@@ -1,0 +1,7 @@
+ManifestFileVersion: 0
+CRC: 1919950496
+AssetBundleManifest:
+  AssetBundleInfos:
+    Info_0:
+      Name: echelon
+      Dependencies: {}
