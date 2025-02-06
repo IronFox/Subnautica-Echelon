@@ -7,7 +7,8 @@
     SubShader
     {
         Tags { "Queue"="Transparent" "IgnoreProjector"="True" "RenderType"="Transparent" }
-        Blend SrcAlpha OneMinusSrcAlpha
+        Blend SrcAlpha One
+        //OneMinusSrcAlpha
         Cull Off Lighting Off ZWrite Off Fog { Color (0,0,0,0) }
         LOD 100
 
@@ -50,6 +51,7 @@
             {
                 // sample the texture
                 fixed4 col = tex2D(_MainTex, i.uv);
+                col.a *= 0.2;
                 //col.rgb *= col.a;
                 // apply fog
                 //col.a = 1;

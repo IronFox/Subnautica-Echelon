@@ -1,9 +1,8 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using static UnityEngine.GraphicsBuffer;
 
-public class LookForward : MonoBehaviour
+public class PointNoseInDirection : MonoBehaviour
 {
     public Transform targetOrientation;
 
@@ -20,25 +19,20 @@ public class LookForward : MonoBehaviour
     }
 
 
-    private Vector2 Flat(Vector3 source) => new Vector2(source.x, source.z).normalized;
+    private Vector2 Flat(Vector3 source) => M.FlatNormalized(source);
 
-    public float HorizontalRotationIntent => rotX;
+    public float HorizontalRotationIntent => enabled ? rotX : 0;
 
-    private Vector3 Unflat(Vector2 flat) => new Vector3(flat.x, 0, flat.y);
     private float SignedMin(float signed, float max)
     {
         return Mathf.Sign(signed) * Mathf.Min(Mathf.Abs(signed), max);
     }
 
-    private Vector2 FlatNormal(Vector2 flatAxis)
-    {
-        return new Vector2(-flatAxis.y, flatAxis.x);
-    }
 
     private float UpAngle(Vector3 vector, Vector2 flatAxis)
     {
-        var forward = FlatNormal(flatAxis);
-        return Vector3.SignedAngle(Unflat(forward), vector, Unflat(flatAxis));
+        var forward = M.FlatNormal(flatAxis);
+        return Vector3.SignedAngle(M.UnFlat(forward), vector, M.UnFlat(flatAxis));
         //=> Vector3.ang
         //return Mathf.Atan2(vector.y, Vector2.Dot(Flat(vector),forward)) * 180f / Mathf.PI;
     }
@@ -48,7 +42,7 @@ public class LookForward : MonoBehaviour
     {
         rotX = RotateHorizontal();
         //RotateDirect();
-        RotateZ(-rotX/10);
+        RotateZ(rb, -rotX/5);
         if (rotateUpDown)
             RotateUpDown();
     }
@@ -59,7 +53,7 @@ public class LookForward : MonoBehaviour
 
     //}
 
-    private void RotateZ(float targetZ)
+    public static void RotateZ(Rigidbody rb, float targetZ)
     {
         var axis = rb.transform.forward;
         //var correct = -Vector3.Dot(rb.angularVelocity, axis);
@@ -91,7 +85,7 @@ public class LookForward : MonoBehaviour
 
     private void RotateUpDown()
     {
-        var axis = -Unflat(FlatNormal(Flat(rb.transform.forward)));
+        var axis = -M.UnFlat(M.FlatNormal(Flat(rb.transform.forward)));
 //            Unflat(Flat(rb.transform.right));
             //Vector3.Cross(Vector3.up, rb.transform.forward);
         float have = UpAngle(rb.transform.forward, Flat(axis));
@@ -165,7 +159,7 @@ public class LookForward : MonoBehaviour
     {
         var upDownAxis = rb.transform.right;
 
-        var normalForward = FlatNormal(Flat(upDownAxis));
+        var normalForward = M.FlatNormal(Flat(upDownAxis));
         var directForward = Flat(rb.transform.forward);
         var correctedForward = (directForward + normalForward) / 2;
         var forward = Mathf.Atan2(correctedForward.y, correctedForward.x) * 180f / Mathf.PI;
