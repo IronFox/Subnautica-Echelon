@@ -40,6 +40,8 @@
             sampler2D _Color;
             sampler2D _Depth;
             float4x4 _Unproject;
+            float4x4 _UnprojectToView;
+            float3 _CameraPosition;
             float _PixelSizeX;
             float _PixelSizeY;
 
@@ -52,6 +54,19 @@
                 return o;
             }
 
+
+            float3 Unproject(float4x4 m, float2 obj1, float depth01)
+            {
+                float4 p = float4(obj1, depth01,1);
+                #ifdef SHADER_API_GLCORE    //https://stackoverflow.com/a/58600831
+                    p.z = depth01 * 2 - 1;
+                #endif
+                
+
+                float4 unprojected = mul(m, p);
+                return unprojected.xyz / unprojected.w;
+            }
+
             fixed4 frag (v2f i) : SV_Target
             {
                 float4 color = tex2D(_Color, i.uv);
@@ -59,36 +74,59 @@
                 duv.y = 1.0 - duv.y;
                 float4 d0 = tex2D(_Depth, duv);
                 float depth = (d0.r);
-                float actualDepth = 1.0/depth;
                 float4 c = float4(0,0,0,1);
-                
+                float3 world = Unproject(_Unproject, i.vCoords, depth);
+                float3 view = Unproject(_UnprojectToView, i.vCoords, depth);
 
-                float4 projected = float4(i.vCoords, depth,1);
-                #ifdef SHADER_API_GLCORE    //https://stackoverflow.com/a/58600831
-                    projected.z = depth * 2 - 1;
-                #endif
 
-                float4 unprojected = mul(_Unproject, projected);
-                float3 world  = unprojected.xyz / unprojected.w;
+                float actualDepth = distance(world,_CameraPosition);
 
-                float3 cell = fmod(abs(world), 2.0) / 2.0;
+
+                float3 cell = fmod(abs(world), 10.0) / 10.0;
                 //c.rgb = cell;
                 //c.rgb = d0.bga * 0.5 + 0.5;
-                cell = (cell - 0.5) * 2.0;
-                cell*= cell;
-                float grid = max(max(cell.x,cell.y),cell.z);
-                grid *= (1.0 - smoothstep(100,1000,actualDepth)) * smoothstep(20,40,actualDepth);
-                float dx = ddx(depth);
-                float dy = ddy(depth);
-                float fresnel = max(abs(dx),abs(dy));
-                float fActual = min(fresnel*1000,1);
+                float3 cell012 = (cell - 0.5) * 2.0;
+                cell012*= cell012;
+                float grid = max(max(cell012.x,cell012.y),cell012.z);
+                //grid -= any(cell < 0.6);
+                //grid *= (1.0 - smoothstep(100,1000,actualDepth)) * smoothstep(20,40,actualDepth);
+                //grid = saturate(grid);
+                float3 dx3 = ddx(view);
+                float3 dy3 = ddy(view);
+                float3 normal = normalize(cross(dx3,dy3));
+
+
+                float fresnel = 1.0+dot(normal,view)/ length(view);
+                //saturate( 1.0 - normal.z);
+                fresnel *= fresnel;
+                 fresnel *= fresnel;
+                // float dx = ddx(actualDepth);
+                // float dy = ddy(actualDepth);
+                //float fresnel = max(abs(dx),abs(dy));
                 //fActual *= fActual;
                 float brightness = color.r * 0.3 + color.g * 0.6 + color.b * 0.1;
                 c.rgb = color.rgb;
-                float mod = fActual*0.1 + smoothstep(0.8,1.0,grid)*0.05;
+                //grid *= smoothstep(10,20,actualDepth) * (1.0 - smoothstep(100,200,actualDepth));
+                float mod = fresnel*0.15 ;
                 float upMod = mod * (1.0 - smoothstep(0.4,0.5,brightness));
-                float downMod = mod * (smoothstep(0.5,0.6,brightness));
-                c.rgb += upMod - downMod;
+                float downMod = 1.0 - mod * (smoothstep(0.5,0.6,brightness));
+                c.rgb += upMod;
+                float gridFade = smoothstep(10,20,actualDepth) * (1.0 - smoothstep(100,200,actualDepth));
+
+                float gridStep = max(abs(ddx(grid)), abs(ddy(grid)));
+
+                float gridInterpolate = gridStep * 2;
+
+                float upGrid = smoothstep(1.0-1.5*gridInterpolate,1.0 - 0.5*gridInterpolate,grid) * gridFade;
+                float downGrid = smoothstep(1.0-4*gridInterpolate,1.0 - 3 * gridInterpolate,grid) * (1.0 - upGrid) * gridFade;
+                c.rgb *= 1.0 + upGrid*0.05;
+                c.rgb *= 1.0 - downGrid *0.05;
+                c.rgb *= downMod;
+
+                //c.rgb = (float3)fresnel;
+
+                //c.r += pow(fresnel,10);
+
                 // if (brightness > 0.5)
                 //     c.rgb -= mod;
                 // else

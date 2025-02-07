@@ -83,11 +83,15 @@ public class ScreenControl : MonoBehaviour
             Graphics.ExecuteCommandBuffer(buffer);
         }
         //https://stackoverflow.com/a/58600831
-        Camera currentCamera = trailingColorCamera;
-        Matrix4x4 matrixCameraToWorld = currentCamera.cameraToWorldMatrix;
-        Matrix4x4 matrixProjectionInverse = GL.GetGPUProjectionMatrix(currentCamera.projectionMatrix, false).inverse;
+        Matrix4x4 matrixCameraToWorld = camera.cameraToWorldMatrix;
+        Matrix4x4 matrixProjectionInverse = GL.GetGPUProjectionMatrix(camera.projectionMatrix, false).inverse;
         Matrix4x4 matrixHClipToWorld = matrixCameraToWorld * matrixProjectionInverse;
 
         screenMaterial.SetMatrix("_Unproject", matrixHClipToWorld);
+        screenMaterial.SetMatrix("_UnprojectToView", matrixProjectionInverse);
+
+
+
+        screenMaterial.SetVector("_CameraPosition", camera.transform.position);
     }
 }
