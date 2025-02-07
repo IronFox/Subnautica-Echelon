@@ -23,6 +23,9 @@ public class NonCameraOrientation : MonoBehaviour
             //transform.rotation = target.rotation;
             rotX = target.eulerAngles.x;
             rotY = target.eulerAngles.y;
+            if (rotX > 180)
+                rotX -= 380;
+            Debug.Log(rotX);
         }
         else
         {
