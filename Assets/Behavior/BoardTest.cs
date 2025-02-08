@@ -20,8 +20,8 @@ public class BoardTest : MonoBehaviour
     {
         if (!isOnboarded)
         {
-            transform.position += transform.forward * Input.GetAxis("Vertical") * 2* Time.deltaTime;
-            transform.position += transform.right * Input.GetAxis("Horizontal") * 2 * Time.deltaTime;
+            transform.position += transform.forward * Input.GetAxis("Vertical") * 10* Time.deltaTime;
+            transform.position += transform.right * Input.GetAxis("Horizontal") * 10 * Time.deltaTime;
 
             LockedEuler
                 .FromLocal(transform)
