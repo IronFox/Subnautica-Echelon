@@ -30,8 +30,11 @@ public class ConsoleControl : MonoBehaviour
     private TextMeshProUGUI tmp;
     public int maxLines = 10;
 
-    public float secondsPerCharacter = 0.01f;
-    private int animationProgress = 0;
+
+    public int charactersPerSecond = 200;
+
+
+    private float accumulatedSeconds;
     private static List<ConsoleControl> Instances { get; } = new List<ConsoleControl>();
 
     private static List<Line> StaticLines { get; } = new List<Line>();
@@ -88,38 +91,83 @@ public class ConsoleControl : MonoBehaviour
 
     }
 
-    void AnimateNextCharacter()
+
+    private Line? NextPendingLine()
+    {
+        if (pendingLines.Count > 0)
+            return pendingLines.Dequeue();
+        return null;
+    }
+
+    void AnimateNextCharacters(int numCharactersLeft)
     {
         try
         {
-            
 
-            if (currentLine == null || lineAnimationAt >= currentLine.Value.Message.Length)
+
+            if (currentLine == null || lineAnimationAt + numCharactersLeft >= currentLine.Value.Message.Length)
             {
                 bool changed = false;
                 if (currentLine != null)
                 {
+                    Debug.Log($"end line");
+                    fullLines.Enqueue(currentLine.Value);
+                    var take = currentLine.Value.Message.Length - lineAnimationAt;
+                    if (take > 0)
+                        numCharactersLeft -= take;
+                    changed = true;
+                    currentLine = null;
+                }
+
+                while (pendingLines.Count > 0)
+                {
+                    currentLine = pendingLines.Dequeue();
+                    lineAnimationAt = 0;
+                    var take = currentLine.Value.Message.Length;
+                    if (take > numCharactersLeft)
+                    {
+                        Debug.Log($"end on partial line ({numCharactersLeft})");
+                        lineAnimationAt = numCharactersLeft;
+                        numCharactersLeft = 0;
+                        changed = true;
+                        break;
+                    }
+
+
+                    if (take == numCharactersLeft)
+                    {
+                        Debug.Log($"end on exact match");
+
+                        numCharactersLeft = 0;
+                        fullLines.Enqueue(currentLine.Value);
+                        currentLine = NextPendingLine();
+                        lineAnimationAt = 0;
+                        changed = true;
+                        break;
+                    }
+
+                    numCharactersLeft -= take;
                     fullLines.Enqueue(currentLine.Value);
                     currentLine = null;
                     changed = true;
                 }
-                if (pendingLines.Count > 0)
+
+                if (currentLine == null)
                 {
-                    currentLine = pendingLines.Dequeue();
                     lineAnimationAt = 0;
-                }
-                else
-                {
                     if (changed)
                     {
                         Rebuild();
                     }
-                    lineAnimationAt = 0;
                     return;
                 }
             }
-            lineAnimationAt++;
-            Rebuild();
+            else
+            {
+                Debug.Log("normal increment by " + numCharactersLeft);
+                lineAnimationAt += numCharactersLeft;
+                Rebuild();
+            }
             //tmp.rectTransform.localPosition = tmp.rectTransform.localPosition + new Vector3(0,0,0.1f);
         }
         catch (System.Exception ex)
@@ -144,12 +192,15 @@ public class ConsoleControl : MonoBehaviour
 
     void FixedUpdate()
     {
-        animationProgress++;
-        if (animationProgress * Time.fixedDeltaTime > secondsPerCharacter)
+        accumulatedSeconds += Time.fixedDeltaTime;
+        float secondsPerCharacter = 1.0f / charactersPerSecond;
+        if (accumulatedSeconds > secondsPerCharacter)
         {
-            animationProgress = 0;
-            AnimateNextCharacter();
+            int numCharacters = Mathf.FloorToInt(accumulatedSeconds / secondsPerCharacter);
+            accumulatedSeconds -= numCharacters *secondsPerCharacter;
+            AnimateNextCharacters(numCharacters);
         }
+
     }
 
     // Update is called once per frame
