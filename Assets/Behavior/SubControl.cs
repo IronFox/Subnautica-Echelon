@@ -23,10 +23,26 @@ public class SubControl : MonoBehaviour
     public DriveControl backRight;
 
     public NonCameraOrientation nonCameraOrientation;
-    public PositionCamera shipTrailingCamera;
+    public RotateCamera rotateCamera;
+    public PositionCamera positionCamera;
 
     private PointNoseInDirection look;
     private Rigidbody rb;
+
+    private enum CameraState
+    {
+        IsFree,
+        IsBound,
+        IsTransitioningToBound
+    }
+    
+    private CameraState state = CameraState.IsBound;
+
+    private void ChangeState(CameraState state)
+    {
+        Debug.Log($"->{state}");
+        this.state = state;
+    }
 
     // Start is called before the first frame update
     void Start()
@@ -38,18 +54,48 @@ public class SubControl : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        look.targetOrientation = freeCamera ? nonCameraOrientation.transform : shipTrailingCamera.transform;
+        if (freeCamera)
+        {
+            rotateCamera.AbortTransition();
+            ChangeState(CameraState.IsFree);
+            look.targetOrientation = nonCameraOrientation.transform;
+            nonCameraOrientation.isActive = true;
+        }
+        else
+        {
+
+            switch (state)
+            {
+                case CameraState.IsTransitioningToBound:
+                    if (rotateCamera.IsTransitionDone)
+                    {
+                        ChangeState(CameraState.IsBound);
+                        look.targetOrientation = rotateCamera.transform;
+                        nonCameraOrientation.isActive = false;
+                        rotateCamera.AbortTransition();
+                    }
+                    break;
+                case CameraState.IsFree:
+                    ChangeState(CameraState.IsTransitioningToBound);
+                    rotateCamera.BeginTransitionTo(transform);
+                    break;
+
+            }
+        }
+
+
+        //look.targetOrientation = freeCamera ? nonCameraOrientation.transform : shipTrailingCamera.transform;
 
         nonCameraOrientation.rightRotationSpeed = rightAxis * 100;
         nonCameraOrientation.upRotationSpeed = -upAxis * 100;
-        nonCameraOrientation.isActive = freeCamera;
+        
 
         forwardLeft.thrust = forwardAxis + look.HorizontalRotationIntent*0.001f;
         forwardRight.thrust = forwardAxis - look.HorizontalRotationIntent*0.001f;
         backLeft.thrust = -forwardLeft.thrust;
         backRight.thrust = -forwardRight.thrust;
 
-        shipTrailingCamera.zoomAxis = zoomAxis;
+        positionCamera.zoomAxis = zoomAxis;
 
 
 

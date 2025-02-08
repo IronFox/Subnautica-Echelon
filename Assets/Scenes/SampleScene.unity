@@ -1090,5 +1090,6 @@ PrefabInstance:
       propertyPath: m_Name
       value: Echelon
       objectReference: {fileID: 0}
-    m_RemovedComponents: []
+    m_RemovedComponents:
+    - {fileID: 119262601401620536, guid: 90a2bc4f316bae74e996df61913f6a52, type: 3}
   m_SourcePrefab: {fileID: 100100000, guid: 90a2bc4f316bae74e996df61913f6a52, type: 3}

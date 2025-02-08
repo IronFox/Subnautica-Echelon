@@ -1761,6 +1761,8 @@ GameObject:
   - component: {fileID: 3057455469629069557}
   - component: {fileID: 3057455469629069554}
   - component: {fileID: 3057455469629069553}
+  - component: {fileID: 119262601401620536}
+  - component: {fileID: 2666188282623945316}
   m_Layer: 0
   m_Name: ShipTrailCamera
   m_TagString: Untagged
@@ -1806,6 +1808,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   targetBoundingBox: {fileID: 8642306418359337054}
   positionBelowTarget: 0
+  zoomAxis: 0
 --- !u!114 &3057455469629069553
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1819,6 +1822,36 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   lookSpeed: 3
+--- !u!114 &119262601401620536
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3057455469629069558}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0577eac3a18bfe14b94372ba05b649bb, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  rotationAxisX: 0
+  rotationAxisY: 0
+  maxDegreesPerSecond: 1000
+--- !u!114 &2666188282623945316
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3057455469629069558}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0577eac3a18bfe14b94372ba05b649bb, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  rotationAxisX: 0
+  rotationAxisY: 0
+  maxDegreesPerSecond: 800
 --- !u!1 &3057455469741199822
 GameObject:
   m_ObjectHideFlags: 0
@@ -2970,7 +3003,8 @@ MonoBehaviour:
   forwardRight: {fileID: 3057455469788612562}
   backRight: {fileID: 3057455469741199820}
   nonCameraOrientation: {fileID: 2068503348}
-  shipTrailingCamera: {fileID: 3057455469629069554}
+  rotateCamera: {fileID: 2666188282623945316}
+  positionCamera: {fileID: 3057455469629069554}
 --- !u!1 &5681242214475770467
 GameObject:
   m_ObjectHideFlags: 0
