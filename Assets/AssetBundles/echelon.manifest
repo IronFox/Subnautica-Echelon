@@ -1,17 +1,19 @@
 ManifestFileVersion: 0
-CRC: 3197263369
+CRC: 2203083373
 Hashes:
   AssetFileHash:
     serializedVersion: 2
-    Hash: 04185c67c9657c39b8995f82f2b6e21a
+    Hash: 50cc9ed01dc0f01aec9eef1cf1986a65
   TypeTreeHash:
     serializedVersion: 2
-    Hash: 5c21481db12698bc7ec327c968659f73
+    Hash: 0d162c4b1adc67cd6098707ae4f5ff3d
 HashAppended: 0
 ClassTypes:
 - Class: 1
   Script: {instanceID: 0}
 - Class: 4
+  Script: {instanceID: 0}
+- Class: 20
   Script: {instanceID: 0}
 - Class: 21
   Script: {instanceID: 0}
@@ -31,13 +33,55 @@ ClassTypes:
   Script: {instanceID: 0}
 - Class: 65
   Script: {instanceID: 0}
+- Class: 81
+  Script: {instanceID: 0}
+- Class: 82
+  Script: {instanceID: 0}
+- Class: 83
+  Script: {instanceID: 0}
 - Class: 108
+  Script: {instanceID: 0}
+- Class: 114
+  Script: {fileID: 11500000, guid: 0cd44c1031e13a943bb63640046fad76, type: 3}
+- Class: 114
+  Script: {fileID: 11500000, guid: feaca3506156d4c47a13c50b2545a014, type: 3}
+- Class: 114
+  Script: {fileID: 11500000, guid: d58e0021e5035b742986340c25862949, type: 3}
+- Class: 114
+  Script: {fileID: 11500000, guid: 5d256c7168af40e498912821a9fc4f88, type: 3}
+- Class: 114
+  Script: {fileID: 11500000, guid: 0577eac3a18bfe14b94372ba05b649bb, type: 3}
+- Class: 114
+  Script: {fileID: 11500000, guid: 7697b894729af20458d640e1a41b39ba, type: 3}
+- Class: 114
+  Script: {fileID: 11500000, guid: 60a3d7e6a8af7bd43828195459d8f693, type: 3}
+- Class: 114
+  Script: {fileID: 11500000, guid: 5963bab8ea534ea4cb6e5f7f2fcf76f4, type: 3}
+- Class: 114
+  Script: {fileID: 11500000, guid: 71c1514a6bd24e1e882cebbe1904ce04, type: 3}
+- Class: 114
+  Script: {fileID: 11500000, guid: b2ecd47b9b308e140926f244b1aa9f45, type: 3}
+- Class: 114
+  Script: {fileID: 11500000, guid: f4688fdb7df04437aeb418b961361dc5, type: 3}
+- Class: 114
+  Script: {fileID: 11500000, guid: fdf75d2cf0c5b7a43bd6cde3891e8c37, type: 3}
+- Class: 114
+  Script: {fileID: 11500000, guid: dc42784cf147c0c48a680349fa168899, type: 3}
+- Class: 115
+  Script: {instanceID: 0}
+- Class: 128
   Script: {instanceID: 0}
 - Class: 134
   Script: {instanceID: 0}
 - Class: 198
   Script: {instanceID: 0}
 - Class: 199
+  Script: {instanceID: 0}
+- Class: 222
+  Script: {instanceID: 0}
+- Class: 223
+  Script: {instanceID: 0}
+- Class: 224
   Script: {instanceID: 0}
 SerializeReferenceClassIdentifiers: []
 Assets:
