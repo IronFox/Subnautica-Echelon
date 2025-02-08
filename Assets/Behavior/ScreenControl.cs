@@ -7,6 +7,11 @@ using UnityEngine.Rendering;
 public class ScreenControl : MonoBehaviour
 {
     public Camera trailingColorCamera;
+    public Transform rightRoomWall;
+    public Transform leftRoomWall;
+    public Transform roomCeiling;
+    public Transform roomFloor;
+    public Transform rearRoomWall;
     public Material screenMaterial;
     public Material copyMaterial;
     private int lastWidth = -1;
@@ -62,7 +67,20 @@ public class ScreenControl : MonoBehaviour
             float screenHeight = screenHeightAtOne * screenDistance;
 
             //Debug.Log($"Resizing screen to {screenHeight}");
-            transform.localScale = new Vector3((float)w/h * screenHeight * 0.98f, screenHeight * 0.98f, 1);
+            var roomSizeY = screenHeight;// * 0.98f;    //make a little smaller to see room
+            var roomSizeX = (float)w / h * roomSizeY;
+            var wallFull = 0.05f;
+            var wall = wallFull /2;
+            transform.localScale = new Vector3(roomSizeX, roomSizeY, 1);
+            leftRoomWall.localScale = new Vector3(wallFull, roomSizeY, 1);
+            leftRoomWall.position = new Vector3(roomSizeX/2 + wall, 0, 0);
+            rightRoomWall.localScale = new Vector3(wallFull, roomSizeY, 1);
+            rightRoomWall.position = new Vector3(-roomSizeX/2 - wall, 0, 0);
+            roomCeiling.localScale = new Vector3(wallFull, roomSizeX + wallFull, 1);
+            roomCeiling.position = new Vector3(0, roomSizeY / 2 + wall, 0);
+            roomFloor.localScale = new Vector3(wallFull, roomSizeX + wallFull, 1);
+            roomFloor.position = new Vector3(0, -roomSizeY / 2 - wall, 0);
+            rearRoomWall.transform.localScale = new Vector3(wallFull, roomSizeY + wallFull, roomSizeX + wallFull);
 
         }
 
