@@ -12,10 +12,13 @@ public class SubControl : MonoBehaviour
     public bool overdriveActive;
     public bool outOfWater;
     public bool freeCamera;
+    public bool isBoarded;
+    public bool positionCameraBelowSub;
 
     public float regularForwardAcceleration = 100000;
     public float overdriveForwardAcceleration = 200000;
     public float strafeAcceleration = 50000;
+    public float rotationDegreesPerSecond = 100;
 
     public DriveControl forwardLeft;
     public DriveControl backLeft;
@@ -28,6 +31,8 @@ public class SubControl : MonoBehaviour
 
     private PointNoseInDirection look;
     private Rigidbody rb;
+    private ScreenControl screen;
+    private bool currentlyBoarded;
 
     private enum CameraState
     {
@@ -44,72 +49,117 @@ public class SubControl : MonoBehaviour
         this.state = state;
     }
 
+    public void Onboard()
+    {
+        if (!currentlyBoarded)
+        {
+            ConsoleControl.Write($"Onboarding");
+            screen.isEnabled = currentlyBoarded = isBoarded = true;
+        }
+    }
+
+    public void Offboard()
+    {
+        if (currentlyBoarded)
+        {
+            ConsoleControl.Write($"Offboarding");
+            screen.isEnabled = currentlyBoarded = isBoarded = false;
+        }
+    }
+
     // Start is called before the first frame update
     void Start()
     {
         rb = GetComponent<Rigidbody>();
         look = GetComponent<PointNoseInDirection>();
+        screen = GetComponentInChildren<ScreenControl>();
     }
 
     // Update is called once per frame
     void Update()
     {
-        if (freeCamera)
+        if (currentlyBoarded != isBoarded)
         {
-            rotateCamera.AbortTransition();
-            ChangeState(CameraState.IsFree);
-            look.targetOrientation = nonCameraOrientation.transform;
-            nonCameraOrientation.isActive = true;
+            if (!isBoarded)
+                Offboard();
+            else
+                Onboard();
+        }
+
+
+        positionCamera.positionBelowTarget = positionCameraBelowSub;
+        if (currentlyBoarded)
+        {
+            rotateCamera.enabled = true;
+
+            if (freeCamera)
+            {
+                rotateCamera.AbortTransition();
+                ChangeState(CameraState.IsFree);
+                look.targetOrientation = nonCameraOrientation.transform;
+                nonCameraOrientation.isActive = true;
+            }
+            else
+            {
+
+                switch (state)
+                {
+                    case CameraState.IsTransitioningToBound:
+                        if (rotateCamera.IsTransitionDone)
+                        {
+                            ChangeState(CameraState.IsBound);
+                            look.targetOrientation = rotateCamera.transform;
+                            nonCameraOrientation.isActive = false;
+                            rotateCamera.AbortTransition();
+                        }
+                        break;
+                    case CameraState.IsFree:
+                        ChangeState(CameraState.IsTransitioningToBound);
+                        rotateCamera.BeginTransitionTo(transform);
+                        break;
+
+                }
+            }
+
+            //look.targetOrientation = freeCamera ? nonCameraOrientation.transform : shipTrailingCamera.transform;
+
+            nonCameraOrientation.rightRotationSpeed = rightAxis * rotationDegreesPerSecond;
+            nonCameraOrientation.upRotationSpeed = -upAxis * rotationDegreesPerSecond;
+
+
+            forwardLeft.thrust = forwardAxis + look.HorizontalRotationIntent * 0.001f;
+            forwardRight.thrust = forwardAxis - look.HorizontalRotationIntent * 0.001f;
+
+            positionCamera.zoomAxis = zoomAxis;
         }
         else
         {
+            nonCameraOrientation.isActive = false;
+            rotateCamera.enabled = false;
+            nonCameraOrientation.rightRotationSpeed = 0;
+            nonCameraOrientation.upRotationSpeed = 0;
+            positionCamera.zoomAxis = 0;
+            forwardLeft.thrust = 0;
+            forwardRight.thrust = 0;
 
-            switch (state)
-            {
-                case CameraState.IsTransitioningToBound:
-                    if (rotateCamera.IsTransitionDone)
-                    {
-                        ChangeState(CameraState.IsBound);
-                        look.targetOrientation = rotateCamera.transform;
-                        nonCameraOrientation.isActive = false;
-                        rotateCamera.AbortTransition();
-                    }
-                    break;
-                case CameraState.IsFree:
-                    ChangeState(CameraState.IsTransitioningToBound);
-                    rotateCamera.BeginTransitionTo(transform);
-                    break;
-
-            }
         }
-
-
-        //look.targetOrientation = freeCamera ? nonCameraOrientation.transform : shipTrailingCamera.transform;
-
-        nonCameraOrientation.rightRotationSpeed = rightAxis * 100;
-        nonCameraOrientation.upRotationSpeed = -upAxis * 100;
-        
-
-        forwardLeft.thrust = forwardAxis + look.HorizontalRotationIntent*0.001f;
-        forwardRight.thrust = forwardAxis - look.HorizontalRotationIntent*0.001f;
         backLeft.thrust = -forwardLeft.thrust;
         backRight.thrust = -forwardRight.thrust;
-
-        positionCamera.zoomAxis = zoomAxis;
-
 
 
     }
 
     void FixedUpdate()
     {
-        
-        rb.AddRelativeForce(0, 0, forwardAxis * (regularForwardAcceleration + (overdriveActive && forwardAxis > 0 ? overdriveForwardAcceleration : 0)));
-        if (!freeCamera)
+        if (currentlyBoarded)
         {
-            //var rAxis = M.FlatNormalized(transform.right);
-            rb.AddForce(look.targetOrientation.right * rightAxis * strafeAcceleration);
-            rb.AddForce(look.targetOrientation.up * upAxis * strafeAcceleration);
+            rb.AddRelativeForce(0, 0, forwardAxis * (regularForwardAcceleration + (overdriveActive && forwardAxis > 0 ? overdriveForwardAcceleration : 0)));
+            if (!freeCamera)
+            {
+                //var rAxis = M.FlatNormalized(transform.right);
+                rb.AddForce(look.targetOrientation.right * rightAxis * strafeAcceleration);
+                rb.AddForce(look.targetOrientation.up * upAxis * strafeAcceleration);
+            }
         }
     }
 }

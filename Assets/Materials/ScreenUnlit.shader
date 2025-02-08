@@ -2,10 +2,12 @@
 {
     Properties
     {
+        _Noise("Noise (Gray)", 2D) = "white" {}
         _Color ("Color (RGB)", 2D) = "white" {}
         _Depth ("Depth (R)", 2D) = "white" {}
         _PixelSizeX("PixelSizeX", Range(0,1)) = 1
         _PixelSizeX("PixelSizeY", Range(0,1)) = 1
+        _NoiseImpact("Noise impact",Range(0,0.2)) = 0.0649
     }
     SubShader
     {
@@ -39,11 +41,15 @@
 
             sampler2D _Color;
             sampler2D _Depth;
+            sampler2D _Noise;
+            sampler2D _Canvas;
             float4x4 _Unproject;
             float4x4 _UnprojectToView;
             float3 _CameraPosition;
             float _PixelSizeX;
             float _PixelSizeY;
+            float _EnabledProgress;
+            float _NoiseImpact;
 
             v2f vert (appdata v)
             {
@@ -107,21 +113,39 @@
                 float brightness = color.r * 0.3 + color.g * 0.6 + color.b * 0.1;
                 c.rgb = color.rgb;
                 //grid *= smoothstep(10,20,actualDepth) * (1.0 - smoothstep(100,200,actualDepth));
-                float mod = fresnel*0.15 ;
-                float upMod = mod * (1.0 - smoothstep(0.4,0.5,brightness));
-                float downMod = 1.0 - mod * (smoothstep(0.5,0.6,brightness));
-                c.rgb += upMod;
                 float gridFade = smoothstep(10,20,actualDepth) * (1.0 - smoothstep(100,200,actualDepth));
 
                 float gridStep = max(abs(ddx(grid)), abs(ddy(grid)));
 
                 float gridInterpolate = gridStep * 2;
 
+
+                float localProgress = _EnabledProgress - (i.vCoords.x * 0.5 + 0.5) +  (tex2D(_Noise, i.uv).x - 0.5) *2*_NoiseImpact - _NoiseImpact ;
+                //localProgress >0 = show
+
+                float strongEffects = 1.0 - smoothstep(0,0.5,localProgress);
+
+                float mod = fresnel*(0.15);
+                float upMod = mod * (1.0 - smoothstep(0.4,0.5,brightness));
+                float downMod = 1.0 - mod * (smoothstep(0.5,0.6,brightness));
+
+                c.rgb += upMod;
+                c.rgb = lerp(c.rgb, normal * 0.5 + 0.5,strongEffects*0.5);
+
+
+                c.rg *= 1.0 - strongEffects*0.25;
+
+
+
                 float upGrid = smoothstep(1.0-1.5*gridInterpolate,1.0 - 0.5*gridInterpolate,grid) * gridFade;
                 float downGrid = smoothstep(1.0-4*gridInterpolate,1.0 - 3 * gridInterpolate,grid) * (1.0 - upGrid) * gridFade;
-                c.rgb *= 1.0 + upGrid*0.05;
-                c.rgb *= 1.0 - downGrid *0.05;
+                c.rgb *= 1.0 + upGrid*(0.05 + strongEffects);
+                c.rgb *= 1.0 - downGrid *(0.05 + strongEffects);
                 c.rgb *= downMod;
+
+
+                c.rgb *= smoothstep(0,0.01,localProgress);
+                c.rgb += smoothstep(0,0.01, localProgress) * (1.0 - smoothstep(0.01, 0.02, localProgress));
 
                 //c.rgb = (float3)fresnel;
 
@@ -133,8 +157,8 @@
                 //     c.rgb += mod;
 
 
-
-
+                float4 canvas = tex2D(_Canvas, i.uv);
+                c.rgb = lerp(c.rgb, canvas.rgb, canvas.a);
 
 
                 //c.rgb  = unprojected.xyz * 0.01;

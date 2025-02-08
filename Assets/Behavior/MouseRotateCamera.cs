@@ -4,9 +4,6 @@ using UnityEngine;
 
 public class MouseRotateCamera : MonoBehaviour
 {
-    public float lookSpeed = 3;
-    private Vector2 rotation = Vector2.zero;
-
     private RotateCamera dtc;
     // Start is called before the first frame update
     void Start()

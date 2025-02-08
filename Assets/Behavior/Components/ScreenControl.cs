@@ -7,6 +7,7 @@ using UnityEngine.Rendering;
 public class ScreenControl : MonoBehaviour
 {
     public Camera trailingColorCamera;
+    public Camera canvasCamera;
     public Transform rightRoomWall;
     public Transform leftRoomWall;
     public Transform roomCeiling;
@@ -16,14 +17,18 @@ public class ScreenControl : MonoBehaviour
     public Material copyMaterial;
     private int lastWidth = -1;
     private int lastHeight = -1;
+    private RenderTexture canvasTexture;
     private RenderTexture colorTexture;
     private RenderTexture depthTexture;
     public float screenDistance = 0.5f;
     private Mesh screenQuad;
+    private float enableVisualizationProgress;
+    public float visualizationSpeedMultiplier = 2;
 
     private int originalCullingMask = -1;
 
     public bool isEnabled;
+    private bool? lastEnabled;
 
     // Start is called before the first frame update
     void Start()
@@ -33,74 +38,125 @@ public class ScreenControl : MonoBehaviour
         screenQuad.subMeshCount = 1;
         screenQuad.SetIndices(new int[] { 0, 1, 2, 0, 2, 3 }, MeshTopology.Triangles,0);
         screenQuad.uv = new Vector2[] { new Vector2(0, 0), new Vector2(1, 0), new Vector2(1, 1), new Vector2(0, 1) };
+
+
+    }
+
+    void OnDestroy()
+    {
+        Destroy(colorTexture);
+        Destroy(depthTexture);
+        Destroy(canvasTexture);
     }
 
     // Update is called once per frame
     void Update()
     {
+        if (lastEnabled != isEnabled)
+        {
+            lastEnabled = isEnabled;
+            if (isEnabled)
+                ConsoleControl.Write($"Screen on");
+            else
+                ConsoleControl.Write($"Screen off");
+        }
         var size = Camera.main.pixelRect;
 
         int w = Camera.main.pixelWidth;
         int h = Camera.main.pixelHeight;
+
+        if (w != lastWidth || h != lastHeight)
+        {
+            if (colorTexture != null)
+            {
+                Destroy(colorTexture);
+                Destroy(depthTexture);
+                Destroy(canvasTexture);
+            }
+            Debug.Log($"Creating new textures at size {w}*{h}");
+            lastWidth = w;
+            lastHeight = h;
+            canvasTexture = new RenderTexture(new RenderTextureDescriptor(w, h, RenderTextureFormat.ARGBHalf, 0));
+            colorTexture = new RenderTexture(new RenderTextureDescriptor(w, h, RenderTextureFormat.ARGBHalf, 24));
+            depthTexture = new RenderTexture(new RenderTextureDescriptor(w, h, RenderTextureFormat.RFloat, 0));
+            trailingColorCamera.depthTextureMode = DepthTextureMode.Depth;
+            trailingColorCamera.targetTexture = colorTexture;
+            trailingColorCamera.fieldOfView = Camera.main.fieldOfView;
+
+            canvasCamera.targetTexture = canvasTexture;
+            canvasCamera.enabled = true;
+
+            screenMaterial.SetTexture("_Color", colorTexture);
+            screenMaterial.SetTexture("_Depth", depthTexture);
+            screenMaterial.SetTexture("_Canvas", canvasTexture);
+            screenMaterial.SetFloat("_PixelSizeX", 1f / w);
+            screenMaterial.SetFloat("_PixelSizeY", 1f / h);
+            screenMaterial.SetFloat("_PixelAspect", (float)w / h);
+
+
+            float screenHeightAtOne = 2 * Mathf.Tan(Camera.main.fieldOfView / 2 * Mathf.PI / 180);
+            //Camera.main.fieldOfView / 90f;
+            float screenHeight = screenHeightAtOne * screenDistance;
+
+            var roomSizeY = screenHeight;// * 0.98f;    //make a little smaller to see room
+            var roomSizeX = (float)w / h * roomSizeY;
+            var wallFull = 0.05f;
+            var wall = wallFull / 2;
+            transform.localScale = new Vector3(roomSizeX, roomSizeY, 1);
+            leftRoomWall.localScale = new Vector3(wallFull, roomSizeY, 1);
+            leftRoomWall.localPosition = new Vector3(roomSizeX / 2 + wall, 0, 0);
+            rightRoomWall.localScale = new Vector3(wallFull, roomSizeY, 1);
+            rightRoomWall.localPosition = new Vector3(-roomSizeX / 2 - wall, 0, 0);
+            roomCeiling.localScale = new Vector3(wallFull, roomSizeX + wallFull, 1);
+            roomCeiling.localPosition = new Vector3(0, roomSizeY / 2 + wall, 0);
+            roomFloor.localScale = new Vector3(wallFull, roomSizeX + wallFull, 1);
+            roomFloor.localPosition = new Vector3(0, -roomSizeY / 2 - wall, 0);
+            rearRoomWall.transform.localScale = new Vector3(wallFull, roomSizeY + wallFull, roomSizeX + wallFull);
+
+        }
+
+
         if (isEnabled)
         {
-            if (w != lastWidth || h != lastHeight)
-            {
-                if (colorTexture != null)
-                {
-                    Destroy(colorTexture);
-                    Destroy(depthTexture);
-                }
-                Debug.Log($"Creating new textures at size {w}*{h}");
-                lastWidth = w;
-                lastHeight = h;
-                colorTexture = new RenderTexture(new RenderTextureDescriptor(w, h, RenderTextureFormat.ARGBHalf, 24));
-                depthTexture = new RenderTexture(new RenderTextureDescriptor(w, h, RenderTextureFormat.RFloat, 24));
-                trailingColorCamera.depthTextureMode = DepthTextureMode.Depth;
-                trailingColorCamera.targetTexture = colorTexture;
-                //Camera.main.depthTextureMode = DepthTextureMode.Depth;
-                trailingColorCamera.fieldOfView = Camera.main.fieldOfView;
 
-                screenMaterial.SetTexture("_Color", colorTexture);
-                screenMaterial.SetTexture("_Depth", depthTexture);
-                screenMaterial.SetFloat("_PixelSizeX", 1f / w);
-                screenMaterial.SetFloat("_PixelSizeY", 1f / h);
-                screenMaterial.SetFloat("_PixelAspect", (float)w / h);
-
-
-                float screenHeightAtOne = 2 * Mathf.Tan(Camera.main.fieldOfView / 2 * Mathf.PI / 180);
-                //Camera.main.fieldOfView / 90f;
-                float screenHeight = screenHeightAtOne * screenDistance;
-
-                var roomSizeY = screenHeight;// * 0.98f;    //make a little smaller to see room
-                var roomSizeX = (float)w / h * roomSizeY;
-                var wallFull = 0.05f;
-                var wall = wallFull / 2;
-                transform.localScale = new Vector3(roomSizeX, roomSizeY, 1);
-                leftRoomWall.localScale = new Vector3(wallFull, roomSizeY, 1);
-                leftRoomWall.localPosition = new Vector3(roomSizeX / 2 + wall, 0, 0);
-                rightRoomWall.localScale = new Vector3(wallFull, roomSizeY, 1);
-                rightRoomWall.localPosition = new Vector3(-roomSizeX / 2 - wall, 0, 0);
-                roomCeiling.localScale = new Vector3(wallFull, roomSizeX + wallFull, 1);
-                roomCeiling.localPosition = new Vector3(0, roomSizeY / 2 + wall, 0);
-                roomFloor.localScale = new Vector3(wallFull, roomSizeX + wallFull, 1);
-                roomFloor.localPosition = new Vector3(0, -roomSizeY / 2 - wall, 0);
-                rearRoomWall.transform.localScale = new Vector3(wallFull, roomSizeY + wallFull, roomSizeX + wallFull);
-
-            }
             if (!trailingColorCamera.enabled)
             {
+                enableVisualizationProgress = 0;
                 originalCullingMask = Camera.main.cullingMask;
-                Debug.Log($"old culling mask: {Camera.main.cullingMask}");
                 Camera.main.cullingMask = ~1;
-                Debug.Log($"new culling mask: {Camera.main.cullingMask}");
+                //Debug.Log($"new culling mask: {Camera.main.cullingMask}");
+                trailingColorCamera.enabled = true;
+                ConsoleControl.Write($"Main camera culling mask changed: {originalCullingMask} -> {Camera.main.cullingMask}");
+                screenMaterial.SetFloat("_EnabledProgress", enableVisualizationProgress);
             }
-            trailingColorCamera.enabled = true;
+            else
+            {
+                if (enableVisualizationProgress < 2)    //some margin for error
+                {
+                    enableVisualizationProgress += Time.deltaTime* visualizationSpeedMultiplier;
+                    screenMaterial.SetFloat("_EnabledProgress", enableVisualizationProgress);
+                }
+            }
+
+            //screenMaterial.SetFloat("_EnabledProgress", progressOverride);
+            //screenMaterial.SetFloat("_NoiseImpact", noiseImpact);
         }
         else
         {
-            trailingColorCamera.enabled = false;
-            Camera.main.cullingMask = originalCullingMask;
+            if (enableVisualizationProgress > 0)    //some margin for error
+            {
+                enableVisualizationProgress = Mathf.Min(enableVisualizationProgress, 1.05f);
+                enableVisualizationProgress -= Time.deltaTime*visualizationSpeedMultiplier;
+                screenMaterial.SetFloat("_EnabledProgress", enableVisualizationProgress);
+            }
+
+
+            if (trailingColorCamera.enabled)
+            {
+                trailingColorCamera.enabled = false;
+                Camera.main.cullingMask = originalCullingMask;
+                ConsoleControl.Write($"Main camera culling mask reverted");
+            }
         }
 
 
