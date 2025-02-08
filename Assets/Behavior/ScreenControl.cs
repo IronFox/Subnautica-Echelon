@@ -53,6 +53,7 @@ public class ScreenControl : MonoBehaviour
             trailingColorCamera.targetTexture = colorTexture;
             //Camera.main.depthTextureMode = DepthTextureMode.Depth;
             trailingColorCamera.enabled = true;
+            trailingColorCamera.fieldOfView = Camera.main.fieldOfView;
 
             //Debug.Log($"Configuring material");
             screenMaterial.SetTexture("_Color", colorTexture);
