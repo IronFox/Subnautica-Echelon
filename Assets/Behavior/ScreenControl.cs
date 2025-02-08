@@ -67,7 +67,7 @@ public class ScreenControl : MonoBehaviour
         }
 
         //Debug.Log($"Updating projection inverse");
-        Debug.Log(trailingColorCamera.previousViewProjectionMatrix);
+        //Debug.Log(trailingColorCamera.previousViewProjectionMatrix);
 
 
     }
