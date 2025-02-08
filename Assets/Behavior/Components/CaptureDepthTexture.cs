@@ -31,7 +31,6 @@ public class CaptureDepthTexture : MonoBehaviour
     void OnRenderImage(RenderTexture source, RenderTexture destination)
     {
         Graphics.Blit(source, destination);
-        //Debug.Log("Capture");
         Texture _camDepthTexture = Shader.GetGlobalTexture("_CameraDepthTexture");
         screen.CaptureDepth(camera, _camDepthTexture);
 

@@ -61,20 +61,16 @@ public class PointNoseInDirection : MonoBehaviour
 
 
 
-        //Debug.Log("@: " + rb.rotation.eulerAngles.z);
         var delta = targetZ - rb.rotation.eulerAngles.z;
         while (delta < -180)
             delta += 360;
         while (delta > 180)
             delta -= 360;
-        //Debug.Log("delta: " + delta);
         float wantTurn = -delta * 5;
         if (Mathf.Abs(wantTurn) < 10)
             wantTurn = 0;
         //SignedMin(delta * horizontalRotationAcceleration, maxHorizontalRotationSpeed);
         float haveTurn = -Vector3.Dot(rb.angularVelocity, axis) * 180 / Mathf.PI;
-        //Debug.Log("want: " + wantTurn);
-        //Debug.Log("have: " + haveTurn);
         float error = wantTurn - haveTurn;
         float accel = error * 10;
 
@@ -97,18 +93,7 @@ public class PointNoseInDirection : MonoBehaviour
             wantTurn = 0;
         //SignedMin(delta * horizontalRotationAcceleration, maxHorizontalRotationSpeed);
         float haveTurn = Vector3.Dot( rb.angularVelocity, axis) * 180 / Mathf.PI;
-        //Debug.Log("want: " + wantTurn);
-        //Debug.Log("have: " + haveTurn);
         float error = wantTurn - haveTurn;
-
-        //if (have < -80f)
-        //{
-        //    rb.AddTorque(axis * -haveTurn, ForceMode.VelocityChange);
-        //    rb.transform.eulerAngles = new Vector3(-79, rb.transform.eulerAngles.y, rb.transform.eulerAngles.z);
-        //    Debug.Log("threshold");
-        //    return;
-
-        //}
         
 
         float accel = error * 10;
@@ -134,15 +119,11 @@ public class PointNoseInDirection : MonoBehaviour
         axis /= len;
 
         var delta = Vector3.Angle(haveForward, wantForward);
-        //Debug.Log("delta: " + delta);
 
         float wantTurn = delta * 5;
         if (Mathf.Abs(wantTurn) < 10)
             wantTurn = 0;
         float haveTurn = Vector3.Dot( rb.angularVelocity, axis) * 180 / Mathf.PI;
-
-        //Debug.Log("want: " + wantTurn);
-        //Debug.Log("have: " + haveTurn);
 
         float error = wantTurn - haveTurn;
         float accel = error * 10;
@@ -163,21 +144,17 @@ public class PointNoseInDirection : MonoBehaviour
         var directForward = Flat(rb.transform.forward);
         var correctedForward = (directForward + normalForward) / 2;
         var forward = Mathf.Atan2(correctedForward.y, correctedForward.x) * 180f / Mathf.PI;
-        //Debug.Log("Forward: " + forward);
         var delta1 = Vector2.SignedAngle(Flat(targetOrientation.forward), directForward);
         //var delta2 = Vector2.SignedAngle(Flat(targetOrientation.forward), normalForward);
         var delta = delta1;
         //if (Mathf.Abs(delta) > Mathf.Abs(delta2))
         //    delta = delta2;
-        //Debug.Log("delta: " + delta);
         float wantTurn = delta * 5;
         if (Mathf.Abs(wantTurn) < 10)
             wantTurn = 0;
         //SignedMin(delta * horizontalRotationAcceleration, maxHorizontalRotationSpeed);
         //float haveTurn = -Vector3.Dot(rb.angularVelocity, axis) * 180 / Mathf.PI;
         float haveTurn = rb.angularVelocity.y * 180 / Mathf.PI;
-        //Debug.Log("want: " + wantTurn);
-        //Debug.Log("have: " + haveTurn);
         float error = wantTurn - haveTurn;
         float accel = error * 10;
 

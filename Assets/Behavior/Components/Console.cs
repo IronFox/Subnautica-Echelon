@@ -61,7 +61,6 @@ public class Console : MonoBehaviour
                 }
                 else
                 {
-                    Debug.Log(changed);
                     if (changed)
                     {
                         StringBuilder textBuilder = new StringBuilder();

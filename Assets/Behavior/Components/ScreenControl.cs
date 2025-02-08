@@ -55,7 +55,6 @@ public class ScreenControl : MonoBehaviour
             trailingColorCamera.enabled = true;
             trailingColorCamera.fieldOfView = Camera.main.fieldOfView;
 
-            //Debug.Log($"Configuring material");
             screenMaterial.SetTexture("_Color", colorTexture);
             screenMaterial.SetTexture("_Depth", depthTexture);
             screenMaterial.SetFloat("_PixelSizeX", 1f / w);
@@ -67,7 +66,6 @@ public class ScreenControl : MonoBehaviour
                 //Camera.main.fieldOfView / 90f;
             float screenHeight = screenHeightAtOne * screenDistance;
 
-            //Debug.Log($"Resizing screen to {screenHeight}");
             var roomSizeY = screenHeight;// * 0.98f;    //make a little smaller to see room
             var roomSizeX = (float)w / h * roomSizeY;
             var wallFull = 0.05f;
@@ -85,8 +83,6 @@ public class ScreenControl : MonoBehaviour
 
         }
 
-        //Debug.Log($"Updating projection inverse");
-        //Debug.Log(trailingColorCamera.previousViewProjectionMatrix);
 
 
     }
