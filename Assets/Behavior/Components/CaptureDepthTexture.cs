@@ -7,12 +7,12 @@ using UnityEngine.Rendering;
 public class CaptureDepthTexture : MonoBehaviour
 {
     public ScreenControl screen;
-    private Camera camera;
+    private Camera myCamera;
 
     // Start is called before the first frame update
     void Start()
     {
-        camera = GetComponent<Camera>();
+        myCamera = GetComponent<Camera>();
     }
 
     // Update is called once per frame
@@ -32,7 +32,7 @@ public class CaptureDepthTexture : MonoBehaviour
     {
         Graphics.Blit(source, destination);
         Texture _camDepthTexture = Shader.GetGlobalTexture("_CameraDepthTexture");
-        screen.CaptureDepth(camera, _camDepthTexture);
+        screen.CaptureDepth(myCamera, _camDepthTexture);
 
 
     }

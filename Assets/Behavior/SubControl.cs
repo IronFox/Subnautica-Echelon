@@ -164,6 +164,22 @@ public class SubControl : MonoBehaviour
             forwardLeft.thrust = forwardAxis + look.HorizontalRotationIntent * 0.001f;
             forwardRight.thrust = forwardAxis - look.HorizontalRotationIntent * 0.001f;
 
+            if (overdriveActive)
+            {
+                float overdriveThreshold = regularForwardAcceleration / (overdriveForwardAcceleration + regularForwardAcceleration);
+                if (forwardAxis > overdriveThreshold)
+                {
+                    forwardRight.overdrive =
+                        forwardLeft.overdrive =
+                        (forwardAxis - overdriveThreshold) / (1f - overdriveThreshold);
+                }
+                else
+                    forwardLeft.overdrive = forwardRight.overdrive = 0;
+            }
+            else
+                forwardLeft.overdrive = forwardRight.overdrive = 0;
+
+
             positionCamera.zoomAxis = zoomAxis;
         }
         else

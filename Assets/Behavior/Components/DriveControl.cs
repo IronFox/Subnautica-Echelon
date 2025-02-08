@@ -8,9 +8,12 @@ public class DriveControl : MonoBehaviour
     
     public Transform propeller;
     public float maxRPS = 100;
-    private ParticleSystem ps;
-
+    public ParticleSystem regularParticleSystem;
+    public ParticleSystem overdriveParticleSystem;
+    public AudioSource regularAudioSource;
+    public AudioSource overdriveAudioSource;
     public float thrust;
+    public float overdrive;
     
     private float emissionSpeed;
     private float emissionRate;
@@ -19,30 +22,73 @@ public class DriveControl : MonoBehaviour
 
     void Start()
     {
-        ps = GetComponentInChildren<ParticleSystem>();
-        emissionSpeed = ps.main.startSpeedMultiplier;
-        emissionRate = ps.emission.rateOverTimeMultiplier * 10;
-        lastPosition = ps.transform.position;
+        emissionSpeed = regularParticleSystem.main.startSpeedMultiplier;
+        emissionRate = regularParticleSystem.emission.rateOverTimeMultiplier * 10;
+        lastPosition = regularParticleSystem.transform.position;
     }
 
     // Update is called once per frame
     void Update()
     {
         thrust = Mathf.Clamp(thrust, -1,1);
-        var inh = ps.inheritVelocity;
-        inh.mode = ParticleSystemInheritVelocityMode.Initial;
 
-        var module = ps.main;
-        module.startSpeedMultiplier = emissionSpeed * thrust;
-        
-        var em = ps.emission;
-        
-        var velocity = ps.transform.position - lastPosition;
+        if (regularAudioSource != null)
+        {
+            var audioThrust = Mathf.Abs(thrust);
+            if (audioThrust > 0)
+            {
+                regularAudioSource.volume = audioThrust;
+                regularAudioSource.pitch = 1 + audioThrust;
+                regularAudioSource.enabled = true;
+            }
+            else
+                regularAudioSource.enabled = false;
+        }
 
-        em.enabled = thrust > 0 && Vector3.Dot(velocity, ps.transform.forward) < 0;
-        em.rateOverTimeMultiplier = emissionRate * thrust * thrust;
-        propeller.Rotate(0, 0, thrust * maxRPS * Time.deltaTime);
+        if (overdrive > 0)
+        {
+            if (overdriveAudioSource != null)
+            {
+                overdriveAudioSource.volume = overdrive;
+                overdriveAudioSource.pitch = 0.5f + overdrive;
+                overdriveAudioSource.enabled = true;
+            }
+            if (overdriveParticleSystem != null)
+            {
+                var em = overdriveParticleSystem.emission;
+                em.enabled = true;
+                var main = overdriveParticleSystem.main;
+                main.startSize = overdrive;
+                main.startLifetime = 0.2f * overdrive;
+            }
+        }
+        else
+        {
+            if (overdriveAudioSource != null)
+                overdriveAudioSource.enabled = false;
+            if (overdriveParticleSystem != null)
+            {
+                var em = overdriveParticleSystem.emission;
+                em.enabled = false;
+            }
+        }
 
-        lastPosition = ps.transform.position;
+        {
+            var inh = regularParticleSystem.inheritVelocity;
+            inh.mode = ParticleSystemInheritVelocityMode.Initial;
+
+            var module = regularParticleSystem.main;
+            module.startSpeedMultiplier = emissionSpeed * thrust;
+
+            var em = regularParticleSystem.emission;
+
+            var velocity = regularParticleSystem.transform.position - lastPosition;
+
+            em.enabled = thrust > 0 && Vector3.Dot(velocity, regularParticleSystem.transform.forward) < 0;
+            em.rateOverTimeMultiplier = emissionRate * thrust * thrust;
+            propeller.Rotate(0, 0, thrust * maxRPS * Time.deltaTime);
+
+            lastPosition = regularParticleSystem.transform.position;
+        }
     }
 }
