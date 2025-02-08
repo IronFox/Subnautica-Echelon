@@ -49,18 +49,6 @@ public class PositionCamera : MonoBehaviour
 
         var hits2 = Physics.RaycastAll(target.position, dir2, dist2);
 
-        float closestHit = Mathf.Infinity;
-        Transform closest = null;
-        foreach (RaycastHit hit in hits)
-        {
-            if (hit.transform.IsChildOf(target))
-                continue;
-            if (hit.distance < closestHit)
-            {
-                closest = hit.transform;
-                closestHit = hit.distance;
-            }
-        }
 
         float closestHit2 = Mathf.Infinity;
         Transform closest2 = null;
@@ -78,7 +66,7 @@ public class PositionCamera : MonoBehaviour
         Vector3 targetPosition;
 
         if (closest2 != null)
-            targetPosition = target.position + dir2 * (closestHit2 - 0.5f);
+            targetPosition = target.position + dir2 * Mathf.Max(3f ,closestHit2 - 0.5f);
         else
             targetPosition = wantPosition;
 
