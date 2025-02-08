@@ -27,9 +27,13 @@ public readonly struct LockedEuler
     public LockedEuler RotateBy(float x, float y, float factor)
         => RotateBy(x * factor, y * factor);
 
-    public void ApplyTo(Transform target)
+    public void ApplyToGlobal(Transform target)
     {
         target.eulerAngles = Vector;
+    }
+    public void ApplyToLocal(Transform target)
+    {
+        target.localEulerAngles = Vector;
     }
     public static LockedEuler FromAngles(Vector3 e)
     {
@@ -42,8 +46,10 @@ public readonly struct LockedEuler
         return new LockedEuler(rotX, rotY);
 
     }
-    public static LockedEuler From(Transform target)
+    public static LockedEuler FromGlobal(Transform target)
         => FromAngles(target.eulerAngles);
+    public static LockedEuler FromLocal(Transform target)
+        => FromAngles(target.localEulerAngles);
     public static LockedEuler From(Quaternion q)
         => FromAngles(q.eulerAngles);
 

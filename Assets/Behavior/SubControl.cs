@@ -28,6 +28,7 @@ public class SubControl : MonoBehaviour
     public NonCameraOrientation nonCameraOrientation;
     public RotateCamera rotateCamera;
     public PositionCamera positionCamera;
+    public Transform cockpitRoot;
 
     private PointNoseInDirection look;
     private Rigidbody rb;
@@ -49,13 +50,43 @@ public class SubControl : MonoBehaviour
         this.state = state;
     }
 
-    public void Onboard()
+    public void Onboard(Transform transformToLocalize)
     {
         if (!currentlyBoarded)
         {
             ConsoleControl.Write($"Onboarding");
+
+            EnableAudio("Camera.main",Camera.main, false);
+            EnableAudio("positionCamera",positionCamera, true);
+
+            ConsoleControl.Write($"Listeners reconfigured");
+            if (transformToLocalize != null)
+            {
+                transformToLocalize.parent = cockpitRoot;
+                transformToLocalize.localPosition = Vector3.zero;
+                transformToLocalize.localEulerAngles = Vector3.zero;
+            }
+
             screen.isEnabled = currentlyBoarded = isBoarded = true;
+
         }
+    }
+
+    private void EnableAudio(string name, Component t, bool enable)
+    {
+        if (t == null)
+        {
+            ConsoleControl.Write($"Trying to switch audio listener of null, read from {name}");
+            return;
+        }
+        var audio = t.GetComponent<AudioListener>();
+        if (audio != null)
+        {
+            ConsoleControl.Write($"Switching audio listener of {t.name} to {enable}");
+            audio.enabled = enable;
+        }
+        else
+            ConsoleControl.Write($"No audio listener found on {t.name}");
     }
 
     public void Offboard()
@@ -63,6 +94,9 @@ public class SubControl : MonoBehaviour
         if (currentlyBoarded)
         {
             ConsoleControl.Write($"Offboarding");
+            EnableAudio("positionCamera", positionCamera, false);
+            EnableAudio("Camera.main", Camera.main, true);
+
             screen.isEnabled = currentlyBoarded = isBoarded = false;
         }
     }
@@ -83,7 +117,7 @@ public class SubControl : MonoBehaviour
             if (!isBoarded)
                 Offboard();
             else
-                Onboard();
+                Onboard(null);
         }
 
 

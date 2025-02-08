@@ -17,7 +17,7 @@ public class RotateCamera : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        current = LockedEuler.From(transform);
+        current = LockedEuler.FromGlobal(transform);
     }
 
     // Update is called once per frame
@@ -26,7 +26,7 @@ public class RotateCamera : MonoBehaviour
         current = current.RotateBy(-rotationAxisY, rotationAxisX, maxDegreesPerSecond * Time.deltaTime);
         if (!transitioning)
         {
-            current.ApplyTo(transform);
+            current.ApplyToGlobal(transform);
         }
         else
         {
@@ -34,9 +34,9 @@ public class RotateCamera : MonoBehaviour
             transitionProgress = Mathf.Clamp01(transitionProgress);
             //Debug.Log($"@{transitionProgress}");
 
-            var interpolated = LockedEuler.Slerp(current, LockedEuler.From(transitionTarget), transitionProgress);
+            var interpolated = LockedEuler.Slerp(current, LockedEuler.FromGlobal(transitionTarget), transitionProgress);
 
-            interpolated.ApplyTo(transform);
+            interpolated.ApplyToGlobal(transform);
         }
     }
 
@@ -55,7 +55,7 @@ public class RotateCamera : MonoBehaviour
     {
         if (transitioning)
         {
-            current = LockedEuler.From(transform);
+            current = LockedEuler.FromGlobal(transform);
             //Debug.Log($"Aborting transition. Imported current as {current}");
         }
         transitionTarget = null;

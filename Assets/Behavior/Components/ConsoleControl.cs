@@ -19,9 +19,10 @@ public readonly struct Line {
         Message = $"{Captured:HH:mm:ss} {input}";
     }
 
+    public override string ToString() => Message;
     
 
-    public bool IsOutdated => DateTimeOffset.Now - Captured > TimeSpan.FromSeconds(30);
+    public bool IsOutdated(int lineRetentionSeconds) => DateTimeOffset.Now - Captured > TimeSpan.FromSeconds(lineRetentionSeconds);
 }
 
 public class ConsoleControl : MonoBehaviour
@@ -34,6 +35,10 @@ public class ConsoleControl : MonoBehaviour
     private static List<ConsoleControl> Instances { get; } = new List<ConsoleControl>();
 
     private static List<Line> StaticLines { get; } = new List<Line>();
+
+    public int lineRetentionSeconds = 30;
+
+
     // Start is called before the first frame update
     void Start()
     {
@@ -152,7 +157,7 @@ public class ConsoleControl : MonoBehaviour
     {
         //tmp.text = textToShow;
         bool changed = false;
-        while (fullLines.Count > 1 && fullLines.Peek().IsOutdated)
+        while (fullLines.Count > 1 && fullLines.Peek().IsOutdated(lineRetentionSeconds))
         {
             fullLines.Dequeue();
             changed = true;

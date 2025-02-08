@@ -134,7 +134,7 @@ Transform:
   m_LocalScale: {x: 0.05, y: 1.1, z: 1.1}
   m_Children: []
   m_Father: {fileID: 807343828}
-  m_RootOrder: 6
+  m_RootOrder: 5
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 90}
 --- !u!33 &88884002
 MeshFilter:
@@ -183,89 +183,6 @@ MeshRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
---- !u!1 &133988788
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 133988789}
-  - component: {fileID: 133988791}
-  - component: {fileID: 133988790}
-  m_Layer: 0
-  m_Name: Camera
-  m_TagString: MainCamera
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!4 &133988789
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 133988788}
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_Children: []
-  m_Father: {fileID: 807343828}
-  m_RootOrder: 1
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!20 &133988791
-Camera:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 133988788}
-  m_Enabled: 1
-  serializedVersion: 2
-  m_ClearFlags: 1
-  m_BackGroundColor: {r: 0.19215687, g: 0.3019608, b: 0.4745098, a: 0}
-  m_projectionMatrixMode: 1
-  m_GateFitMode: 2
-  m_FOVAxisMode: 0
-  m_SensorSize: {x: 36, y: 24}
-  m_LensShift: {x: 0, y: 0}
-  m_FocalLength: 50
-  m_NormalizedViewPortRect:
-    serializedVersion: 2
-    x: 0
-    y: 0
-    width: 1
-    height: 1
-  near clip plane: 0.3
-  far clip plane: 1000
-  field of view: 60
-  orthographic: 0
-  orthographic size: 5
-  m_Depth: -1
-  m_CullingMask:
-    serializedVersion: 2
-    m_Bits: 4294967295
-  m_RenderingPath: -1
-  m_TargetTexture: {fileID: 0}
-  m_TargetDisplay: 0
-  m_TargetEye: 3
-  m_HDR: 1
-  m_AllowMSAA: 1
-  m_AllowDynamicResolution: 0
-  m_ForceIntoRT: 0
-  m_OcclusionCulling: 1
-  m_StereoConvergence: 10
-  m_StereoSeparation: 0.022
---- !u!81 &133988790
-AudioListener:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 133988788}
-  m_Enabled: 0
 --- !u!1 &330926894
 GameObject:
   m_ObjectHideFlags: 0
@@ -296,7 +213,7 @@ Transform:
   m_LocalScale: {x: 0.05, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 807343828}
-  m_RootOrder: 3
+  m_RootOrder: 2
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!33 &330926898
 MeshFilter:
@@ -463,7 +380,7 @@ Transform:
   m_LocalScale: {x: 0.05, y: 1, z: 1.1}
   m_Children: []
   m_Father: {fileID: 807343828}
-  m_RootOrder: 4
+  m_RootOrder: 3
   m_LocalEulerAnglesHint: {x: 0, y: 90, z: 0}
 --- !u!33 &491572184
 MeshFilter:
@@ -639,7 +556,6 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 87351054}
-  - {fileID: 133988789}
   - {fileID: 2011519371}
   - {fileID: 330926895}
   - {fileID: 491572181}
@@ -795,7 +711,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   maxLines: 20
-  secondsPerCharacter: 0.01
+  secondsPerCharacter: 0.005
+  lineRetentionSeconds: 100000000
 --- !u!1 &1471085687
 GameObject:
   m_ObjectHideFlags: 0
@@ -826,7 +743,7 @@ Transform:
   m_LocalScale: {x: 0.05, y: 1.1, z: 1.1}
   m_Children: []
   m_Father: {fileID: 807343828}
-  m_RootOrder: 5
+  m_RootOrder: 4
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 90}
 --- !u!33 &1471085691
 MeshFilter:
@@ -905,7 +822,7 @@ Transform:
   m_LocalScale: {x: 0.05, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 807343828}
-  m_RootOrder: 2
+  m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!33 &2011519374
 MeshFilter:
@@ -1868,7 +1785,7 @@ AudioListener:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 3057455469629069558}
-  m_Enabled: 1
+  m_Enabled: 0
 --- !u!114 &3057455469629069554
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -3030,9 +2947,12 @@ MonoBehaviour:
   overdriveActive: 0
   outOfWater: 0
   freeCamera: 1
+  isBoarded: 0
+  positionCameraBelowSub: 0
   regularForwardAcceleration: 100000
   overdriveForwardAcceleration: 200000
   strafeAcceleration: 50000
+  rotationDegreesPerSecond: 100
   forwardLeft: {fileID: 3057455468289570219}
   backLeft: {fileID: 3057455468070960988}
   forwardRight: {fileID: 3057455469788612562}
@@ -3040,6 +2960,7 @@ MonoBehaviour:
   nonCameraOrientation: {fileID: 2068503348}
   rotateCamera: {fileID: 2666188282623945316}
   positionCamera: {fileID: 3057455469629069554}
+  cockpitRoot: {fileID: 807343828}
 --- !u!1 &5681242214475770467
 GameObject:
   m_ObjectHideFlags: 0
