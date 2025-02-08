@@ -32,7 +32,7 @@ public class RotateCamera : MonoBehaviour
         {
             transitionProgress += Time.deltaTime * transitionSpeedMultiplier;
             transitionProgress = Mathf.Clamp01(transitionProgress);
-            Debug.Log($"@{transitionProgress}");
+            //Debug.Log($"@{transitionProgress}");
 
             var interpolated = LockedEuler.Slerp(current, LockedEuler.From(transitionTarget), transitionProgress);
 
@@ -45,7 +45,7 @@ public class RotateCamera : MonoBehaviour
 
     public void BeginTransitionTo(Transform t)
     {
-        Debug.Log($"Begin transition to {t}");
+        //Debug.Log($"Begin transition to {t}");
         transitionTarget = t;
         transitioning = true;
         transitionProgress = 0;
@@ -56,7 +56,7 @@ public class RotateCamera : MonoBehaviour
         if (transitioning)
         {
             current = LockedEuler.From(transform);
-            Debug.Log($"Aborting transition. Imported current as {current}");
+            //Debug.Log($"Aborting transition. Imported current as {current}");
         }
         transitionTarget = null;
         transitioning = false;
