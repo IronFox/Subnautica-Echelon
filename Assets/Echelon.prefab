@@ -12,7 +12,7 @@ GameObject:
   - component: {fileID: 87351058}
   - component: {fileID: 87351057}
   - component: {fileID: 87351055}
-  m_Layer: 0
+  m_Layer: 28
   m_Name: Screen
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1837,6 +1837,7 @@ MonoBehaviour:
   rotationAxisX: 0
   rotationAxisY: 0
   maxDegreesPerSecond: 1000
+  transitionSpeedMultiplier: 2
 --- !u!114 &2666188282623945316
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1852,6 +1853,7 @@ MonoBehaviour:
   rotationAxisX: 0
   rotationAxisY: 0
   maxDegreesPerSecond: 800
+  transitionSpeedMultiplier: 2
 --- !u!1 &3057455469741199822
 GameObject:
   m_ObjectHideFlags: 0
