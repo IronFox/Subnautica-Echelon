@@ -157,7 +157,11 @@
                 //     c.rgb += mod;
 
 
-                float4 canvas = tex2D(_Canvas, i.uv);
+                float2 canvasUV = i.uv;
+                float bendX = i.vCoords.x;
+                float bendY = sqrt(1-bendX * bendX);
+                canvasUV.y = (canvasUV.y-0.5)*(1 + bendY * 0.2)+0.5;
+                float4 canvas = tex2D(_Canvas, canvasUV);
                 c.rgb = lerp(c.rgb, canvas.rgb, canvas.a);
 
 
