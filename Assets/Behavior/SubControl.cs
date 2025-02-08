@@ -7,6 +7,7 @@ public class SubControl : MonoBehaviour
     public float forwardAxis;
     public float rightAxis;
     public float upAxis;
+    public float zoomAxis;
 
     public bool overdriveActive;
     public bool outOfWater;
@@ -22,7 +23,7 @@ public class SubControl : MonoBehaviour
     public DriveControl backRight;
 
     public NonCameraOrientation nonCameraOrientation;
-    public Transform cameraOrientation;
+    public PositionCamera shipTrailingCamera;
 
     private PointNoseInDirection look;
     private Rigidbody rb;
@@ -37,7 +38,7 @@ public class SubControl : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        look.targetOrientation = freeCamera ? nonCameraOrientation.transform : cameraOrientation;
+        look.targetOrientation = freeCamera ? nonCameraOrientation.transform : shipTrailingCamera.transform;
 
         nonCameraOrientation.rightRotationSpeed = rightAxis * 100;
         nonCameraOrientation.upRotationSpeed = -upAxis * 100;
@@ -47,6 +48,10 @@ public class SubControl : MonoBehaviour
         forwardRight.thrust = forwardAxis - look.HorizontalRotationIntent*0.001f;
         backLeft.thrust = -forwardLeft.thrust;
         backRight.thrust = -forwardRight.thrust;
+
+        shipTrailingCamera.zoomAxis = zoomAxis;
+
+
 
     }
 

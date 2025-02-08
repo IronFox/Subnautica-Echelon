@@ -10,19 +10,22 @@ public class PositionCamera : MonoBehaviour
     public BoxCollider targetBoundingBox;
     private float distanceToTarget;
     private Transform target;
-    
+    private float minDistanceToTarget;
+    private float maxDistanceToTarget;
     public bool positionBelowTarget;
 
     private float boxHeight;
 
     private float h = 0;
-
+    public float zoomAxis;
 
 
     void Start()
     {
         target = targetBoundingBox.transform.parent;
         distanceToTarget = Vector3.Distance(targetBoundingBox.transform.position, transform.transform.position);
+        minDistanceToTarget = targetBoundingBox.size.magnitude;
+        maxDistanceToTarget = minDistanceToTarget * 20;
         boxHeight = targetBoundingBox.size.y * targetBoundingBox.transform.localScale.y;
     }
 
@@ -30,6 +33,10 @@ public class PositionCamera : MonoBehaviour
 
     void LateUpdate()
     {
+        distanceToTarget *= Mathf.Pow(1.5f, zoomAxis);
+        distanceToTarget = Mathf.Clamp(distanceToTarget, minDistanceToTarget, maxDistanceToTarget);
+
+
         var wantH = positionBelowTarget ? -boxHeight : boxHeight;
 
         h += (wantH - h) * 2f * Mathf.Min(Time.deltaTime, 1f);

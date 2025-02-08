@@ -2958,6 +2958,7 @@ MonoBehaviour:
   forwardAxis: 0
   rightAxis: 0
   upAxis: 0
+  zoomAxis: 0
   overdriveActive: 0
   outOfWater: 0
   freeCamera: 1
@@ -2969,7 +2970,7 @@ MonoBehaviour:
   forwardRight: {fileID: 3057455469788612562}
   backRight: {fileID: 3057455469741199820}
   nonCameraOrientation: {fileID: 2068503348}
-  cameraOrientation: {fileID: 3057455469629069555}
+  shipTrailingCamera: {fileID: 3057455469629069554}
 --- !u!1 &5681242214475770467
 GameObject:
   m_ObjectHideFlags: 0

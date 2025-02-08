@@ -19,5 +19,6 @@ public class MotionSimulation : MonoBehaviour
         control.upAxis = Input.GetAxis("Jump") - (Input.GetKey(KeyCode.LeftControl) ? 1 : 0);
         control.overdriveActive = Input.GetKey(KeyCode.LeftShift);
         control.freeCamera = Input.GetMouseButton(1);
+        control.zoomAxis = -Input.GetAxis("Mouse ScrollWheel");
     }
 }
