@@ -1,0 +1,25 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.11.35303.130
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Subnautica Echelon", "Subnautica Echelon.csproj", "{0CBB5CFB-C1AE-4DFF-A266-9D55C3F9995A}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{0CBB5CFB-C1AE-4DFF-A266-9D55C3F9995A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{0CBB5CFB-C1AE-4DFF-A266-9D55C3F9995A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{0CBB5CFB-C1AE-4DFF-A266-9D55C3F9995A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{0CBB5CFB-C1AE-4DFF-A266-9D55C3F9995A}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {3DDA7D56-A6F6-4B60-A4DC-99E8CB81BC7C}
+	EndGlobalSection
+EndGlobal
