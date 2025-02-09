@@ -2,36 +2,36 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class NonCameraOrientation : MonoBehaviour
+public class NonCameraOrientation : MonoBehaviour, IDirectionSource
 {
     public float rightRotationSpeed;
     public float upRotationSpeed;
     public bool isActive;
-    public Transform target;
-    private float rotX, rotY;
+    private LockedEuler rot;
+
+    public Vector3 Forward => isActive ? rot.Forward : transform.forward;
+    public Vector3 Right => isActive ? rot.Right : transform.right;
+    public Vector3 Up => isActive? rot.Up : transform.up;
+
     // Start is called before the first frame update
     void Start()
     {
         
     }
 
+
+
     // Update is called once per frame
     void Update()
     {
         if (!isActive)
         {
-            //transform.rotation = target.rotation;
-            rotX = target.eulerAngles.x;
-            rotY = target.eulerAngles.y;
-            if (rotX > 180)
-                rotX -= 380;
+            rot = LockedEuler.FromGlobal(transform);
         }
         else
         {
-            rotY += rightRotationSpeed * Time.deltaTime;
-            rotX += upRotationSpeed * Time.deltaTime;
-            rotX = Mathf.Clamp(rotX, -88f, 88f);
-            transform.eulerAngles = new Vector3(rotX, rotY, 0);
+            Debug.Log(upRotationSpeed);
+            rot = rot.RotateBy(upRotationSpeed, rightRotationSpeed, Time.deltaTime);
         }
     }
 }

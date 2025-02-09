@@ -53,10 +53,11 @@ public readonly struct LockedEuler
     public static LockedEuler From(Quaternion q)
         => FromAngles(q.eulerAngles);
 
-    public Quaternion Quaternion
-        => Quaternion.Euler(X, Y, 0);
-    public Vector3 Vector
-        => new Vector3(X, Y, 0);
+    public Vector3 Forward          => Quaternion * Vector3.forward;
+    public Vector3 Right            => Quaternion * Vector3.right;
+    public Vector3 Up               => Quaternion * Vector3.up;
+    public Quaternion Quaternion    => Quaternion.Euler(X, Y, 0);
+    public Vector3 Vector           => new Vector3(X, Y, 0);
 
     public static LockedEuler Slerp(LockedEuler x, LockedEuler y, float t)
         => From(Quaternion.Slerp(x.Quaternion, y.Quaternion, t));

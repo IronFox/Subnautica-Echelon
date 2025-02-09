@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class PointNoseInDirection : MonoBehaviour
 {
-    public Transform targetOrientation;
+    public IDirectionSource targetOrientation;
 
     private Rigidbody rb;
 
@@ -85,7 +85,7 @@ public class PointNoseInDirection : MonoBehaviour
 //            Unflat(Flat(rb.transform.right));
             //Vector3.Cross(Vector3.up, rb.transform.forward);
         float have = UpAngle(rb.transform.forward, Flat(axis));
-        float want = UpAngle(targetOrientation.forward, Flat(targetOrientation.right));
+        float want = UpAngle(targetOrientation.Forward, Flat(targetOrientation.Right));
 
         var delta = Mathf.DeltaAngle(have, want);
         float wantTurn = delta * 5;
@@ -109,7 +109,7 @@ public class PointNoseInDirection : MonoBehaviour
     private void RotateDirect()
     {
         var haveForward = rb.transform.forward;
-        var wantForward = targetOrientation.forward;
+        var wantForward = targetOrientation.Forward;
         var axis = Vector3.Cross( haveForward, wantForward);
         var len = axis.magnitude;
         if (len == 0)
@@ -144,7 +144,7 @@ public class PointNoseInDirection : MonoBehaviour
         var directForward = Flat(rb.transform.forward);
         var correctedForward = (directForward + normalForward) / 2;
         var forward = Mathf.Atan2(correctedForward.y, correctedForward.x) * 180f / Mathf.PI;
-        var delta1 = Vector2.SignedAngle(Flat(targetOrientation.forward), directForward);
+        var delta1 = Vector2.SignedAngle(Flat(targetOrientation.Forward), directForward);
         //var delta2 = Vector2.SignedAngle(Flat(targetOrientation.forward), normalForward);
         var delta = delta1;
         //if (Mathf.Abs(delta) > Mathf.Abs(delta2))

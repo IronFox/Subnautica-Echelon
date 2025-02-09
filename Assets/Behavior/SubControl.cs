@@ -25,10 +25,12 @@ public class SubControl : MonoBehaviour
     public DriveControl forwardRight;
     public DriveControl backRight;
 
-    public NonCameraOrientation nonCameraOrientation;
-    public RotateCamera rotateCamera;
-    public PositionCamera positionCamera;
+    private NonCameraOrientation nonCameraOrientation;
+    public Transform trailingCamera;
     public Transform cockpitRoot;
+
+    private RotateCamera rotateCamera;
+    private PositionCamera positionCamera;
 
     private PointNoseInDirection look;
     private Rigidbody rb;
@@ -67,6 +69,8 @@ public class SubControl : MonoBehaviour
                 transformToLocalize.localEulerAngles = Vector3.zero;
             }
 
+            trailingCamera.parent = transform.parent;
+
             screen.isEnabled = currentlyBoarded = isBoarded = true;
 
         }
@@ -98,15 +102,22 @@ public class SubControl : MonoBehaviour
             EnableAudio("Camera.main", Camera.main, true);
 
             screen.isEnabled = currentlyBoarded = isBoarded = false;
+            trailingCamera.parent = transform;
+
         }
     }
 
     // Start is called before the first frame update
     void Start()
     {
+        nonCameraOrientation = GetComponent<NonCameraOrientation>();
         rb = GetComponent<Rigidbody>();
         look = GetComponent<PointNoseInDirection>();
         screen = GetComponentInChildren<ScreenControl>();
+        rotateCamera = trailingCamera.GetComponent<RotateCamera>();
+        positionCamera = trailingCamera.GetComponent<PositionCamera>();
+
+        look.targetOrientation = new TransformDirectionSource(trailingCamera);
     }
 
     // Update is called once per frame
@@ -130,7 +141,7 @@ public class SubControl : MonoBehaviour
             {
                 rotateCamera.AbortTransition();
                 ChangeState(CameraState.IsFree);
-                look.targetOrientation = nonCameraOrientation.transform;
+                look.targetOrientation = nonCameraOrientation;
                 nonCameraOrientation.isActive = true;
             }
             else
@@ -142,7 +153,7 @@ public class SubControl : MonoBehaviour
                         if (rotateCamera.IsTransitionDone)
                         {
                             ChangeState(CameraState.IsBound);
-                            look.targetOrientation = rotateCamera.transform;
+                            look.targetOrientation = new TransformDirectionSource(trailingCamera);
                             nonCameraOrientation.isActive = false;
                             rotateCamera.AbortTransition();
                         }
@@ -207,8 +218,8 @@ public class SubControl : MonoBehaviour
             if (!freeCamera)
             {
                 //var rAxis = M.FlatNormalized(transform.right);
-                rb.AddForce(look.targetOrientation.right * rightAxis * strafeAcceleration);
-                rb.AddForce(look.targetOrientation.up * upAxis * strafeAcceleration);
+                rb.AddForce(look.targetOrientation.Right * rightAxis * strafeAcceleration);
+                rb.AddForce(look.targetOrientation.Up * upAxis * strafeAcceleration);
             }
         }
     }
