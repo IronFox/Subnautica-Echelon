@@ -67,6 +67,7 @@ public class ConsoleControl : MonoBehaviour
         if (Instances.Count == 0)
             StaticLines.Add(line);
 
+        Directory.CreateDirectory(@"C:\Temp\Logs");
         File.AppendAllText(@"C:\Temp\Logs\log.txt", $"{DateTimeOffset.Now:HH:mm:ss.fff} {text} \r\n");
 
     }
