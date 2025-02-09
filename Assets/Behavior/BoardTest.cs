@@ -29,6 +29,10 @@ public class BoardTest : MonoBehaviour
                 .ApplyToLocal(transform);
         }
 
+        if (Input.GetKeyDown(KeyCode.F))
+        {
+            subControl.outOfWater = !subControl.outOfWater;
+        }
 
         if (Input.GetKeyDown(KeyCode.B))
         {

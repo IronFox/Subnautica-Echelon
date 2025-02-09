@@ -1782,6 +1782,7 @@ GameObject:
   - component: {fileID: 5613443862763800058}
   - component: {fileID: 5613443862763800056}
   - component: {fileID: 2535805266906155808}
+  - component: {fileID: 4924710681398916856}
   m_Layer: 0
   m_Name: Echelon
   m_TagString: Untagged
@@ -1890,6 +1891,18 @@ MonoBehaviour:
   rightRotationSpeed: 0
   upRotationSpeed: 0
   isActive: 0
+--- !u!114 &4924710681398916856
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3057455469336189139}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e28475d6d10248446bcf2ce28ac58543, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &3057455469476130600
 GameObject:
   m_ObjectHideFlags: 0

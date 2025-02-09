@@ -19,6 +19,8 @@ public class SubControl : MonoBehaviour
     public float overdriveForwardAcceleration = 200000;
     public float strafeAcceleration = 50000;
     public float rotationDegreesPerSecond = 100;
+    public float waterDrag = 10;
+    public float airDrag = 0.1f;
 
     public DriveControl forwardLeft;
     public DriveControl backLeft;
@@ -26,6 +28,7 @@ public class SubControl : MonoBehaviour
     public DriveControl backRight;
 
     private NonCameraOrientation nonCameraOrientation;
+    private FallOrientation fallOrientation;
     public Transform trailingCamera;
     public Transform cockpitRoot;
 
@@ -116,9 +119,11 @@ public class SubControl : MonoBehaviour
         screen = GetComponentInChildren<ScreenControl>();
         rotateCamera = trailingCamera.GetComponent<RotateCamera>();
         positionCamera = trailingCamera.GetComponent<PositionCamera>();
-
-        look.targetOrientation = new TransformDirectionSource(trailingCamera);
+        fallOrientation = GetComponent<FallOrientation>();
+        look.targetOrientation = inWaterDirectionSource = new TransformDirectionSource(trailingCamera);
     }
+
+    private IDirectionSource inWaterDirectionSource;
 
     // Update is called once per frame
     void Update()
@@ -141,7 +146,7 @@ public class SubControl : MonoBehaviour
             {
                 rotateCamera.AbortTransition();
                 ChangeState(CameraState.IsFree);
-                look.targetOrientation = nonCameraOrientation;
+                inWaterDirectionSource = nonCameraOrientation;
                 nonCameraOrientation.isActive = true;
             }
             else
@@ -153,7 +158,9 @@ public class SubControl : MonoBehaviour
                         if (rotateCamera.IsTransitionDone)
                         {
                             ChangeState(CameraState.IsBound);
-                            look.targetOrientation = new TransformDirectionSource(trailingCamera);
+                            
+                            inWaterDirectionSource = new TransformDirectionSource(trailingCamera);
+
                             nonCameraOrientation.isActive = false;
                             rotateCamera.AbortTransition();
                         }
@@ -166,29 +173,47 @@ public class SubControl : MonoBehaviour
                 }
             }
 
+            look.targetOrientation = outOfWater
+                    ? fallOrientation
+                    : inWaterDirectionSource;
+
             //look.targetOrientation = freeCamera ? nonCameraOrientation.transform : shipTrailingCamera.transform;
-
-            nonCameraOrientation.rightRotationSpeed = rightAxis * rotationDegreesPerSecond;
-            nonCameraOrientation.upRotationSpeed = -upAxis * rotationDegreesPerSecond;
-
-
-            forwardLeft.thrust = forwardAxis + look.HorizontalRotationIntent * 0.001f;
-            forwardRight.thrust = forwardAxis - look.HorizontalRotationIntent * 0.001f;
-
-            if (overdriveActive)
+            if (outOfWater)
             {
-                float overdriveThreshold = regularForwardAcceleration / (overdriveForwardAcceleration + regularForwardAcceleration);
-                if (forwardAxis > overdriveThreshold)
+                nonCameraOrientation.rightRotationSpeed = 0;
+                nonCameraOrientation.upRotationSpeed = 0;
+                forwardLeft.thrust = 0;
+                forwardRight.thrust = 0;
+
+                forwardRight.overdrive = 0;
+                forwardLeft.overdrive = 0;
+            }
+            else
+            {
+                nonCameraOrientation.rightRotationSpeed = rightAxis * rotationDegreesPerSecond;
+                nonCameraOrientation.upRotationSpeed = -upAxis * rotationDegreesPerSecond;
+                forwardLeft.thrust = forwardAxis + look.HorizontalRotationIntent * 0.001f;
+                forwardRight.thrust = forwardAxis - look.HorizontalRotationIntent * 0.001f;
+
+
+                if (overdriveActive)
                 {
-                    forwardRight.overdrive =
-                        forwardLeft.overdrive =
-                        (forwardAxis - overdriveThreshold) / (1f - overdriveThreshold);
+                    float overdriveThreshold = regularForwardAcceleration / (overdriveForwardAcceleration + regularForwardAcceleration);
+                    if (forwardAxis > overdriveThreshold)
+                    {
+                        forwardRight.overdrive =
+                            forwardLeft.overdrive =
+                            (forwardAxis - overdriveThreshold) / (1f - overdriveThreshold);
+                    }
+                    else
+                        forwardLeft.overdrive = forwardRight.overdrive = 0;
                 }
                 else
                     forwardLeft.overdrive = forwardRight.overdrive = 0;
+
             }
-            else
-                forwardLeft.overdrive = forwardRight.overdrive = 0;
+
+
 
 
             positionCamera.zoomAxis = zoomAxis;
@@ -207,12 +232,15 @@ public class SubControl : MonoBehaviour
         backLeft.thrust = -forwardLeft.thrust;
         backRight.thrust = -forwardRight.thrust;
 
+        rb.drag = outOfWater ? airDrag : waterDrag;
+
+        rb.useGravity = outOfWater;
 
     }
 
     void FixedUpdate()
     {
-        if (currentlyBoarded)
+        if (currentlyBoarded && !outOfWater)
         {
             rb.AddRelativeForce(0, 0, forwardAxis * (regularForwardAcceleration + (overdriveActive && forwardAxis > 0 ? overdriveForwardAcceleration : 0)));
             if (!freeCamera)

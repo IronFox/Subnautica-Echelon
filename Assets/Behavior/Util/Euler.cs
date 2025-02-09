@@ -43,7 +43,8 @@ public readonly struct LockedEuler
             rotX -= 360;
         while (rotX < -180)
             rotX += 360;
-        return new LockedEuler(rotX, rotY);
+
+        return new LockedEuler(Mathf.Clamp(rotX, -88f, 88f), rotY);
 
     }
     public static LockedEuler FromGlobal(Transform target)
@@ -61,4 +62,8 @@ public readonly struct LockedEuler
 
     public static LockedEuler Slerp(LockedEuler x, LockedEuler y, float t)
         => From(Quaternion.Slerp(x.Quaternion, y.Quaternion, t));
+
+
+    public static LockedEuler FromForward(Vector3 forward)
+        => FromAngles(Quaternion.FromToRotation(Vector3.forward, forward).eulerAngles);
 };

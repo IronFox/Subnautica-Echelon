@@ -9,9 +9,9 @@ public class NonCameraOrientation : MonoBehaviour, IDirectionSource
     public bool isActive;
     private LockedEuler rot;
 
-    public Vector3 Forward => isActive ? rot.Forward : transform.forward;
-    public Vector3 Right => isActive ? rot.Right : transform.right;
-    public Vector3 Up => isActive? rot.Up : transform.up;
+    public Vector3 Forward => rot.Forward;
+    public Vector3 Right => rot.Right;
+    public Vector3 Up => rot.Up;
 
     // Start is called before the first frame update
     void Start()
