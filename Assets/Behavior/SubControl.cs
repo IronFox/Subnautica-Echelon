@@ -14,6 +14,7 @@ public class SubControl : MonoBehaviour
     public bool freeCamera;
     public bool isBoarded;
     public bool positionCameraBelowSub;
+    public bool isDocked;
 
     public float regularForwardAcceleration = 100000;
     public float overdriveForwardAcceleration = 200000;
@@ -138,7 +139,7 @@ public class SubControl : MonoBehaviour
 
 
         positionCamera.positionBelowTarget = positionCameraBelowSub;
-        if (currentlyBoarded)
+        if (currentlyBoarded && !isDocked)
         {
             rotateCamera.enabled = true;
 
@@ -227,20 +228,24 @@ public class SubControl : MonoBehaviour
             positionCamera.zoomAxis = 0;
             forwardLeft.thrust = 0;
             forwardRight.thrust = 0;
+            look.targetOrientation = fallOrientation;
 
         }
+
+        look.enabled = (isBoarded || outOfWater) && !isDocked;
+
         backLeft.thrust = -forwardLeft.thrust;
         backRight.thrust = -forwardRight.thrust;
 
         rb.drag = outOfWater ? airDrag : waterDrag;
 
-        rb.useGravity = outOfWater;
+        rb.useGravity = outOfWater && !isDocked;
 
     }
 
     void FixedUpdate()
     {
-        if (currentlyBoarded && !outOfWater)
+        if (currentlyBoarded && !outOfWater && !isDocked)
         {
             rb.AddRelativeForce(0, 0, forwardAxis * (regularForwardAcceleration + (overdriveActive && forwardAxis > 0 ? overdriveForwardAcceleration : 0)));
             if (!freeCamera)
