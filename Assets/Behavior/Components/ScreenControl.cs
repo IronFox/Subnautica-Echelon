@@ -15,6 +15,7 @@ public class ScreenControl : MonoBehaviour
     public Transform rearRoomWall;
     public Material screenMaterial;
     public Material copyMaterial;
+    private CaptureDepthTexture captureDepthTexture;
     private int lastWidth = -1;
     private int lastHeight = -1;
     private RenderTexture canvasTexture;
@@ -45,6 +46,7 @@ public class ScreenControl : MonoBehaviour
         screenQuad.uv = new Vector2[] { new Vector2(0, 0), new Vector2(1, 0), new Vector2(1, 1), new Vector2(0, 1) };
 
         screenRenderer = GetComponent<MeshRenderer>();
+        captureDepthTexture = trailingColorCamera.GetComponent<CaptureDepthTexture>();
     }
 
     void OnDestroy()
@@ -123,7 +125,7 @@ public class ScreenControl : MonoBehaviour
             trailingColorCamera.fieldOfView = Camera.main.fieldOfView;
 
             canvasCamera.targetTexture = canvasTexture;
-            canvasCamera.enabled = true;
+            captureDepthTexture.doRender = true;
 
             
             screenMaterial.SetTexture("_Color", colorTexture);
@@ -159,12 +161,13 @@ public class ScreenControl : MonoBehaviour
         if (isEnabled)
         {
 
-            if (!trailingColorCamera.enabled)
+
+            if (!captureDepthTexture.doRender)
             {
                 enableVisualizationProgress = 0;
                 originalCullingMask = Camera.main.cullingMask;
                 trailingColorCamera.cullingMask = originalCullingMask;
-                trailingColorCamera.enabled = true;
+                captureDepthTexture.doRender = true;
                 //Camera.main.cullingMask = ~1;
                 Camera.main.cullingMask |= 1 << 28; //make sure we see the screen
                 ConsoleControl.Write($"Main camera culling mask changed: {originalCullingMask} -> {Camera.main.cullingMask}");
@@ -192,9 +195,9 @@ public class ScreenControl : MonoBehaviour
             }
 
 
-            if (trailingColorCamera.enabled)
+            if (captureDepthTexture.doRender)
             {
-                trailingColorCamera.enabled = false;
+                captureDepthTexture.doRender = false;
                 Camera.main.cullingMask = originalCullingMask;
                 ConsoleControl.Write($"Main camera culling mask reverted");
             }
