@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class SubControl : MonoBehaviour
+public class EchelonControl : MonoBehaviour
 {
     public float forwardAxis;
     public float rightAxis;
@@ -23,14 +23,16 @@ public class SubControl : MonoBehaviour
     public float waterDrag = 10;
     public float airDrag = 0.1f;
 
-    public DriveControl forwardLeft;
-    public DriveControl backLeft;
-    public DriveControl forwardRight;
-    public DriveControl backRight;
+
+    public DriveControl forwardFacingLeft;
+    public DriveControl backFacingLeft;
+    public DriveControl forwardFacingRight;
+    public DriveControl backFacingRight;
 
     private NonCameraOrientation nonCameraOrientation;
     private FallOrientation fallOrientation;
-    public Transform trailingCamera;
+    public Transform trailingCameraContainer;
+    public Camera trailingColorCamera;
     public Transform cockpitRoot;
 
     private RotateCamera rotateCamera;
@@ -71,9 +73,16 @@ public class SubControl : MonoBehaviour
                 transformToLocalize.parent = cockpitRoot;
                 transformToLocalize.localPosition = Vector3.zero;
                 transformToLocalize.localEulerAngles = Vector3.zero;
+
+                var error = Camera.main.transform.position - cockpitRoot.position;
+
+                transformToLocalize.position -= error;
+
             }
 
-            trailingCamera.parent = transform.parent;
+
+
+            trailingCameraContainer.parent = transform.parent;
 
             screen.isEnabled = currentlyBoarded = isBoarded = true;
 
@@ -87,10 +96,10 @@ public class SubControl : MonoBehaviour
             ConsoleControl.Write($"Trying to switch audio listener of null, read from {name}");
             return;
         }
-        var audio = t.GetComponent<AudioListener>();
+        var audio = t.GetComponentInChildren<AudioListener>();
         if (audio != null)
         {
-            ConsoleControl.Write($"Switching audio listener of {t.name} to {enable}");
+            ConsoleControl.Write($"Switching audio listener of {t.name}(->{audio.transform.name}) to {enable}");
             audio.enabled = enable;
         }
         else
@@ -106,7 +115,7 @@ public class SubControl : MonoBehaviour
             EnableAudio("Camera.main", Camera.main, true);
 
             screen.isEnabled = currentlyBoarded = isBoarded = false;
-            trailingCamera.parent = transform;
+            trailingCameraContainer.parent = transform;
 
         }
     }
@@ -118,10 +127,17 @@ public class SubControl : MonoBehaviour
         rb = GetComponent<Rigidbody>();
         look = GetComponent<PointNoseInDirection>();
         screen = GetComponentInChildren<ScreenControl>();
-        rotateCamera = trailingCamera.GetComponent<RotateCamera>();
-        positionCamera = trailingCamera.GetComponent<PositionCamera>();
+        rotateCamera = trailingCameraContainer.GetComponent<RotateCamera>();
+        positionCamera = trailingCameraContainer.GetComponent<PositionCamera>();
         fallOrientation = GetComponent<FallOrientation>();
-        look.targetOrientation = inWaterDirectionSource = new TransformDirectionSource(trailingCamera);
+        look.targetOrientation = inWaterDirectionSource = new TransformDirectionSource(trailingCameraContainer);
+    }
+
+    private static string TN(RenderTexture rt)
+    {
+        if (rt == null)
+            return "null";
+        return $"{rt.name}, ptr = {rt.GetNativeTexturePtr()}";
     }
 
     private IDirectionSource inWaterDirectionSource;
@@ -135,6 +151,41 @@ public class SubControl : MonoBehaviour
                 Offboard();
             else
                 Onboard(null);
+        }
+
+
+
+        if (Input.GetKeyDown(KeyCode.F7))
+        {
+            ConsoleControl.Write("Capturing debug information v3");
+            
+            ConsoleControl.Write($"3rd person camera at {trailingCameraContainer.position}");
+            ConsoleControl.Write($"Main camera at {Camera.main.transform.position}");
+            ConsoleControl.Write($"Cockpit center at {cockpitRoot.position}");
+            ConsoleControl.Write($"Trailing color camera at {trailingColorCamera.transform.position}");
+            ConsoleControl.Write($"Trailing color camera is enabled = {trailingColorCamera.enabled}");
+            ConsoleControl.Write($"Trailing camera rendering to texture {TN(trailingColorCamera.targetTexture)}");
+            ConsoleControl.Write($"Main camera rendering to texture {TN(Camera.main.targetTexture)}");
+            ConsoleControl.Write($"Last trailing camera matrix {trailingColorCamera.previousViewProjectionMatrix}");
+            ConsoleControl.Write($"Last main camera matrix {Camera.main.previousViewProjectionMatrix}");
+
+
+            ConsoleControl.Write($"RigidBody.isKinematic="+rb.isKinematic);
+            ConsoleControl.Write($"RigidBody.constraints="+rb.constraints);
+            ConsoleControl.Write($"RigidBody.collisionDetectionMode=" +rb.collisionDetectionMode);
+            ConsoleControl.Write($"RigidBody.drag=" +rb.drag);
+            ConsoleControl.Write($"RigidBody.mass=" +rb.mass);
+            ConsoleControl.Write($"RigidBody.useGravity=" +rb.useGravity);
+            ConsoleControl.Write($"RigidBody.velocity=" +rb.velocity);
+            ConsoleControl.Write($"RigidBody.worldCenterOfMass=" +rb.worldCenterOfMass);
+
+        }
+
+
+        if (isBoarded && !isDocked && rb.isKinematic)
+        {
+            ConsoleControl.Write($"Switching off kinematic mode");
+            rb.isKinematic = false;
         }
 
 
@@ -160,7 +211,7 @@ public class SubControl : MonoBehaviour
                         {
                             ChangeState(CameraState.IsBound);
                             
-                            inWaterDirectionSource = new TransformDirectionSource(trailingCamera);
+                            inWaterDirectionSource = new TransformDirectionSource(trailingCameraContainer);
 
                             nonCameraOrientation.isActive = false;
                             rotateCamera.AbortTransition();
@@ -183,18 +234,18 @@ public class SubControl : MonoBehaviour
             {
                 nonCameraOrientation.rightRotationSpeed = 0;
                 nonCameraOrientation.upRotationSpeed = 0;
-                forwardLeft.thrust = 0;
-                forwardRight.thrust = 0;
+                backFacingLeft.thrust = 0;
+                backFacingRight.thrust = 0;
 
-                forwardRight.overdrive = 0;
-                forwardLeft.overdrive = 0;
+                backFacingLeft.overdrive = 0;
+                backFacingRight.overdrive = 0;
             }
             else
             {
                 nonCameraOrientation.rightRotationSpeed = rightAxis * rotationDegreesPerSecond;
                 nonCameraOrientation.upRotationSpeed = -upAxis * rotationDegreesPerSecond;
-                forwardLeft.thrust = forwardAxis + look.HorizontalRotationIntent * 0.001f;
-                forwardRight.thrust = forwardAxis - look.HorizontalRotationIntent * 0.001f;
+                backFacingLeft.thrust = forwardAxis + look.HorizontalRotationIntent * 0.001f;
+                backFacingRight.thrust = forwardAxis - look.HorizontalRotationIntent * 0.001f;
 
 
                 if (overdriveActive)
@@ -202,15 +253,15 @@ public class SubControl : MonoBehaviour
                     float overdriveThreshold = regularForwardAcceleration / (overdriveForwardAcceleration + regularForwardAcceleration);
                     if (forwardAxis > overdriveThreshold)
                     {
-                        forwardRight.overdrive =
-                            forwardLeft.overdrive =
+                        backFacingRight.overdrive =
+                        backFacingLeft.overdrive =
                             (forwardAxis - overdriveThreshold) / (1f - overdriveThreshold);
                     }
                     else
-                        forwardLeft.overdrive = forwardRight.overdrive = 0;
+                        backFacingLeft.overdrive = backFacingRight.overdrive = 0;
                 }
                 else
-                    forwardLeft.overdrive = forwardRight.overdrive = 0;
+                    backFacingLeft.overdrive = backFacingRight.overdrive = 0;
 
             }
 
@@ -226,16 +277,16 @@ public class SubControl : MonoBehaviour
             nonCameraOrientation.rightRotationSpeed = 0;
             nonCameraOrientation.upRotationSpeed = 0;
             positionCamera.zoomAxis = 0;
-            forwardLeft.thrust = 0;
-            forwardRight.thrust = 0;
+            backFacingLeft.thrust = 0;
+            backFacingLeft.thrust = 0;
             look.targetOrientation = fallOrientation;
 
         }
 
         look.enabled = (isBoarded || outOfWater) && !isDocked;
 
-        backLeft.thrust = -forwardLeft.thrust;
-        backRight.thrust = -forwardRight.thrust;
+        forwardFacingLeft.thrust = -backFacingLeft.thrust;
+        forwardFacingRight.thrust = -backFacingRight.thrust;
 
         rb.drag = outOfWater ? airDrag : waterDrag;
 

@@ -8,7 +8,7 @@ public class BoardTest : MonoBehaviour
     private LockedEuler preBoardingEuler;
     private Transform preBoardingParent;
     private bool isOnboarded;
-    public SubControl subControl;
+    public EchelonControl subControl;
     // Start is called before the first frame update
     void Start()
     {
@@ -20,6 +20,7 @@ public class BoardTest : MonoBehaviour
     {
         if (!isOnboarded)
         {
+            //Debug.Log(Input.GetAxis("Vertical"));
             transform.position += transform.forward * Input.GetAxis("Vertical") * 10* Time.deltaTime;
             transform.position += transform.right * Input.GetAxis("Horizontal") * 10 * Time.deltaTime;
 

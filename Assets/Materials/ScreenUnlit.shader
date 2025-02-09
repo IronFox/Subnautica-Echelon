@@ -169,6 +169,7 @@
 
 
                 //c.rgb = color.rgb;
+                c.rgb = (float3)1.0 - c.rgb;
                 return c;
             }
             ENDCG

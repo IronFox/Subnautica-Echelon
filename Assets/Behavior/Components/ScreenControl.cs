@@ -24,8 +24,13 @@ public class ScreenControl : MonoBehaviour
     private Mesh screenQuad;
     private float enableVisualizationProgress;
     public float visualizationSpeedMultiplier = 2;
+    private MeshRenderer screenRenderer;
+    public Shader screenShader;
 
     private int originalCullingMask = -1;
+    private Matrix4x4 lastUnprojectView;
+    private Matrix4x4 lastUnproject;
+    private Vector3 lastCameraPosition;
 
     public bool isEnabled;
     private bool? lastEnabled;
@@ -39,7 +44,7 @@ public class ScreenControl : MonoBehaviour
         screenQuad.SetIndices(new int[] { 0, 1, 2, 0, 2, 3 }, MeshTopology.Triangles,0);
         screenQuad.uv = new Vector2[] { new Vector2(0, 0), new Vector2(1, 0), new Vector2(1, 1), new Vector2(0, 1) };
 
-
+        screenRenderer = GetComponent<MeshRenderer>();
     }
 
     void OnDestroy()
@@ -52,6 +57,15 @@ public class ScreenControl : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+
+        screenRenderer.material = screenMaterial;
+        if (!screenRenderer.enabled)
+        {
+            ConsoleControl.Write($"Screen renderer was disabled");
+            screenRenderer.enabled = true;
+        }
+
+
         if (lastEnabled != isEnabled)
         {
             lastEnabled = isEnabled;
@@ -65,6 +79,28 @@ public class ScreenControl : MonoBehaviour
         int w = Camera.main.pixelWidth;
         int h = Camera.main.pixelHeight;
 
+        if (screenShader != screenMaterial.shader)
+        {
+            ConsoleControl.Write($"Resetting material shader");
+            screenMaterial.shader = screenShader;
+
+            if (colorTexture != null)
+            {
+                screenMaterial.SetTexture("_Color", colorTexture);
+                screenMaterial.SetTexture("_Depth", depthTexture);
+                screenMaterial.SetTexture("_Canvas", canvasTexture);
+            }
+            screenMaterial.SetMatrix("_Unproject", lastUnproject);
+            screenMaterial.SetMatrix("_UnprojectToView", lastUnprojectView);
+            screenMaterial.SetVector("_CameraPosition", lastCameraPosition);
+            screenMaterial.SetFloat("_EnabledProgress", enableVisualizationProgress);
+
+            screenMaterial.SetFloat("_PixelSizeX", 1f / w);
+            screenMaterial.SetFloat("_PixelSizeY", 1f / h);
+            screenMaterial.SetFloat("_PixelAspect", (float)w / h);
+        }
+
+
         if (w != lastWidth || h != lastHeight)
         {
             if (colorTexture != null)
@@ -76,9 +112,12 @@ public class ScreenControl : MonoBehaviour
             Debug.Log($"Creating new textures at size {w}*{h}");
             lastWidth = w;
             lastHeight = h;
-            canvasTexture = new RenderTexture(new RenderTextureDescriptor(w, h, RenderTextureFormat.ARGBHalf, 0));
+            canvasTexture = new RenderTexture(new RenderTextureDescriptor(w, h, RenderTextureFormat.ARGBHalf, 16));
+            canvasTexture.name = $"Echelon Screen Text Canvas Capture";
             colorTexture = new RenderTexture(new RenderTextureDescriptor(w, h, RenderTextureFormat.ARGBHalf, 24));
-            depthTexture = new RenderTexture(new RenderTextureDescriptor(w, h, RenderTextureFormat.RFloat, 0));
+            colorTexture.name = $"Echelon Screen Capture";
+            depthTexture = new RenderTexture(new RenderTextureDescriptor(w, h, RenderTextureFormat.RFloat, 16));
+            depthTexture.name = $"Echelon Depth Capture";
             trailingColorCamera.depthTextureMode = DepthTextureMode.Depth;
             trailingColorCamera.targetTexture = colorTexture;
             trailingColorCamera.fieldOfView = Camera.main.fieldOfView;
@@ -86,6 +125,7 @@ public class ScreenControl : MonoBehaviour
             canvasCamera.targetTexture = canvasTexture;
             canvasCamera.enabled = true;
 
+            
             screenMaterial.SetTexture("_Color", colorTexture);
             screenMaterial.SetTexture("_Depth", depthTexture);
             screenMaterial.SetTexture("_Canvas", canvasTexture);
@@ -123,9 +163,10 @@ public class ScreenControl : MonoBehaviour
             {
                 enableVisualizationProgress = 0;
                 originalCullingMask = Camera.main.cullingMask;
-                Camera.main.cullingMask = ~1;
-                //Debug.Log($"new culling mask: {Camera.main.cullingMask}");
+                trailingColorCamera.cullingMask = originalCullingMask;
                 trailingColorCamera.enabled = true;
+                //Camera.main.cullingMask = ~1;
+                Camera.main.cullingMask |= 1 << 28; //make sure we see the screen
                 ConsoleControl.Write($"Main camera culling mask changed: {originalCullingMask} -> {Camera.main.cullingMask}");
                 screenMaterial.SetFloat("_EnabledProgress", enableVisualizationProgress);
             }
@@ -162,7 +203,24 @@ public class ScreenControl : MonoBehaviour
 
     }
 
-    internal void CaptureDepth(Camera camera, Texture camDepthTexture)
+    public void CaptureCameraProperties(Camera camera)
+    {
+        //https://stackoverflow.com/a/58600831
+        Matrix4x4 matrixCameraToWorld = camera.cameraToWorldMatrix;
+        Matrix4x4 matrixProjectionInverse = GL.GetGPUProjectionMatrix(camera.projectionMatrix, false).inverse;
+        Matrix4x4 matrixHClipToWorld = matrixCameraToWorld * matrixProjectionInverse;
+
+        lastUnproject = matrixHClipToWorld;
+        lastUnprojectView = matrixProjectionInverse;
+        screenMaterial.SetMatrix("_Unproject", matrixHClipToWorld);
+        screenMaterial.SetMatrix("_UnprojectToView", matrixProjectionInverse);
+
+
+        lastCameraPosition = camera.transform.position;
+        screenMaterial.SetVector("_CameraPosition", camera.transform.position);
+    }
+
+    public void CaptureDepth(Camera camera, Texture camDepthTexture)
     {
         using (CommandBuffer buffer = new CommandBuffer())
         {
@@ -172,16 +230,6 @@ public class ScreenControl : MonoBehaviour
             buffer.DrawMesh(screenQuad, Matrix4x4.identity, copyMaterial, 0, -1, materialProperties);
             Graphics.ExecuteCommandBuffer(buffer);
         }
-        //https://stackoverflow.com/a/58600831
-        Matrix4x4 matrixCameraToWorld = camera.cameraToWorldMatrix;
-        Matrix4x4 matrixProjectionInverse = GL.GetGPUProjectionMatrix(camera.projectionMatrix, false).inverse;
-        Matrix4x4 matrixHClipToWorld = matrixCameraToWorld * matrixProjectionInverse;
-
-        screenMaterial.SetMatrix("_Unproject", matrixHClipToWorld);
-        screenMaterial.SetMatrix("_UnprojectToView", matrixProjectionInverse);
-
-
-
-        screenMaterial.SetVector("_CameraPosition", camera.transform.position);
+        CaptureCameraProperties(camera);
     }
 }

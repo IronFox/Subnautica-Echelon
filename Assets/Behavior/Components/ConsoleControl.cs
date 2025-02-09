@@ -6,6 +6,8 @@ using System.Text;
 using TMPro;
 using System;
 
+using System.IO;
+
 public readonly struct Line {
     public string Input { get; }
     public string Message { get; }
@@ -64,6 +66,9 @@ public class ConsoleControl : MonoBehaviour
             control.AddLine(line);
         if (Instances.Count == 0)
             StaticLines.Add(line);
+
+        File.AppendAllText(@"C:\Temp\Logs\log.txt", $"{DateTimeOffset.Now:HH:mm:ss.fff} {text} \r\n");
+
     }
 
 
@@ -85,7 +90,7 @@ public class ConsoleControl : MonoBehaviour
         while (fullLines.Count > 0 && fullLines.Count + pendingLines.Count+1 > maxLines)
             fullLines.Dequeue();
         while (pendingLines.Count+1 > maxLines)
-            fullLines.Dequeue();
+            pendingLines.Dequeue();
 
         pendingLines.Enqueue(line);
 

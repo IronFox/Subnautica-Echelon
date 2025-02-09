@@ -15,25 +15,37 @@ public class CaptureDepthTexture : MonoBehaviour
         myCamera = GetComponent<Camera>();
     }
 
+    private void RenderPipelineManager_beginCameraRendering(ScriptableRenderContext arg1, Camera camera)
+    {
+        //if (camera == myCamera)
+        //{
+        //    Debug.Log(myCamera.fieldOfView);
+        //    myCamera.fieldOfView = 30;
+        //    lastPosition = camera.transform.position;
+        //    lastFov = camera.fieldOfView;
+        //    lastMatrix = camera.previousViewProjectionMatrix;
+        //}
+    }
+
+    private void RenderPipelineManager_endCameraRendering(ScriptableRenderContext arg1, Camera camera)
+    {
+        if (camera == myCamera)
+        {
+            Debug.Log("end");
+            screen.CaptureCameraProperties(myCamera);
+            //Texture _camDepthTexture = Shader.GetGlobalTexture("_CameraDepthTexture");
+            //screen.CaptureDepth(myCamera, _camDepthTexture);
+        }
+    }
+
     // Update is called once per frame
     void Update()
     {
-        
-    }
-
-
-
-    public void PostRender(ScriptableRenderContext _context, Camera _camera)
-    {
-        // Get Camera depth texture (Must be rendering to a used display OR a render texture)
-    }
-
-    void OnRenderImage(RenderTexture source, RenderTexture destination)
-    {
-        Graphics.Blit(source, destination);
+        myCamera.Render();
         Texture _camDepthTexture = Shader.GetGlobalTexture("_CameraDepthTexture");
         screen.CaptureDepth(myCamera, _camDepthTexture);
 
-
     }
+
+
 }

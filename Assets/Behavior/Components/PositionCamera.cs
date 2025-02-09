@@ -26,6 +26,9 @@ public class PositionCamera : MonoBehaviour
         distanceToTarget = Vector3.Distance(targetBoundingBox.transform.position, transform.transform.position);
         minDistanceToTarget = targetBoundingBox.size.magnitude;
         maxDistanceToTarget = minDistanceToTarget * 20;
+        ConsoleControl.Write($"Valid 3rd person camera distance range is [{minDistanceToTarget},{maxDistanceToTarget}]");
+        distanceToTarget = Mathf.Clamp( distanceToTarget, minDistanceToTarget, maxDistanceToTarget );
+        ConsoleControl.Write($"3rd camera distance set to {distanceToTarget}");
         boxHeight = targetBoundingBox.size.y * targetBoundingBox.transform.localScale.y;
     }
 

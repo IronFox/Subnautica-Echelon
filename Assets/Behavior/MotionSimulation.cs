@@ -4,11 +4,11 @@ using UnityEngine;
 
 public class MotionSimulation : MonoBehaviour
 {
-    private SubControl control;
+    private EchelonControl control;
     // Start is called before the first frame update
     void Start()
     {
-        control = GetComponent<SubControl>();
+        control = GetComponent<EchelonControl>();
     }
 
     // Update is called once per frame
