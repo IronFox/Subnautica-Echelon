@@ -29,6 +29,6 @@ public class FallOrientation : MonoBehaviour, IDirectionSource
         else
             dir /= mag;
 
-        rot = LockedEuler.FromForward(dir);
+        rot = LockedEuler.FromForward(dir,TransformLocality.Global);
     }
 }

@@ -15,6 +15,7 @@ public class EchelonControl : MonoBehaviour
     public bool isBoarded;
     public bool positionCameraBelowSub;
     public bool isDocked;
+    public bool cameraCenterIsCockpit;
 
     public float regularForwardAcceleration = 100000;
     public float overdriveForwardAcceleration = 200000;
@@ -29,19 +30,24 @@ public class EchelonControl : MonoBehaviour
     public DriveControl forwardFacingRight;
     public DriveControl backFacingRight;
 
-    private NonCameraOrientation nonCameraOrientation;
-    private FallOrientation fallOrientation;
-    public Transform trailingCameraContainer;
-    public Camera trailingColorCamera;
+    public Transform trailSpace;
     public Transform cockpitRoot;
 
     private RotateCamera rotateCamera;
     private PositionCamera positionCamera;
+    private NonCameraOrientation nonCameraOrientation;
+    private FallOrientation fallOrientation;
 
     private PointNoseInDirection look;
     private Rigidbody rb;
     private ScreenControl screen;
     private bool currentlyBoarded;
+
+    private Parentage onboardLocalizedTransform;
+    private Parentage cameraMove;
+
+    private bool currentCameraCenterIsCockpit;
+    private bool cameraIsInTrailspace;
 
     private enum CameraState
     {
@@ -49,7 +55,7 @@ public class EchelonControl : MonoBehaviour
         IsBound,
         IsTransitioningToBound
     }
-    
+
     private CameraState state = CameraState.IsBound;
 
     private void ChangeState(CameraState state)
@@ -58,18 +64,43 @@ public class EchelonControl : MonoBehaviour
         this.state = state;
     }
 
+    private void MoveCameraToTrailSpace()
+    {
+        if (!cameraIsInTrailspace)
+        {
+            cameraIsInTrailspace = true;
+            ConsoleControl.Write("Moving camera to trailspace");
+            cameraMove = Parentage.FromLocal(Camera.main.transform);
+
+            Camera.main.transform.parent = trailSpace;
+            TransformDescriptor.LocalIdentity.ApplyTo(Camera.main.transform);
+            ConsoleControl.Write("Moved");
+        }
+    }
+
+    private void MoveCameraOutOfTrailSpace()
+    {
+        if (cameraIsInTrailspace)
+        {
+            cameraIsInTrailspace = false;
+            ConsoleControl.Write("Moving camera out of trailspace");
+            cameraMove.Restore();
+            ConsoleControl.Write("Moved");
+        }
+    }
+
     public void Onboard(Transform transformToLocalize)
     {
         if (!currentlyBoarded)
         {
             ConsoleControl.Write($"Onboarding");
 
-            EnableAudio("Camera.main",Camera.main, false);
-            EnableAudio("positionCamera",positionCamera, true);
 
             ConsoleControl.Write($"Listeners reconfigured");
             if (transformToLocalize != null)
             {
+                onboardLocalizedTransform = Parentage.FromLocal(transformToLocalize);
+
                 transformToLocalize.parent = cockpitRoot;
                 transformToLocalize.localPosition = Vector3.zero;
                 transformToLocalize.localEulerAngles = Vector3.zero;
@@ -79,43 +110,30 @@ public class EchelonControl : MonoBehaviour
                 transformToLocalize.position -= error;
 
             }
+            cameraIsInTrailspace = false;//just in case
+            if (!currentCameraCenterIsCockpit)
+                MoveCameraToTrailSpace();
 
-
-
-            trailingCameraContainer.parent = transform.parent;
+            trailSpace.parent = transform.parent;
 
             screen.isEnabled = currentlyBoarded = isBoarded = true;
 
         }
     }
 
-    private void EnableAudio(string name, Component t, bool enable)
-    {
-        if (t == null)
-        {
-            ConsoleControl.Write($"Trying to switch audio listener of null, read from {name}");
-            return;
-        }
-        var audio = t.GetComponentInChildren<AudioListener>();
-        if (audio != null)
-        {
-            ConsoleControl.Write($"Switching audio listener of {t.name}(->{audio.transform.name}) to {enable}");
-            audio.enabled = enable;
-        }
-        else
-            ConsoleControl.Write($"No audio listener found on {t.name}");
-    }
+
 
     public void Offboard()
     {
         if (currentlyBoarded)
         {
             ConsoleControl.Write($"Offboarding");
-            EnableAudio("positionCamera", positionCamera, false);
-            EnableAudio("Camera.main", Camera.main, true);
+
+            MoveCameraOutOfTrailSpace();
+            onboardLocalizedTransform.Restore();
 
             screen.isEnabled = currentlyBoarded = isBoarded = false;
-            trailingCameraContainer.parent = transform;
+            trailSpace.parent = transform;
 
         }
     }
@@ -127,10 +145,10 @@ public class EchelonControl : MonoBehaviour
         rb = GetComponent<Rigidbody>();
         look = GetComponent<PointNoseInDirection>();
         screen = GetComponentInChildren<ScreenControl>();
-        rotateCamera = trailingCameraContainer.GetComponent<RotateCamera>();
-        positionCamera = trailingCameraContainer.GetComponent<PositionCamera>();
+        rotateCamera = trailSpace.GetComponent<RotateCamera>();
+        positionCamera = trailSpace.GetComponent<PositionCamera>();
         fallOrientation = GetComponent<FallOrientation>();
-        look.targetOrientation = inWaterDirectionSource = new TransformDirectionSource(trailingCameraContainer);
+        look.targetOrientation = inWaterDirectionSource = new TransformDirectionSource(trailSpace);
     }
 
     private static string TN(RenderTexture rt)
@@ -153,21 +171,23 @@ public class EchelonControl : MonoBehaviour
                 Onboard(null);
         }
 
+        if (currentCameraCenterIsCockpit != cameraCenterIsCockpit)
+        {
+            currentCameraCenterIsCockpit = cameraCenterIsCockpit;
+            if (currentCameraCenterIsCockpit)
+                MoveCameraOutOfTrailSpace();
+            else
+                MoveCameraToTrailSpace();
+        }
 
 
         if (Input.GetKeyDown(KeyCode.F7))
         {
             ConsoleControl.Write("Capturing debug information v3");
             
-            ConsoleControl.Write($"3rd person camera at {trailingCameraContainer.position}");
+            ConsoleControl.Write($"3rd person camera at {trailSpace.position}");
             ConsoleControl.Write($"Main camera at {Camera.main.transform.position}");
             ConsoleControl.Write($"Cockpit center at {cockpitRoot.position}");
-            ConsoleControl.Write($"Trailing color camera at {trailingColorCamera.transform.position}");
-            ConsoleControl.Write($"Trailing color camera is enabled = {trailingColorCamera.enabled}");
-            ConsoleControl.Write($"Trailing camera rendering to texture {TN(trailingColorCamera.targetTexture)}");
-            ConsoleControl.Write($"Main camera rendering to texture {TN(Camera.main.targetTexture)}");
-            ConsoleControl.Write($"Last trailing camera matrix {trailingColorCamera.previousViewProjectionMatrix}");
-            ConsoleControl.Write($"Last main camera matrix {Camera.main.previousViewProjectionMatrix}");
 
 
             ConsoleControl.Write($"RigidBody.isKinematic="+rb.isKinematic);
@@ -211,7 +231,7 @@ public class EchelonControl : MonoBehaviour
                         {
                             ChangeState(CameraState.IsBound);
                             
-                            inWaterDirectionSource = new TransformDirectionSource(trailingCameraContainer);
+                            inWaterDirectionSource = new TransformDirectionSource(trailSpace);
 
                             nonCameraOrientation.isActive = false;
                             rotateCamera.AbortTransition();

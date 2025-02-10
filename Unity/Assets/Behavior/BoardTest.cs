@@ -27,7 +27,7 @@ public class BoardTest : MonoBehaviour
             LockedEuler
                 .FromLocal(transform)
                 .RotateBy(-Input.GetAxis("Mouse Y"), Input.GetAxis("Mouse X"), Time.deltaTime * 800)
-                .ApplyToLocal(transform);
+                .ApplyTo(transform);
         }
 
         if (Input.GetKeyDown(KeyCode.F))
@@ -54,7 +54,7 @@ public class BoardTest : MonoBehaviour
                 subControl.Offboard();
                 transform.parent = preBoardingParent;
                 transform.position = preBoardingPosition;
-                preBoardingEuler.ApplyToGlobal(transform);
+                preBoardingEuler.ApplyTo(transform);
                 isOnboarded = false;
                 Debug.Log("Offboarded");
             }

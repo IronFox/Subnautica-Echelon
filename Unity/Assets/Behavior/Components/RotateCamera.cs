@@ -26,7 +26,7 @@ public class RotateCamera : MonoBehaviour
         current = current.RotateBy(-rotationAxisY, rotationAxisX, maxDegreesPerSecond * Time.deltaTime);
         if (!transitioning)
         {
-            current.ApplyToGlobal(transform);
+            current.ApplyTo(transform);
         }
         else
         {
@@ -36,7 +36,7 @@ public class RotateCamera : MonoBehaviour
 
             var interpolated = LockedEuler.Slerp(current, LockedEuler.FromGlobal(transitionTarget), transitionProgress);
 
-            interpolated.ApplyToGlobal(transform);
+            interpolated.ApplyTo(transform);
         }
     }
 
