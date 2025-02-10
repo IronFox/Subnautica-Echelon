@@ -40,7 +40,6 @@ public class EchelonControl : MonoBehaviour
 
     private PointNoseInDirection look;
     private Rigidbody rb;
-    private ScreenControl screen;
     private bool currentlyBoarded;
 
     private Parentage onboardLocalizedTransform;
@@ -116,7 +115,7 @@ public class EchelonControl : MonoBehaviour
 
             trailSpace.parent = transform.parent;
 
-            screen.isEnabled = currentlyBoarded = isBoarded = true;
+            currentlyBoarded = isBoarded = true;
 
         }
     }
@@ -132,7 +131,7 @@ public class EchelonControl : MonoBehaviour
             MoveCameraOutOfTrailSpace();
             onboardLocalizedTransform.Restore();
 
-            screen.isEnabled = currentlyBoarded = isBoarded = false;
+            currentlyBoarded = isBoarded = false;
             trailSpace.parent = transform;
 
         }
@@ -144,7 +143,6 @@ public class EchelonControl : MonoBehaviour
         nonCameraOrientation = GetComponent<NonCameraOrientation>();
         rb = GetComponent<Rigidbody>();
         look = GetComponent<PointNoseInDirection>();
-        screen = GetComponentInChildren<ScreenControl>();
         rotateCamera = trailSpace.GetComponent<RotateCamera>();
         positionCamera = trailSpace.GetComponent<PositionCamera>();
         fallOrientation = GetComponent<FallOrientation>();

@@ -58,9 +58,17 @@ public class ConsoleControl : MonoBehaviour
         Instances.Remove(this);
     }
 
+    public static void WriteException(string whileDoing, Exception ex)
+    {
+        Write($"Caught exception during {whileDoing}: {ex.Message}");
+        Write(ex.StackTrace);
+    }
+
 
     public static void Write(string text)
     {
+        if (string.IsNullOrWhiteSpace(text))
+            return;
         var line = new Line(text);
         foreach (var control in Instances)
             control.AddLine(line);
