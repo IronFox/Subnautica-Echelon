@@ -1,9 +1,13 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
 public class EchelonControl : MonoBehaviour
 {
+    public KeyCode logStateKey = KeyCode.F7;
+
+
     public float forwardAxis;
     public float rightAxis;
     public float upAxis;
@@ -156,6 +160,21 @@ public class EchelonControl : MonoBehaviour
         return $"{rt.name}, ptr = {rt.GetNativeTexturePtr()}";
     }
 
+
+    private static string AllMessages(Exception ex)
+    {
+        string rs = ex.Message;
+        if (ex.InnerException != null)
+            rs += "<-" + AllMessages(ex.InnerException);
+        return rs;
+    }
+    
+    private void LogComposition(Transform t, Indent indent = default)
+    {
+        new HierarchyAnalyzer().LogTree(t);
+
+    }
+
     private IDirectionSource inWaterDirectionSource;
 
     // Update is called once per frame
@@ -179,7 +198,7 @@ public class EchelonControl : MonoBehaviour
         }
 
 
-        if (Input.GetKeyDown(KeyCode.F7))
+        if (Input.GetKeyDown(logStateKey))
         {
             ConsoleControl.Write("Capturing debug information v3");
             
@@ -196,6 +215,8 @@ public class EchelonControl : MonoBehaviour
             ConsoleControl.Write($"RigidBody.useGravity=" +rb.useGravity);
             ConsoleControl.Write($"RigidBody.velocity=" +rb.velocity);
             ConsoleControl.Write($"RigidBody.worldCenterOfMass=" +rb.worldCenterOfMass);
+
+            LogComposition(transform);
 
         }
 
