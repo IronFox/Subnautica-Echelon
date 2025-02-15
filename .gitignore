@@ -75,3 +75,4 @@
 /Plugin/bin/
 /Plugin/.vs/
 /Unity/Assets/AssetBundles.meta
+/Plugin/obj/*
