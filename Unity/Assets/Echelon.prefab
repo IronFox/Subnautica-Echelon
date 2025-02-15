@@ -32592,6 +32592,8 @@ MonoBehaviour:
   rotationDegreesPerSecond: 50
   waterDrag: 10
   airDrag: 0.1
+  explosionPrefab: {fileID: 1559697159186320428, guid: 75390e578275a3b4d831189dc16d5b06,
+    type: 3}
   forwardFacingLeft: {fileID: 7858723242007386751}
   backFacingLeft: {fileID: 7858723241938675400}
   forwardFacingRight: {fileID: 7858723242230373191}

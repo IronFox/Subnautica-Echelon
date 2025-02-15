@@ -1,0 +1,21 @@
+echelon todos:
+
+* explosions:
+	* reduce size
+	* use Subnautica sound source to fix 3d issues
+	* add light source
+	* pressure wave should use lit material but face normal to the inside
+	* add smolder sphere
+* torpedoes:
+	* model mesh
+	* split covers into two
+	* animate covers
+	* torpedo behavior (lock on targets)
+	* torpedo trigger explosion and damage targets
+	* deploy torpedo from ship on trigger press
+* sub: 
+	* add camera shake on overdrive or nearby explosion
+	* disable overdrive when moving backwards, reduce reverse speed to prevent backwards jumping
+	* when returning from outside water while free camera is active, free camera ship direction should copy falling vector
+	
+* disable all access to C:\temp both in the unity scene and the plugin

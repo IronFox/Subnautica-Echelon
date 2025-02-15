@@ -1165,6 +1165,55 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 4
   m_LocalEulerAnglesHint: {x: -99.54099, y: 0, z: 0}
+--- !u!1001 &1559697157477494349
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    m_TransformParent: {fileID: 0}
+    m_Modifications:
+    - target: {fileID: 1559697159186320428, guid: 75390e578275a3b4d831189dc16d5b06,
+        type: 3}
+      propertyPath: m_RootOrder
+      value: 12
+      objectReference: {fileID: 0}
+    - target: {fileID: 1559697159186320428, guid: 75390e578275a3b4d831189dc16d5b06,
+        type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 10.51
+      objectReference: {fileID: 0}
+    - target: {fileID: 1559697159186320428, guid: 75390e578275a3b4d831189dc16d5b06,
+        type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1559697159186320428, guid: 75390e578275a3b4d831189dc16d5b06,
+        type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1559697159186320428, guid: 75390e578275a3b4d831189dc16d5b06,
+        type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1559697159186320429, guid: 75390e578275a3b4d831189dc16d5b06,
+        type: 3}
+      propertyPath: m_Name
+      value: Explosion
+      objectReference: {fileID: 0}
+    - target: {fileID: 6276074680272702291, guid: 75390e578275a3b4d831189dc16d5b06,
+        type: 3}
+      propertyPath: m_Pitch
+      value: 0.7
+      objectReference: {fileID: 0}
+    - target: {fileID: 6276074680272702291, guid: 75390e578275a3b4d831189dc16d5b06,
+        type: 3}
+      propertyPath: panLevelCustomCurve.m_Curve.Array.data[0].value
+      value: 1
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+  m_SourcePrefab: {fileID: 100100000, guid: 75390e578275a3b4d831189dc16d5b06, type: 3}
 --- !u!1001 &3057455469208139143
 PrefabInstance:
   m_ObjectHideFlags: 0

@@ -11,6 +11,7 @@ public class BoardTest : MonoBehaviour
     private Transform preBoardingParent;
     private bool isOnboarded;
     public EchelonControl subControl;
+    
 
     public KeyCode boardKey = KeyCode.B;
     public KeyCode centerKey = KeyCode.C;

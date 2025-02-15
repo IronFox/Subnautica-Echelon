@@ -483,7 +483,7 @@ namespace Subnautica_Echelon
                 control.lookRightAxis = lookDelta.x * 0.1f;
                 control.lookUpAxis = lookDelta.y * 0.1f;
 
-
+                control.triggerActive = GameInput.GetButtonDown(GameInput.Button.LeftHand);
                 //var rb = GetComponent<Rigidbody>();
                 //rb.isKinematic = false;
                 //rb.mass = 10;

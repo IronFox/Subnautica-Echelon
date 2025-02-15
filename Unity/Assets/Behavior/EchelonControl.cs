@@ -30,6 +30,10 @@ public class EchelonControl : MonoBehaviour
     public float rotationDegreesPerSecond = 50;
     public float waterDrag = 10;
     public float airDrag = 0.1f;
+    public bool triggerActive;
+    private DateTime lastTriggerTime = DateTime.MinValue;
+
+    public Transform explosionPrefab;
 
     private Transform cameraRoot;
 
@@ -226,6 +230,14 @@ public class EchelonControl : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        if (triggerActive && DateTime.Now - lastTriggerTime > TimeSpan.FromSeconds(1))
+        {
+            lastTriggerTime = DateTime.Now;
+            var explosion = Instantiate(explosionPrefab, transform.parent);
+            explosion.localPosition = transform.localPosition;
+        }
+
+
         if (currentlyBoarded != isBoarded)
         {
             if (!isBoarded)
