@@ -25,6 +25,9 @@ namespace Subnautica_Echelon
             //AngularDrag = 10;
             
         }
+
+        public float overdriveActive;
+
         public override void Start()
         {
             base.Start();
@@ -42,6 +45,8 @@ namespace Subnautica_Echelon
         protected override void MoveWithInput(Vector3 moveInput)
         {
             //Log.WriteLowFrequency(MyLogger.Channel.Two, $"MoveWithInput({moveInput})");
+
+            moveInput = new Vector3(moveInput.x, moveInput.y , moveInput.z * (1.5f + 3 * overdriveActive));
 
             RB.AddRelativeForce(moveInput, ForceMode.VelocityChange);
         }
@@ -451,8 +456,8 @@ namespace Subnautica_Echelon
 
 
                 Vector2 lookDelta = GameInput.GetLookDelta();
-                control.lookRightAxis = lookDelta.x;
-                control.lookUpAxis = lookDelta.y;
+                control.lookRightAxis = lookDelta.x * 0.1f;
+                control.lookUpAxis = lookDelta.y * 0.1f;
 
 
                 //var rb = GetComponent<Rigidbody>();
@@ -501,6 +506,8 @@ namespace Subnautica_Echelon
                 //control.freeCamera =
                 //    GameInput.GetAnalogValueForButton(GameInput.Button.RightHand) > 0.5f
                 //    ;
+
+                engine.overdriveActive = GameInput.GetAnalogValueForButton(GameInput.Button.Sprint);
 
                 //control.overdriveActive =
                 //    GameInput.GetAnalogValueForButton(GameInput.Button.Sprint) > 0.5f
