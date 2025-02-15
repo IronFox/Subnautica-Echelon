@@ -45,6 +45,8 @@ public class PointNoseInDirection : MonoBehaviour
         RotateZ(rb, -rotX/5);
         if (rotateUpDown)
             RotateUpDown();
+
+        rb.AddRelativeForce(0, 0, 10, ForceMode.Acceleration);
     }
 
     //void LateUpdate()
@@ -72,10 +74,10 @@ public class PointNoseInDirection : MonoBehaviour
         //SignedMin(delta * horizontalRotationAcceleration, maxHorizontalRotationSpeed);
         float haveTurn = -Vector3.Dot(rb.angularVelocity, axis) * 180 / Mathf.PI;
         float error = wantTurn - haveTurn;
-        float accel = error * 10;
+        float accel = error * 10 * 0.02f;
 
         //SignedMin((wantTurn - haveTurn)*10, 10);
-        rb.AddTorque(axis * -accel * Time.fixedDeltaTime, ForceMode.Acceleration);
+        rb.AddTorque(axis * -accel, ForceMode.Acceleration);
 
     }
 
@@ -96,13 +98,13 @@ public class PointNoseInDirection : MonoBehaviour
         float error = wantTurn - haveTurn;
         
 
-        float accel = error * 10;
+        float accel = error * 10 * 0.02f;
 
         //if (rb.transform.eulerAngles.x > 45f && haveTurn < 0)
           //  rb.AddTorque(axis * -haveTurn * Time.fixedDeltaTime, ForceMode.VelocityChange);
         //else
         //SignedMin((wantTurn - haveTurn)*10, 10);
-        rb.AddTorque(axis * accel * Time.fixedDeltaTime, ForceMode.Acceleration);
+        rb.AddTorque(axis * accel, ForceMode.Acceleration);
 
     }
 
@@ -126,10 +128,10 @@ public class PointNoseInDirection : MonoBehaviour
         float haveTurn = Vector3.Dot( rb.angularVelocity, axis) * 180 / Mathf.PI;
 
         float error = wantTurn - haveTurn;
-        float accel = error * 10;
+        float accel = error * 10 * 0.02f;
 
 
-        rb.AddTorque(axis * accel * Time.fixedDeltaTime, ForceMode.Acceleration);
+        rb.AddTorque(axis * accel, ForceMode.Acceleration);
 
 
     }
@@ -156,10 +158,10 @@ public class PointNoseInDirection : MonoBehaviour
         //float haveTurn = -Vector3.Dot(rb.angularVelocity, axis) * 180 / Mathf.PI;
         float haveTurn = rb.angularVelocity.y * 180 / Mathf.PI;
         float error = wantTurn - haveTurn;
-        float accel = error * 10;
+        float accel = error * 10 * 0.02f;
 
         //SignedMin((wantTurn - haveTurn)*10, 10);
-        rb.AddTorque(0, accel * Time.fixedDeltaTime, 0, ForceMode.Acceleration);
+        rb.AddTorque(0, accel, 0, ForceMode.Acceleration);
 
         return wantTurn;
 

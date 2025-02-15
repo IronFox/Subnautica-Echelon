@@ -6462,6 +6462,36 @@ BoxCollider:
   serializedVersion: 2
   m_Size: {x: 1, y: 1, z: 1}
   m_Center: {x: 0, y: 0, z: 0}
+--- !u!1 &2493117014699551954
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 4103978763940198248}
+  m_Layer: 0
+  m_Name: ExitLocation
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &4103978763940198248
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2493117014699551954}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: -3.591}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 7858723242686317378}
+  m_RootOrder: 7
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &2846385082014980129
 GameObject:
   m_ObjectHideFlags: 0
@@ -32000,6 +32030,36 @@ Transform:
   m_Father: {fileID: 6978876558591410562}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &7781635572056041009
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1779742060576592947}
+  m_Layer: 0
+  m_Name: HeadCenter
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1779742060576592947
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7781635572056041009}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 7858723242686317378}
+  m_RootOrder: 6
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &7858723241311038672
 GameObject:
   m_ObjectHideFlags: 0
@@ -32494,6 +32554,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5d256c7168af40e498912821a9fc4f88, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  logStateKey: 288
   forwardAxis: 0
   rightAxis: 0
   upAxis: 0
@@ -32504,9 +32565,10 @@ MonoBehaviour:
   isBoarded: 0
   positionCameraBelowSub: 0
   isDocked: 0
-  regularForwardAcceleration: 300000
-  overdriveForwardAcceleration: 600000
-  strafeAcceleration: 150000
+  cameraCenterIsCockpit: 0
+  regularForwardAcc: 400
+  overdriveForwardAcc: 800
+  strafeAcc: 200
   rotationDegreesPerSecond: 100
   waterDrag: 10
   airDrag: 0.1
@@ -32516,6 +32578,7 @@ MonoBehaviour:
   backFacingRight: {fileID: 7858723241757330820}
   trailSpace: {fileID: 7858723242922749386}
   cockpitRoot: {fileID: 7858723242686317378}
+  headCenter: {fileID: 1779742060576592947}
 --- !u!54 &7858723241877434804
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -32832,6 +32895,8 @@ Transform:
   - {fileID: 8641471225895144767}
   - {fileID: 8641471227281535576}
   - {fileID: 6423358651981457271}
+  - {fileID: 1779742060576592947}
+  - {fileID: 4103978763940198248}
   m_Father: {fileID: 7858723241877434807}
   m_RootOrder: 10
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}

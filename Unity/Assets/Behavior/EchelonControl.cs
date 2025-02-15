@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
 public class EchelonControl : MonoBehaviour
@@ -21,9 +22,9 @@ public class EchelonControl : MonoBehaviour
     public bool isDocked;
     public bool cameraCenterIsCockpit;
 
-    public float regularForwardAcceleration = 100000;
-    public float overdriveForwardAcceleration = 200000;
-    public float strafeAcceleration = 50000;
+    public float regularForwardAcc = 400;
+    public float overdriveForwardAcc = 800;
+    public float strafeAcc = 200;
     public float rotationDegreesPerSecond = 100;
     public float waterDrag = 10;
     public float airDrag = 0.1f;
@@ -36,6 +37,7 @@ public class EchelonControl : MonoBehaviour
 
     public Transform trailSpace;
     public Transform cockpitRoot;
+    public Transform headCenter;
 
     private RotateCamera rotateCamera;
     private PositionCamera positionCamera;
@@ -92,31 +94,74 @@ public class EchelonControl : MonoBehaviour
         }
     }
 
-    public void Onboard(Transform transformToLocalize)
+    private readonly List<Rigidbody> localizeRigidBodyState = new List<Rigidbody>();
+    private readonly List<(string Name, Renderer Renderer)> unhide = new List<(string Nasme, Renderer Renderer)>();
+    private void Hide(Transform t, Transform[] branchesNotToHide)
+    {
+        if (branchesNotToHide.Contains(t))
+        {
+            ConsoleControl.Write($"Encountered {t.name}. Not hiding this branch");
+            return;
+        }
+        var rs = t.GetComponents<SkinnedMeshRenderer>();    
+        if (rs != null && rs.Length > 0)
+        {
+
+            ConsoleControl.Write($"Hiding {t.name}");
+            foreach (var r in rs)
+            {
+                if (r != null)
+                {
+                    unhide.Add((r.name,r));
+                    r.enabled = false;
+                }
+            }
+        }
+ 
+        for (int i = 0; i < t.childCount; i++)
+            Hide(t.GetChild(i), branchesNotToHide);
+    }
+
+    public void Onboard(Transform transformToLocalize, params Transform[] branchesNotToHide)
     {
         if (!currentlyBoarded)
         {
             ConsoleControl.Write($"Onboarding");
 
 
-            ConsoleControl.Write($"Listeners reconfigured");
+            localizeRigidBodyState.Clear();
             if (transformToLocalize != null)
             {
+                unhide.Clear();
+                Hide(transformToLocalize, branchesNotToHide);
+
                 onboardLocalizedTransform = Parentage.FromLocal(transformToLocalize);
 
-                transformToLocalize.parent = cockpitRoot;
+                transformToLocalize.parent = headCenter;
                 transformToLocalize.localPosition = Vector3.zero;
                 transformToLocalize.localEulerAngles = Vector3.zero;
+                var rbs = transformToLocalize.GetComponentsInChildren<Rigidbody>();
+                foreach (var rb in rbs)
+                {
+                    if (!rb.isKinematic)
+                    {
+                        ConsoleControl.Write($"Disabling onboarding rigid body {rb.name}");
+                        rb.isKinematic = true;
+                        localizeRigidBodyState.Add(rb);
+                    }
+                }
 
-                var error = Camera.main.transform.position - cockpitRoot.position;
+                var error = Camera.main.transform.position - headCenter.position;
 
                 transformToLocalize.position -= error;
+
 
             }
             cameraIsInTrailspace = false;//just in case
             if (!currentCameraCenterIsCockpit)
                 MoveCameraToTrailSpace();
 
+            ConsoleControl.Write($"Offloading trail space");
             trailSpace.parent = transform.parent;
 
             currentlyBoarded = isBoarded = true;
@@ -131,12 +176,46 @@ public class EchelonControl : MonoBehaviour
         if (currentlyBoarded)
         {
             ConsoleControl.Write($"Offboarding");
+            try
+            {
 
-            MoveCameraOutOfTrailSpace();
-            onboardLocalizedTransform.Restore();
 
-            currentlyBoarded = isBoarded = false;
-            trailSpace.parent = transform;
+                MoveCameraOutOfTrailSpace();
+                ConsoleControl.Write($"Restoring parentage");
+                onboardLocalizedTransform.Restore();
+
+                ConsoleControl.Write($"Reactivating rigid bodies ({localizeRigidBodyState.Count})");
+                foreach (var rb in localizeRigidBodyState)
+                {
+                    if (rb != null)
+                    {
+                        ConsoleControl.Write($"Reactivating {rb.name}");
+                        rb.isKinematic = false;
+                    }
+                    else
+                        ConsoleControl.Write($"Lost inactive");
+                }
+
+                ConsoleControl.Write($"Unhiding renderers ({unhide.Count})");
+                foreach (var r in unhide)
+                {
+                    if (r.Renderer != null)
+                    {
+                        ConsoleControl.Write($"Unhiding {r.Renderer.name}");
+                        r.Renderer.enabled = true;
+                    }
+                    else
+                        ConsoleControl.Write($"Lost invisible {r.Name}");
+                }
+
+                ConsoleControl.Write($"Cleaning up state");
+            }
+            finally
+            {
+                currentlyBoarded = isBoarded = false;
+                ConsoleControl.Write($"Reintegration trail space");
+                trailSpace.parent = transform;
+            }
 
         }
     }
@@ -171,7 +250,7 @@ public class EchelonControl : MonoBehaviour
     
     private void LogComposition(Transform t, Indent indent = default)
     {
-        new HierarchyAnalyzer().LogTree(t);
+        new HierarchyAnalyzer().LogToJson(t, $@"C:\Temp\Logs\snapshot{DateTime.Now:yyyy-MM-dd HH_mm_ss}.json");
 
     }
 
@@ -185,7 +264,7 @@ public class EchelonControl : MonoBehaviour
             if (!isBoarded)
                 Offboard();
             else
-                Onboard(null);
+                Onboard(null, null);
         }
 
         if (currentCameraCenterIsCockpit != cameraCenterIsCockpit)
@@ -289,7 +368,7 @@ public class EchelonControl : MonoBehaviour
 
                 if (overdriveActive)
                 {
-                    float overdriveThreshold = regularForwardAcceleration / (overdriveForwardAcceleration + regularForwardAcceleration);
+                    float overdriveThreshold = regularForwardAcc / (overdriveForwardAcc + regularForwardAcc);
                     if (forwardAxis > overdriveThreshold)
                     {
                         backFacingRight.overdrive =
@@ -333,16 +412,42 @@ public class EchelonControl : MonoBehaviour
 
     }
 
+    bool warnedAboutNoRb = false;
+    int roll = 0;
     void FixedUpdate()
     {
         if (currentlyBoarded && !outOfWater && !isDocked)
         {
-            rb.AddRelativeForce(0, 0, forwardAxis * (regularForwardAcceleration + (overdriveActive && forwardAxis > 0 ? overdriveForwardAcceleration : 0)));
-            if (!freeCamera)
+            if (rb == null)
             {
-                //var rAxis = M.FlatNormalized(transform.right);
-                rb.AddForce(look.targetOrientation.Right * rightAxis * strafeAcceleration);
-                rb.AddForce(look.targetOrientation.Up * upAxis * strafeAcceleration);
+                if (!warnedAboutNoRb)
+                {
+                    warnedAboutNoRb = true;
+                    ConsoleControl.Write($"Warning: rb is null. Cannot move");
+                }
+                return;
+            }
+            var forwardAccel = forwardAxis * (regularForwardAcc + (overdriveActive && forwardAxis > 0 ? overdriveForwardAcc : 0));
+
+            //forwardAccel = forwardAxis * 1e10f;  //turbo debug
+            bool log = ((roll++) % 100) == 0;
+            if (log)
+                ConsoleControl.Write($"Accel: {forwardAccel} {freeCamera} {rb.name}, fps: {1f/Time.fixedTime}");
+            try
+            {
+                rb.AddRelativeForce(0, 0, forwardAccel, ForceMode.Acceleration);
+                if (!freeCamera)
+                {
+                    //var rAxis = M.FlatNormalized(transform.right);
+                    rb.AddForce(look.targetOrientation.Right * rightAxis * strafeAcc, ForceMode.Acceleration);
+                    rb.AddForce(look.targetOrientation.Up * upAxis * strafeAcc, ForceMode.Acceleration);
+                }
+                if (log)
+                    ConsoleControl.Write($"Done: {forwardAccel} {rb.name}, fps: {1f / Time.fixedTime}");
+            }
+            catch (Exception ex)
+            {
+                ConsoleControl.WriteException("FixedUpdate()",ex);
             }
         }
     }

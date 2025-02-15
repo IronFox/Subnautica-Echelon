@@ -64,7 +64,7 @@ public class PositionCamera : MonoBehaviour
         Transform closest2 = null;
         foreach (RaycastHit hit in hits2)
         {
-            if (hit.transform.IsChildOf(target))
+            if (hit.transform.IsChildOf(target) || hit.transform.IsChildOf(transform))
                 continue;
             if (hit.distance < closestHit2)
             {

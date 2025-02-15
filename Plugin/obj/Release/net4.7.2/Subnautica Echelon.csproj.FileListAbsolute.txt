@@ -216,3 +216,4 @@ E:\UnityCode\Subnautica Echelon\Plugin\obj\Release\net4.7.2\Subnautica Echelon.c
 E:\UnityCode\Subnautica Echelon\Plugin\obj\Release\net4.7.2\Subnauti.B212C1E0.Up2Date
 E:\UnityCode\Subnautica Echelon\Plugin\obj\Release\net4.7.2\Subnautica Echelon.dll
 E:\UnityCode\Subnautica Echelon\Plugin\obj\Release\net4.7.2\Subnautica Echelon.pdb
+E:\UnityCode\Subnautica Echelon\Plugin\obj\Release\net4.7.2\Subnautica Echelon.sourcelink.json

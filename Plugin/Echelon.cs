@@ -11,20 +11,74 @@ using UnityEngine.Networking;
 using Nautilus.Extensions;
 using static Vehicle;
 using UnityEngine.Experimental.GlobalIllumination;
+using System.Linq;
 
 
 namespace Subnautica_Echelon
 {
+    public class EchelonEngine : ModVehicleEngine
+    {
+        private MyLogger Log { get; }
+        public EchelonEngine()
+        {
+            Log = new MyLogger(this);
+            AngularDrag = 10;
+            
+        }
+        public override void Start()
+        {
+            AngularDrag = 10;
+        }
+        public override void ControlRotation()
+        {
+            Log.WriteLowFrequency(MyLogger.Channel.Four, ($"ControlRotation()"));
+        }
+
+        public override void KillMomentum()
+        {
+            Log.WriteLowFrequency(MyLogger.Channel.Three, ($"KillMomentum()"));
+            RB.velocity = Vector3.zero;
+        }
+
+        protected override void MoveWithInput(Vector3 moveInput)
+        {
+            Log.WriteLowFrequency(MyLogger.Channel.Two, $"MoveWithInput({moveInput})");
+        }
+
+        public override void ExecutePhysicsMove()
+        {
+            Log.WriteLowFrequency(MyLogger.Channel.Five, $"Move()");
+            //base.RB.AddForce(base.MV.transform.forward * 1e10f * Time.fixedDeltaTime, ForceMode.VelocityChange);
+            base.RB.AddForce(base.MV.transform.forward * 10000f * Time.fixedDeltaTime, ForceMode.VelocityChange);
+            Log.WriteLowFrequency(MyLogger.Channel.Six, $"Velocity = {RB.velocity}");
+        }
+
+        public void Update()
+        {
+            if (!CanMove())
+                Log.WriteLowFrequency(MyLogger.Channel.One, $"Cannot move");
+            else if (!CanTakeInputs())
+                Log.WriteLowFrequency(MyLogger.Channel.One, $"Cannot take inputs");
+            else
+                Log.WriteLowFrequency(MyLogger.Channel.One, $"All go");
+        }
+    }
 
     public class VoidEngine : ModVehicleEngine
     {
+        int counter = 0;
         public override void ExecutePhysicsMove()
-        { }
+        {
+            Log.Write($"ExecutePhysicsMove() {Log.PathOf(RB)}");
+        
+        }
         public override void ControlRotation()
-        { }
+        {
+            Log.Write($"ControlRotation() {Log.PathOf(RB)}");
+        }
         public override void DrainPower(Vector3 moveDirection)
         {
-            //todo
+            Log.Write($"DrainPower() {Log.PathOf(RB)} {moveDirection}");
         }
     }
 
@@ -84,6 +138,22 @@ namespace Subnautica_Echelon
 
     public static class Log
     {
+        public static string PathOf(Transform t)
+        {
+            var parts = new List<string>();
+            while (t != null && t.parent != t)
+            {
+                parts.Add($"{t.name}[{t.GetInstanceID()}]");
+                t = t.parent;
+            }
+            parts.Reverse();
+            return string.Join( "/", parts );
+
+        }
+        public static string PathOf(Component c)
+        {
+            return PathOf(c.transform) + $":{c.name}[{c.GetInstanceID()}]({c.GetType()})";
+        }
         public static void Write(string message)
         {
             File.AppendAllText(@"C:\Temp\Logs\log.txt", $"{DateTimeOffset.Now:HH:mm:ss.fff} {message}\r\n");
@@ -103,11 +173,60 @@ namespace Subnautica_Echelon
         }
     }
 
+    public class MyLogger
+    {
+        public Component Owner { get; }
+
+        public enum Channel
+        {
+            One,
+            Two,
+            Three,
+            Four,
+            Five,
+            Six,
+
+            Count
+        }
+
+        private DateTime[] LastStamp { get; } = new DateTime[(int)Channel.Count];
+
+        public MyLogger(Component owner)
+        {
+            Owner = owner;
+            for (int i = 0; i < LastStamp.Length; i++)
+                LastStamp[i] = DateTime.MinValue;
+        }
+
+        public void WriteLowFrequency(Channel channel, string msg)
+        {
+            DateTime now = DateTime.Now;
+            if (now - LastStamp[(int)channel] < TimeSpan.FromMilliseconds(1000))
+                return;
+            LastStamp[(int)channel] = now;
+            Write(msg);
+        }
+        public void Write(string msg)
+        {
+            Log.Write(Log.PathOf(Owner) + $": {msg}");
+        }
+    }
+
 
     public class Echelon : Submersible
     {
         public static GameObject model;
         private EchelonControl control;
+        private RotateCamera rotateCamera;
+        private PDA pda;
+        private MyLogger EchLog { get; }
+
+
+        public Echelon()
+        {
+            EchLog = new MyLogger(this);
+            EchLog.Write($"Constructed");
+        }
 
         public static void GetAssets()
         {
@@ -169,41 +288,58 @@ namespace Subnautica_Echelon
         {
             if (!isInitialized)
             {
-                Log.Write($"LocalInit() first time");
+                EchLog.Write($"LocalInit() first time");
                 isInitialized = true;
                 try
                 {
-                    Engine = new VoidEngine();
-                    CanLeviathanGrab = false;
-                    stabilizeRoll = false;
-                    sidewaysTorque = 0;
-                    sidewardForce = 0;
-                    forwardForce = 0;
-                    backwardForce = 0;
-                    verticalForce = 0;
-                    onGroundForceMultiplier = 0;
+                    //Engine = new VoidEngine();
+                    //CanLeviathanGrab = false;
+                    //stabilizeRoll = false;
+                    //sidewaysTorque = 0;
+                    //sidewardForce = 0;
+                    //forwardForce = 0;
+                    //backwardForce = 0;
+                    //verticalForce = 0;
+                    //onGroundForceMultiplier = 0;
 
+                    //var dummy = new GameObject("DummyPhysics");
+                    //var dummyRb = dummy.AddComponent<Rigidbody>();
+                    //dummyRb.isKinematic = true;
+                    //dummy.transform.parent = transform;
+                    //useRigidbody = dummyRb;
+
+                    VFEngine = gameObject.AddComponent<EchelonEngine>();
+
+
+
+
+                    EchLog.Write($"Start on rb");
 
 
                     control = GetComponent<EchelonControl>();
+                    rotateCamera = GetComponentInChildren<RotateCamera>();
+
+                    if (rotateCamera == null)
+                        EchLog.Write($"Rotate camera not found");
+                    else
+                        EchLog.Write($"Found camera rotate {rotateCamera.name}");
+
                     if (control != null)
                     {
-                        Log.Write("Found control");
-                        control.isBoarded = false;
-
+                        EchLog.Write("Found control");
                     }
                     else
                     {
                         if (transform == null)
-                            Log.Write($"Do not have a transform");
+                            EchLog.Write($"Do not have a transform");
                         else
                         {
-                            Log.Write($"This is {transform.name}");
-                            Log.Write("This has components: " + Helper.NamesS(Helper.AllComponents(transform)));
-                            Log.Write("This has children: " + Helper.NamesS(Helper.Children(transform)));
+                            EchLog.Write($"This is {transform.name}");
+                            EchLog.Write("This has components: " + Helper.NamesS(Helper.AllComponents(transform)));
+                            EchLog.Write("This has children: " + Helper.NamesS(Helper.Children(transform)));
                         }
                     }
-                    Log.Write($"LocalInit() done");
+                    EchLog.Write($"LocalInit() done");
 
                 }
                 catch (Exception e)
@@ -218,11 +354,13 @@ namespace Subnautica_Echelon
         {
             try
             {
-                Log.Write("Echelon.Start()");
+                EchLog.Write("Echelon.Start()");
+
+
                 LocalInit();
 
                 base.Start();
-                Log.Write("Echelon.Start() done");
+                EchLog.Write("Echelon.Start() done");
 
             }
             catch (Exception ex)
@@ -235,11 +373,16 @@ namespace Subnautica_Echelon
         {
             try
             {
-                Log.Write("Echelon.PlayerEntry()");
+                EchLog.Write("Echelon.PlayerEntry()");
                 LocalInit();
 
                 base.PlayerEntry();
-                control.Onboard(Player.main.transform);
+
+
+
+                //control.Onboard(null);//Player.main.transform/*, Player.main.pda.transform, Player.main.transform.Find("Inventory Storage")*/);
+
+                //playerPosition = Player.main.transform.parent.gameObject;
             }
             catch (Exception ex)
             {
@@ -251,10 +394,10 @@ namespace Subnautica_Echelon
         {
             try
             {
-                Log.Write("Echelon.PlayerExit()");
+                EchLog.Write("Echelon.PlayerExit()");
                 LocalInit();
                 base.PlayerExit();
-                control.Offboard();
+                //control.Offboard();
             }
             catch (Exception ex)
             {
@@ -289,7 +432,24 @@ namespace Subnautica_Echelon
             {
                 LocalInit();
 
+                var rb = GetComponent<Rigidbody>();
+                rb.isKinematic = false;
+                rb.mass = 10;
+                rb.angularDrag = 10;
+                rb.drag = 10;
+                rb.useGravity = true;
+
+                EchLog.WriteLowFrequency(MyLogger.Channel.One,
+                    $"pm={GetPilotingMode()}, ctrl={IsUnderCommand}," +
+                    $" engine.enabled={VFEngine?.enabled}," +
+                    $" pda={Player.main.GetPDA().isOpen}," +
+                    $" av={!AvatarInputHandler.main || AvatarInputHandler.main.IsEnabled()}," +
+                    $" charge={GetComponent<EnergyInterface>().hasCharge}");
+
+
                 control.outOfWater = !GetIsUnderwater();
+
+                control.cameraCenterIsCockpit = Player.main.pda.state != PDA.State.Closed;
                 var move = GameInput.GetMoveDirection();
                 control.forwardAxis =
                     GameInput.GetAnalogValueForButton(GameInput.Button.MoveForward)
@@ -303,6 +463,17 @@ namespace Subnautica_Echelon
                     GameInput.GetAnalogValueForButton(GameInput.Button.MoveUp)
                     - GameInput.GetAnalogValueForButton(GameInput.Button.MoveDown)
                     ;
+                rotateCamera.rotationAxisX = Input.GetAxis("Mouse X") * 0.1f;
+                rotateCamera.rotationAxisY = Input.GetAxis("Mouse Y") * 0.1f;
+
+                //rotateCamera.rotationAxisX = 
+                //    GameInput.GetAnalogValueForButton(GameInput.Button.LookRight)
+                //    - GameInput.GetAnalogValueForButton(GameInput.Button.LookLeft);
+                //rotateCamera.rotationAxisY = GameInput.GetAnalogValueForButton(GameInput.Button.LookUp)
+                //    - GameInput.GetAnalogValueForButton(GameInput.Button.LookDown);
+
+                //if (rotateCamera.rotationAxisX != 0 || rotateCamera.rotationAxisY != 0)
+                //    Log.Write($"Rot: {rotateCamera.rotationAxisX}, {rotateCamera.rotationAxisY}");
 
                 control.freeCamera =
                     GameInput.GetAnalogValueForButton(GameInput.Button.RightHand) > 0.5f
@@ -338,15 +509,17 @@ namespace Subnautica_Echelon
             get
             {
                 var mainSeat = transform.Find("PilotSeat");
+                var cockpitExit = transform.Find($"Cockpit/ExitLocation");
                 if (!mainSeat)
                 {
-                    Log.Write("PilotSeat not found");
+                    EchLog.Write("PilotSeat not found");
                     return default;
                 }
                 return new VehiclePilotSeat
                 {
                     Seat = mainSeat.gameObject,
                     SitLocation = mainSeat.gameObject,
+                    ExitLocation = cockpitExit,
                     LeftHandLocation = mainSeat,
                     RightHandLocation = mainSeat,
                 };
@@ -363,7 +536,7 @@ namespace Subnautica_Echelon
                 var hatch = transform.Find("Hatch");
                 if (!hatch)
                 {
-                    Log.Write("Hatch not found");
+                    EchLog.Write("Hatch not found");
                     return new List<VehicleHatchStruct>();
                 }
                 return new List<VehicleHatchStruct>
@@ -395,7 +568,7 @@ namespace Subnautica_Echelon
                         rs.Add(clipProxyParent.GetChild(i).gameObject);
                 }
                 else
-                    Log.Write("Clip proxy not found");
+                    EchLog.Write("Clip proxy not found");
                 return rs;
             }
         }
@@ -415,12 +588,15 @@ namespace Subnautica_Echelon
                     });
                 }
                 else
-                    Log.Write($"Upgrades interface not found");
+                    EchLog.Write($"Upgrades interface not found");
                 return rs;
 
             }
 
         }
+
+
+        public override VFEngine VFEngine { get; set; }
 
         public override List<VehicleFloodLight> HeadLights
         {
@@ -451,7 +627,7 @@ namespace Subnautica_Echelon
                 {
                     Log.Write("HeadLights", ex);
                 }
-                Log.Write($"Returning {rs.Count} headlight(s)");
+                EchLog.Write($"Returning {rs.Count} headlight(s)");
                 return rs;
 
             }
