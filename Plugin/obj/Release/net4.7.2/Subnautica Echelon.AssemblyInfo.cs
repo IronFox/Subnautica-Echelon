@@ -14,7 +14,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("Subnautica Echelon")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Release")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+f09ebb9dd241c8d22b5c292b10a98bd7ca11b36a")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+8c28331bcdda9f00f59fb4e01ebe314ded510105")]
 [assembly: System.Reflection.AssemblyProductAttribute("Subnautica Echelon")]
 [assembly: System.Reflection.AssemblyTitleAttribute("Subnautica Echelon")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

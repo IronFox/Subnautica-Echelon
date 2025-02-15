@@ -472,7 +472,7 @@ namespace Subnautica_Echelon
 
                 //control.outOfWater = !GetIsUnderwater();
 
-                //control.cameraCenterIsCockpit = Player.main.pda.state != PDA.State.Closed;
+                control.cameraCenterIsCockpit = Player.main.pda.state != PDA.State.Closed;
                 //var move = GameInput.GetMoveDirection();
                 //control.forwardAxis =
                 //    GameInput.GetAnalogValueForButton(GameInput.Button.MoveForward)
