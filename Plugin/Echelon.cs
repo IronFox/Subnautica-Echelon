@@ -27,7 +27,13 @@ namespace Subnautica_Echelon
         }
 
         public float overdriveActive;
+        public Vector3 currentInput;
 
+        public override void Awake()
+        {
+            WhistleFactor = 1.5f;
+            base.Awake();
+        }
         public override void Start()
         {
             base.Start();
@@ -45,7 +51,7 @@ namespace Subnautica_Echelon
         protected override void MoveWithInput(Vector3 moveInput)
         {
             //Log.WriteLowFrequency(MyLogger.Channel.Two, $"MoveWithInput({moveInput})");
-
+            currentInput = moveInput;
             moveInput = new Vector3(moveInput.x, moveInput.y , moveInput.z * (1.5f + 3 * overdriveActive));
 
             RB.AddRelativeForce(moveInput, ForceMode.VelocityChange);
@@ -455,7 +461,9 @@ namespace Subnautica_Echelon
                 //    $" pda={Player.main.GetPDA().isOpen}," +
                 //    $" av={!AvatarInputHandler.main || AvatarInputHandler.main.IsEnabled()}," +
                 //    $" charge={GetComponent<EnergyInterface>().hasCharge}");
-
+                control.forwardAxis = engine.currentInput.z;
+                control.rightAxis = engine.currentInput.x;
+                control.upAxis = engine.currentInput.y;
 
                 control.outOfWater = !GetIsUnderwater();
 

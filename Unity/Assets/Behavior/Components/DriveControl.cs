@@ -32,18 +32,18 @@ public class DriveControl : MonoBehaviour
     {
         thrust = Mathf.Clamp(thrust, -1,1);
 
-        if (regularAudioSource != null)
-        {
-            var audioThrust = Mathf.Abs(thrust);
-            if (audioThrust > 0)
-            {
-                regularAudioSource.volume = audioThrust;
-                regularAudioSource.pitch = 1 + audioThrust;
-                regularAudioSource.enabled = true;
-            }
-            else
-                regularAudioSource.enabled = false;
-        }
+        //if (regularAudioSource != null)
+        //{
+        //    var audioThrust = Mathf.Abs(thrust);
+        //    if (audioThrust > 0)
+        //    {
+        //        regularAudioSource.volume = audioThrust;
+        //        regularAudioSource.pitch = 1 + audioThrust;
+        //        regularAudioSource.enabled = true;
+        //    }
+        //    else
+        //        regularAudioSource.enabled = false;
+        //}
 
         if (overdrive > 0)
         {
@@ -74,18 +74,18 @@ public class DriveControl : MonoBehaviour
         }
 
         {
-            var inh = regularParticleSystem.inheritVelocity;
-            inh.mode = ParticleSystemInheritVelocityMode.Initial;
+            //var inh = regularParticleSystem.inheritVelocity;
+            //inh.mode = ParticleSystemInheritVelocityMode.Initial;
 
-            var module = regularParticleSystem.main;
-            module.startSpeedMultiplier = emissionSpeed * thrust;
+            //var module = regularParticleSystem.main;
+            //module.startSpeedMultiplier = emissionSpeed * thrust;
 
-            var em = regularParticleSystem.emission;
+            //var em = regularParticleSystem.emission;
 
             var velocity = regularParticleSystem.transform.position - lastPosition;
 
-            em.enabled = thrust > 0 && Vector3.Dot(velocity, regularParticleSystem.transform.forward) < 0;
-            em.rateOverTimeMultiplier = emissionRate * thrust * thrust;
+            //em.enabled = thrust > 0 && Vector3.Dot(velocity, regularParticleSystem.transform.forward) < 0;
+            //em.rateOverTimeMultiplier = emissionRate * thrust * thrust;
             propeller.Rotate(0, 0, thrust * maxRPS * Time.deltaTime);
 
             lastPosition = regularParticleSystem.transform.position;

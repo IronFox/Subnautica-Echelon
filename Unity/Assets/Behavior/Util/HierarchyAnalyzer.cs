@@ -393,23 +393,23 @@ public class HierarchyAnalyzer
                     switch (type)
                     {
                         case UnityEngine.Rendering.ShaderPropertyType.Color:
-                            properties.Add(name, ToJsonNode(m.GetColor(name), m));
+                            properties.Add($"{name}({type})", ToJsonNode(m.GetColor(name), m));
                             break;
                         case UnityEngine.Rendering.ShaderPropertyType.Vector:
-                            properties.Add(name, ToJsonNode(m.GetVector(name), m));
+                            properties.Add($"{name}({type})", ToJsonNode(m.GetVector(name), m));
                             break;
                         case UnityEngine.Rendering.ShaderPropertyType.Float:
                         case UnityEngine.Rendering.ShaderPropertyType.Range:
-                            properties.Add(name, ToJsonNode(m.GetFloat(name), m));
+                            properties.Add($"{name}({type})", ToJsonNode(m.GetFloat(name), m));
                             break;
                         case UnityEngine.Rendering.ShaderPropertyType.Texture:
                             {
                                 var t = m.GetTexture(name);
-                                properties.Add(name, ObjectToJson(t, true));
+                                properties.Add($"{name}({type})", ObjectToJson(t, true));
                             }
                             break;
                         default:
-                            properties.AddValue(name, "<unsupported type>(" + type + ")");
+                            properties.AddValue($"{name}({type})", "<unsupported type>");
                             break;
                     }
                 }

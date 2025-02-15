@@ -90,6 +90,7 @@ GameObject:
   - component: {fileID: 7662012628860270118}
   - component: {fileID: 297063062522891214}
   - component: {fileID: 868042733925689592}
+  - component: {fileID: 8696970996149497864}
   m_Layer: 0
   m_Name: Lattice.001
   m_TagString: Untagged
@@ -158,6 +159,18 @@ MeshRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
+--- !u!114 &8696970996149497864
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 162239215109796356}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8f49e1df347ade44e9bf8e0921436806, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &219489033037700311
 GameObject:
   m_ObjectHideFlags: 0
@@ -406,6 +419,7 @@ GameObject:
   - component: {fileID: 8051428205045970095}
   - component: {fileID: 1559503474548653912}
   - component: {fileID: 5600733829212013280}
+  - component: {fileID: 1224057564408287777}
   m_Layer: 0
   m_Name: Lattice
   m_TagString: Untagged
@@ -474,6 +488,18 @@ MeshRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
+--- !u!114 &1224057564408287777
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 417505858130370306}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8f49e1df347ade44e9bf8e0921436806, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &452463436206445301
 GameObject:
   m_ObjectHideFlags: 0
@@ -1219,7 +1245,7 @@ AudioSource:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1446893560356266015}
-  m_Enabled: 0
+  m_Enabled: 1
   serializedVersion: 4
   OutputAudioMixerGroup: {fileID: 0}
   m_audioClip: {fileID: 8300000, guid: ec8502a56f827164983874c1f4280071, type: 3}
@@ -2357,7 +2383,7 @@ ParticleSystem:
           m_PostInfinity: 2
           m_RotationOrder: 4
   EmissionModule:
-    enabled: 1
+    enabled: 0
     serializedVersion: 4
     rateOverTime:
       serializedVersion: 2
@@ -7459,7 +7485,7 @@ ParticleSystem:
           m_PostInfinity: 2
           m_RotationOrder: 4
   EmissionModule:
-    enabled: 0
+    enabled: 1
     serializedVersion: 4
     rateOverTime:
       serializedVersion: 2
@@ -12482,7 +12508,7 @@ ParticleSystem:
           m_PostInfinity: 2
           m_RotationOrder: 4
   EmissionModule:
-    enabled: 1
+    enabled: 0
     serializedVersion: 4
     rateOverTime:
       serializedVersion: 2
@@ -17666,7 +17692,7 @@ ParticleSystem:
           m_PostInfinity: 2
           m_RotationOrder: 4
   EmissionModule:
-    enabled: 0
+    enabled: 1
     serializedVersion: 4
     rateOverTime:
       serializedVersion: 2
@@ -23469,7 +23495,7 @@ ParticleSystem:
           m_PostInfinity: 2
           m_RotationOrder: 4
   EmissionModule:
-    enabled: 1
+    enabled: 0
     serializedVersion: 4
     rateOverTime:
       serializedVersion: 2
@@ -28231,7 +28257,7 @@ ParticleSystem:
           m_PostInfinity: 2
           m_RotationOrder: 4
   EmissionModule:
-    enabled: 1
+    enabled: 0
     serializedVersion: 4
     rateOverTime:
       serializedVersion: 2
@@ -32404,6 +32430,10 @@ MonoBehaviour:
   rotationDegreesPerSecond: 100
   waterDrag: 10
   airDrag: 0.1
+  forwardFacingLeft: {fileID: 7858723242007386751}
+  backFacingLeft: {fileID: 7858723241938675400}
+  forwardFacingRight: {fileID: 7858723242230373191}
+  backFacingRight: {fileID: 7858723241757330820}
   trailSpace: {fileID: 6661174160902177833}
   seat: {fileID: 745221224139561894}
 --- !u!114 &7425152161169628275
@@ -32446,6 +32476,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e28475d6d10248446bcf2ce28ac58543, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  debugForward: {x: 0, y: 0, z: 0}
 --- !u!1 &7858723241917922246
 GameObject:
   m_ObjectHideFlags: 0

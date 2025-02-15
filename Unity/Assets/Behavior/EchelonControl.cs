@@ -34,10 +34,10 @@ public class EchelonControl : MonoBehaviour
     private Transform cameraRoot;
 
 
-    //public DriveControl forwardFacingLeft;
-    //public DriveControl backFacingLeft;
-    //public DriveControl forwardFacingRight;
-    //public DriveControl backFacingRight;
+    public DriveControl forwardFacingLeft;
+    public DriveControl backFacingLeft;
+    public DriveControl forwardFacingRight;
+    public DriveControl backFacingRight;
 
     public Transform trailSpace;
     //public Transform cockpitRoot;
@@ -326,11 +326,11 @@ public class EchelonControl : MonoBehaviour
                     nonCameraOrientation.rightRotationSpeed = 0;
                     nonCameraOrientation.upRotationSpeed = 0;
                 }
-                //backFacingLeft.thrust = 0;
-                //backFacingRight.thrust = 0;
+                backFacingLeft.thrust = 0;
+                backFacingRight.thrust = 0;
 
-                //backFacingLeft.overdrive = 0;
-                //backFacingRight.overdrive = 0;
+                backFacingLeft.overdrive = 0;
+                backFacingRight.overdrive = 0;
             }
             else
             {
@@ -339,24 +339,24 @@ public class EchelonControl : MonoBehaviour
                     nonCameraOrientation.rightRotationSpeed = rightAxis * rotationDegreesPerSecond;
                     nonCameraOrientation.upRotationSpeed = -upAxis * rotationDegreesPerSecond;
                 }
-                //backFacingLeft.thrust = forwardAxis + look.HorizontalRotationIntent * 0.001f;
-                //backFacingRight.thrust = forwardAxis - look.HorizontalRotationIntent * 0.001f;
+                backFacingLeft.thrust = forwardAxis + look.HorizontalRotationIntent * 0.001f;
+                backFacingRight.thrust = forwardAxis - look.HorizontalRotationIntent * 0.001f;
 
 
-                //if (overdriveActive)
-                //{
-                //    float overdriveThreshold = regularForwardAcc / (overdriveForwardAcc + regularForwardAcc);
-                //    if (forwardAxis > overdriveThreshold)
-                //    {
-                //        backFacingRight.overdrive =
-                //        backFacingLeft.overdrive =
-                //            (forwardAxis - overdriveThreshold) / (1f - overdriveThreshold);
-                //    }
-                //    else
-                //        backFacingLeft.overdrive = backFacingRight.overdrive = 0;
-                //}
-                //else
-                //    backFacingLeft.overdrive = backFacingRight.overdrive = 0;
+                if (overdriveActive)
+                {
+                    float overdriveThreshold = regularForwardAcc / (overdriveForwardAcc + regularForwardAcc);
+                    if (forwardAxis > overdriveThreshold)
+                    {
+                        backFacingRight.overdrive =
+                        backFacingLeft.overdrive =
+                            (forwardAxis - overdriveThreshold) / (1f - overdriveThreshold);
+                    }
+                    else
+                        backFacingLeft.overdrive = backFacingRight.overdrive = 0;
+                }
+                else
+                    backFacingLeft.overdrive = backFacingRight.overdrive = 0;
 
             }
 
@@ -375,8 +375,8 @@ public class EchelonControl : MonoBehaviour
             }
             rotateCamera.enabled = false;
             positionCamera.zoomAxis = 0;
-            //backFacingLeft.thrust = 0;
-            //backFacingLeft.thrust = 0;
+            backFacingLeft.thrust = 0;
+            backFacingLeft.thrust = 0;
             if (look != null)
                 look.targetOrientation = fallOrientation;
 
