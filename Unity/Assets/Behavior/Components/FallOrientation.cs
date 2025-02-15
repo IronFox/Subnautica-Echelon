@@ -14,6 +14,8 @@ public class FallOrientation : MonoBehaviour, IDirectionSource
 
     }
 
+    public Vector3 debugForward;
+
     public Vector3 Forward => rot.Forward;
     public Vector3 Right => rot.Right;
     public Vector3 Up => rot.Up;
@@ -30,5 +32,7 @@ public class FallOrientation : MonoBehaviour, IDirectionSource
             dir /= mag;
 
         rot = LockedEuler.FromForward(dir,TransformLocality.Global);
+
+        debugForward = Forward;
     }
 }

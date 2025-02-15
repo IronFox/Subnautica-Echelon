@@ -457,7 +457,7 @@ namespace Subnautica_Echelon
                 //    $" charge={GetComponent<EnergyInterface>().hasCharge}");
 
 
-                //control.outOfWater = !GetIsUnderwater();
+                control.outOfWater = !GetIsUnderwater();
 
                 control.cameraCenterIsCockpit = Player.main.pda.state != PDA.State.Closed;
                 //var move = GameInput.GetMoveDirection();
