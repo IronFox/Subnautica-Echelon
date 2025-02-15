@@ -135,18 +135,37 @@ namespace Subnautica_Echelon
         public static string PathOf(Transform t)
         {
             var parts = new List<string>();
-            while (t != null && t.parent != t)
+            try
             {
-                parts.Add($"{t.name}[{t.GetInstanceID()}]");
-                t = t.parent;
+                while (t != null)
+                {
+                    parts.Add($"{t.name}[{t.GetInstanceID()}]");
+                    t = t.parent;
+                }
             }
+            catch (UnityException)  //odd, but okay, don't care
+            { }
             parts.Reverse();
             return string.Join( "/", parts );
 
         }
         public static string PathOf(Component c)
         {
-            return PathOf(c.transform) + $":{c.name}[{c.GetInstanceID()}]({c.GetType()})";
+            try
+            {
+                return PathOf(c.transform) + $":{c.name}[{c.GetInstanceID()}]({c.GetType()})";
+            }
+            catch (Exception)
+            {
+                try
+                {
+                    return c.name;
+                }
+                catch (Exception ex)
+                {
+                    return ex.Message;
+                }
+            }
         }
         public static void Write(string message)
         {
@@ -291,7 +310,18 @@ namespace Subnautica_Echelon
             }
             VFEngine = Engine = engine = gameObject.AddComponent<EchelonEngine>();
             EchLog.Write($"Assigned new engine");
+
+
+
             base.Awake();
+            var cameraController = gameObject.GetComponentInChildren<VehicleFramework.VehicleComponents.MVCameraController>();
+            if (cameraController != null)
+            {
+                EchLog.Write($"Destroying camera controller {cameraController}");
+                Destroy(cameraController );
+            }
+
+
         }
 
         private void LocalInit()

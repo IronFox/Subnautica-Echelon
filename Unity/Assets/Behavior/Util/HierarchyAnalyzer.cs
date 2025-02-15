@@ -393,23 +393,26 @@ public class HierarchyAnalyzer
                     switch (type)
                     {
                         case UnityEngine.Rendering.ShaderPropertyType.Color:
-                            properties.Add($"{name}({type})", ToJsonNode(m.GetColor(name), m));
+                            properties.Add($"#{i} {name}({type})", ToJsonNode(m.GetColor(name), m));
                             break;
                         case UnityEngine.Rendering.ShaderPropertyType.Vector:
-                            properties.Add($"{name}({type})", ToJsonNode(m.GetVector(name), m));
+                            properties.Add($"#{i} {name}({type})", ToJsonNode(m.GetVector(name), m));
                             break;
                         case UnityEngine.Rendering.ShaderPropertyType.Float:
+                            properties.Add($"#{i} {name}({type})", ToJsonNode(m.GetFloat(name), m));
+                            break;
                         case UnityEngine.Rendering.ShaderPropertyType.Range:
-                            properties.Add($"{name}({type})", ToJsonNode(m.GetFloat(name), m));
+                            var range = m.shader.GetPropertyRangeLimits(i);
+                            properties.Add($"#{i} {name}({type} in [{range.x},{range.y}])", ToJsonNode(m.GetFloat(name), m));
                             break;
                         case UnityEngine.Rendering.ShaderPropertyType.Texture:
                             {
                                 var t = m.GetTexture(name);
-                                properties.Add($"{name}({type})", ObjectToJson(t, true));
+                                properties.Add($"#{i} {name}({type})", ObjectToJson(t, true));
                             }
                             break;
                         default:
-                            properties.AddValue($"{name}({type})", "<unsupported type>");
+                            properties.AddValue($"#{i} {name}({type})", "<unsupported type>");
                             break;
                     }
                 }

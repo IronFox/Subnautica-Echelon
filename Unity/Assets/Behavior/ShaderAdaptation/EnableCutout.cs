@@ -4,20 +4,20 @@ using UnityEngine;
 
 public class EnableCutout : MonoBehaviour
 {
+    private MaterialAccess access;
     // Start is called before the first frame update
     void Start()
     {
-        var renderer = GetComponent<MeshRenderer>();
-
-        if (renderer != null && renderer.materials.Length == 1)
-        {
-            renderer.materials[0].SetInt($"_EnableCutOff",1);
-        }
+        access = ShaderUtil.Access(transform);
+        access.SetFloat($"_EnableCutOff", 1f);
+        access.SetFloat($"_EnableDitherAlpha", 1f);
     }
 
     // Update is called once per frame
     void Update()
     {
-        
+        if (access.IsActive)
+            access.SetFloat($"_EnableCutOff", 1f);
+
     }
 }
