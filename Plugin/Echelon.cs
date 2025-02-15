@@ -39,10 +39,12 @@ namespace Subnautica_Echelon
         //    RB.velocity = Vector3.zero;
         //}
 
-        //protected override void MoveWithInput(Vector3 moveInput)
-        //{
-        //    Log.WriteLowFrequency(MyLogger.Channel.Two, $"MoveWithInput({moveInput})");
-        //}
+        protected override void MoveWithInput(Vector3 moveInput)
+        {
+            //Log.WriteLowFrequency(MyLogger.Channel.Two, $"MoveWithInput({moveInput})");
+
+            RB.AddRelativeForce(moveInput, ForceMode.VelocityChange);
+        }
 
         //public override void ExecutePhysicsMove()
         //{
