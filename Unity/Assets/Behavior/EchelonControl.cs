@@ -31,6 +31,8 @@ public class EchelonControl : MonoBehaviour
     public float waterDrag = 10;
     public float airDrag = 0.1f;
 
+    private Transform cameraRoot;
+
 
     //public DriveControl forwardFacingLeft;
     //public DriveControl backFacingLeft;
@@ -78,10 +80,10 @@ public class EchelonControl : MonoBehaviour
         {
             cameraIsInTrailspace = true;
             ConsoleControl.Write("Moving camera to trailspace");
-            cameraMove = Parentage.FromLocal(Camera.main.transform);
+            cameraMove = Parentage.FromLocal(cameraRoot);
 
-            Camera.main.transform.parent = trailSpace;
-            TransformDescriptor.LocalIdentity.ApplyTo(Camera.main.transform);
+            cameraRoot.parent = trailSpace;
+            TransformDescriptor.LocalIdentity.ApplyTo(cameraRoot);
             ConsoleControl.Write("Moved");
         }
     }
@@ -124,14 +126,17 @@ public class EchelonControl : MonoBehaviour
             Hide(t.GetChild(i), branchesNotToHide);
     }
 
-    public void Onboard()
+    public void Onboard(Transform localizeInsteadOfMainCamera = null)
     {
         if (!currentlyBoarded)
         {
             ConsoleControl.Write($"Onboarding");
 
+            cameraRoot = localizeInsteadOfMainCamera;
+            if (cameraRoot == null)
+                cameraRoot = Camera.main.transform;
 
-           
+
             cameraIsInTrailspace = false;//just in case
             if (!currentCameraCenterIsCockpit)
                 MoveCameraToTrailSpace();
@@ -244,7 +249,7 @@ public class EchelonControl : MonoBehaviour
             ConsoleControl.Write("Capturing debug information v3");
             
             ConsoleControl.Write($"3rd person camera at {trailSpace.position}");
-            ConsoleControl.Write($"Main camera at {Camera.main.transform.position}");
+            ConsoleControl.Write($"Main camera at {cameraRoot.position}");
             //ConsoleControl.Write($"Cockpit center at {cockpitRoot.position}");
 
 

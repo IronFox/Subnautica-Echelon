@@ -70,24 +70,6 @@ namespace Subnautica_Echelon
         //}
     }
 
-    public class VoidEngine : ModVehicleEngine
-    {
-        int counter = 0;
-        public override void ExecutePhysicsMove()
-        {
-            Log.Write($"ExecutePhysicsMove() {Log.PathOf(RB)}");
-        
-        }
-        public override void ControlRotation()
-        {
-            Log.Write($"ControlRotation() {Log.PathOf(RB)}");
-        }
-        public override void DrainPower(Vector3 moveDirection)
-        {
-            Log.Write($"DrainPower() {Log.PathOf(RB)} {moveDirection}");
-        }
-    }
-
 
     public class Method1<T>
     {
@@ -399,10 +381,7 @@ namespace Subnautica_Echelon
                 LocalInit();
 
                 base.PlayerEntry();
-
-
-
-                control.Onboard();//Player.main.transform/*, Player.main.pda.transform, Player.main.transform.Find("Inventory Storage")*/);
+                control.Onboard(Player.main.camRoot.transform);
 
                 //playerPosition = Player.main.transform.parent.gameObject;
             }
@@ -418,8 +397,11 @@ namespace Subnautica_Echelon
             {
                 EchLog.Write("Echelon.PlayerExit()");
                 LocalInit();
-                base.PlayerExit();
                 control.Offboard();
+                base.PlayerExit();
+
+                Player.main.transform.LookAt(transform.position);
+
             }
             catch (Exception ex)
             {
