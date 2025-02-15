@@ -397,8 +397,8 @@ public class EchelonControl : MonoBehaviour
         if (look != null)
             look.enabled = (isBoarded || outOfWater) && !isDocked;
 
-        //forwardFacingLeft.thrust = -backFacingLeft.thrust;
-        //forwardFacingRight.thrust = -backFacingRight.thrust;
+        forwardFacingLeft.thrust = -backFacingLeft.thrust;
+        forwardFacingRight.thrust = -backFacingRight.thrust;
 
         //rb.drag = outOfWater ? airDrag : waterDrag;
 

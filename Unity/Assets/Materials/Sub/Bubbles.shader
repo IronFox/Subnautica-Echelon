@@ -51,7 +51,8 @@
             {
                 // sample the texture
                 fixed4 col = tex2D(_MainTex, i.uv);
-                col.a *= 0.2;
+                //col.a *= 0.05;
+                col.rgb *= unity_AmbientEquator.rgb;
                 //col.rgb *= col.a;
                 // apply fog
                 //col.a = 1;

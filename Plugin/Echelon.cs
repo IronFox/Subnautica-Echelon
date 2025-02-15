@@ -518,7 +518,7 @@ namespace Subnautica_Echelon
                 else if (transform.position.y < Ocean.GetOceanLevel() - 10 || transform.position.y > 2)
                     control.positionCameraBelowSub = false;
 
-                //control.isDocked = docked;
+                control.isDocked = docked;
 
                 base.Update();
             }

@@ -1246,7 +1246,7 @@ AudioSource:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1446893560356266015}
-  m_Enabled: 1
+  m_Enabled: 0
   serializedVersion: 4
   OutputAudioMixerGroup: {fileID: 0}
   m_audioClip: {fileID: 8300000, guid: ec8502a56f827164983874c1f4280071, type: 3}
@@ -1694,7 +1694,7 @@ GameObject:
   - component: {fileID: 6512694332215919195}
   - component: {fileID: 6910418796837276539}
   m_Layer: 0
-  m_Name: Emitter
+  m_Name: Emitter Light
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -2542,7 +2542,7 @@ ParticleSystem:
           m_PostInfinity: 2
           m_RotationOrder: 4
   EmissionModule:
-    enabled: 0
+    enabled: 1
     serializedVersion: 4
     rateOverTime:
       serializedVersion: 2
@@ -6797,7 +6797,7 @@ GameObject:
   - component: {fileID: 7629831111941395817}
   - component: {fileID: 2329096796898652469}
   m_Layer: 0
-  m_Name: Overdrive Emitter
+  m_Name: Overdrive Emitter Light
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -11494,7 +11494,7 @@ ParticleSystemRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: 5c0a7ad6aa0225243a5d448f6057e8d2, type: 2}
+  - {fileID: 2100000, guid: 54c60d041517d404c9fd7f505734090d, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -11820,7 +11820,7 @@ GameObject:
   - component: {fileID: 4801341791708076473}
   - component: {fileID: 5127008834341720217}
   m_Layer: 0
-  m_Name: Emitter
+  m_Name: Emitter Light
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -12668,7 +12668,7 @@ ParticleSystem:
           m_PostInfinity: 2
           m_RotationOrder: 4
   EmissionModule:
-    enabled: 0
+    enabled: 1
     serializedVersion: 4
     rateOverTime:
       serializedVersion: 2
@@ -17005,7 +17005,7 @@ GameObject:
   - component: {fileID: 1038691074895587304}
   - component: {fileID: 5177498881610236852}
   m_Layer: 0
-  m_Name: Overdrive Emitter
+  m_Name: Overdrive Emitter Light
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -21702,7 +21702,7 @@ ParticleSystemRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: 5c0a7ad6aa0225243a5d448f6057e8d2, type: 2}
+  - {fileID: 2100000, guid: 54c60d041517d404c9fd7f505734090d, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -21741,7 +21741,7 @@ ParticleSystemRenderer:
   m_ApplyActiveColorSpace: 1
   m_AllowRoll: 1
   m_VertexStreams: 00010304
-  m_Mesh: {fileID: 0}
+  m_Mesh: {fileID: 10202, guid: 0000000000000000e000000000000000, type: 0}
   m_Mesh1: {fileID: 0}
   m_Mesh2: {fileID: 0}
   m_Mesh3: {fileID: 0}
@@ -22809,7 +22809,7 @@ GameObject:
   - component: {fileID: 2677807881038326584}
   - component: {fileID: 2354957788536562200}
   m_Layer: 0
-  m_Name: Emitter
+  m_Name: Emitter Light
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -23657,7 +23657,7 @@ ParticleSystem:
           m_PostInfinity: 2
           m_RotationOrder: 4
   EmissionModule:
-    enabled: 0
+    enabled: 1
     serializedVersion: 4
     rateOverTime:
       serializedVersion: 2
@@ -27571,7 +27571,7 @@ GameObject:
   - component: {fileID: 2677807882152835839}
   - component: {fileID: 2354957789374247903}
   m_Layer: 0
-  m_Name: Emitter
+  m_Name: Emitter Light
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -28419,7 +28419,7 @@ ParticleSystem:
           m_PostInfinity: 2
           m_RotationOrder: 4
   EmissionModule:
-    enabled: 0
+    enabled: 1
     serializedVersion: 4
     rateOverTime:
       serializedVersion: 2
@@ -32592,6 +32592,7 @@ MonoBehaviour:
   rotationDegreesPerSecond: 50
   waterDrag: 10
   airDrag: 0.1
+  triggerActive: 0
   explosionPrefab: {fileID: 1559697159186320428, guid: 75390e578275a3b4d831189dc16d5b06,
     type: 3}
   forwardFacingLeft: {fileID: 7858723242007386751}
@@ -33455,7 +33456,7 @@ AudioSource:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 8330763181566546590}
-  m_Enabled: 1
+  m_Enabled: 0
   serializedVersion: 4
   OutputAudioMixerGroup: {fileID: 0}
   m_audioClip: {fileID: 8300000, guid: ec8502a56f827164983874c1f4280071, type: 3}
