@@ -32320,6 +32320,8 @@ GameObject:
   - component: {fileID: 7858723241877434807}
   - component: {fileID: 7858723241877434804}
   - component: {fileID: 5519261214424765450}
+  - component: {fileID: 7425152161169628275}
+  - component: {fileID: 6757097437200021303}
   m_Layer: 0
   m_Name: Echelon
   m_TagString: Untagged
@@ -32402,6 +32404,34 @@ MonoBehaviour:
   airDrag: 0.1
   trailSpace: {fileID: 6661174160902177833}
   seat: {fileID: 745221224139561894}
+--- !u!114 &7425152161169628275
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7858723241877434803}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: feaca3506156d4c47a13c50b2545a014, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  rightRotationSpeed: 0
+  upRotationSpeed: 0
+  isActive: 0
+--- !u!114 &6757097437200021303
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7858723241877434803}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b2ecd47b9b308e140926f244b1aa9f45, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  rotateUpDown: 1
 --- !u!1 &7858723241917922246
 GameObject:
   m_ObjectHideFlags: 0

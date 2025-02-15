@@ -46,7 +46,7 @@ public class PointNoseInDirection : MonoBehaviour
         if (rotateUpDown)
             RotateUpDown();
 
-        rb.AddRelativeForce(0, 0, 10, ForceMode.Acceleration);
+        //rb.AddRelativeForce(0, 0, 10, ForceMode.Acceleration);
     }
 
     //void LateUpdate()

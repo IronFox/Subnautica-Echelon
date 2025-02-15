@@ -4,18 +4,18 @@ using UnityEngine;
 
 public class MouseRotateCamera : MonoBehaviour
 {
-    private RotateCamera dtc;
+    private EchelonControl dtc;
     // Start is called before the first frame update
     void Start()
     {
-        dtc = GetComponent<RotateCamera>();
+        dtc = GetComponent<EchelonControl>();
     }
 
     // Update is called once per frame
     void Update()
     {
-        dtc.rotationAxisX = Input.GetAxis("Mouse X");
-        dtc.rotationAxisY = Input.GetAxis("Mouse Y");
+        dtc.lookRightAxis = Input.GetAxis("Mouse X");
+        dtc.lookUpAxis = Input.GetAxis("Mouse Y");
 
     }
 }
