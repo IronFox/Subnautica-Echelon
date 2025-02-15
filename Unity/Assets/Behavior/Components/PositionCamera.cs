@@ -8,7 +8,8 @@ public class PositionCamera : MonoBehaviour
 {
     // Start is called before the first frame update
 
-    public BoxCollider targetBoundingBox;
+    public BoxCollider referenceBoundingBox;
+    public Rigidbody subRoot;
     private float distanceToTarget;
     private Transform target;
     private float minDistanceToTarget;
@@ -24,14 +25,14 @@ public class PositionCamera : MonoBehaviour
 
     void Start()
     {
-        target = targetBoundingBox.transform.parent;
-        distanceToTarget = Vector3.Distance(targetBoundingBox.transform.position, transform.transform.position);
-        minDistanceToTarget = targetBoundingBox.size.magnitude;
+        target = subRoot.transform;
+        distanceToTarget = Vector3.Distance(referenceBoundingBox.transform.position, transform.transform.position);
+        minDistanceToTarget = referenceBoundingBox.size.magnitude;
         maxDistanceToTarget = minDistanceToTarget * 20;
         ConsoleControl.Write($"Valid 3rd person camera distance range is [{minDistanceToTarget},{maxDistanceToTarget}]");
         distanceToTarget = Mathf.Clamp( distanceToTarget, minDistanceToTarget, maxDistanceToTarget );
         ConsoleControl.Write($"3rd camera distance set to {distanceToTarget}");
-        boxHeight = targetBoundingBox.size.y * targetBoundingBox.transform.localScale.y;
+        boxHeight = referenceBoundingBox.size.y * referenceBoundingBox.transform.localScale.y;
     }
 
     private string loggedCollider;
@@ -46,9 +47,10 @@ public class PositionCamera : MonoBehaviour
 
         h += (wantH - h) * 2f * Mathf.Min(Time.deltaTime, 1f);
 
-        var lookAtTarget = targetBoundingBox.transform.position + targetBoundingBox.transform.up * h;
+        var lookAtTarget = target.position + referenceBoundingBox.transform.up * h;
 
         var wantPosition = lookAtTarget - transform.forward * distanceToTarget;
+        Vector3 targetPosition;
 
 
         var dir = -transform.forward;
@@ -79,7 +81,7 @@ public class PositionCamera : MonoBehaviour
                 if (loggedCollider != hit.transform.name)
                 {
                     loggedCollider = hit.transform.name;
-                    ConsoleControl.Write("Camera collision with "+ hit.transform.name);
+                    ConsoleControl.Write("Camera collision with " + hit.transform.name);
                     //HierarchyAnalyzer analyzer = new HierarchyAnalyzer();
                     //analyzer.LogToJson(hit.transform, $@"C:\temp\logs\hit{DateTime.Now:yyyy-MM-dd HH_mm_ss}.json");
                 }
@@ -89,10 +91,9 @@ public class PositionCamera : MonoBehaviour
             }
         }
 
-        Vector3 targetPosition;
 
         if (closest2 != null)
-            targetPosition = target.position + dir2 * Mathf.Max(3f ,closestHit2 - 0.5f);
+            targetPosition = target.position + dir2 * Mathf.Max(3f, closestHit2 - 0.5f);
         else
             targetPosition = wantPosition;
 

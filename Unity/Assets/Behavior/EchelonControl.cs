@@ -27,7 +27,7 @@ public class EchelonControl : MonoBehaviour
     public float regularForwardAcc = 400;
     public float overdriveForwardAcc = 800;
     public float strafeAcc = 200;
-    public float rotationDegreesPerSecond = 100;
+    public float rotationDegreesPerSecond = 50;
     public float waterDrag = 10;
     public float airDrag = 0.1f;
 

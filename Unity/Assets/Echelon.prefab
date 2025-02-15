@@ -6658,7 +6658,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: fdf75d2cf0c5b7a43bd6cde3891e8c37, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  targetBoundingBox: {fileID: 7858723241677529997}
+  referenceBoundingBox: {fileID: 7858723241677529997}
+  subRoot: {fileID: 7858723241877434804}
   positionBelowTarget: 0
   shipCollider: {fileID: 571559332300350846}
   zoomAxis: 0
@@ -32588,7 +32589,7 @@ MonoBehaviour:
   regularForwardAcc: 400
   overdriveForwardAcc: 800
   strafeAcc: 200
-  rotationDegreesPerSecond: 100
+  rotationDegreesPerSecond: 50
   waterDrag: 10
   airDrag: 0.1
   forwardFacingLeft: {fileID: 7858723242007386751}

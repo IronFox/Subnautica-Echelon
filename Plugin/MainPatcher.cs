@@ -1,6 +1,7 @@
 ﻿using BepInEx;
 using HarmonyLib;
 using Nautilus.Handlers;
+using RootMotion.FinalIK;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -8,17 +9,14 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using UnityEngine;
+using UnityEngine.Assertions;
 using UWE;
 using VehicleFramework;
 using VehicleFramework.VehicleTypes;
+using static OVRHaptics;
 
 namespace Subnautica_Echelon
 {
-
-    public class EchelonConfig : Nautilus.Json.ConfigFile
-    {
-
-    }
 
 
 
@@ -27,7 +25,8 @@ namespace Subnautica_Echelon
     [BepInDependency(Nautilus.PluginInfo.PLUGIN_GUID, Nautilus.PluginInfo.PLUGIN_VERSION)]
     public class MainPatcher : BaseUnityPlugin
     {
-        internal static EchelonConfig config { get; private set; }
+        internal static EchelonConfig Config { get; private set; }
+
 
         public void Awake()
         {
@@ -49,7 +48,7 @@ namespace Subnautica_Echelon
             try
             {
                 Log.Write("MainPatcher.Start()");
-                config = OptionsPanelHandler.RegisterModOptions<EchelonConfig>();
+                Config = OptionsPanelHandler.RegisterModOptions<EchelonConfig>();
                 var harmony = new Harmony(PluginInfo.PLUGIN_GUID);
                 harmony.PatchAll();
                 UWE.CoroutineHost.StartCoroutine(Register());

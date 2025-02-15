@@ -3,15 +3,9 @@ using System.Collections.Generic;
 using System.IO;
 using System.Reflection;
 using UnityEngine;
-using VehicleFramework;
 using VehicleFramework.Engines;
 using VehicleFramework.VehicleParts;
 using VehicleFramework.VehicleTypes;
-using UnityEngine.Networking;
-using Nautilus.Extensions;
-using static Vehicle;
-using UnityEngine.Experimental.GlobalIllumination;
-using System.Linq;
 
 
 namespace Subnautica_Echelon
@@ -28,6 +22,7 @@ namespace Subnautica_Echelon
 
         public float overdriveActive;
         public Vector3 currentInput;
+        public bool freeCamera;
 
         public override void Awake()
         {
@@ -53,7 +48,8 @@ namespace Subnautica_Echelon
             //Log.WriteLowFrequency(MyLogger.Channel.Two, $"MoveWithInput({moveInput})");
             currentInput = moveInput;
             moveInput = new Vector3(moveInput.x, moveInput.y , moveInput.z * (1.5f + 3 * overdriveActive));
-
+            if (freeCamera)
+                moveInput = new Vector3(0, 0, moveInput.z);
             RB.AddRelativeForce(moveInput, ForceMode.VelocityChange);
         }
 
@@ -409,6 +405,7 @@ namespace Subnautica_Echelon
             }
         }
 
+        private readonly List<MonoBehaviour> reenableOnExit = new List<MonoBehaviour>();
         public override void PlayerEntry()
         {
             try
@@ -418,6 +415,9 @@ namespace Subnautica_Echelon
 
                 base.PlayerEntry();
                 control.Onboard(Player.main.camRoot.transform);
+                
+                reenableOnExit.Clear();
+                
 
                 //playerPosition = Player.main.transform.parent.gameObject;
             }
@@ -435,6 +435,12 @@ namespace Subnautica_Echelon
                 LocalInit();
                 control.Offboard();
                 base.PlayerExit();
+
+                foreach (MonoBehaviour behavior in reenableOnExit)
+                {
+                    EchLog.Write($"Reenabling {behavior.name}");
+                    behavior.enabled = true;
+                }
 
                 Player.main.transform.LookAt(transform.position);
 
@@ -498,45 +504,19 @@ namespace Subnautica_Echelon
                 control.outOfWater = !GetIsUnderwater();
 
                 control.cameraCenterIsCockpit = Player.main.pda.state != PDA.State.Closed;
-                //var move = GameInput.GetMoveDirection();
-                //control.forwardAxis =
-                //    GameInput.GetAnalogValueForButton(GameInput.Button.MoveForward)
-                //    - GameInput.GetAnalogValueForButton(GameInput.Button.MoveBackward)
-                //    ;
-                //control.rightAxis =
-                //    GameInput.GetAnalogValueForButton(GameInput.Button.MoveRight)
-                //    - GameInput.GetAnalogValueForButton(GameInput.Button.MoveLeft)
-                //    ;
-                //control.upAxis = 
-                //    GameInput.GetAnalogValueForButton(GameInput.Button.MoveUp)
-                //    - GameInput.GetAnalogValueForButton(GameInput.Button.MoveDown)
-                //    ;
-                //rotateCamera.rotationAxisX = Input.GetAxis("Mouse X") * 0.1f;
-                //rotateCamera.rotationAxisY = Input.GetAxis("Mouse Y") * 0.1f;
 
-                ////rotateCamera.rotationAxisX = 
-                ////    GameInput.GetAnalogValueForButton(GameInput.Button.LookRight)
-                ////    - GameInput.GetAnalogValueForButton(GameInput.Button.LookLeft);
-                ////rotateCamera.rotationAxisY = GameInput.GetAnalogValueForButton(GameInput.Button.LookUp)
-                ////    - GameInput.GetAnalogValueForButton(GameInput.Button.LookDown);
+                if (GameInput.GetKeyDown(MainPatcher.Config.toggleFreeCamera))
+                    engine.freeCamera = control.freeCamera = !control.freeCamera;
 
-                ////if (rotateCamera.rotationAxisX != 0 || rotateCamera.rotationAxisY != 0)
-                ////    Log.Write($"Rot: {rotateCamera.rotationAxisX}, {rotateCamera.rotationAxisY}");
-
-                //control.freeCamera =
-                //    GameInput.GetAnalogValueForButton(GameInput.Button.RightHand) > 0.5f
-                //    ;
 
                 engine.overdriveActive = GameInput.GetAnalogValueForButton(GameInput.Button.Sprint);
 
-                //control.overdriveActive =
-                //    GameInput.GetAnalogValueForButton(GameInput.Button.Sprint) > 0.5f
-                //    ;
+                control.overdriveActive = engine.overdriveActive > 0.5f;
 
-                //if (transform.position.y >= Ocean.GetOceanLevel() - 10)
-                //    control.positionCameraBelowSub = true;
-                //else if (transform.position.y < Ocean.GetOceanLevel() - 15)
-                //    control.positionCameraBelowSub = false;
+                if (transform.position.y >= Ocean.GetOceanLevel() - 5 && transform.position.y < 1)
+                    control.positionCameraBelowSub = true;
+                else if (transform.position.y < Ocean.GetOceanLevel() - 10 || transform.position.y > 2)
+                    control.positionCameraBelowSub = false;
 
                 //control.isDocked = docked;
 

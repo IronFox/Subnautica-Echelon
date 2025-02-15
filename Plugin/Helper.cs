@@ -54,5 +54,19 @@ namespace Subnautica_Echelon
 
         public static string S(IEnumerable<string> source)
             => string.Join(", ", source);
+
+        public static Component FindComponentInChildren(Transform t, string componentTypeName)
+        {
+            var c = t.GetComponent(componentTypeName);
+            if (c != null)
+                return c;
+            for (int i = 0; i < t.childCount; i++)
+            {
+                c = FindComponentInChildren(t.GetChild(i), componentTypeName);
+                if (c != null)
+                    return c;
+            }
+            return null;
+        }
     }
 }
