@@ -497,6 +497,11 @@ public class HierarchyAnalyzer
 
 
     }
+
+    public void LogToJson(Component c, string filename)
+    {
+        ComponentToJson(c).SaveTo(filename);
+    }
     public void LogToJson(Transform t, string filename)
     {
         ToJson(t,false).SaveTo(filename);

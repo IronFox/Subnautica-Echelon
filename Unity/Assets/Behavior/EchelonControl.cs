@@ -30,14 +30,15 @@ public class EchelonControl : MonoBehaviour
     public float airDrag = 0.1f;
 
 
-    public DriveControl forwardFacingLeft;
-    public DriveControl backFacingLeft;
-    public DriveControl forwardFacingRight;
-    public DriveControl backFacingRight;
+    //public DriveControl forwardFacingLeft;
+    //public DriveControl backFacingLeft;
+    //public DriveControl forwardFacingRight;
+    //public DriveControl backFacingRight;
 
     public Transform trailSpace;
-    public Transform cockpitRoot;
-    public Transform headCenter;
+    //public Transform cockpitRoot;
+    //public Transform headCenter;
+    public Transform seat;
 
     private RotateCamera rotateCamera;
     private PositionCamera positionCamera;
@@ -45,7 +46,7 @@ public class EchelonControl : MonoBehaviour
     private FallOrientation fallOrientation;
 
     private PointNoseInDirection look;
-    private Rigidbody rb;
+    //private Rigidbody rb;
     private bool currentlyBoarded;
 
     private Parentage onboardLocalizedTransform;
@@ -94,7 +95,6 @@ public class EchelonControl : MonoBehaviour
         }
     }
 
-    private readonly List<Rigidbody> localizeRigidBodyState = new List<Rigidbody>();
     private readonly List<(string Name, Renderer Renderer)> unhide = new List<(string Nasme, Renderer Renderer)>();
     private void Hide(Transform t, Transform[] branchesNotToHide)
     {
@@ -122,41 +122,14 @@ public class EchelonControl : MonoBehaviour
             Hide(t.GetChild(i), branchesNotToHide);
     }
 
-    public void Onboard(Transform transformToLocalize, params Transform[] branchesNotToHide)
+    public void Onboard()
     {
         if (!currentlyBoarded)
         {
             ConsoleControl.Write($"Onboarding");
 
 
-            localizeRigidBodyState.Clear();
-            if (transformToLocalize != null)
-            {
-                unhide.Clear();
-                Hide(transformToLocalize, branchesNotToHide);
-
-                onboardLocalizedTransform = Parentage.FromLocal(transformToLocalize);
-
-                transformToLocalize.parent = headCenter;
-                transformToLocalize.localPosition = Vector3.zero;
-                transformToLocalize.localEulerAngles = Vector3.zero;
-                var rbs = transformToLocalize.GetComponentsInChildren<Rigidbody>();
-                foreach (var rb in rbs)
-                {
-                    if (!rb.isKinematic)
-                    {
-                        ConsoleControl.Write($"Disabling onboarding rigid body {rb.name}");
-                        rb.isKinematic = true;
-                        localizeRigidBodyState.Add(rb);
-                    }
-                }
-
-                var error = Camera.main.transform.position - headCenter.position;
-
-                transformToLocalize.position -= error;
-
-
-            }
+           
             cameraIsInTrailspace = false;//just in case
             if (!currentCameraCenterIsCockpit)
                 MoveCameraToTrailSpace();
@@ -184,18 +157,6 @@ public class EchelonControl : MonoBehaviour
                 ConsoleControl.Write($"Restoring parentage");
                 onboardLocalizedTransform.Restore();
 
-                ConsoleControl.Write($"Reactivating rigid bodies ({localizeRigidBodyState.Count})");
-                foreach (var rb in localizeRigidBodyState)
-                {
-                    if (rb != null)
-                    {
-                        ConsoleControl.Write($"Reactivating {rb.name}");
-                        rb.isKinematic = false;
-                    }
-                    else
-                        ConsoleControl.Write($"Lost inactive");
-                }
-
                 ConsoleControl.Write($"Unhiding renderers ({unhide.Count})");
                 foreach (var r in unhide)
                 {
@@ -207,8 +168,6 @@ public class EchelonControl : MonoBehaviour
                     else
                         ConsoleControl.Write($"Lost invisible {r.Name}");
                 }
-
-                ConsoleControl.Write($"Cleaning up state");
             }
             finally
             {
@@ -224,12 +183,13 @@ public class EchelonControl : MonoBehaviour
     void Start()
     {
         nonCameraOrientation = GetComponent<NonCameraOrientation>();
-        rb = GetComponent<Rigidbody>();
+        //rb = GetComponent<Rigidbody>();
         look = GetComponent<PointNoseInDirection>();
         rotateCamera = trailSpace.GetComponent<RotateCamera>();
         positionCamera = trailSpace.GetComponent<PositionCamera>();
         fallOrientation = GetComponent<FallOrientation>();
-        look.targetOrientation = inWaterDirectionSource = new TransformDirectionSource(trailSpace);
+        if (look != null)
+            look.targetOrientation = inWaterDirectionSource = new TransformDirectionSource(trailSpace);
     }
 
     private static string TN(RenderTexture rt)
@@ -264,10 +224,10 @@ public class EchelonControl : MonoBehaviour
             if (!isBoarded)
                 Offboard();
             else
-                Onboard(null, null);
+                Onboard();
         }
 
-        if (currentCameraCenterIsCockpit != cameraCenterIsCockpit)
+        if (currentCameraCenterIsCockpit != cameraCenterIsCockpit && currentlyBoarded)
         {
             currentCameraCenterIsCockpit = cameraCenterIsCockpit;
             if (currentCameraCenterIsCockpit)
@@ -283,28 +243,28 @@ public class EchelonControl : MonoBehaviour
             
             ConsoleControl.Write($"3rd person camera at {trailSpace.position}");
             ConsoleControl.Write($"Main camera at {Camera.main.transform.position}");
-            ConsoleControl.Write($"Cockpit center at {cockpitRoot.position}");
+            //ConsoleControl.Write($"Cockpit center at {cockpitRoot.position}");
 
 
-            ConsoleControl.Write($"RigidBody.isKinematic="+rb.isKinematic);
-            ConsoleControl.Write($"RigidBody.constraints="+rb.constraints);
-            ConsoleControl.Write($"RigidBody.collisionDetectionMode=" +rb.collisionDetectionMode);
-            ConsoleControl.Write($"RigidBody.drag=" +rb.drag);
-            ConsoleControl.Write($"RigidBody.mass=" +rb.mass);
-            ConsoleControl.Write($"RigidBody.useGravity=" +rb.useGravity);
-            ConsoleControl.Write($"RigidBody.velocity=" +rb.velocity);
-            ConsoleControl.Write($"RigidBody.worldCenterOfMass=" +rb.worldCenterOfMass);
+            //ConsoleControl.Write($"RigidBody.isKinematic="+rb.isKinematic);
+            //ConsoleControl.Write($"RigidBody.constraints="+rb.constraints);
+            //ConsoleControl.Write($"RigidBody.collisionDetectionMode=" +rb.collisionDetectionMode);
+            //ConsoleControl.Write($"RigidBody.drag=" +rb.drag);
+            //ConsoleControl.Write($"RigidBody.mass=" +rb.mass);
+            //ConsoleControl.Write($"RigidBody.useGravity=" +rb.useGravity);
+            //ConsoleControl.Write($"RigidBody.velocity=" +rb.velocity);
+            //ConsoleControl.Write($"RigidBody.worldCenterOfMass=" +rb.worldCenterOfMass);
 
             LogComposition(transform);
 
         }
 
 
-        if (isBoarded && !isDocked && rb.isKinematic)
-        {
-            ConsoleControl.Write($"Switching off kinematic mode");
-            rb.isKinematic = false;
-        }
+        //if (isBoarded && !isDocked && rb.isKinematic)
+        //{
+        //    ConsoleControl.Write($"Switching off kinematic mode");
+        //    rb.isKinematic = false;
+        //}
 
 
         positionCamera.positionBelowTarget = positionCameraBelowSub;
@@ -317,7 +277,8 @@ public class EchelonControl : MonoBehaviour
                 rotateCamera.AbortTransition();
                 ChangeState(CameraState.IsFree);
                 inWaterDirectionSource = nonCameraOrientation;
-                nonCameraOrientation.isActive = true;
+                if (nonCameraOrientation != null)
+                    nonCameraOrientation.isActive = true;
             }
             else
             {
@@ -331,7 +292,8 @@ public class EchelonControl : MonoBehaviour
                             
                             inWaterDirectionSource = new TransformDirectionSource(trailSpace);
 
-                            nonCameraOrientation.isActive = false;
+                            if (nonCameraOrientation != null)
+                                nonCameraOrientation.isActive = false;
                             rotateCamera.AbortTransition();
                         }
                         break;
@@ -343,43 +305,49 @@ public class EchelonControl : MonoBehaviour
                 }
             }
 
-            look.targetOrientation = outOfWater
-                    ? fallOrientation
-                    : inWaterDirectionSource;
+            if (look != null)
+                look.targetOrientation = outOfWater
+                        ? fallOrientation
+                        : inWaterDirectionSource;
 
-            //look.targetOrientation = freeCamera ? nonCameraOrientation.transform : shipTrailingCamera.transform;
             if (outOfWater)
             {
-                nonCameraOrientation.rightRotationSpeed = 0;
-                nonCameraOrientation.upRotationSpeed = 0;
-                backFacingLeft.thrust = 0;
-                backFacingRight.thrust = 0;
+                if (nonCameraOrientation != null)
+                {
+                    nonCameraOrientation.rightRotationSpeed = 0;
+                    nonCameraOrientation.upRotationSpeed = 0;
+                }
+                //backFacingLeft.thrust = 0;
+                //backFacingRight.thrust = 0;
 
-                backFacingLeft.overdrive = 0;
-                backFacingRight.overdrive = 0;
+                //backFacingLeft.overdrive = 0;
+                //backFacingRight.overdrive = 0;
             }
             else
             {
-                nonCameraOrientation.rightRotationSpeed = rightAxis * rotationDegreesPerSecond;
-                nonCameraOrientation.upRotationSpeed = -upAxis * rotationDegreesPerSecond;
-                backFacingLeft.thrust = forwardAxis + look.HorizontalRotationIntent * 0.001f;
-                backFacingRight.thrust = forwardAxis - look.HorizontalRotationIntent * 0.001f;
-
-
-                if (overdriveActive)
+                if (nonCameraOrientation != null)
                 {
-                    float overdriveThreshold = regularForwardAcc / (overdriveForwardAcc + regularForwardAcc);
-                    if (forwardAxis > overdriveThreshold)
-                    {
-                        backFacingRight.overdrive =
-                        backFacingLeft.overdrive =
-                            (forwardAxis - overdriveThreshold) / (1f - overdriveThreshold);
-                    }
-                    else
-                        backFacingLeft.overdrive = backFacingRight.overdrive = 0;
+                    nonCameraOrientation.rightRotationSpeed = rightAxis * rotationDegreesPerSecond;
+                    nonCameraOrientation.upRotationSpeed = -upAxis * rotationDegreesPerSecond;
                 }
-                else
-                    backFacingLeft.overdrive = backFacingRight.overdrive = 0;
+                //backFacingLeft.thrust = forwardAxis + look.HorizontalRotationIntent * 0.001f;
+                //backFacingRight.thrust = forwardAxis - look.HorizontalRotationIntent * 0.001f;
+
+
+                //if (overdriveActive)
+                //{
+                //    float overdriveThreshold = regularForwardAcc / (overdriveForwardAcc + regularForwardAcc);
+                //    if (forwardAxis > overdriveThreshold)
+                //    {
+                //        backFacingRight.overdrive =
+                //        backFacingLeft.overdrive =
+                //            (forwardAxis - overdriveThreshold) / (1f - overdriveThreshold);
+                //    }
+                //    else
+                //        backFacingLeft.overdrive = backFacingRight.overdrive = 0;
+                //}
+                //else
+                //    backFacingLeft.overdrive = backFacingRight.overdrive = 0;
 
             }
 
@@ -390,65 +358,77 @@ public class EchelonControl : MonoBehaviour
         }
         else
         {
-            nonCameraOrientation.isActive = false;
+            if (nonCameraOrientation != null)
+            {
+                nonCameraOrientation.isActive = false;
+                nonCameraOrientation.rightRotationSpeed = 0;
+                nonCameraOrientation.upRotationSpeed = 0;
+            }
             rotateCamera.enabled = false;
-            nonCameraOrientation.rightRotationSpeed = 0;
-            nonCameraOrientation.upRotationSpeed = 0;
             positionCamera.zoomAxis = 0;
-            backFacingLeft.thrust = 0;
-            backFacingLeft.thrust = 0;
-            look.targetOrientation = fallOrientation;
+            //backFacingLeft.thrust = 0;
+            //backFacingLeft.thrust = 0;
+            if (look != null)
+                look.targetOrientation = fallOrientation;
 
         }
 
-        look.enabled = (isBoarded || outOfWater) && !isDocked;
+        if (look != null)
+            look.enabled = (isBoarded || outOfWater) && !isDocked;
 
-        forwardFacingLeft.thrust = -backFacingLeft.thrust;
-        forwardFacingRight.thrust = -backFacingRight.thrust;
+        //forwardFacingLeft.thrust = -backFacingLeft.thrust;
+        //forwardFacingRight.thrust = -backFacingRight.thrust;
 
-        rb.drag = outOfWater ? airDrag : waterDrag;
+        //rb.drag = outOfWater ? airDrag : waterDrag;
 
-        rb.useGravity = outOfWater && !isDocked;
+        //rb.useGravity = outOfWater && !isDocked;
 
+    }
+
+    public void Localize(Transform player)
+    {
+        player.parent = seat;
+        player.localPosition = Vector3.zero;
+        player.localEulerAngles = Vector3.zero;
     }
 
     bool warnedAboutNoRb = false;
     int roll = 0;
-    void FixedUpdate()
-    {
-        if (currentlyBoarded && !outOfWater && !isDocked)
-        {
-            if (rb == null)
-            {
-                if (!warnedAboutNoRb)
-                {
-                    warnedAboutNoRb = true;
-                    ConsoleControl.Write($"Warning: rb is null. Cannot move");
-                }
-                return;
-            }
-            var forwardAccel = forwardAxis * (regularForwardAcc + (overdriveActive && forwardAxis > 0 ? overdriveForwardAcc : 0));
+    //void FixedUpdate()
+    //{
+    //    if (currentlyBoarded && !outOfWater && !isDocked)
+    //    {
+    //        if (rb == null)
+    //        {
+    //            if (!warnedAboutNoRb)
+    //            {
+    //                warnedAboutNoRb = true;
+    //                ConsoleControl.Write($"Warning: rb is null. Cannot move");
+    //            }
+    //            return;
+    //        }
+    //        var forwardAccel = forwardAxis * (regularForwardAcc + (overdriveActive && forwardAxis > 0 ? overdriveForwardAcc : 0));
 
-            //forwardAccel = forwardAxis * 1e10f;  //turbo debug
-            bool log = ((roll++) % 100) == 0;
-            if (log)
-                ConsoleControl.Write($"Accel: {forwardAccel} {freeCamera} {rb.name}, fps: {1f/Time.fixedTime}");
-            try
-            {
-                rb.AddRelativeForce(0, 0, forwardAccel, ForceMode.Acceleration);
-                if (!freeCamera)
-                {
-                    //var rAxis = M.FlatNormalized(transform.right);
-                    rb.AddForce(look.targetOrientation.Right * rightAxis * strafeAcc, ForceMode.Acceleration);
-                    rb.AddForce(look.targetOrientation.Up * upAxis * strafeAcc, ForceMode.Acceleration);
-                }
-                if (log)
-                    ConsoleControl.Write($"Done: {forwardAccel} {rb.name}, fps: {1f / Time.fixedTime}");
-            }
-            catch (Exception ex)
-            {
-                ConsoleControl.WriteException("FixedUpdate()",ex);
-            }
-        }
-    }
+    //        //forwardAccel = forwardAxis * 1e10f;  //turbo debug
+    //        bool log = ((roll++) % 100) == 0;
+    //        if (log)
+    //            ConsoleControl.Write($"Accel: {forwardAccel} {freeCamera} {rb.name}, fps: {1f/Time.fixedTime}");
+    //        try
+    //        {
+    //            rb.AddRelativeForce(0, 0, forwardAccel, ForceMode.Acceleration);
+    //            if (!freeCamera)
+    //            {
+    //                //var rAxis = M.FlatNormalized(transform.right);
+    //                rb.AddForce(look.targetOrientation.Right * rightAxis * strafeAcc, ForceMode.Acceleration);
+    //                rb.AddForce(look.targetOrientation.Up * upAxis * strafeAcc, ForceMode.Acceleration);
+    //            }
+    //            if (log)
+    //                ConsoleControl.Write($"Done: {forwardAccel} {rb.name}, fps: {1f / Time.fixedTime}");
+    //        }
+    //        catch (Exception ex)
+    //        {
+    //            ConsoleControl.WriteException("FixedUpdate()",ex);
+    //        }
+    //    }
+    //}
 }

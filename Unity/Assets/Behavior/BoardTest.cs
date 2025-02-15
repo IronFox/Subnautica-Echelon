@@ -57,7 +57,7 @@ public class BoardTest : MonoBehaviour
                     preBoardingPosition = transform.position;
                     preBoardingEuler = LockedEuler.FromGlobal(transform);
                     preBoardingParent = transform.parent;
-                    subControl.Onboard(transform);
+                    subControl.Onboard();
                 }
                 catch (Exception ex)
                 {

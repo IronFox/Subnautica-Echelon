@@ -22,46 +22,45 @@ namespace Subnautica_Echelon
         public EchelonEngine()
         {
             Log = new MyLogger(this);
-            AngularDrag = 10;
+            //AngularDrag = 10;
             
         }
         public override void Start()
         {
-            AngularDrag = 10;
+            //AngularDrag = 10;
         }
         public override void ControlRotation()
         {
-            Log.WriteLowFrequency(MyLogger.Channel.Four, ($"ControlRotation()"));
         }
 
-        public override void KillMomentum()
-        {
-            Log.WriteLowFrequency(MyLogger.Channel.Three, ($"KillMomentum()"));
-            RB.velocity = Vector3.zero;
-        }
+        //public override void KillMomentum()
+        //{
+        //    Log.WriteLowFrequency(MyLogger.Channel.Three, ($"KillMomentum()"));
+        //    RB.velocity = Vector3.zero;
+        //}
 
-        protected override void MoveWithInput(Vector3 moveInput)
-        {
-            Log.WriteLowFrequency(MyLogger.Channel.Two, $"MoveWithInput({moveInput})");
-        }
+        //protected override void MoveWithInput(Vector3 moveInput)
+        //{
+        //    Log.WriteLowFrequency(MyLogger.Channel.Two, $"MoveWithInput({moveInput})");
+        //}
 
-        public override void ExecutePhysicsMove()
-        {
-            Log.WriteLowFrequency(MyLogger.Channel.Five, $"Move()");
-            //base.RB.AddForce(base.MV.transform.forward * 1e10f * Time.fixedDeltaTime, ForceMode.VelocityChange);
-            base.RB.AddForce(base.MV.transform.forward * 10000f * Time.fixedDeltaTime, ForceMode.VelocityChange);
-            Log.WriteLowFrequency(MyLogger.Channel.Six, $"Velocity = {RB.velocity}");
-        }
+        //public override void ExecutePhysicsMove()
+        //{
+        //    Log.WriteLowFrequency(MyLogger.Channel.Five, $"Move()");
+        //    //base.RB.AddForce(base.MV.transform.forward * 1e10f * Time.fixedDeltaTime, ForceMode.VelocityChange);
+        //    base.RB.AddForce(base.MV.transform.forward * 10000f * Time.fixedDeltaTime, ForceMode.VelocityChange);
+        //    Log.WriteLowFrequency(MyLogger.Channel.Six, $"Velocity = {RB.velocity}");
+        //}
 
-        public void Update()
-        {
-            if (!CanMove())
-                Log.WriteLowFrequency(MyLogger.Channel.One, $"Cannot move");
-            else if (!CanTakeInputs())
-                Log.WriteLowFrequency(MyLogger.Channel.One, $"Cannot take inputs");
-            else
-                Log.WriteLowFrequency(MyLogger.Channel.One, $"All go");
-        }
+        //public void Update()
+        //{
+        //    if (!CanMove())
+        //        Log.WriteLowFrequency(MyLogger.Channel.One, $"Cannot move");
+        //    else if (!CanTakeInputs())
+        //        Log.WriteLowFrequency(MyLogger.Channel.One, $"Cannot take inputs");
+        //    else
+        //        Log.WriteLowFrequency(MyLogger.Channel.One, $"All go");
+        //}
     }
 
     public class VoidEngine : ModVehicleEngine
@@ -217,7 +216,7 @@ namespace Subnautica_Echelon
     {
         public static GameObject model;
         private EchelonControl control;
-        private RotateCamera rotateCamera;
+        //private RotateCamera rotateCamera;
         private PDA pda;
         private MyLogger EchLog { get; }
 
@@ -284,6 +283,20 @@ namespace Subnautica_Echelon
         }
 
         private bool isInitialized = false;
+
+        public override void Awake()
+        {
+            var existing = GetComponent<VFEngine>();
+            if (existing != null)
+            {
+                EchLog.Write($"Removing existing vfEngine {existing}");
+                Destroy(existing);
+            }
+            VFEngine = Engine = gameObject.AddComponent<EchelonEngine>();
+            EchLog.Write($"Assigned new engine");
+            base.Awake();
+        }
+
         private void LocalInit()
         {
             if (!isInitialized)
@@ -308,21 +321,21 @@ namespace Subnautica_Echelon
                     //dummy.transform.parent = transform;
                     //useRigidbody = dummyRb;
 
-                    VFEngine = gameObject.AddComponent<EchelonEngine>();
+                    //VFEngine = Engine = gameObject.AddComponent<EchelonEngine>();
 
 
 
 
-                    EchLog.Write($"Start on rb");
+                    //EchLog.Write($"Start on rb");
 
 
                     control = GetComponent<EchelonControl>();
-                    rotateCamera = GetComponentInChildren<RotateCamera>();
+                    //rotateCamera = GetComponentInChildren<RotateCamera>();
 
-                    if (rotateCamera == null)
-                        EchLog.Write($"Rotate camera not found");
-                    else
-                        EchLog.Write($"Found camera rotate {rotateCamera.name}");
+                    //if (rotateCamera == null)
+                    //    EchLog.Write($"Rotate camera not found");
+                    //else
+                    //    EchLog.Write($"Found camera rotate {rotateCamera.name}");
 
                     if (control != null)
                     {
@@ -380,7 +393,7 @@ namespace Subnautica_Echelon
 
 
 
-                //control.Onboard(null);//Player.main.transform/*, Player.main.pda.transform, Player.main.transform.Find("Inventory Storage")*/);
+                control.Onboard();//Player.main.transform/*, Player.main.pda.transform, Player.main.transform.Find("Inventory Storage")*/);
 
                 //playerPosition = Player.main.transform.parent.gameObject;
             }
@@ -397,7 +410,7 @@ namespace Subnautica_Echelon
                 EchLog.Write("Echelon.PlayerExit()");
                 LocalInit();
                 base.PlayerExit();
-                //control.Offboard();
+                control.Offboard();
             }
             catch (Exception ex)
             {
@@ -432,63 +445,65 @@ namespace Subnautica_Echelon
             {
                 LocalInit();
 
-                var rb = GetComponent<Rigidbody>();
-                rb.isKinematic = false;
-                rb.mass = 10;
-                rb.angularDrag = 10;
-                rb.drag = 10;
-                rb.useGravity = true;
+                //Vector2 lookDelta = GameInput.GetLookDelta();
 
-                EchLog.WriteLowFrequency(MyLogger.Channel.One,
-                    $"pm={GetPilotingMode()}, ctrl={IsUnderCommand}," +
-                    $" engine.enabled={VFEngine?.enabled}," +
-                    $" pda={Player.main.GetPDA().isOpen}," +
-                    $" av={!AvatarInputHandler.main || AvatarInputHandler.main.IsEnabled()}," +
-                    $" charge={GetComponent<EnergyInterface>().hasCharge}");
+                //var rb = GetComponent<Rigidbody>();
+                //rb.isKinematic = false;
+                //rb.mass = 10;
+                //rb.angularDrag = 10;
+                //rb.drag = 10;
+                //rb.useGravity = true;
+
+                //EchLog.WriteLowFrequency(MyLogger.Channel.One,
+                //    $"pm={GetPilotingMode()}, ctrl={IsUnderCommand}," +
+                //    $" engine.enabled={VFEngine?.enabled}," +
+                //    $" pda={Player.main.GetPDA().isOpen}," +
+                //    $" av={!AvatarInputHandler.main || AvatarInputHandler.main.IsEnabled()}," +
+                //    $" charge={GetComponent<EnergyInterface>().hasCharge}");
 
 
-                control.outOfWater = !GetIsUnderwater();
+                //control.outOfWater = !GetIsUnderwater();
 
-                control.cameraCenterIsCockpit = Player.main.pda.state != PDA.State.Closed;
-                var move = GameInput.GetMoveDirection();
-                control.forwardAxis =
-                    GameInput.GetAnalogValueForButton(GameInput.Button.MoveForward)
-                    - GameInput.GetAnalogValueForButton(GameInput.Button.MoveBackward)
-                    ;
-                control.rightAxis =
-                    GameInput.GetAnalogValueForButton(GameInput.Button.MoveRight)
-                    - GameInput.GetAnalogValueForButton(GameInput.Button.MoveLeft)
-                    ;
-                control.upAxis = 
-                    GameInput.GetAnalogValueForButton(GameInput.Button.MoveUp)
-                    - GameInput.GetAnalogValueForButton(GameInput.Button.MoveDown)
-                    ;
-                rotateCamera.rotationAxisX = Input.GetAxis("Mouse X") * 0.1f;
-                rotateCamera.rotationAxisY = Input.GetAxis("Mouse Y") * 0.1f;
+                //control.cameraCenterIsCockpit = Player.main.pda.state != PDA.State.Closed;
+                //var move = GameInput.GetMoveDirection();
+                //control.forwardAxis =
+                //    GameInput.GetAnalogValueForButton(GameInput.Button.MoveForward)
+                //    - GameInput.GetAnalogValueForButton(GameInput.Button.MoveBackward)
+                //    ;
+                //control.rightAxis =
+                //    GameInput.GetAnalogValueForButton(GameInput.Button.MoveRight)
+                //    - GameInput.GetAnalogValueForButton(GameInput.Button.MoveLeft)
+                //    ;
+                //control.upAxis = 
+                //    GameInput.GetAnalogValueForButton(GameInput.Button.MoveUp)
+                //    - GameInput.GetAnalogValueForButton(GameInput.Button.MoveDown)
+                //    ;
+                //rotateCamera.rotationAxisX = Input.GetAxis("Mouse X") * 0.1f;
+                //rotateCamera.rotationAxisY = Input.GetAxis("Mouse Y") * 0.1f;
 
-                //rotateCamera.rotationAxisX = 
-                //    GameInput.GetAnalogValueForButton(GameInput.Button.LookRight)
-                //    - GameInput.GetAnalogValueForButton(GameInput.Button.LookLeft);
-                //rotateCamera.rotationAxisY = GameInput.GetAnalogValueForButton(GameInput.Button.LookUp)
-                //    - GameInput.GetAnalogValueForButton(GameInput.Button.LookDown);
+                ////rotateCamera.rotationAxisX = 
+                ////    GameInput.GetAnalogValueForButton(GameInput.Button.LookRight)
+                ////    - GameInput.GetAnalogValueForButton(GameInput.Button.LookLeft);
+                ////rotateCamera.rotationAxisY = GameInput.GetAnalogValueForButton(GameInput.Button.LookUp)
+                ////    - GameInput.GetAnalogValueForButton(GameInput.Button.LookDown);
 
-                //if (rotateCamera.rotationAxisX != 0 || rotateCamera.rotationAxisY != 0)
-                //    Log.Write($"Rot: {rotateCamera.rotationAxisX}, {rotateCamera.rotationAxisY}");
+                ////if (rotateCamera.rotationAxisX != 0 || rotateCamera.rotationAxisY != 0)
+                ////    Log.Write($"Rot: {rotateCamera.rotationAxisX}, {rotateCamera.rotationAxisY}");
 
-                control.freeCamera =
-                    GameInput.GetAnalogValueForButton(GameInput.Button.RightHand) > 0.5f
-                    ;
+                //control.freeCamera =
+                //    GameInput.GetAnalogValueForButton(GameInput.Button.RightHand) > 0.5f
+                //    ;
 
-                control.overdriveActive =
-                    GameInput.GetAnalogValueForButton(GameInput.Button.Sprint) > 0.5f
-                    ;
+                //control.overdriveActive =
+                //    GameInput.GetAnalogValueForButton(GameInput.Button.Sprint) > 0.5f
+                //    ;
 
-                if (transform.position.y >= Ocean.GetOceanLevel() - 10)
-                    control.positionCameraBelowSub = true;
-                else if (transform.position.y < Ocean.GetOceanLevel() - 15)
-                    control.positionCameraBelowSub = false;
+                //if (transform.position.y >= Ocean.GetOceanLevel() - 10)
+                //    control.positionCameraBelowSub = true;
+                //else if (transform.position.y < Ocean.GetOceanLevel() - 15)
+                //    control.positionCameraBelowSub = false;
 
-                control.isDocked = docked;
+                //control.isDocked = docked;
 
                 base.Update();
             }
@@ -509,7 +524,7 @@ namespace Subnautica_Echelon
             get
             {
                 var mainSeat = transform.Find("PilotSeat");
-                var cockpitExit = transform.Find($"Cockpit/ExitLocation");
+                var cockpitExit = mainSeat.Find($"ExitLocation");
                 if (!mainSeat)
                 {
                     EchLog.Write("PilotSeat not found");
@@ -596,7 +611,7 @@ namespace Subnautica_Echelon
         }
 
 
-        public override VFEngine VFEngine { get; set; }
+        //public override VFEngine VFEngine { get; set; }
 
         public override List<VehicleFloodLight> HeadLights
         {
