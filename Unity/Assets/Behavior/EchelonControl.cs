@@ -13,6 +13,8 @@ public class EchelonControl : MonoBehaviour
     public float rightAxis;
     public float upAxis;
     public float zoomAxis;
+    public float lookRightAxis;
+    public float lookUpAxis;
 
     public bool overdriveActive;
     public bool outOfWater;
@@ -265,6 +267,8 @@ public class EchelonControl : MonoBehaviour
         //    ConsoleControl.Write($"Switching off kinematic mode");
         //    rb.isKinematic = false;
         //}
+        rotateCamera.rotationAxisX = lookRightAxis;
+        rotateCamera.rotationAxisY = lookUpAxis;
 
 
         positionCamera.positionBelowTarget = positionCameraBelowSub;

@@ -450,9 +450,10 @@ namespace Subnautica_Echelon
                 LocalInit();
 
 
-                
+                Vector2 lookDelta = GameInput.GetLookDelta();
+                control.lookRightAxis = lookDelta.x;
+                control.lookUpAxis = lookDelta.y;
 
-                //Vector2 lookDelta = GameInput.GetLookDelta();
 
                 //var rb = GetComponent<Rigidbody>();
                 //rb.isKinematic = false;
