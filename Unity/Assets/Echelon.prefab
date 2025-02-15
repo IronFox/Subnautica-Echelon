@@ -6475,6 +6475,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   targetBoundingBox: {fileID: 7858723241677529997}
   positionBelowTarget: 0
+  shipCollider: {fileID: 571559332300350846}
   zoomAxis: 0
 --- !u!1 &3021922736397656458
 GameObject:

@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using static UnityEngine.GraphicsBuffer;
@@ -13,12 +14,13 @@ public class PositionCamera : MonoBehaviour
     private float minDistanceToTarget;
     private float maxDistanceToTarget;
     public bool positionBelowTarget;
+    public Collider shipCollider;
 
     private float boxHeight;
 
     private float h = 0;
     public float zoomAxis;
-
+    
 
     void Start()
     {
@@ -32,7 +34,7 @@ public class PositionCamera : MonoBehaviour
         boxHeight = targetBoundingBox.size.y * targetBoundingBox.transform.localScale.y;
     }
 
-    
+    private string loggedCollider;
 
     void LateUpdate()
     {
@@ -64,12 +66,26 @@ public class PositionCamera : MonoBehaviour
         Transform closest2 = null;
         foreach (RaycastHit hit in hits2)
         {
-            if (hit.transform.IsChildOf(target) || hit.transform.IsChildOf(transform))
+            if (hit.transform.IsChildOf(target)
+                || hit.transform.IsChildOf(transform)
+                || Physics.GetIgnoreCollision(hit.collider, shipCollider)
+                || !hit.collider.enabled
+                || hit.collider.isTrigger)
                 continue;
             if (hit.distance < closestHit2)
             {
                 closest2 = hit.transform;
                 closestHit2 = hit.distance;
+                if (loggedCollider != hit.transform.name)
+                {
+                    loggedCollider = hit.transform.name;
+                    ConsoleControl.Write("Camera collision with "+ hit.transform.name);
+                    //HierarchyAnalyzer analyzer = new HierarchyAnalyzer();
+                    //analyzer.LogToJson(hit.transform, $@"C:\temp\logs\hit{DateTime.Now:yyyy-MM-dd HH_mm_ss}.json");
+                }
+
+
+
             }
         }
 

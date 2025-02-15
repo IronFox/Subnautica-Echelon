@@ -20,7 +20,10 @@ public readonly struct Parentage
 
     public void Restore()
     {
-        Target.parent = Parent;
-        Transform.ApplyTo(Target);
+        if (Target != null)
+        {
+            Target.parent = Parent;
+            Transform.ApplyTo(Target);
+        }
     }
 }
