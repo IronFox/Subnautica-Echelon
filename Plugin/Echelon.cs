@@ -27,7 +27,7 @@ namespace Subnautica_Echelon
         }
         public override void Start()
         {
-            //AngularDrag = 10;
+            base.Start();
         }
         public override void ControlRotation()
         {
@@ -221,7 +221,7 @@ namespace Subnautica_Echelon
         //private RotateCamera rotateCamera;
         private PDA pda;
         private MyLogger EchLog { get; }
-
+        private EchelonEngine engine;
 
         public Echelon()
         {
@@ -292,9 +292,11 @@ namespace Subnautica_Echelon
             if (existing != null)
             {
                 EchLog.Write($"Removing existing vfEngine {existing}");
+                //HierarchyAnalyzer analyzer = new HierarchyAnalyzer();
+                //analyzer.LogToJson(existing, $@"C:\temp\logs\oldEngine.json");
                 Destroy(existing);
             }
-            VFEngine = Engine = gameObject.AddComponent<EchelonEngine>();
+            VFEngine = Engine = engine = gameObject.AddComponent<EchelonEngine>();
             EchLog.Write($"Assigned new engine");
             base.Awake();
         }
@@ -446,6 +448,9 @@ namespace Subnautica_Echelon
             try
             {
                 LocalInit();
+
+
+                
 
                 //Vector2 lookDelta = GameInput.GetLookDelta();
 
