@@ -1,0 +1,3 @@
+Unless you created your own explosions, please import the Realistic Explosions Pack from 
+https://assetstore.unity.com/packages/vfx/particles/fire-explosions/realistic-explosions-pack-54783.
+It should fill out this directory
