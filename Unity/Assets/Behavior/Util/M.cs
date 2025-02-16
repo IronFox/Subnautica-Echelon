@@ -5,6 +5,8 @@ using UnityEngine;
 
 public static class M
 {
+    public static float Sqrt2 { get; } = 1.4142135623730950488016887242097f;
+
     public static Vector2 FlatNormalized(Vector3 source) => Flat(source).normalized;
     public static Vector2 Flat(Vector3 source) => new Vector2(source.x, source.z);
 
@@ -14,4 +16,23 @@ public static class M
 
     public static Vector3 V3(float v) => new Vector3(v, v, v);
     public static Vector3 V3(float x, float y, float z) => new Vector3(x, y, z);
+
+    public static float Saturate(float x) => Mathf.Clamp01(x);
+
+    /// <summary>
+    /// Interpolates smoothly from 0 to 1 based on x compared to a and b.
+    /// https://developer.download.nvidia.com/cg/smoothstep.html
+    /// </summary>
+    /// <param name="a">Minimum reference value(s)</param>
+    /// <param name="b">Maximum reference value(s)</param>
+    /// <param name="x">Value to compute from</param>
+    /// <returns>Interpolated value in [0,1]</returns>
+    public static float Smoothstep(float a, float b, float x)
+    {
+        float t = Saturate((x - a) / (b - a));
+        return t * t * (3f - (2f * t));
+    }
+
+    public static float Dot(Vector3 right, Vector3 delta)
+        => Vector3.Dot(right, delta);
 }
