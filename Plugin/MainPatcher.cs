@@ -1,6 +1,8 @@
 ﻿using BepInEx;
+using FMODUnity;
 using HarmonyLib;
 using Nautilus.Handlers;
+using Nautilus.Utility;
 using RootMotion.FinalIK;
 using System;
 using System.Collections;
@@ -74,6 +76,8 @@ namespace Subnautica_Echelon
                 started = UWE.CoroutineHost.StartCoroutine(VehicleRegistrar.RegisterVehicle(sub,true));
 
                 AudioPatcher.Patcher = (source) => FreezeTimePatcher.Register(source);
+
+                SoundAdapter.SoundCreator = new FModSoundCreator();
 
                 Log.Write("MainPatcher.Register() done");
             }

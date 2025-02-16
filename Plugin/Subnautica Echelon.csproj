@@ -22,6 +22,9 @@
     <Reference Include="EchelonScripts">
       <HintPath>..\..\..\UnityCode\BuildTarget\Subnautica Echelon_Data\Managed\EchelonScripts.dll</HintPath>
     </Reference>
+    <Reference Include="FMODUnity">
+      <HintPath>G:\SteamLibrary\steamapps\common\Subnautica\Subnautica_Data\Managed\FMODUnity.dll</HintPath>
+    </Reference>
     <Reference Include="Nautilus">
       <HintPath>G:\SteamLibrary\steamapps\common\Subnautica\BepInEx\plugins\Nautilus\Nautilus.dll</HintPath>
     </Reference>

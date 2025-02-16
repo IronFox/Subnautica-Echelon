@@ -114,32 +114,25 @@ E:\UnityCode\Subnautica Echelon\Plugin\bin\Release\net4.7.2\Assembly-CSharp-firs
 E:\UnityCode\Subnautica Echelon\Plugin\bin\Release\net4.7.2\Assembly-CSharp.dll
 E:\UnityCode\Subnautica Echelon\Plugin\bin\Release\net4.7.2\BepInEx.dll
 E:\UnityCode\Subnautica Echelon\Plugin\bin\Release\net4.7.2\EchelonScripts.dll
+E:\UnityCode\Subnautica Echelon\Plugin\bin\Release\net4.7.2\FMODUnity.dll
 E:\UnityCode\Subnautica Echelon\Plugin\bin\Release\net4.7.2\Nautilus.dll
-E:\UnityCode\Subnautica Echelon\Plugin\bin\Release\net4.7.2\Unity.Addressables.dll
-E:\UnityCode\Subnautica Echelon\Plugin\bin\Release\net4.7.2\Unity.Burst.dll
-E:\UnityCode\Subnautica Echelon\Plugin\bin\Release\net4.7.2\Unity.Burst.Unsafe.dll
-E:\UnityCode\Subnautica Echelon\Plugin\bin\Release\net4.7.2\Unity.Collections.dll
-E:\UnityCode\Subnautica Echelon\Plugin\bin\Release\net4.7.2\Unity.Mathematics.dll
-E:\UnityCode\Subnautica Echelon\Plugin\bin\Release\net4.7.2\Unity.ResourceManager.dll
-E:\UnityCode\Subnautica Echelon\Plugin\bin\Release\net4.7.2\Unity.TextMeshPro.dll
-E:\UnityCode\Subnautica Echelon\Plugin\bin\Release\net4.7.2\Unity.Timeline.dll
 E:\UnityCode\Subnautica Echelon\Plugin\bin\Release\net4.7.2\UnityEngine.AssetBundleModule.dll
+E:\UnityCode\Subnautica Echelon\Plugin\bin\Release\net4.7.2\UnityEngine.AudioModule.dll
 E:\UnityCode\Subnautica Echelon\Plugin\bin\Release\net4.7.2\UnityEngine.CoreModule.dll
 E:\UnityCode\Subnautica Echelon\Plugin\bin\Release\net4.7.2\UnityEngine.dll
-E:\UnityCode\Subnautica Echelon\Plugin\bin\Release\net4.7.2\UnityEngine.InputModule.dll
+E:\UnityCode\Subnautica Echelon\Plugin\bin\Release\net4.7.2\UnityEngine.InputLegacyModule.dll
 E:\UnityCode\Subnautica Echelon\Plugin\bin\Release\net4.7.2\UnityEngine.PhysicsModule.dll
-E:\UnityCode\Subnautica Echelon\Plugin\bin\Release\net4.7.2\UnityEngine.VehiclesModule.dll
-E:\UnityCode\Subnautica Echelon\Plugin\bin\Release\net4.7.2\UnityEngine.VRModule.dll
 E:\UnityCode\Subnautica Echelon\Plugin\bin\Release\net4.7.2\VehicleFramework.dll
 E:\UnityCode\Subnautica Echelon\Plugin\bin\Release\net4.7.2\Mono.Cecil.dll
 E:\UnityCode\Subnautica Echelon\Plugin\bin\Release\net4.7.2\MonoMod.Utils.dll
 E:\UnityCode\Subnautica Echelon\Plugin\bin\Release\net4.7.2\MonoMod.RuntimeDetour.dll
 E:\UnityCode\Subnautica Echelon\Plugin\bin\Release\net4.7.2\UnityEngine.AnimationModule.dll
 E:\UnityCode\Subnautica Echelon\Plugin\bin\Release\net4.7.2\UnityEngine.UI.dll
-E:\UnityCode\Subnautica Echelon\Plugin\bin\Release\net4.7.2\UnityEngine.AudioModule.dll
+E:\UnityCode\Subnautica Echelon\Plugin\bin\Release\net4.7.2\Unity.Addressables.dll
+E:\UnityCode\Subnautica Echelon\Plugin\bin\Release\net4.7.2\Unity.ResourceManager.dll
 E:\UnityCode\Subnautica Echelon\Plugin\bin\Release\net4.7.2\LitJSON.dll
 E:\UnityCode\Subnautica Echelon\Plugin\bin\Release\net4.7.2\UnityEngine.UnityWebRequestModule.dll
-E:\UnityCode\Subnautica Echelon\Plugin\bin\Release\net4.7.2\FMODUnity.dll
+E:\UnityCode\Subnautica Echelon\Plugin\bin\Release\net4.7.2\Unity.TextMeshPro.dll
 E:\UnityCode\Subnautica Echelon\Plugin\bin\Release\net4.7.2\UnityEngine.ParticleSystemModule.dll
 E:\UnityCode\Subnautica Echelon\Plugin\bin\Release\net4.7.2\UnityEngine.UIModule.dll
 E:\UnityCode\Subnautica Echelon\Plugin\bin\Release\net4.7.2\UnityEngine.TextRenderingModule.dll
@@ -152,8 +145,11 @@ E:\UnityCode\Subnautica Echelon\Plugin\bin\Release\net4.7.2\com.rlabrecque.steam
 E:\UnityCode\Subnautica Echelon\Plugin\bin\Release\net4.7.2\XGamingRuntime.dll
 E:\UnityCode\Subnautica Echelon\Plugin\bin\Release\net4.7.2\PlatformIODefault.dll
 E:\UnityCode\Subnautica Echelon\Plugin\bin\Release\net4.7.2\Sentry.dll
+E:\UnityCode\Subnautica Echelon\Plugin\bin\Release\net4.7.2\Unity.Mathematics.dll
+E:\UnityCode\Subnautica Echelon\Plugin\bin\Release\net4.7.2\Unity.Collections.dll
+E:\UnityCode\Subnautica Echelon\Plugin\bin\Release\net4.7.2\Unity.Burst.dll
 E:\UnityCode\Subnautica Echelon\Plugin\bin\Release\net4.7.2\Newtonsoft.Json.dll
-E:\UnityCode\Subnautica Echelon\Plugin\bin\Release\net4.7.2\UnityEngine.InputLegacyModule.dll
+E:\UnityCode\Subnautica Echelon\Plugin\bin\Release\net4.7.2\UnityEngine.VRModule.dll
 E:\UnityCode\Subnautica Echelon\Plugin\bin\Release\net4.7.2\UnityEngine.ImageConversionModule.dll
 E:\UnityCode\Subnautica Echelon\Plugin\bin\Release\net4.7.2\PlatformInputDefault.dll
 E:\UnityCode\Subnautica Echelon\Plugin\bin\Release\net4.7.2\UnityEngine.JSONSerializeModule.dll
@@ -163,10 +159,8 @@ E:\UnityCode\Subnautica Echelon\Plugin\bin\Release\net4.7.2\UnityEngine.Streamin
 E:\UnityCode\Subnautica Echelon\Plugin\bin\Release\net4.7.2\UnityEngine.Physics2DModule.dll
 E:\UnityCode\Subnautica Echelon\Plugin\bin\Release\net4.7.2\PlatformUtilsDefault.dll
 E:\UnityCode\Subnautica Echelon\Plugin\bin\Release\net4.7.2\UnityEngine.XRModule.dll
-E:\UnityCode\Subnautica Echelon\Plugin\bin\Release\net4.7.2\UnityEngine.UnityWebRequestAssetBundleModule.dll
-E:\UnityCode\Subnautica Echelon\Plugin\bin\Release\net4.7.2\System.Runtime.CompilerServices.Unsafe.dll
+E:\UnityCode\Subnautica Echelon\Plugin\bin\Release\net4.7.2\Unity.Timeline.dll
 E:\UnityCode\Subnautica Echelon\Plugin\bin\Release\net4.7.2\UnityEngine.DirectorModule.dll
-E:\UnityCode\Subnautica Echelon\Plugin\bin\Release\net4.7.2\UnityEngine.SharedInternalsModule.dll
 E:\UnityCode\Subnautica Echelon\Plugin\bin\Release\net4.7.2\UnityEngine.DSPGraphModule.dll
 E:\UnityCode\Subnautica Echelon\Plugin\bin\Release\net4.7.2\UnityEngine.AndroidJNIModule.dll
 E:\UnityCode\Subnautica Echelon\Plugin\bin\Release\net4.7.2\UnityEngine.AccessibilityModule.dll
@@ -174,6 +168,7 @@ E:\UnityCode\Subnautica Echelon\Plugin\bin\Release\net4.7.2\UnityEngine.UnityCon
 E:\UnityCode\Subnautica Echelon\Plugin\bin\Release\net4.7.2\UnityEngine.AIModule.dll
 E:\UnityCode\Subnautica Echelon\Plugin\bin\Release\net4.7.2\UnityEngine.UnityAnalyticsModule.dll
 E:\UnityCode\Subnautica Echelon\Plugin\bin\Release\net4.7.2\UnityEngine.PerformanceReportingModule.dll
+E:\UnityCode\Subnautica Echelon\Plugin\bin\Release\net4.7.2\UnityEngine.SharedInternalsModule.dll
 E:\UnityCode\Subnautica Echelon\Plugin\bin\Release\net4.7.2\UnityEngine.ClothModule.dll
 E:\UnityCode\Subnautica Echelon\Plugin\bin\Release\net4.7.2\UnityEngine.ClusterInputModule.dll
 E:\UnityCode\Subnautica Echelon\Plugin\bin\Release\net4.7.2\UnityEngine.ClusterRendererModule.dll
@@ -185,6 +180,7 @@ E:\UnityCode\Subnautica Echelon\Plugin\bin\Release\net4.7.2\UnityEngine.GridModu
 E:\UnityCode\Subnautica Echelon\Plugin\bin\Release\net4.7.2\UnityEngine.SubsystemsModule.dll
 E:\UnityCode\Subnautica Echelon\Plugin\bin\Release\net4.7.2\UnityEngine.LocalizationModule.dll
 E:\UnityCode\Subnautica Echelon\Plugin\bin\Release\net4.7.2\UnityEngine.UNETModule.dll
+E:\UnityCode\Subnautica Echelon\Plugin\bin\Release\net4.7.2\UnityEngine.UnityWebRequestAssetBundleModule.dll
 E:\UnityCode\Subnautica Echelon\Plugin\bin\Release\net4.7.2\UnityEngine.UnityWebRequestAudioModule.dll
 E:\UnityCode\Subnautica Echelon\Plugin\bin\Release\net4.7.2\UnityEngine.UnityWebRequestTextureModule.dll
 E:\UnityCode\Subnautica Echelon\Plugin\bin\Release\net4.7.2\UnityEngine.GameCenterModule.dll
@@ -192,8 +188,12 @@ E:\UnityCode\Subnautica Echelon\Plugin\bin\Release\net4.7.2\UnityEngine.SpriteMa
 E:\UnityCode\Subnautica Echelon\Plugin\bin\Release\net4.7.2\UnityEngine.TerrainPhysicsModule.dll
 E:\UnityCode\Subnautica Echelon\Plugin\bin\Release\net4.7.2\UnityEngine.SpriteShapeModule.dll
 E:\UnityCode\Subnautica Echelon\Plugin\bin\Release\net4.7.2\UnityEngine.UIElementsModule.dll
+E:\UnityCode\Subnautica Echelon\Plugin\bin\Release\net4.7.2\UnityEngine.VehiclesModule.dll
 E:\UnityCode\Subnautica Echelon\Plugin\bin\Release\net4.7.2\UnityEngine.WindModule.dll
 E:\UnityCode\Subnautica Echelon\Plugin\bin\Release\net4.7.2\UnityEngine.ARModule.dll
+E:\UnityCode\Subnautica Echelon\Plugin\bin\Release\net4.7.2\UnityEngine.InputModule.dll
+E:\UnityCode\Subnautica Echelon\Plugin\bin\Release\net4.7.2\System.Runtime.CompilerServices.Unsafe.dll
+E:\UnityCode\Subnautica Echelon\Plugin\bin\Release\net4.7.2\Unity.Burst.Unsafe.dll
 E:\UnityCode\Subnautica Echelon\Plugin\bin\Release\net4.7.2\0Harmony.xml
 E:\UnityCode\Subnautica Echelon\Plugin\bin\Release\net4.7.2\BepInEx.xml
 E:\UnityCode\Subnautica Echelon\Plugin\bin\Release\net4.7.2\Nautilus.xml
@@ -204,7 +204,7 @@ E:\UnityCode\Subnautica Echelon\Plugin\obj\Release\net4.7.2\Subnautica Echelon.G
 E:\UnityCode\Subnautica Echelon\Plugin\obj\Release\net4.7.2\Subnautica Echelon.AssemblyInfoInputs.cache
 E:\UnityCode\Subnautica Echelon\Plugin\obj\Release\net4.7.2\Subnautica Echelon.AssemblyInfo.cs
 E:\UnityCode\Subnautica Echelon\Plugin\obj\Release\net4.7.2\Subnautica Echelon.csproj.CoreCompileInputs.cache
+E:\UnityCode\Subnautica Echelon\Plugin\obj\Release\net4.7.2\Subnautica Echelon.sourcelink.json
 E:\UnityCode\Subnautica Echelon\Plugin\obj\Release\net4.7.2\Subnauti.B212C1E0.Up2Date
 E:\UnityCode\Subnautica Echelon\Plugin\obj\Release\net4.7.2\Subnautica Echelon.dll
 E:\UnityCode\Subnautica Echelon\Plugin\obj\Release\net4.7.2\Subnautica Echelon.pdb
-E:\UnityCode\Subnautica Echelon\Plugin\obj\Release\net4.7.2\Subnautica Echelon.sourcelink.json

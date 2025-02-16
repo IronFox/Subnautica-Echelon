@@ -31,6 +31,7 @@ The plugin needs the following DLLs to be referenced in the Plugin/Subnautica Ec
 - [Subnautica]\BepInEx\plugins\VehicleFramework\VehicleFramework.dll
 - [Subnautica]\Subnautica_Data\Managed\Assembly-CSharp.dll
 - [Subnautica]\Subnautica_Data\Managed\Assembly-CSharp-firstpass.dll
+- [Subnautica]\Subnautica_Data\Managed\FMODUnity.dll
 - [Subnautica]\Subnautica_Data\Managed\UnityEngine.dll
 - [Subnautica]\Subnautica_Data\Managed\UnityEngine.AssetBundleModule.dll
 - [Subnautica]\Subnautica_Data\Managed\UnityEngine.AudioModule.dll
