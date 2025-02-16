@@ -42,7 +42,7 @@ public readonly struct MaterialAccess
     public bool IsActive => Transform != null && Material != null;
 
     private string Target =>
-        $"MeshRenderer ('{Transform.name}'[{Transform.GetInstanceID()}]) material '{Material.name}'";
+        $"MeshRenderer ('{Transform.name}'[{Transform.GetInstanceID()}]) material '{Material.name}' shader '{Material.shader.name}'";
 
     private bool AssertHasProperty(string name, ShaderPropertyType type)
     {
