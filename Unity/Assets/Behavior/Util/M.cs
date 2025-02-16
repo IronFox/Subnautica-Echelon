@@ -18,6 +18,9 @@ public static class M
     public static Vector3 V3(float x, float y, float z) => new Vector3(x, y, z);
 
     public static float Saturate(float x) => Mathf.Clamp01(x);
+    public static float Interpolate(float a, float b, float x) => a * (1f -x) + b*x;
+    public static float Sqr(float x) => x * x;
+    public static float Abs(float x) => Mathf.Abs(x);
 
     /// <summary>
     /// Interpolates smoothly from 0 to 1 based on x compared to a and b.

@@ -15,6 +15,7 @@ public class DriveControl : MonoBehaviour
     public float thrust;
     public float overdrive;
     
+    
     private float emissionSpeed;
     private float emissionRate;
 
@@ -23,7 +24,7 @@ public class DriveControl : MonoBehaviour
     void Start()
     {
         emissionSpeed = regularParticleSystem.main.startSpeedMultiplier;
-        emissionRate = regularParticleSystem.emission.rateOverTimeMultiplier * 20;
+        emissionRate = regularParticleSystem.emission.rateOverTimeMultiplier;
         lastPosition = regularParticleSystem.transform.position;
     }
 
@@ -85,7 +86,7 @@ public class DriveControl : MonoBehaviour
             var velocity = regularParticleSystem.transform.position - lastPosition;
 
             em.enabled = thrust > 0 && Vector3.Dot(velocity, regularParticleSystem.transform.forward) < 0;
-            em.rateOverTimeMultiplier = emissionRate * thrust * thrust;
+            em.rateOverTimeMultiplier = emissionRate * 5* (M.Abs(thrust) + overdrive);
             propeller.Rotate(0, 0, thrust * maxRPS * Time.deltaTime);
 
             lastPosition = regularParticleSystem.transform.position;
