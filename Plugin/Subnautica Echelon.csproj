@@ -25,62 +25,14 @@
     <Reference Include="Nautilus">
       <HintPath>G:\SteamLibrary\steamapps\common\Subnautica\BepInEx\plugins\Nautilus\Nautilus.dll</HintPath>
     </Reference>
-    <Reference Include="Unity.Addressables">
-      <HintPath>G:\SteamLibrary\steamapps\common\Subnautica\Subnautica_Data\Managed\Unity.Addressables.dll</HintPath>
-    </Reference>
-    <Reference Include="Unity.Burst">
-      <HintPath>G:\SteamLibrary\steamapps\common\Subnautica\Subnautica_Data\Managed\Unity.Burst.dll</HintPath>
-    </Reference>
-    <Reference Include="Unity.Burst.Cecil">
-      <HintPath>G:\SteamLibrary\steamapps\common\Subnautica\Subnautica_Data\Managed\Unity.Burst.Cecil.dll</HintPath>
-    </Reference>
-    <Reference Include="Unity.Burst.Cecil.Mdb">
-      <HintPath>G:\SteamLibrary\steamapps\common\Subnautica\Subnautica_Data\Managed\Unity.Burst.Cecil.Mdb.dll</HintPath>
-    </Reference>
-    <Reference Include="Unity.Burst.Cecil.Pdb">
-      <HintPath>G:\SteamLibrary\steamapps\common\Subnautica\Subnautica_Data\Managed\Unity.Burst.Cecil.Pdb.dll</HintPath>
-    </Reference>
-    <Reference Include="Unity.Burst.Cecil.Rocks">
-      <HintPath>G:\SteamLibrary\steamapps\common\Subnautica\Subnautica_Data\Managed\Unity.Burst.Cecil.Rocks.dll</HintPath>
-    </Reference>
-    <Reference Include="Unity.Burst.Unsafe">
-      <HintPath>G:\SteamLibrary\steamapps\common\Subnautica\Subnautica_Data\Managed\Unity.Burst.Unsafe.dll</HintPath>
-    </Reference>
-    <Reference Include="Unity.Collections">
-      <HintPath>G:\SteamLibrary\steamapps\common\Subnautica\Subnautica_Data\Managed\Unity.Collections.dll</HintPath>
-    </Reference>
-    <Reference Include="Unity.Formats.Fbx.Runtime">
-      <HintPath>G:\SteamLibrary\steamapps\common\Subnautica\Subnautica_Data\Managed\Unity.Formats.Fbx.Runtime.dll</HintPath>
-    </Reference>
-    <Reference Include="Unity.InternalAPIEngineBridge.001">
-      <HintPath>G:\SteamLibrary\steamapps\common\Subnautica\Subnautica_Data\Managed\Unity.InternalAPIEngineBridge.001.dll</HintPath>
-    </Reference>
-    <Reference Include="Unity.Mathematics">
-      <HintPath>G:\SteamLibrary\steamapps\common\Subnautica\Subnautica_Data\Managed\Unity.Mathematics.dll</HintPath>
-    </Reference>
-    <Reference Include="Unity.MemoryProfiler">
-      <HintPath>G:\SteamLibrary\steamapps\common\Subnautica\Subnautica_Data\Managed\Unity.MemoryProfiler.dll</HintPath>
-    </Reference>
-    <Reference Include="Unity.Recorder">
-      <HintPath>G:\SteamLibrary\steamapps\common\Subnautica\Subnautica_Data\Managed\Unity.Recorder.dll</HintPath>
-    </Reference>
-    <Reference Include="Unity.ResourceManager">
-      <HintPath>G:\SteamLibrary\steamapps\common\Subnautica\Subnautica_Data\Managed\Unity.ResourceManager.dll</HintPath>
-    </Reference>
-    <Reference Include="Unity.ScriptableBuildPipeline">
-      <HintPath>G:\SteamLibrary\steamapps\common\Subnautica\Subnautica_Data\Managed\Unity.ScriptableBuildPipeline.dll</HintPath>
-    </Reference>
-    <Reference Include="Unity.TextMeshPro">
-      <HintPath>G:\SteamLibrary\steamapps\common\Subnautica\Subnautica_Data\Managed\Unity.TextMeshPro.dll</HintPath>
-    </Reference>
-    <Reference Include="Unity.Timeline">
-      <HintPath>G:\SteamLibrary\steamapps\common\Subnautica\Subnautica_Data\Managed\Unity.Timeline.dll</HintPath>
-    </Reference>
     <Reference Include="UnityEngine">
       <HintPath>G:\SteamLibrary\steamapps\common\Subnautica\Subnautica_Data\Managed\UnityEngine.dll</HintPath>
     </Reference>
     <Reference Include="UnityEngine.AssetBundleModule">
       <HintPath>G:\SteamLibrary\steamapps\common\Subnautica\Subnautica_Data\Managed\UnityEngine.AssetBundleModule.dll</HintPath>
+    </Reference>
+    <Reference Include="UnityEngine.AudioModule">
+      <HintPath>G:\SteamLibrary\steamapps\common\Subnautica\Subnautica_Data\Managed\UnityEngine.AudioModule.dll</HintPath>
     </Reference>
     <Reference Include="UnityEngine.CoreModule">
       <HintPath>G:\SteamLibrary\steamapps\common\Subnautica\Subnautica_Data\Managed\UnityEngine.CoreModule.dll</HintPath>
@@ -88,17 +40,8 @@
     <Reference Include="UnityEngine.InputLegacyModule">
       <HintPath>G:\SteamLibrary\steamapps\common\Subnautica\Subnautica_Data\Managed\UnityEngine.InputLegacyModule.dll</HintPath>
     </Reference>
-    <Reference Include="UnityEngine.InputModule">
-      <HintPath>G:\SteamLibrary\steamapps\common\Subnautica\Subnautica_Data\Managed\UnityEngine.InputModule.dll</HintPath>
-    </Reference>
     <Reference Include="UnityEngine.PhysicsModule">
       <HintPath>G:\SteamLibrary\steamapps\common\Subnautica\Subnautica_Data\Managed\UnityEngine.PhysicsModule.dll</HintPath>
-    </Reference>
-    <Reference Include="UnityEngine.VehiclesModule">
-      <HintPath>G:\SteamLibrary\steamapps\common\Subnautica\Subnautica_Data\Managed\UnityEngine.VehiclesModule.dll</HintPath>
-    </Reference>
-    <Reference Include="UnityEngine.VRModule">
-      <HintPath>G:\SteamLibrary\steamapps\common\Subnautica\Subnautica_Data\Managed\UnityEngine.VRModule.dll</HintPath>
     </Reference>
     <Reference Include="VehicleFramework">
       <HintPath>G:\SteamLibrary\steamapps\common\Subnautica\BepInEx\plugins\VehicleFramework\VehicleFramework.dll</HintPath>
