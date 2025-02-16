@@ -1,11 +1,11 @@
 echelon todos:
 
 * explosions:
-	* reduce size
-	* use Subnautica sound source to fix 3d issues
-	* add light source
-	* pressure wave should use lit material but face normal to the inside
-	* add smolder sphere
+	* reduce size (done, using KriptoFX)
+	* use Subnautica sound source to fix 3d issues (done, doesn't work)
+	* add light source (done, using KriptoFX)
+	* pressure wave should use lit material but face normal to the inside (won't do, using KriptoFX)
+	* add smolder sphere (done, using KriptoFX)
 * torpedoes:
 	* model mesh
 	* split covers into two
@@ -14,6 +14,10 @@ echelon todos:
 	* torpedo trigger explosion and damage targets
 	* deploy torpedo from ship on trigger press
 * sub: 
+	* propeller still rotates while docked
+	* restore all directions on undock from docked orientation
+	* increase all speeds +50%
+	* transfer occlusion maps to albedo
 	* add camera shake on overdrive or nearby explosion
 	* disable overdrive when moving backwards, reduce reverse speed to prevent backwards jumping
 	* when returning from outside water while free camera is active, free camera ship direction should copy falling vector
