@@ -12,7 +12,7 @@ internal abstract class JsonNode
 {
     public void SaveTo(string filename)
     {
-        using (var fs = new FileStream(filename, FileMode.CreateNew))
+        using (var fs = new FileStream(filename, FileMode.Create))
         {
             using (var w = new StreamWriter(fs))
             {
