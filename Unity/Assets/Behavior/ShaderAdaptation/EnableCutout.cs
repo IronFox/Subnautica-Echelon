@@ -16,8 +16,8 @@ public class EnableCutout : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if (access.IsActive)
-            access.SetFloat($"_EnableCutOff", 1f);
+        //if (access.IsActive)
+        //    access.SetFloat($"_EnableCutOff", 1f);
 
     }
 }
