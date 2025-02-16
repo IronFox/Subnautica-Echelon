@@ -92,7 +92,7 @@ GameObject:
   - component: {fileID: 868042733925689592}
   - component: {fileID: 8696970996149497864}
   m_Layer: 0
-  m_Name: Lattice.001
+  m_Name: Lattice.001 Light
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -421,7 +421,7 @@ GameObject:
   - component: {fileID: 5600733829212013280}
   - component: {fileID: 1224057564408287777}
   m_Layer: 0
-  m_Name: Lattice
+  m_Name: Lattice Light
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
