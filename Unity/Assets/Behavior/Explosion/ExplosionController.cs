@@ -29,6 +29,7 @@ public class ExplosionController : MonoBehaviour
         pressureRing0 = Instantiate(pressureRingPrefab, transform);   
         pressureRing1 = Instantiate(pressureRingPrefab, transform);
         pressureRing1.transform.localEulerAngles = fireRing1.transform.localEulerAngles;
+        AudioPatcher.PatchAll(transform);
 
         HierarchyAnalyzer hierarchyAnalyzer = new HierarchyAnalyzer();
         hierarchyAnalyzer.LogToJson(transform, @"C:\temp\logs\explosion.json");

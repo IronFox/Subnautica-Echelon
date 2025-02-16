@@ -12,6 +12,7 @@ using UnityEngine;
 using UnityEngine.Assertions;
 using UWE;
 using VehicleFramework;
+using VehicleFramework.Patches;
 using VehicleFramework.VehicleTypes;
 using static OVRHaptics;
 
@@ -71,6 +72,9 @@ namespace Subnautica_Echelon
                 var sub = Echelon.model.EnsureComponent<Echelon>();
                 Log.Write("echelon attached: "+sub.name);
                 started = UWE.CoroutineHost.StartCoroutine(VehicleRegistrar.RegisterVehicle(sub,true));
+
+                AudioPatcher.Patcher = (source) => FreezeTimePatcher.Register(source);
+
                 Log.Write("MainPatcher.Register() done");
             }
             catch (Exception ex)
