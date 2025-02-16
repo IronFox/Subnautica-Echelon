@@ -8,7 +8,7 @@ public class EchelonControl : MonoBehaviour
 {
     public KeyCode logStateKey = KeyCode.F7;
 
-
+    public GameObject targetMarkerPrefab;
     public float forwardAxis;
     public float rightAxis;
     public float upAxis;
@@ -24,6 +24,9 @@ public class EchelonControl : MonoBehaviour
     public bool isDocked;
     public bool cameraCenterIsCockpit;
 
+    public TorpedoLaunchControl leftLaunch;
+    public TorpedoLaunchControl rightLaunch;
+
     public float regularForwardAcc = 400;
     public float overdriveForwardAcc = 800;
     public float strafeAcc = 200;
@@ -33,7 +36,7 @@ public class EchelonControl : MonoBehaviour
     public bool triggerActive;
     private DateTime lastTriggerTime = DateTime.MinValue;
 
-    public Transform explosionPrefab;
+    
 
     private Transform cameraRoot;
 
@@ -225,17 +228,69 @@ public class EchelonControl : MonoBehaviour
 
     }
 
-    private IDirectionSource inWaterDirectionSource;
+    private ITargetable GetTarget()
+    {
+        var hits = Physics.RaycastAll(new Ray(Camera.main.transform.position, Camera.main.transform.forward));
+        RaycastHit? closest = null;
+        foreach (var hit in hits)
+        {
+            if (hit.collider.isTrigger || hit.transform.IsChildOf(transform))
+                continue;
+            if (M.Dot(hit.point - Camera.main.transform.position, transform.forward) < 0)
+                continue;
+            if (closest is null || hit.distance < closest.Value.distance)
+                closest = hit;
+        }
+        if (closest != null)
+        {
+            if (closest.Value.rigidbody != null)
+                return new RigidbodyTargetable(closest.Value.rigidbody);
+            return new TransformTargetable(closest.Value.transform);
+        }
+        return null;
 
+    }
+
+
+    private IDirectionSource inWaterDirectionSource;
+    private GameObject targetMarker;
+    private ITargetable lastValidTarget;
     // Update is called once per frame
     void Update()
     {
-        if (triggerActive && DateTime.Now - lastTriggerTime > TimeSpan.FromSeconds(1))
+        var target = GetTarget();
+        if (target != null)
         {
-            lastTriggerTime = DateTime.Now;
-            var explosion = Instantiate(explosionPrefab, transform.parent);
-            explosion.localPosition = transform.localPosition;
+            lastValidTarget = target;
+            if (targetMarker == null)
+            {
+                targetMarker = Instantiate(targetMarkerPrefab, target.Position, Quaternion.identity);
+                targetMarker.transform.localScale = target.LocalScale*2;
+            }
+            else
+                targetMarker.transform.position = target.Position;
         }
+        else
+        {
+            if (lastValidTarget?.Exists == true)
+            {
+                if (targetMarker != null)
+                    targetMarker.transform.position = lastValidTarget.Position;
+
+            }
+            else
+                if (targetMarker != null)
+                {
+                    Destroy(targetMarker);
+                    targetMarker = null;
+                }
+        }
+
+
+
+
+
+        leftLaunch.fireWithTarget = triggerActive ? lastValidTarget : null;
 
 
         if (currentlyBoarded != isBoarded)

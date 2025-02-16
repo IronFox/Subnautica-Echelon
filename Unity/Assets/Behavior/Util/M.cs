@@ -21,7 +21,8 @@ public static class M
     public static float Interpolate(float a, float b, float x) => a * (1f -x) + b*x;
     public static float Sqr(float x) => x * x;
     public static float Abs(float x) => Mathf.Abs(x);
-
+    public static float Max(float x, float y) => Mathf.Max(x, y);
+    public static float Min(float x, float y) => Mathf.Min(x, y);
     /// <summary>
     /// Interpolates smoothly from 0 to 1 based on x compared to a and b.
     /// https://developer.download.nvidia.com/cg/smoothstep.html

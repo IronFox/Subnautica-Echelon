@@ -69,6 +69,7 @@ public class ConsoleControl : MonoBehaviour
     {
         if (string.IsNullOrWhiteSpace(text))
             return;
+        Debug.Log(text);
         var line = new Line(text);
         foreach (var control in Instances)
             control.AddLine(line);

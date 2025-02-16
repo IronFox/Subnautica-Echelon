@@ -1,0 +1,53 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!1 &40660911785746813
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 5794600956658866444}
+  - component: {fileID: 8646352818163184600}
+  m_Layer: 0
+  m_Name: Torpedo Tube
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &5794600956658866444
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 40660911785746813}
+  m_LocalRotation: {x: -0, y: -0.028881148, z: -0, w: 0.9995829}
+  m_LocalPosition: {x: -0.817, y: 0.009, z: 1.324}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_RootOrder: 0
+  m_LocalEulerAnglesHint: {x: 0, y: -3.31, z: 0}
+--- !u!114 &8646352818163184600
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 40660911785746813}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8d908e1910b85d446adb9520a4d03604, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  torpedoPrefab: {fileID: 2501418104200933177, guid: 140d7c8d9f700844c883dba6e90b66fc,
+    type: 3}
+  relativeExitVelocity: 100
+  cover: {fileID: 0}
+  secondsToOpenCover: 0.5
+  secondsToFire: 1
+  coverRedactionXZ: {x: 0, y: 0}
+  myBody: {fileID: 0}

@@ -41,7 +41,8 @@ public class SoundAdapter : MonoBehaviour
                 Sound = SoundCreator.Instantiate(cfg);
             }
             else
-                Sound.ApplyLiveChanges(cfg);
+                if (Sound.Config.IsSignificantlyDifferent(cfg))
+                    Sound.ApplyLiveChanges(cfg);
         }
     }
 
@@ -113,6 +114,19 @@ public readonly struct SoundConfig
         Loop = loop;
     }
 
+    private static bool SigDif(float a, float b)
+        => Mathf.Abs(a - b) > 0.005f;
+    public bool IsSignificantlyDifferent(SoundConfig other)
+    {
+        return //!IsLiveCompatibleTo(Other)
+            //|| 
+            SigDif(Pitch, other.Pitch)
+            || SigDif(Volume, other.Volume)
+            || SigDif(MinDistance, other.MinDistance)
+            || SigDif(MaxDistance, other.MaxDistance)
+            ;
+
+    }
     public bool IsLiveCompatibleTo(SoundConfig other)
         => Owner == other.Owner
             && AudioClip == other.AudioClip
@@ -160,6 +174,7 @@ public class EmulatedSpacialSoundCreator : ISoundCreator
         source.spatialBlend = 0;
         source.volume = soundConfig.Volume;
         source.loop = soundConfig.Loop;
+
         var emulator = soundConfig.Owner.AddComponent<SpatialSoundEmulator>();
         AudioPatcher.Patch(source);
         source.Play();
@@ -180,7 +195,7 @@ internal class EmulatedSpacialSound : IInstantiatedSound
     public SpatialSoundEmulator Emulator { get; }
     public AudioSource Source { get; }
 
-    public SoundConfig Config { get; }
+    public SoundConfig Config { get; private set; }
 
     public void ApplyLiveChanges(SoundConfig cfg)
     {
@@ -188,6 +203,16 @@ internal class EmulatedSpacialSound : IInstantiatedSound
         Source.volume = cfg.Volume;
         Source.maxDistance = cfg.MaxDistance;
         Source.minDistance = cfg.MinDistance;
+
+        if (cfg.Volume < 0.01f)
+        {
+            if (Source.isPlaying)
+                Source.Stop();
+        }
+        else if (!Source.isPlaying)
+            Source.Play();
+
+        Config = cfg;
 
     }
 
@@ -201,7 +226,7 @@ internal class EmulatedSpacialSound : IInstantiatedSound
 internal class DefaultSound : IInstantiatedSound
 {
     public AudioSource Source { get; }
-    public SoundConfig Config { get; }
+    public SoundConfig Config { get; private set; }
 
     public DefaultSound(AudioSource audioSource, SoundConfig config)
     {
@@ -221,5 +246,14 @@ internal class DefaultSound : IInstantiatedSound
         Source.maxDistance = cfg.MaxDistance;
         Source.minDistance = cfg.MinDistance;
         Source.spatialBlend = cfg.Is3D ? 1 : 0;
+        if (cfg.Volume < 0.01f)
+        {
+            if (Source.isPlaying)
+                Source.Stop();
+        }
+        else if (!Source.isPlaying)
+                Source.Play();
+
+        Config = cfg;
     }
 }
