@@ -5,6 +5,7 @@ using UnityEngine;
 public class Detonator : MonoBehaviour
 {
     public GameObject explosionPrefab;
+    public bool noExplosion;
     // Start is called before the first frame update
     void Start()
     {
@@ -13,7 +14,8 @@ public class Detonator : MonoBehaviour
 
     public void Detonate()
     {
-        Instantiate(explosionPrefab, transform.position, Quaternion.identity);
+        if (!noExplosion)
+            Instantiate(explosionPrefab, transform.position, Quaternion.identity);
         Destroy(gameObject);
     }
 

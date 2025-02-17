@@ -10,12 +10,13 @@ public class SoundAdapter : MonoBehaviour
     public AudioClip clip;
 
     public float volume = 1;
-    public bool playWhenReady = true;
+    public bool play = true;
     public float minDistance = 1f;
     public float maxDistance = 500f;
     public bool is3D = true;
     public float pitch = 1f;
     public bool loop = false;
+    
 
     void Start()
     {
@@ -31,7 +32,7 @@ public class SoundAdapter : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if (clip != null && playWhenReady)
+        if (clip != null && play)
         {
             var cfg = GetCurrentConfig();
 
@@ -43,6 +44,11 @@ public class SoundAdapter : MonoBehaviour
             else
                 if (Sound.Config.IsSignificantlyDifferent(cfg))
                     Sound.ApplyLiveChanges(cfg);
+        }
+        else if (Sound != null)
+        {
+            Sound.Dispose();
+            Sound = null;
         }
     }
 

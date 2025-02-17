@@ -56,7 +56,7 @@ public class EchelonControl : MonoBehaviour
     private NonCameraOrientation nonCameraOrientation;
     private FallOrientation fallOrientation;
 
-    private PointNoseInDirection look;
+    private DirectAt look;
     //private Rigidbody rb;
     private bool currentlyBoarded;
 
@@ -198,7 +198,7 @@ public class EchelonControl : MonoBehaviour
     {
         nonCameraOrientation = GetComponent<NonCameraOrientation>();
         //rb = GetComponent<Rigidbody>();
-        look = GetComponent<PointNoseInDirection>();
+        look = GetComponent<DirectAt>();
         rotateCamera = trailSpace.GetComponent<RotateCamera>();
         positionCamera = trailSpace.GetComponent<PositionCamera>();
         fallOrientation = GetComponent<FallOrientation>();
@@ -230,6 +230,7 @@ public class EchelonControl : MonoBehaviour
 
     private ITargetable GetTarget()
     {
+        return new TransformTargetable(Camera.main.transform);
         var hits = Physics.RaycastAll(new Ray(Camera.main.transform.position, Camera.main.transform.forward));
         RaycastHit? closest = null;
         foreach (var hit in hits)
@@ -265,7 +266,7 @@ public class EchelonControl : MonoBehaviour
             if (targetMarker == null)
             {
                 targetMarker = Instantiate(targetMarkerPrefab, target.Position, Quaternion.identity);
-                targetMarker.transform.localScale = target.LocalScale*2;
+                targetMarker.transform.localScale = M.Max(target.GlobalSize, M.V3(0.1f))*2;
             }
             else
                 targetMarker.transform.position = target.Position;

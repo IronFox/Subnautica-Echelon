@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class PointNoseInDirection : MonoBehaviour
+public class DirectAt : MonoBehaviour
 {
     public IDirectionSource targetOrientation;
 

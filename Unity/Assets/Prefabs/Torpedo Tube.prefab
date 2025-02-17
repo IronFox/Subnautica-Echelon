@@ -45,9 +45,11 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   torpedoPrefab: {fileID: 2501418104200933177, guid: 140d7c8d9f700844c883dba6e90b66fc,
     type: 3}
-  relativeExitVelocity: 100
+  relativeExitVelocity: 40
   cover: {fileID: 0}
   secondsToOpenCover: 0.5
   secondsToFire: 1
-  coverRedactionXZ: {x: 0, y: 0}
+  coverOpenPosition: {fileID: 0}
+  noExplosions: 0
+  overrideMaxLifetimeSeconds: 0
   myBody: {fileID: 0}

@@ -11,7 +11,10 @@ public class TargetPredictor : MonoBehaviour, ITargetPredictor
 
     public LinearPrediction? CurentPrediction =>
         target != null && target.Exists ?
-            (LinearPrediction?)new LinearPrediction(target.InherentVelocity ?? observedVelocity, target.Position)
+            (LinearPrediction?)new LinearPrediction(
+                target.InherentVelocity ?? observedVelocity
+                //Vector3.zero
+                , target.Position)
             : null;
 
 
@@ -22,23 +25,28 @@ public class TargetPredictor : MonoBehaviour, ITargetPredictor
     }
 
 
+    void FixedUpdate()
+    {
+        if (target?.Equals(lastTarget) == true)
+        {
+            observedVelocity = target.InherentVelocity ?? (target.Position - lastPosition) / Time.fixedDeltaTime;
+            lastPosition = target.Position;
+        }
+    }
 
-    // Update is called once per frame
+        // Update is called once per frame
     void Update()
     {
         if (target?.Equals(lastTarget) == true)
         {
-            observedVelocity = target.InherentVelocity ?? (target.Position - lastPosition) / Time.deltaTime;
+            //observedVelocity = target.InherentVelocity ?? (target.Position - lastPosition) / Time.deltaTime;
         }
         else
         {
             observedVelocity = target?.InherentVelocity ?? Vector3.zero;
+            lastPosition = target?.Position ?? Vector3.zero;
             lastTarget = target;
         }
-
-
-        if (target != null && target.Exists)
-            lastPosition = target.Position;
     }
 }
 
@@ -69,7 +77,7 @@ public readonly struct LinearPrediction
 
 public interface ITargetable
 {
-    Vector3 LocalScale { get; }
+    Vector3 GlobalSize { get; }
     Vector3 Position { get; }
     Vector3? InherentVelocity { get; }
     bool Exists { get; }
@@ -84,13 +92,26 @@ public class TransformTargetable : ITargetable
 
     public Vector3? InherentVelocity => null;
 
-    public Vector3 LocalScale => Transform.localScale;
+    public Vector3 GlobalSize { get; } = Vector3.one;
 
     public bool Exists => Transform != null;
 
     public TransformTargetable(Transform transform)
     {
         Transform = transform;
+
+        var colliders = Transform.GetComponentsInChildren<Collider>();
+        if (colliders.Length > 0)
+        {
+            Bounds b = new Bounds(Vector3.zero, M.V3(float.MinValue));
+            foreach (var collider in colliders)
+            {
+                b.Encapsulate(collider.bounds);
+            }
+            GlobalSize = b.max - b.min;
+        }
+        else
+            GlobalSize = Vector3.zero;
     }
 
     public override bool Equals(object obj)
@@ -112,13 +133,27 @@ public class RigidbodyTargetable : ITargetable
 
     public Vector3? InherentVelocity => Exists ? Rigidbody.velocity : (Vector3 ? )null;
 
-    public Vector3 LocalScale => Rigidbody.transform.localScale;
+    public Vector3 GlobalSize { get; }
 
     public bool Exists => Rigidbody != null;
 
     public RigidbodyTargetable(Rigidbody rigidbody)
     {
         Rigidbody = rigidbody;
+
+        var colliders = Rigidbody.transform.GetComponentsInChildren<Collider>();
+        if (colliders.Length > 0)
+        {
+            Bounds b = new Bounds(Vector3.zero, M.V3(float.MinValue));
+            foreach (var collider in colliders)
+            {
+                b.Encapsulate(collider.bounds);
+            }
+            GlobalSize = b.max - b.min;
+        }
+        else
+            GlobalSize = Vector3.zero;
+
     }
 
     public override bool Equals(object obj)

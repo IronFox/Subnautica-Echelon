@@ -61,6 +61,8 @@ MonoBehaviour:
   regularCollider: {fileID: 4216335903275335655}
   detonator: {fileID: 3761711288602698140}
   doNotCollideWith: {fileID: 0}
+  targetPredictor: {fileID: 4212403024039375308}
+  targetTriggerDistance: 1
 --- !u!1 &329291616062558915
 GameObject:
   m_ObjectHideFlags: 0
@@ -183,9 +185,10 @@ GameObject:
   - component: {fileID: 3025576928318911875}
   - component: {fileID: 2501418104200933176}
   - component: {fileID: 8672693807555207657}
+  - component: {fileID: 6141264307191172702}
+  - component: {fileID: 3378224997223897512}
   - component: {fileID: 4212403024039375308}
   - component: {fileID: 4459133791306129189}
-  - component: {fileID: 8132302495361111451}
   - component: {fileID: 8596132587207070730}
   - component: {fileID: 3761711288602698140}
   - component: {fileID: 4714040130784626947}
@@ -247,6 +250,33 @@ Rigidbody:
   m_Interpolate: 2
   m_Constraints: 0
   m_CollisionDetection: 2
+--- !u!114 &6141264307191172702
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2501418104200933177}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b6258a1d643d1704db7be8bd79ad1e42, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  maxLookAheadSeconds: 10
+  minLookAheadDistance: 1
+  targetError: 0
+--- !u!114 &3378224997223897512
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2501418104200933177}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 58c05becee79f9d4f955a1be42bc2b29, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!114 &4212403024039375308
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -272,24 +302,11 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   normalCollider: {fileID: 4216335903275335655}
-  acceleration: 200
-  maxLookAheadSeconds: 10
-  minLookAheadDistance: 1
-  travelVelocity: 1000
-  doNotCollideWith: {fileID: 0}
---- !u!114 &8132302495361111451
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2501418104200933177}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: b2ecd47b9b308e140926f244b1aa9f45, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  rotateUpDown: 1
+  minAcceleration: 20
+  acceleration: 400
+  maxTravelVelocity: 1000
+  origin: {fileID: 0}
+  safetyOriginDistance: 10
 --- !u!114 &8596132587207070730
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -304,7 +321,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   clip: {fileID: 8300000, guid: c14f69f79de300d419cf03a4e6200328, type: 3}
   volume: 1
-  playWhenReady: 1
+  play: 1
   minDistance: 1
   maxDistance: 500
   is3D: 1
@@ -324,6 +341,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   explosionPrefab: {fileID: 1559697159186320429, guid: 75390e578275a3b4d831189dc16d5b06,
     type: 3}
+  noExplosion: 0
 --- !u!114 &4714040130784626947
 MonoBehaviour:
   m_ObjectHideFlags: 0

@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -35,5 +36,7 @@ public readonly struct TransformDescriptor
                 break;
         }
     }
-    
+
+    public static TransformDescriptor Lerp(TransformDescriptor a, TransformDescriptor b, float t)
+        => new TransformDescriptor(FullEuler.Slerp(a.Euler, b.Euler, t), Vector3.Lerp(a.Position,b.Position,t));
 }

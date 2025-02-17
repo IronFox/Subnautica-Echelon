@@ -20,9 +20,12 @@ public static class M
     public static float Saturate(float x) => Mathf.Clamp01(x);
     public static float Interpolate(float a, float b, float x) => a * (1f -x) + b*x;
     public static float Sqr(float x) => x * x;
+
     public static float Abs(float x) => Mathf.Abs(x);
     public static float Max(float x, float y) => Mathf.Max(x, y);
     public static float Min(float x, float y) => Mathf.Min(x, y);
+    public static Vector3 Max(Vector3 a, Vector3 b)
+        => new Vector3(Max(a.x, b.x), Max(a.y, b.y), Max(a.z, b.z));
     /// <summary>
     /// Interpolates smoothly from 0 to 1 based on x compared to a and b.
     /// https://developer.download.nvidia.com/cg/smoothstep.html
@@ -39,4 +42,14 @@ public static class M
 
     public static float Dot(Vector3 right, Vector3 delta)
         => Vector3.Dot(right, delta);
+
+    public static float Distance(Vector3 a, Vector3 b)
+        => Vector3.Distance(a, b);
+    public static float SqrDistance(Vector3 a, Vector3 b)
+        => Sqr(a.x - b.x) + Sqr(a.y - b.y) + Sqr(a.z - b.z);
+
+    public static float DegToRad(float deg)
+        => deg *Mathf.PI / 180f;
+    public static float RadToDeg(float rad)
+        => rad * 180f / Mathf.PI;
 }

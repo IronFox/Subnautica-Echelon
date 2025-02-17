@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -9,13 +10,18 @@ public class TorpedoLaunchControl : MonoBehaviour
     public Transform cover;
     public float secondsToOpenCover = 0.5f;
     public float secondsToFire = 1f;
+    public Transform coverOpenPosition;
+    public bool noExplosions;
+    public float overrideMaxLifetimeSeconds;
+
+    private Torpedo torpedoInTube;
 
     public float CycleTime => secondsToOpenCover * 2 + secondsToFire;
 
     public ITargetable fireWithTarget;
 
-    public Vector2 coverRedactionXZ;
-    private Vector2 originalCoverPosition;
+    private TransformDescriptor originalCoverPosition;
+    private TransformDescriptor openCoverPosition;
 
     private float coverRedactionProgress;
     private float coverRecoveryProgress;
@@ -23,26 +29,35 @@ public class TorpedoLaunchControl : MonoBehaviour
     private bool fired;
     private bool closing;
     public Rigidbody myBody;
+    private Torpedo lastTorpedo;
 
     // Start is called before the first frame update
     void Start()
     {
-        originalCoverPosition = cover.localPosition;
+        originalCoverPosition = TransformDescriptor.FromLocal(cover);
+        openCoverPosition = TransformDescriptor.FromLocal(coverOpenPosition);
     }
 
     private void SetCover(float at)
     {
-
+        var position = TransformDescriptor.Lerp(originalCoverPosition, openCoverPosition, at);
+        position.ApplyTo(cover);
     }
     // Update is called once per frame
     void Update()
     {
+        if (lastTorpedo?.IsAlive == true)
+        {
+            //Debug.Log($"Targeting is live on last torpedo: {lastTorpedo.Control.Targeting.enabled}");
+        }
+
         if (fired)
         {
             fireRecoverProgress += Time.deltaTime;
-            Debug.Log("Waiting for fire recovery @" + fireRecoverProgress);
+            //Debug.Log("Waiting for fire recovery @" + fireRecoverProgress);
             if (fireRecoverProgress > secondsToFire)
             {
+                Debug.Log("Recovered from firing. Closing again");
                 fired = false;
                 coverRecoveryProgress = 0;
                 SetCover(1);
@@ -53,7 +68,7 @@ public class TorpedoLaunchControl : MonoBehaviour
         else if (closing)
         {
             coverRecoveryProgress += Time.deltaTime;
-            Debug.Log("Closing again @" + coverRecoveryProgress);
+            //Debug.Log("Closing again @" + coverRecoveryProgress);
             if (coverRecoveryProgress > secondsToOpenCover)
             {
                 Debug.Log("Closed");
@@ -66,23 +81,25 @@ public class TorpedoLaunchControl : MonoBehaviour
         }
         else if (fireWithTarget != null)
         {
+            if (torpedoInTube == null)
+                torpedoInTube = InstantiateTorpedo();
+
             coverRedactionProgress += Time.deltaTime;
-            Debug.Log("Opening @"+ coverRedactionProgress);
+            //Debug.Log("Opening @"+ coverRedactionProgress);
             if (coverRedactionProgress > secondsToOpenCover)
             {
                 SetCover(1);
                 Debug.Log("Firing");
                 fired = true;
 
-                var torpedo = Instantiate(torpedoPrefab, transform.position, transform.rotation);
-                var rb = torpedo.GetComponent<Rigidbody>();
-                if (rb != null)
-                    rb.velocity = myBody.GetPointVelocity(transform.position) + transform.forward * relativeExitVelocity;
-                var tp = torpedo.GetComponent<TargetPredictor>();
-                tp.target = fireWithTarget;
-
-                var ctrl = torpedo.GetComponent<TorpedoControl>();
-                ctrl.doNotCollideWith = myBody;
+                torpedoInTube.Launch(
+                    myBody.GetPointVelocity(transform.position) + transform.forward * relativeExitVelocity,
+                    fireWithTarget,
+                    noExplosions,
+                    overrideMaxLifetimeSeconds);
+                lastTorpedo = torpedoInTube;
+                Debug.Log("Releasing old torpedo");
+                torpedoInTube = null;
 
             }
             else
@@ -94,11 +111,62 @@ public class TorpedoLaunchControl : MonoBehaviour
             {
                 coverRedactionProgress -= Time.deltaTime;
                 coverRedactionProgress = M.Max(coverRedactionProgress, 0);
-                Debug.Log("Closing @" + coverRedactionProgress);
+                //Debug.Log("Closing @" + coverRedactionProgress);
                 SetCover(coverRedactionProgress / secondsToOpenCover);
             }
 
         }
 
    }
+
+    private Torpedo InstantiateTorpedo()
+    {
+        Debug.Log($"Creating torpedo");
+        var torpedo = Instantiate(torpedoPrefab, transform);
+        return new Torpedo(myBody, torpedo);
+
+    }
+}
+
+
+public class Torpedo
+{
+
+    public bool IsAlive => GameObject != null;
+    public void Launch(Vector3 velocity, ITargetable target, bool noExplosions, float overrideMaxFlightTime)
+    {
+        Control.Rigidbody.velocity = velocity;
+        GameObject.transform.parent = null;
+        Control.Detonator.noExplosion = noExplosions;
+        Control.TargetPredictor.target = target;
+
+
+        if (overrideMaxFlightTime > 0)
+            Control.MaxFlightTime.maxLifetimeSeconds = overrideMaxFlightTime;
+        Control.IsLive = true;
+
+
+        //debug keep stationary
+        //Control.MaxFlightTime.enabled = false;
+        //Control.acceleration = 0.01f;
+        //Control.minAcceleration = 0.001f;
+    }
+
+    public Torpedo(Rigidbody origin, GameObject torpedo)
+    {
+        GameObject = torpedo;
+
+        Control = torpedo.GetComponent<TorpedoControl>();
+        Control.origin = origin;
+        Control.IsLive = false;
+        torpedo.transform.localPosition = Vector3.zero;
+        torpedo.transform.localEulerAngles = Vector3.zero;
+
+        Debug.Log($"Torpedo created");
+
+    }
+
+    public GameObject GameObject { get; }
+    public TorpedoControl Control { get; }
+
 }
