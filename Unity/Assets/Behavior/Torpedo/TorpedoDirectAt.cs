@@ -5,7 +5,7 @@ using UnityEngine;
 public class TorpedoDirectAt : MonoBehaviour
 {
     public Vector3 targetDirection;
-    private float maxRotationDegreesPerSecond = 200f;
+    private float maxRotationDegreesPerSecond = 300f;
     private Rigidbody rb;
     // Start is called before the first frame update
     void Start()
