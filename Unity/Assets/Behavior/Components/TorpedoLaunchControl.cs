@@ -17,6 +17,7 @@ public class TorpedoLaunchControl : MonoBehaviour
     private Torpedo torpedoInTube;
 
     public float CycleTime => secondsToOpenCover * 2 + secondsToFire;
+    public float CycleProgress => coverRedactionProgress + fireRecoverProgress + coverRecoveryProgress;
 
     public ITargetable fireWithTarget;
 
@@ -57,6 +58,7 @@ public class TorpedoLaunchControl : MonoBehaviour
             //Debug.Log("Waiting for fire recovery @" + fireRecoverProgress);
             if (fireRecoverProgress > secondsToFire)
             {
+                fireRecoverProgress = secondsToFire;
                 Debug.Log("Recovered from firing. Closing again");
                 fired = false;
                 coverRecoveryProgress = 0;
@@ -73,7 +75,10 @@ public class TorpedoLaunchControl : MonoBehaviour
             {
                 Debug.Log("Closed");
                 closing = false;
+
                 SetCover(0);
+                fireRecoverProgress = 0;
+                coverRecoveryProgress = 0;
                 coverRedactionProgress = 0;
             }
             else
@@ -88,6 +93,7 @@ public class TorpedoLaunchControl : MonoBehaviour
             //Debug.Log("Opening @"+ coverRedactionProgress);
             if (coverRedactionProgress > secondsToOpenCover)
             {
+                coverRedactionProgress = secondsToOpenCover;
                 SetCover(1);
                 Debug.Log("Firing");
                 fired = true;

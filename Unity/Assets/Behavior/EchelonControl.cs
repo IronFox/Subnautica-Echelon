@@ -27,6 +27,8 @@ public class EchelonControl : MonoBehaviour
     public TorpedoLaunchControl leftLaunch;
     public TorpedoLaunchControl rightLaunch;
 
+    private bool firingLeft = true;
+
     public float regularForwardAcc = 400;
     public float overdriveForwardAcc = 800;
     public float strafeAcc = 200;
@@ -290,9 +292,16 @@ public class EchelonControl : MonoBehaviour
 
 
 
+        var firing = firingLeft ? leftLaunch : rightLaunch;
 
-        leftLaunch.fireWithTarget = triggerActive ? lastValidTarget : null;
 
+        firing.fireWithTarget = triggerActive ? lastValidTarget : null;
+        if (firing.CycleProgress > firing.CycleTime * 0.5f)
+        {
+            firing.fireWithTarget = null;
+            firingLeft = !firingLeft;
+        }
+        
 
         if (currentlyBoarded != isBoarded)
         {
