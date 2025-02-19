@@ -13,6 +13,8 @@ public class TorpedoLaunchControl : MonoBehaviour
     public Transform coverOpenPosition;
     public bool noExplosions;
     public float overrideMaxLifetimeSeconds;
+    public SoundAdapter openSound;
+    public SoundAdapter fireSound;
 
     private Torpedo torpedoInTube;
 
@@ -47,14 +49,12 @@ public class TorpedoLaunchControl : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if (lastTorpedo?.IsAlive == true)
-        {
-            //Debug.Log($"Targeting is live on last torpedo: {lastTorpedo.Control.Targeting.enabled}");
-        }
-
         if (fired)
         {
+            openSound.play = false;
             fireRecoverProgress += Time.deltaTime;
+            fireSound.play = true;
+            fireSound.volume = 1f - fireRecoverProgress / secondsToFire;
             //Debug.Log("Waiting for fire recovery @" + fireRecoverProgress);
             if (fireRecoverProgress > secondsToFire)
             {
@@ -69,6 +69,8 @@ public class TorpedoLaunchControl : MonoBehaviour
         }
         else if (closing)
         {
+            openSound.play = true;
+            fireSound.play = false;
             coverRecoveryProgress += Time.deltaTime;
             //Debug.Log("Closing again @" + coverRecoveryProgress);
             if (coverRecoveryProgress > secondsToOpenCover)
@@ -86,6 +88,8 @@ public class TorpedoLaunchControl : MonoBehaviour
         }
         else if (fireWithTarget != null)
         {
+            openSound.play = true;
+            fireSound.play = false;
             if (torpedoInTube == null)
                 torpedoInTube = InstantiateTorpedo();
 
@@ -93,6 +97,8 @@ public class TorpedoLaunchControl : MonoBehaviour
             //Debug.Log("Opening @"+ coverRedactionProgress);
             if (coverRedactionProgress > secondsToOpenCover)
             {
+                openSound.play = false;
+                fireSound.play = true;
                 coverRedactionProgress = secondsToOpenCover;
                 SetCover(1);
                 Debug.Log("Firing");
@@ -113,8 +119,12 @@ public class TorpedoLaunchControl : MonoBehaviour
         }
         else
         {
+            openSound.play = false;
+            fireSound.play = false;
             if (coverRedactionProgress > 0)
             {
+                openSound.play = true;
+
                 coverRedactionProgress -= Time.deltaTime;
                 coverRedactionProgress = M.Max(coverRedactionProgress, 0);
                 //Debug.Log("Closing @" + coverRedactionProgress);

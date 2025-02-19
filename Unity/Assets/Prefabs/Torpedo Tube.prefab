@@ -10,6 +10,7 @@ GameObject:
   m_Component:
   - component: {fileID: 5794600956658866444}
   - component: {fileID: 8646352818163184600}
+  - component: {fileID: 6797835144150957075}
   m_Layer: 0
   m_Name: Torpedo Tube
   m_TagString: Untagged
@@ -27,7 +28,9 @@ Transform:
   m_LocalRotation: {x: -0, y: -0.028881148, z: -0, w: 0.9995829}
   m_LocalPosition: {x: -0.817, y: 0.009, z: 1.324}
   m_LocalScale: {x: 1, y: 1, z: 1}
-  m_Children: []
+  m_Children:
+  - {fileID: 1981495861444897908}
+  - {fileID: 831734797529450510}
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: -3.31, z: 0}
@@ -52,4 +55,128 @@ MonoBehaviour:
   coverOpenPosition: {fileID: 0}
   noExplosions: 0
   overrideMaxLifetimeSeconds: 0
+  openSound: {fileID: 9019908714965762504}
+  fireSound: {fileID: 4244463131336336650}
   myBody: {fileID: 0}
+--- !u!114 &6797835144150957075
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 40660911785746813}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 56534fd16a4420046924e3771b758cdd, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  clip: {fileID: 0}
+  volume: 1
+  play: 1
+  minDistance: 1
+  maxDistance: 500
+  is3D: 1
+  pitch: 1
+  loop: 0
+--- !u!1 &1402143320969980528
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 831734797529450510}
+  - component: {fileID: 4244463131336336650}
+  m_Layer: 0
+  m_Name: FireSound
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &831734797529450510
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1402143320969980528}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 5794600956658866444}
+  m_RootOrder: 1
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &4244463131336336650
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1402143320969980528}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 56534fd16a4420046924e3771b758cdd, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  clip: {fileID: 8300000, guid: ec8502a56f827164983874c1f4280071, type: 3}
+  volume: 10
+  play: 0
+  minDistance: 10
+  maxDistance: 500
+  is3D: 1
+  pitch: 1
+  loop: 1
+--- !u!1 &5497185180567628045
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1981495861444897908}
+  - component: {fileID: 9019908714965762504}
+  m_Layer: 0
+  m_Name: OpenSound
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1981495861444897908
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5497185180567628045}
+  m_LocalRotation: {x: -0, y: 0.028881148, z: -0, w: 0.9995829}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 0.9999999, y: 1, z: 0.9999999}
+  m_Children: []
+  m_Father: {fileID: 5794600956658866444}
+  m_RootOrder: 0
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &9019908714965762504
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5497185180567628045}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 56534fd16a4420046924e3771b758cdd, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  clip: {fileID: 8300000, guid: 1032059709042524c80dbfa4dc586658, type: 3}
+  volume: 0.5
+  play: 0
+  minDistance: 1
+  maxDistance: 500
+  is3D: 1
+  pitch: 0.35
+  loop: 1

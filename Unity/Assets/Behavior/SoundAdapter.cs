@@ -77,7 +77,7 @@ public class SoundAdapter : MonoBehaviour
     }
 
 
-    public static ISoundCreator SoundCreator { get; set; } = new EmulatedSpacialSoundCreator();
+    public static ISoundCreator SoundCreator { get; set; } = new DefaultSoundCreator();
         //new DefaultSoundCreator();
 
 }
@@ -182,6 +182,8 @@ public class EmulatedSpacialSoundCreator : ISoundCreator
         source.loop = soundConfig.Loop;
 
         var emulator = soundConfig.Owner.AddComponent<SpatialSoundEmulator>();
+        emulator.pitch = soundConfig.Pitch;
+        emulator.volume = soundConfig.Volume;
         AudioPatcher.Patch(source);
         source.Play();
 
@@ -209,6 +211,8 @@ internal class EmulatedSpacialSound : IInstantiatedSound
         Source.volume = cfg.Volume;
         Source.maxDistance = cfg.MaxDistance;
         Source.minDistance = cfg.MinDistance;
+        Emulator.pitch = cfg.Pitch;
+        Emulator.volume = cfg.Volume;
 
         if (cfg.Volume < 0.01f)
         {
