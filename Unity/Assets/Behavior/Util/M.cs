@@ -19,8 +19,9 @@ public static class M
 
     public static float Saturate(float x) => Mathf.Clamp01(x);
     public static float Interpolate(float a, float b, float x) => a * (1f -x) + b*x;
+    public static Vector3 Interpolate(Vector3 a, Vector3 b, float x) => a * (1f -x) + b*x;
     public static float Sqr(float x) => x * x;
-
+    public static float Sqr(Vector3 x) => Vector3.Dot(x, x);
     public static float Abs(float x) => Mathf.Abs(x);
     public static float Max(float x, float y) => Mathf.Max(x, y);
     public static float Min(float x, float y) => Mathf.Min(x, y);
@@ -52,4 +53,71 @@ public static class M
         => deg *Mathf.PI / 180f;
     public static float RadToDeg(float rad)
         => rad * 180f / Mathf.PI;
+
+
+    public static QuadraticSolution SolveQuadraticEquation(float a, float b, float c)
+    {
+        if (Mathf.Abs(a) < Mathf.Epsilon)
+        {
+            //0 = b * x + c
+            //x = -c / b
+            if (Mathf.Abs(b) < Mathf.Epsilon)
+                return default;
+            return QuadraticSolution.One(-c / b);
+        }
+
+
+        var root = b*b -4*a*c;
+        if (root < 0)
+            return default;
+        var a2 = a * 2;
+        if (root <= Mathf.Epsilon)
+            return QuadraticSolution.One(-b / a2);
+
+        root = Mathf.Sqrt(root);
+        var x0 = (-b - root) / a2;
+        var x1 = (-b + root) / a2;
+        return QuadraticSolution.Two(x0, x1);
+    }
+    
+}
+
+
+public readonly struct QuadraticSolution
+{
+    public float? X0 { get; }
+    public float? X1 { get; }
+
+    public bool HasAnySolution => X0.HasValue;
+
+    private static bool IsNonNegative(float?x)
+        => x.HasValue && x.Value >= 0;
+
+    public float? SmallestNonNegative =>
+        IsNonNegative(X0)
+            ? IsNonNegative(X1)
+                ? Mathf.Min(X1.Value, X1.Value)
+                : X0.Value
+            : IsNonNegative(X1)
+                ? X1.Value
+                : (float?) null;
+
+
+    private QuadraticSolution(float? x0, float? x1)
+    {
+        X0 = x0;
+        X1 = x1;
+    }
+
+    public static QuadraticSolution Two(float x0, float x1)
+        => new QuadraticSolution(x0, x1);
+
+    public static QuadraticSolution One(float x)
+    {
+        return new QuadraticSolution(x, null);
+    }
+
+
+
+
 }

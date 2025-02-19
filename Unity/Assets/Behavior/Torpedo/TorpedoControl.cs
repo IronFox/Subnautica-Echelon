@@ -16,6 +16,7 @@ public class TorpedoControl : MonoBehaviour
     public ProximityDetector ProximityDetector { get; private set; }
     public TorpedoTargeting Targeting {get; private set; }
     public Rigidbody Rigidbody {get; private set;}
+    public TorpedoDrive Drive {get; private set; }
 
     public Collider normalCollider;
 
@@ -23,14 +24,10 @@ public class TorpedoControl : MonoBehaviour
     //public float detonationProximity = 1;
     
 
-    public float minAcceleration = 20;
-    public float acceleration = 100;
-    public float maxTravelVelocity = 1000;
 
     public Rigidbody origin;
     public float safetyOriginDistance = 10;
 
-    private float currentAcceleration;
 
     public bool IsLive
     {
@@ -54,6 +51,7 @@ public class TorpedoControl : MonoBehaviour
             em.enabled = value;
             SoundAdapter.play = value;
             TurnPropeller.enabled = value;
+            Drive.enabled = value;
 
             Debug.Log("Targeting.enabled := "+ Targeting.enabled);
 
@@ -83,6 +81,7 @@ public class TorpedoControl : MonoBehaviour
         TorpedoDirectAt = GetComponent<TorpedoDirectAt>();
         ParticleSystem = GetComponentInChildren<ParticleSystem>();
         SoundAdapter = GetComponent<SoundAdapter>();
+        Drive = GetComponent<TorpedoDrive>();
     }
 
     // Update is called once per frame
@@ -96,21 +95,8 @@ public class TorpedoControl : MonoBehaviour
             ConsoleControl.Write($"Exited exlusion intersection. Restoring collider");
             normalCollider.isTrigger = false;
         }
-
-        //Targeting.enabled = !normalCollider.isTrigger;
-        TurnPropeller.speedScale = currentAcceleration / acceleration;
     }
 
-
-    void FixedUpdate()
-    {
-        currentAcceleration = M.Interpolate(
-            minAcceleration,
-            acceleration,
-            1f - M.Smoothstep(0, 0.5f, Targeting.targetError)
-            );
-        Rigidbody.AddRelativeForce(0, 0, currentAcceleration, ForceMode.Acceleration);
-    }
 
 
 }

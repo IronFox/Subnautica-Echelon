@@ -5,12 +5,13 @@ using UnityEngine;
 public class TorpedoDirectAt : MonoBehaviour
 {
     public Vector3 targetDirection;
-    private float maxRotationDegreesPerSecond = 50f;
+    private float maxRotationDegreesPerSecond = 200f;
     private Rigidbody rb;
     // Start is called before the first frame update
     void Start()
     {
         rb = GetComponent<Rigidbody>();
+        targetDirection = transform.forward;
     }
 
     // Update is called once per frame
@@ -25,12 +26,20 @@ public class TorpedoDirectAt : MonoBehaviour
         var error = Vector3.Angle(transform.forward, targetDirection);
         if (error < maxRotThisFrame)
         {
-            transform.forward = targetDirection;
+            //transform.forward = targetDirection;
+            //rb.angularVelocity = Vector3.zero;
+
+            var axis = Vector3.Cross(transform.forward, targetDirection).normalized;
+            var want = axis * M.DegToRad(maxRotationDegreesPerSecond) * (error / maxRotThisFrame);
+            var delta = want - rb.angularVelocity;
+            rb.AddTorque(delta, ForceMode.VelocityChange);
         }
-        else
+        else 
         {
-            var axis = Vector3.Cross(transform.forward, targetDirection);
-            rb.AddTorque(axis * M.DegToRad(maxRotationDegreesPerSecond), ForceMode.VelocityChange);
+            var axis = Vector3.Cross(transform.forward, targetDirection).normalized;
+            var want = axis * M.DegToRad(maxRotationDegreesPerSecond);
+            var delta = want - rb.angularVelocity;
+            rb.AddTorque(delta, ForceMode.VelocityChange);
         }
     }
 }

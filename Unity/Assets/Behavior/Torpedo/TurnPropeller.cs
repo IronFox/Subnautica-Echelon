@@ -23,6 +23,10 @@ public class TurnPropeller : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        if (float.IsNaN(rps))
+            return;
+        if (float.IsNaN(speedScale))
+            speedScale = 1;
         angle = Mathf.Repeat(angle + Time.deltaTime * rps * speedScale, 360f);
         if (propeller != null)
             propeller.localEulerAngles = M.V3(0, 0, angle);

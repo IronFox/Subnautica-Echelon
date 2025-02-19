@@ -57,8 +57,8 @@ public class ProximityDetector : MonoBehaviour
                     ConsoleControl.Write($"Detected distance touch with target");
                     detonator.Detonate();
                 }
-                else
-                    Debug.Log(dist);
+                //else
+                //    Debug.Log(dist);
             }
 
         }
