@@ -41,7 +41,7 @@ public class EchelonControl : MonoBehaviour
     
 
     private Transform cameraRoot;
-
+    private TargetScanner scanner;
 
     public DriveControl forwardFacingLeft;
     public DriveControl backFacingLeft;
@@ -198,6 +198,7 @@ public class EchelonControl : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
+        scanner = trailSpace.GetComponentInChildren<TargetScanner>();
         nonCameraOrientation = GetComponent<NonCameraOrientation>();
         //rb = GetComponent<Rigidbody>();
         look = GetComponent<DirectAt>();
@@ -232,26 +233,30 @@ public class EchelonControl : MonoBehaviour
 
     private ITargetable GetTarget()
     {
-        return new TransformTargetable(Camera.main.transform);
-        var hits = Physics.RaycastAll(new Ray(Camera.main.transform.position, Camera.main.transform.forward));
-        RaycastHit? closest = null;
-        foreach (var hit in hits)
+        var t = scanner.GetBestTarget(transform);
+        if (t != null)
         {
-            if (hit.collider.isTrigger || hit.transform.IsChildOf(transform))
-                continue;
-            if (M.Dot(hit.point - Camera.main.transform.position, transform.forward) < 0)
-                continue;
-            if (closest is null || hit.distance < closest.Value.distance)
-                closest = hit;
+            var target = new RigidbodyTargetable(t);
+            return target;
         }
-        if (closest != null)
+        var ray = new Ray(Camera.main.transform.position, Camera.main.transform.forward);
+        var candidates = Physics.RaycastAll(ray);
+        float closestAt = 500;
+        Vector3? targetLocation = null;
+        foreach (var candidate in candidates)
         {
-            if (closest.Value.rigidbody != null)
-                return new RigidbodyTargetable(closest.Value.rigidbody);
-            return new TransformTargetable(closest.Value.transform);
+            if (candidate.collider.gameObject.transform.IsChildOf(transform))
+                continue;
+            var dist = candidate.distance;
+            if (dist < closestAt)
+            {
+                closestAt = dist;
+                targetLocation = candidate.point;
+            }
         }
-        return null;
-
+        if (targetLocation.HasValue)
+            return new PositionTargetable(targetLocation.Value);
+        return new PositionTargetable(ray.GetPoint(500f));
     }
 
 
@@ -262,7 +267,8 @@ public class EchelonControl : MonoBehaviour
     void Update()
     {
         var target = GetTarget();
-        if (target != null)
+        //Debug.Log(target);
+        if (target is RigidbodyTargetable)
         {
             lastValidTarget = target;
             if (targetMarker == null)
@@ -275,18 +281,7 @@ public class EchelonControl : MonoBehaviour
         }
         else
         {
-            if (lastValidTarget?.Exists == true)
-            {
-                if (targetMarker != null)
-                    targetMarker.transform.position = lastValidTarget.Position;
-
-            }
-            else
-                if (targetMarker != null)
-                {
-                    Destroy(targetMarker);
-                    targetMarker = null;
-                }
+            Destroy(targetMarker);
         }
 
 
@@ -295,7 +290,7 @@ public class EchelonControl : MonoBehaviour
         var firing = firingLeft ? leftLaunch : rightLaunch;
 
         var doFire = triggerActive && isBoarded && !isDocked && !outOfWater;
-        firing.fireWithTarget = doFire ? lastValidTarget : null;
+        firing.fireWithTarget = doFire ? target : null;
         if (firing.CycleProgress > firing.CycleTime * 0.5f)
         {
             firing.fireWithTarget = null;

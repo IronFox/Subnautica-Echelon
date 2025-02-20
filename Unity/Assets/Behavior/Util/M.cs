@@ -44,15 +44,23 @@ public static class M
     public static float Dot(Vector3 right, Vector3 delta)
         => Vector3.Dot(right, delta);
 
+    public static RayDistance Distance(Ray ray, Vector3 point)
+    {
+        var d = point - ray.origin;
+        var along = M.Dot(ray.direction, d);
+        var onRay = ray.GetPoint(along);
+        var cross = point - onRay;
+        return new RayDistance(along, cross.magnitude);
+    }
     public static float Distance(Vector3 a, Vector3 b)
         => Vector3.Distance(a, b);
     public static float SqrDistance(Vector3 a, Vector3 b)
         => Sqr(a.x - b.x) + Sqr(a.y - b.y) + Sqr(a.z - b.z);
 
     public static float DegToRad(float deg)
-        => deg *Mathf.PI / 180f;
+        => deg * Mathf.Deg2Rad;
     public static float RadToDeg(float rad)
-        => rad * 180f / Mathf.PI;
+        => rad * Mathf.Rad2Deg;
 
 
     public static QuadraticSolution SolveQuadraticEquation(float a, float b, float c)
@@ -120,4 +128,17 @@ public readonly struct QuadraticSolution
 
 
 
+}
+
+
+public readonly struct RayDistance
+{
+    public float DistanceAlongRay { get; }
+    public float DistanceToClosesPointOnRay { get; }
+
+    public RayDistance(float distanceAlongRay, float distanceToClosesPointOnRay)
+    {
+        DistanceAlongRay = distanceAlongRay;
+        DistanceToClosesPointOnRay = distanceToClosesPointOnRay;
+    }
 }

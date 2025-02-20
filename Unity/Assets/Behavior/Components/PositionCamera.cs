@@ -21,10 +21,12 @@ public class PositionCamera : MonoBehaviour
 
     private float h = 0;
     public float zoomAxis;
-    
+
+    private TargetScanner scanner;
 
     void Start()
     {
+        scanner= GetComponentInChildren<TargetScanner>();
         target = subRoot.transform;
         distanceToTarget = Vector3.Distance(referenceBoundingBox.transform.position, transform.transform.position);
         minDistanceToTarget = referenceBoundingBox.size.magnitude;
@@ -41,6 +43,8 @@ public class PositionCamera : MonoBehaviour
     {
         distanceToTarget *= Mathf.Pow(1.5f, zoomAxis);
         distanceToTarget = Mathf.Clamp(distanceToTarget, minDistanceToTarget, maxDistanceToTarget);
+
+        scanner.minDistance = distanceToTarget;
 
 
         var wantH = positionBelowTarget ? -boxHeight : boxHeight;

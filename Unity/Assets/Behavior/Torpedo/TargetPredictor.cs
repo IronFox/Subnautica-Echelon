@@ -113,6 +113,7 @@ public class TransformTargetable : ITargetable
         else
             GlobalSize = Vector3.zero;
     }
+    public override string ToString() => $"Transform Target {Transform.name}";
 
     public override bool Equals(object obj)
     {
@@ -156,6 +157,8 @@ public class RigidbodyTargetable : ITargetable
 
     }
 
+    public override string ToString() => $"RB Target {Rigidbody.name}";
+
     public override bool Equals(object obj)
     {
         return obj is RigidbodyTargetable t && t.Rigidbody == Rigidbody;
@@ -165,4 +168,35 @@ public class RigidbodyTargetable : ITargetable
     {
         return -1854442488 + EqualityComparer<Rigidbody>.Default.GetHashCode(Rigidbody);
     }
+}
+
+public class PositionTargetable : ITargetable
+{
+    public PositionTargetable(Vector3 position)
+    {
+        Position = position;
+    }
+
+    public Vector3 Position { get; }
+
+    public Vector3 GlobalSize => Vector3.one;
+
+    public Vector3? InherentVelocity => Vector3.zero;
+
+    public override string ToString() => $"Position Target {Position}";
+
+    public override bool Equals(object obj)
+    {
+        return obj is PositionTargetable targetable &&
+               Position.Equals(targetable.Position);
+    }
+
+    public override int GetHashCode()
+    {
+        return -425505606 + Position.GetHashCode();
+    }
+
+    public bool Exists => true;
+
+
 }
