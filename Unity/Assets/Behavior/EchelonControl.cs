@@ -294,8 +294,8 @@ public class EchelonControl : MonoBehaviour
 
         var firing = firingLeft ? leftLaunch : rightLaunch;
 
-
-        firing.fireWithTarget = triggerActive ? lastValidTarget : null;
+        var doFire = triggerActive && isBoarded && !isDocked && !outOfWater;
+        firing.fireWithTarget = doFire ? lastValidTarget : null;
         if (firing.CycleProgress > firing.CycleTime * 0.5f)
         {
             firing.fireWithTarget = null;
