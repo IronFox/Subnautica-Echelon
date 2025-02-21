@@ -15,7 +15,7 @@ public class TorpedoControl : MonoBehaviour
     public TurnPropeller TurnPropeller { get; private set; }
     public ProximityDetector ProximityDetector { get; private set; }
     public TorpedoTargeting Targeting {get; private set; }
-    public Rigidbody Rigidbody {get; private set;}
+    public RigidbodyAdapter Rigidbody {get; private set;}
     public TorpedoDrive Drive {get; private set; }
 
     public Collider normalCollider;
@@ -75,7 +75,7 @@ public class TorpedoControl : MonoBehaviour
         ProximityDetector = GetComponentInChildren<ProximityDetector>();
         Targeting = GetComponent<TorpedoTargeting>();
         ProximityDetector.doNotCollideWith = origin;
-        Rigidbody = GetComponent<Rigidbody>();
+        Rigidbody = GetComponent<RigidbodyAdapter>();
         MaxFlightTime = GetComponent<MaxFlightTime>();
         Detonator = GetComponent<Detonator>();
         TorpedoDirectAt = GetComponent<TorpedoDirectAt>();

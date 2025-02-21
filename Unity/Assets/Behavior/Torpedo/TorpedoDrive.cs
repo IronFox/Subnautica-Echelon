@@ -7,7 +7,7 @@ public class TorpedoDrive : MonoBehaviour
     private float acceleration = 500;
     private float travelVelocity = 40;
     private TurnPropeller turn;
-    private Rigidbody rb;
+    private RigidbodyAdapter rb;
     public float currentVelocity;
     public float dragCompensated;
     public float finalAcceleration;
@@ -18,7 +18,7 @@ public class TorpedoDrive : MonoBehaviour
     void Start()
     {
         turn = GetComponent<TurnPropeller>();
-        rb = GetComponent<Rigidbody>();
+        rb = GetComponent<RigidbodyAdapter>();
     }
 
     // Update is called once per frame

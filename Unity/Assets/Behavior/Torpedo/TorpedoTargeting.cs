@@ -1,13 +1,10 @@
-﻿using System;
-using System.Collections;
-using System.Collections.Generic;
-using UnityEditorInternal.VR;
-using UnityEngine;
+﻿using UnityEngine;
+
 
 public class TorpedoTargeting : MonoBehaviour
 {
     private TargetPredictor predictor;
-    private Rigidbody rb;
+    private RigidbodyAdapter rb;
     private TorpedoDirectAt look;
     private TorpedoDrive drive;
 
@@ -24,7 +21,7 @@ public class TorpedoTargeting : MonoBehaviour
         Debug.Log("TorpedoTargeting: start()");
         look = GetComponent<TorpedoDirectAt>();
         predictor = GetComponent<TargetPredictor>();
-        rb = GetComponent<Rigidbody>();
+        rb = GetComponent<RigidbodyAdapter>();
         drive = GetComponent<TorpedoDrive>();
 
     }
@@ -107,7 +104,7 @@ public class TorpedoTargeting : MonoBehaviour
     {
         targetError = 0;
 
-        Debug.Log("Predicting");
+        //Debug.Log("Predicting");
 
         var target = predictor.CurentPrediction;
         if (target == null)

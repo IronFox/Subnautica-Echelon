@@ -30,7 +30,7 @@ public class NonCameraOrientation : MonoBehaviour, IDirectionSource
         }
         else
         {
-            Debug.Log(upRotationSpeed);
+            //Debug.Log(upRotationSpeed);
             rot = rot.RotateBy(upRotationSpeed, rightRotationSpeed, Time.deltaTime);
         }
     }

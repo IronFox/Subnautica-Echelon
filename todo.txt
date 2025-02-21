@@ -14,6 +14,7 @@ echelon todos:
 	* torpedo trigger explosion and damage targets
 	* deploy torpedo from ship on trigger press
 * sub: 
+	* when opening inventory, only move camera on final state
 	* propeller still rotates while docked
 	* restore all directions on undock from docked orientation
 	* increase all speeds +50%

@@ -62,6 +62,17 @@ namespace Subnautica_Echelon
                 Log.Write("MainPatcher.Start()", ex);
             }
         }
+        public static T CopyComponent<T>(T original, GameObject destination) where T : Component
+        {
+            System.Type type = original.GetType();
+            Component copy = destination.EnsureComponent(type);
+            System.Reflection.FieldInfo[] fields = type.GetFields();
+            foreach (System.Reflection.FieldInfo field in fields)
+            {
+                field.SetValue(copy, field.GetValue(original));
+            }
+            return copy as T;
+        }
 
         public IEnumerator Register()
         {
@@ -76,6 +87,32 @@ namespace Subnautica_Echelon
                 started = UWE.CoroutineHost.StartCoroutine(VehicleRegistrar.RegisterVehicle(sub,true));
 
                 AudioPatcher.Patcher = (source) => FreezeTimePatcher.Register(source);
+                RigidbodyAdapter.MakeRigidbody = (go, mass) =>
+                {
+                    try
+                    {
+                        Log.Write($"Creating rigidbody for {go} with mass {mass}");
+                        var rb = go.EnsureComponent<Rigidbody>();
+                        rb.mass = mass;
+                        rb.drag = 10f;
+                        rb.angularDrag = 10f;
+                        rb.useGravity = false;
+
+                        var worldForces = CopyComponent<WorldForces>(SeamothHelper.Seamoth.GetComponent<SeaMoth>().worldForces, go);
+                        worldForces.useRigidbody = rb;
+                        worldForces.underwaterGravity = 0f;
+                        worldForces.aboveWaterGravity = 9.8f;
+                        worldForces.waterDepth = 0f;
+
+                        Log.Write("Rigidbody created: " + rb);
+                        return rb;
+                    }
+                    catch (Exception ex)
+                    {
+                        Log.Write("RigidbodyAdapter.MakeRigidbody", ex);
+                        throw;
+                    }
+                };
 
                 SoundAdapter.SoundCreator = new FModSoundCreator();
 

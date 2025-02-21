@@ -1,5 +1,6 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
 public class TargetScanner : MonoBehaviour
@@ -23,47 +24,79 @@ public class TargetScanner : MonoBehaviour
 
     private Mesh mesh;
 
-    private void Rebuild()
-    {
-        if (mesh == null)
-            mesh = new Mesh();
+    //private void Rebuild()
+    //{
+    //    if (mesh == null)
+    //        mesh = new Mesh();
 
 
 
-        float w0 = minWidth / 2;
-        float h0 = minHeight / 2;
-        float w1 = w0 / minDistance * maxDistance;
-        float h1 = h0 / minDistance * maxDistance;
+    //    float w0 = minWidth / 2;
+    //    float h0 = minHeight / 2;
+    //    float w1 = w0 / minDistance * maxDistance;
+    //    float h1 = h0 / minDistance * maxDistance;
 
-        mesh.vertices = new Vector3[]
-            {
-                 M.V3(-w0,-h0, minDistance),    //0
-                 M.V3(w0,-h0, minDistance),     //1
-                 M.V3(w0,h0, minDistance),      //2
-                 M.V3(-w0,h0, minDistance),     //3
-                 M.V3(-w1,-h1, maxDistance),    //4
-                 M.V3(w1,-h1, maxDistance),     //5
-                 M.V3(w1,h1, maxDistance),      //6
-                 M.V3(-w1,h1, maxDistance),     //7
-            };
+    //    mesh.vertices = new Vector3[]
+    //        {
+    //             M.V3(-w0,-h0, minDistance),    //0
+    //             M.V3(w0,-h0, minDistance),     //1
+    //             M.V3(w0,h0, minDistance),      //2
+    //             M.V3(-w0,h0, minDistance),     //3
+    //             M.V3(-w1,-h1, maxDistance),    //4
+    //             M.V3(w1,-h1, maxDistance),     //5
+    //             M.V3(w1,h1, maxDistance),      //6
+    //             M.V3(-w1,h1, maxDistance),     //7
+    //        };
 
-        mesh.subMeshCount = 1;
-        mesh.SetTriangles(new int[]{
-            0,1,2, 0,2,3,
-            3,2,6, 3,6,7,
-            2,1,5, 2,5,6,
-            1,0,4, 1,4,5,
-            0,3,7, 0,7,4,
-            4,5,7, 5,7,6,
-        }, 0);
+    //    mesh.subMeshCount = 1;
+    //    mesh.SetTriangles(new int[]{
+    //        0,1,2, 0,2,3,
+    //        3,2,6, 3,6,7,
+    //        2,1,5, 2,5,6,
+    //        1,0,4, 1,4,5,
+    //        0,3,7, 0,7,4,
+    //        4,5,7, 5,7,6,
+    //    }, 0);
 
-        targetCollider.sharedMesh = mesh;
-    }
+    //    targetCollider.sharedMesh = mesh;
+    //}
 
     // Start is called before the first frame update
     void Start()
     {
         targetCollider = GetComponent<MeshCollider>();
+    }
+
+    private string[] excludePrefixes = new string[]{
+        "HoopFishSchool",
+        "BoomerangFishSchool",
+        "FloatingStone",
+        "FloatingStoneMedium",
+        "FloatingStoneSmall",
+        "Coral_reef_",
+        "Eyeye",
+        "Boomerang",
+        "JellyRay",
+        "GarryFish",
+        "Peeper",
+        "RabbitRay",
+        "metal",
+        "quartz",
+        "salt",
+        "Bubble",
+        "Floater",
+        "Crash",
+        "limestone",
+        "BladderFish",
+        "BrainCoral",
+        "Reginald",
+        "SpadeFish",
+        "HoopFish",
+    };
+
+    private bool IsExcluded(string objectName)
+    {
+        return excludePrefixes.Any(x => objectName.StartsWith(x));
     }
 
     public Rigidbody GetBestTarget(Transform exclude)
@@ -88,6 +121,8 @@ public class TargetScanner : MonoBehaviour
                 if (exclude != null && item.transform.IsChildOf(exclude))
                     continue;
                 if (item.transform.GetComponent<TorpedoControl>() != null)
+                    continue;
+                if (IsExcluded(item.transform.name))
                     continue;
 
                 //var distance = M.SqrDistance(transform.position, item.Rigidbody.transform.position);
@@ -126,7 +161,7 @@ public class TargetScanner : MonoBehaviour
             lastHeight = minHeight;
             lastMaxDistance = maxDistance;
             lastMinDistance = minDistance;
-            Rebuild();
+            //Rebuild();
         }
     }
     

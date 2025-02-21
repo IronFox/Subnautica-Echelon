@@ -4,9 +4,10 @@ using UnityEngine;
 
 public class MaxFlightTime : MonoBehaviour
 {
-    public float maxLifetimeSeconds = 120;
+    public float maxLifetimeSeconds = 30;
     private float age;
     private Detonator det;
+    public float currentFlightTime;
     // Start is called before the first frame update
     void Start()
     {
@@ -17,6 +18,7 @@ public class MaxFlightTime : MonoBehaviour
     void Update()
     {
         age += Time.deltaTime;
+        currentFlightTime = age;
         if (age > maxLifetimeSeconds)
         {
             ConsoleControl.Write($"Maximum lifetime reached ({maxLifetimeSeconds}). Detonating");

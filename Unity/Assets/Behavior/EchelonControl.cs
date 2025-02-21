@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
+using static UnityEngine.GraphicsBuffer;
 
 public class EchelonControl : MonoBehaviour
 {
@@ -79,7 +80,7 @@ public class EchelonControl : MonoBehaviour
 
     private void ChangeState(CameraState state)
     {
-        Debug.Log($"->{state}");
+        //Debug.Log($"->{state}");
         this.state = state;
     }
 
@@ -263,207 +264,246 @@ public class EchelonControl : MonoBehaviour
     private IDirectionSource inWaterDirectionSource;
     private GameObject targetMarker;
     private ITargetable lastValidTarget;
+
+    private Vector3 SizeOf(ITargetable t)
+    {
+        return M.Max(t.GlobalSize*2, 0.1f * M.Distance(t.Position, Camera.main.transform.position));
+    }
     // Update is called once per frame
     void Update()
     {
-        var target = GetTarget();
-        //Debug.Log(target);
-        if (target is RigidbodyTargetable)
+        try
         {
-            lastValidTarget = target;
-            if (targetMarker == null)
+            //ConsoleControl.Write($"isBoarded: {isBoarded}");
+            //ConsoleControl.Write($"isDocked: {isDocked}");
+            if (isBoarded && !isDocked)
             {
-                targetMarker = Instantiate(targetMarkerPrefab, target.Position, Quaternion.identity);
-                targetMarker.transform.localScale = M.Max(target.GlobalSize, M.V3(0.1f))*2;
-            }
-            else
-                targetMarker.transform.position = target.Position;
-        }
-        else
-        {
-            Destroy(targetMarker);
-        }
-
-
-
-
-        var firing = firingLeft ? leftLaunch : rightLaunch;
-
-        var doFire = triggerActive && isBoarded && !isDocked && !outOfWater;
-        firing.fireWithTarget = doFire ? target : null;
-        if (firing.CycleProgress > firing.CycleTime * 0.5f)
-        {
-            firing.fireWithTarget = null;
-            firingLeft = !firingLeft;
-        }
-        
-
-        if (currentlyBoarded != isBoarded)
-        {
-            if (!isBoarded)
-                Offboard();
-            else
-                Onboard();
-        }
-
-        if (currentCameraCenterIsCockpit != cameraCenterIsCockpit && currentlyBoarded)
-        {
-            currentCameraCenterIsCockpit = cameraCenterIsCockpit;
-            if (currentCameraCenterIsCockpit)
-                MoveCameraOutOfTrailSpace();
-            else
-                MoveCameraToTrailSpace();
-        }
-
-
-        if (Input.GetKeyDown(logStateKey))
-        {
-            ConsoleControl.Write("Capturing debug information v3");
-            
-            ConsoleControl.Write($"3rd person camera at {trailSpace.position}");
-            ConsoleControl.Write($"Main camera at {cameraRoot.position}");
-            //ConsoleControl.Write($"Cockpit center at {cockpitRoot.position}");
-
-
-            //ConsoleControl.Write($"RigidBody.isKinematic="+rb.isKinematic);
-            //ConsoleControl.Write($"RigidBody.constraints="+rb.constraints);
-            //ConsoleControl.Write($"RigidBody.collisionDetectionMode=" +rb.collisionDetectionMode);
-            //ConsoleControl.Write($"RigidBody.drag=" +rb.drag);
-            //ConsoleControl.Write($"RigidBody.mass=" +rb.mass);
-            //ConsoleControl.Write($"RigidBody.useGravity=" +rb.useGravity);
-            //ConsoleControl.Write($"RigidBody.velocity=" +rb.velocity);
-            //ConsoleControl.Write($"RigidBody.worldCenterOfMass=" +rb.worldCenterOfMass);
-
-            LogComposition(transform);
-
-        }
-
-
-        //if (isBoarded && !isDocked && rb.isKinematic)
-        //{
-        //    ConsoleControl.Write($"Switching off kinematic mode");
-        //    rb.isKinematic = false;
-        //}
-        rotateCamera.rotationAxisX = lookRightAxis;
-        rotateCamera.rotationAxisY = lookUpAxis;
-
-
-        positionCamera.positionBelowTarget = positionCameraBelowSub;
-        if (currentlyBoarded && !isDocked)
-        {
-            rotateCamera.enabled = true;
-
-            if (freeCamera)
-            {
-                rotateCamera.AbortTransition();
-                ChangeState(CameraState.IsFree);
-                inWaterDirectionSource = nonCameraOrientation;
-                if (nonCameraOrientation != null)
-                    nonCameraOrientation.isActive = true;
-            }
-            else
-            {
-
-                switch (state)
+                var target = GetTarget();
+                //ConsoleControl.Write($"target: "+target.ToString());
+                if (target != null)
                 {
-                    case CameraState.IsTransitioningToBound:
-                        if (rotateCamera.IsTransitionDone)
-                        {
-                            ChangeState(CameraState.IsBound);
-                            
-                            inWaterDirectionSource = new TransformDirectionSource(trailSpace);
+                    if (!(target is PositionTargetable) && !target.Equals(lastValidTarget))
+                        ConsoleControl.Write($"New target acquired: {target}");
 
-                            if (nonCameraOrientation != null)
-                                nonCameraOrientation.isActive = false;
-                            rotateCamera.AbortTransition();
-                        }
-                        break;
-                    case CameraState.IsFree:
-                        ChangeState(CameraState.IsTransitioningToBound);
-                        rotateCamera.BeginTransitionTo(transform);
-                        break;
-
-                }
-            }
-
-            if (look != null)
-                look.targetOrientation = outOfWater
-                        ? fallOrientation
-                        : inWaterDirectionSource;
-
-            if (outOfWater)
-            {
-                if (nonCameraOrientation != null)
-                {
-                    nonCameraOrientation.rightRotationSpeed = 0;
-                    nonCameraOrientation.upRotationSpeed = 0;
-                }
-                backFacingLeft.thrust = 0;
-                backFacingRight.thrust = 0;
-
-                backFacingLeft.overdrive = 0;
-                backFacingRight.overdrive = 0;
-            }
-            else
-            {
-                if (nonCameraOrientation != null)
-                {
-                    nonCameraOrientation.rightRotationSpeed = rightAxis * rotationDegreesPerSecond;
-                    nonCameraOrientation.upRotationSpeed = -upAxis * rotationDegreesPerSecond;
-                }
-                backFacingLeft.thrust = forwardAxis + look.HorizontalRotationIntent * 0.001f;
-                backFacingRight.thrust = forwardAxis - look.HorizontalRotationIntent * 0.001f;
-
-
-                if (overdriveActive)
-                {
-                    float overdriveThreshold = regularForwardAcc / (overdriveForwardAcc + regularForwardAcc);
-                    if (forwardAxis > overdriveThreshold)
+                    lastValidTarget = target;
+                    if (targetMarker == null)
                     {
-                        backFacingRight.overdrive =
-                        backFacingLeft.overdrive =
-                            (forwardAxis - overdriveThreshold) / (1f - overdriveThreshold);
+                        ConsoleControl.Write($"Creating target marker");
+                        targetMarker = Instantiate(targetMarkerPrefab, target.Position, Quaternion.identity);
+                        targetMarker.transform.localScale = SizeOf(target);
+                    }
+                    else
+                    {
+                        //Debug.Log($"Repositioning target marker");
+                        targetMarker.transform.position = target.Position;
+                        targetMarker.transform.localScale = SizeOf(target);
+                    }
+                }
+                else
+                {
+                    ConsoleControl.Write($"Destroying target marker");
+                    Destroy(targetMarker);
+                    targetMarker = null;
+                }
+
+                var firing = firingLeft ? leftLaunch : rightLaunch;
+
+                var doFire = triggerActive && !outOfWater;
+                if (triggerActive)
+                    Debug.Log($"triggerActive");
+                if (doFire)
+                    Debug.Log($"doFire");
+                firing.fireWithTarget = doFire ? target : null;
+                if (firing.CycleProgress > firing.CycleTime * 0.5f)
+                {
+                    ConsoleControl.Write($"Switching tube");
+                    firing.fireWithTarget = null;
+                    firingLeft = !firingLeft;
+                }
+            }
+            else if (targetMarker != null)
+            {
+                ConsoleControl.Write($"Destroying target marker");
+                Destroy(targetMarker);
+                targetMarker = null;
+            }
+
+
+
+
+
+
+
+            if (currentlyBoarded != isBoarded)
+            {
+                if (!isBoarded)
+                    Offboard();
+                else
+                    Onboard();
+            }
+
+            if (currentCameraCenterIsCockpit != cameraCenterIsCockpit && currentlyBoarded)
+            {
+                currentCameraCenterIsCockpit = cameraCenterIsCockpit;
+                if (currentCameraCenterIsCockpit)
+                    MoveCameraOutOfTrailSpace();
+                else
+                    MoveCameraToTrailSpace();
+            }
+
+
+            if (Input.GetKeyDown(logStateKey))
+            {
+                ConsoleControl.Write("Capturing debug information v3");
+
+                ConsoleControl.Write($"3rd person camera at {trailSpace.position}");
+                ConsoleControl.Write($"Main camera at {cameraRoot.position}");
+                //ConsoleControl.Write($"Cockpit center at {cockpitRoot.position}");
+
+
+                //ConsoleControl.Write($"RigidBody.isKinematic="+rb.isKinematic);
+                //ConsoleControl.Write($"RigidBody.constraints="+rb.constraints);
+                //ConsoleControl.Write($"RigidBody.collisionDetectionMode=" +rb.collisionDetectionMode);
+                //ConsoleControl.Write($"RigidBody.drag=" +rb.drag);
+                //ConsoleControl.Write($"RigidBody.mass=" +rb.mass);
+                //ConsoleControl.Write($"RigidBody.useGravity=" +rb.useGravity);
+                //ConsoleControl.Write($"RigidBody.velocity=" +rb.velocity);
+                //ConsoleControl.Write($"RigidBody.worldCenterOfMass=" +rb.worldCenterOfMass);
+
+                LogComposition(transform);
+
+            }
+
+
+            //if (isBoarded && !isDocked && rb.isKinematic)
+            //{
+            //    ConsoleControl.Write($"Switching off kinematic mode");
+            //    rb.isKinematic = false;
+            //}
+            rotateCamera.rotationAxisX = lookRightAxis;
+            rotateCamera.rotationAxisY = lookUpAxis;
+
+
+            positionCamera.positionBelowTarget = positionCameraBelowSub;
+            if (currentlyBoarded && !isDocked)
+            {
+                rotateCamera.enabled = true;
+
+                if (freeCamera)
+                {
+                    rotateCamera.AbortTransition();
+                    ChangeState(CameraState.IsFree);
+                    inWaterDirectionSource = nonCameraOrientation;
+                    if (nonCameraOrientation != null)
+                        nonCameraOrientation.isActive = true;
+                }
+                else
+                {
+
+                    switch (state)
+                    {
+                        case CameraState.IsTransitioningToBound:
+                            if (rotateCamera.IsTransitionDone)
+                            {
+                                ChangeState(CameraState.IsBound);
+
+                                inWaterDirectionSource = new TransformDirectionSource(trailSpace);
+
+                                if (nonCameraOrientation != null)
+                                    nonCameraOrientation.isActive = false;
+                                rotateCamera.AbortTransition();
+                            }
+                            break;
+                        case CameraState.IsFree:
+                            ChangeState(CameraState.IsTransitioningToBound);
+                            rotateCamera.BeginTransitionTo(transform);
+                            break;
+
+                    }
+                }
+
+                if (look != null)
+                    look.targetOrientation = outOfWater
+                            ? fallOrientation
+                            : inWaterDirectionSource;
+
+                if (outOfWater)
+                {
+                    if (nonCameraOrientation != null)
+                    {
+                        nonCameraOrientation.rightRotationSpeed = 0;
+                        nonCameraOrientation.upRotationSpeed = 0;
+                    }
+                    backFacingLeft.thrust = 0;
+                    backFacingRight.thrust = 0;
+
+                    backFacingLeft.overdrive = 0;
+                    backFacingRight.overdrive = 0;
+                }
+                else
+                {
+                    if (nonCameraOrientation != null)
+                    {
+                        nonCameraOrientation.rightRotationSpeed = rightAxis * rotationDegreesPerSecond;
+                        nonCameraOrientation.upRotationSpeed = -upAxis * rotationDegreesPerSecond;
+                    }
+                    backFacingLeft.thrust = forwardAxis + look.HorizontalRotationIntent * 0.001f;
+                    backFacingRight.thrust = forwardAxis - look.HorizontalRotationIntent * 0.001f;
+
+
+                    if (overdriveActive)
+                    {
+                        float overdriveThreshold = regularForwardAcc / (overdriveForwardAcc + regularForwardAcc);
+                        if (forwardAxis > overdriveThreshold)
+                        {
+                            backFacingRight.overdrive =
+                            backFacingLeft.overdrive =
+                                (forwardAxis - overdriveThreshold) / (1f - overdriveThreshold);
+                        }
+                        else
+                            backFacingLeft.overdrive = backFacingRight.overdrive = 0;
                     }
                     else
                         backFacingLeft.overdrive = backFacingRight.overdrive = 0;
+
                 }
-                else
-                    backFacingLeft.overdrive = backFacingRight.overdrive = 0;
 
+
+
+
+                positionCamera.zoomAxis = zoomAxis;
             }
-
-
-
-
-            positionCamera.zoomAxis = zoomAxis;
-        }
-        else
-        {
-            if (nonCameraOrientation != null)
+            else
             {
-                nonCameraOrientation.isActive = false;
-                nonCameraOrientation.rightRotationSpeed = 0;
-                nonCameraOrientation.upRotationSpeed = 0;
+                if (nonCameraOrientation != null)
+                {
+                    nonCameraOrientation.isActive = false;
+                    nonCameraOrientation.rightRotationSpeed = 0;
+                    nonCameraOrientation.upRotationSpeed = 0;
+                }
+                rotateCamera.enabled = false;
+                positionCamera.zoomAxis = 0;
+                backFacingLeft.thrust = 0;
+                backFacingLeft.thrust = 0;
+                if (look != null)
+                    look.targetOrientation = fallOrientation;
+
             }
-            rotateCamera.enabled = false;
-            positionCamera.zoomAxis = 0;
-            backFacingLeft.thrust = 0;
-            backFacingLeft.thrust = 0;
+
             if (look != null)
-                look.targetOrientation = fallOrientation;
+                look.enabled = (isBoarded || outOfWater) && !isDocked;
 
+            forwardFacingLeft.thrust = -backFacingLeft.thrust;
+            forwardFacingRight.thrust = -backFacingRight.thrust;
+
+            //rb.drag = outOfWater ? airDrag : waterDrag;
+
+            //rb.useGravity = outOfWater && !isDocked;
         }
-
-        if (look != null)
-            look.enabled = (isBoarded || outOfWater) && !isDocked;
-
-        forwardFacingLeft.thrust = -backFacingLeft.thrust;
-        forwardFacingRight.thrust = -backFacingRight.thrust;
-
-        //rb.drag = outOfWater ? airDrag : waterDrag;
-
-        //rb.useGravity = outOfWater && !isDocked;
-
+        catch (Exception ex)
+        {
+            ConsoleControl.WriteException($"EchelongControl.Update()", ex);
+        }
     }
 
     public void Localize(Transform player)
