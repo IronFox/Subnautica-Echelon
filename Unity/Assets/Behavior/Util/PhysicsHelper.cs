@@ -13,5 +13,11 @@ public static class PhysicsHelper
         && CanCollide(incomingCollider, myCollider, true);
 
     public static bool CanCollide(Collider incomingCollider, Collider myCollider, bool ignoreIfSelfIsTrigger)
-        => !incomingCollider.isTrigger && (!myCollider.isTrigger || ignoreIfSelfIsTrigger) && !Physics.GetIgnoreCollision(incomingCollider, myCollider);
+        => !incomingCollider.isTrigger 
+        && incomingCollider.enabled 
+        && (
+            !myCollider.isTrigger
+         || ignoreIfSelfIsTrigger
+        ) 
+        && !Physics.GetIgnoreCollision(incomingCollider, myCollider);
 }

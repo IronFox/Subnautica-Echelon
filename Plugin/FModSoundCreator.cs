@@ -9,7 +9,7 @@ namespace Subnautica_Echelon
 {
     internal class FModSoundCreator : ISoundCreator
     {
-        public float halfDistance = 10f;
+        public float halfDistance = 20f;
         private static float Sqr(float value) => value * value;
         public IInstantiatedSound Instantiate(SoundConfig cfg)
         {

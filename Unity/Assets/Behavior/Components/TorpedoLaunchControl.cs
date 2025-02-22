@@ -179,6 +179,7 @@ public class Torpedo
     public bool IsAlive => GameObject != null;
     public void Launch(Vector3 velocity, ITargetable target, bool noExplosions, float overrideMaxFlightTime)
     {
+        ConsoleControl.Write($"Launching torpedo at {target}");
         Control.Rigidbody.velocity = velocity;
         GameObject.transform.parent = null;
         Control.Detonator.noExplosion = noExplosions;

@@ -5,6 +5,7 @@ using UnityEngine;
 public class Detonator : MonoBehaviour
 {
     public GameObject explosionPrefab;
+    public Rigidbody origin;
     public bool noExplosion;
     // Start is called before the first frame update
     void Start()
@@ -14,7 +15,7 @@ public class Detonator : MonoBehaviour
 
     public void Detonate()
     {
-        if (!noExplosion)
+        if (!noExplosion && (origin == null || M.Distance(origin.position, transform.position) > ExplosionController.ExplosionRadius))
             Instantiate(explosionPrefab, transform.position, Quaternion.identity);
         Destroy(gameObject);
     }

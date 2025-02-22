@@ -11,6 +11,8 @@ public class ExplosionController : MonoBehaviour
 
     private float time;
 
+    public const float ExplosionRadius = 15;
+
     // Start is called before the first frame update
     void Start()
     {
@@ -23,7 +25,7 @@ public class ExplosionController : MonoBehaviour
             if (t != null && t.IsAlive)
             {
                 float distance = M.Distance(transform.position,t.GameObject.transform.position); 
-                float dmg = 500 / (1f + distance * 0.1f);
+                float dmg = 2000 / (1f + distance * 0.1f);
                 ConsoleControl.Write($"Dealing {dmg} damage to {t} at health {t.CurrentHealth} and distance {distance}");
                 t.DealDamage(transform.position, dmg, gameObject);
                 ConsoleControl.Write($"Health now at {t.CurrentHealth}");
@@ -48,7 +50,7 @@ public class ExplosionController : MonoBehaviour
 
     private IEnumerable<Rigidbody> GetCurrentEnvironment()
     {
-        var others = Physics.OverlapSphere(transform.position, 30);
+        var others = Physics.OverlapSphere(transform.position, ExplosionRadius);
         Dictionary<int, Rigidbody> bodies = new Dictionary<int, Rigidbody>();
         foreach (var other in others)
         {

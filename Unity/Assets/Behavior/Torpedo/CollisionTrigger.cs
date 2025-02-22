@@ -53,6 +53,14 @@ public class CollisionTrigger : MonoBehaviour
 
         if (PhysicsHelper.CanCollide(collision.collider, regularCollider, doNotCollideWith))
         {
+            var t = TargetAdapter.ResolveTarget(collision.gameObject, collision.rigidbody);
+            if (t != null && t.MaxHealth < 100)
+            {
+                ConsoleControl.Write($"Colliding instance {t} is too fragile: Killing & ignoring");
+                t.DealDamage(transform.position, 100, gameObject);
+                return;
+            }
+
             ConsoleControl.Write($"Reacting to collision with {collision.collider}: Detonating");
             detonator.Detonate();
         }

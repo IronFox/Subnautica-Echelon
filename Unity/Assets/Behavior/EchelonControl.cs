@@ -248,6 +248,12 @@ public class EchelonControl : MonoBehaviour
         {
             if (candidate.collider.gameObject.transform.IsChildOf(transform))
                 continue;
+            if (candidate.collider.isTrigger || !candidate.collider.enabled)
+                continue;
+            //if (candidate.rigidbody != null &&
+            //    candidate.rigidbody.isKinematic
+            //    )
+            //    continue;
             var dist = candidate.distance;
             if (dist < closestAt)
             {
@@ -263,6 +269,7 @@ public class EchelonControl : MonoBehaviour
 
     private IDirectionSource inWaterDirectionSource;
     private GameObject targetMarker;
+    private TargetHealthFeed targetHealthFeed;
     private ITargetable lastValidTarget;
 
     private Vector3 SizeOf(ITargetable t)
@@ -293,12 +300,17 @@ public class EchelonControl : MonoBehaviour
                         ConsoleControl.Write($"Creating target marker");
                         targetMarker = Instantiate(targetMarkerPrefab, target.Position, Quaternion.identity);
                         targetMarker.transform.localScale = SizeOf(target);
+                        targetHealthFeed = targetMarker.GetComponent<TargetHealthFeed>();
+                        if (targetHealthFeed != null)
+                            targetHealthFeed.target = (target as AdapterTargetable)?.TargetAdapter;
                     }
                     else
                     {
                         //Debug.Log($"Repositioning target marker");
                         targetMarker.transform.position = target.Position;
                         targetMarker.transform.localScale = SizeOf(target);
+                        if (targetHealthFeed != null)
+                            targetHealthFeed.target = (target as AdapterTargetable)?.TargetAdapter;
                     }
                 }
                 else

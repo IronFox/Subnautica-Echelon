@@ -48,22 +48,22 @@ public class ProximityDetector : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        //if (targetPredictor != null)
-        //{
-        //    var prediction = targetPredictor.target;
-        //    if (prediction != null && prediction.Exists)
-        //    {
-        //        var dist = M.Distance(prediction.Position, transform.position)
-        //            - prediction.GlobalSize.magnitude;
-        //        if (dist < targetTriggerDistance)
-        //        {
-        //            ConsoleControl.Write($"Detected distance touch with target");
-        //            detonator.Detonate();
-        //        }
-        //        //else
-        //        //    Debug.Log(dist);
-        //    }
+        if (targetPredictor != null)
+        {
+            var prediction = targetPredictor.target;
+            if (prediction != null && prediction.Exists)
+            {
+                var dist = M.Distance(prediction.Position, transform.position)
+                    - prediction.GlobalSize.magnitude;
+                if (dist < targetTriggerDistance)
+                {
+                    ConsoleControl.Write($"Detected distance touch with target");
+                    detonator.Detonate();
+                }
+                //else
+                //    Debug.Log(dist);
+            }
 
-        //}
+        }
     }
 }

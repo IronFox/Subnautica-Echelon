@@ -524,7 +524,7 @@ namespace Subnautica_Echelon
                         engine.overdriveActive = Mathf.Max(engine.overdriveActive,GameInput.GetAnalogValueForButton(GameInput.Button.Sprint));
                 }
                 else
-                    engine.overdriveActive = GameInput.GetAnalogValueForButton(GameInput.Button.Sprint);
+                    engine.overdriveActive = control.forwardAxis > 0 ? GameInput.GetAnalogValueForButton(GameInput.Button.Sprint) : 0;
 
 
                 control.overdriveActive = engine.overdriveActive > 0.5f;

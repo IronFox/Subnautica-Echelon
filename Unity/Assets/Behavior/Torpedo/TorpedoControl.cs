@@ -18,6 +18,7 @@ public class TorpedoControl : MonoBehaviour
     public Rigidbody Rigidbody { get; private set; }
     public TorpedoDrive Drive { get; private set; }
     public CollisionTrigger CollisionTrigger { get; private set; }
+    public Light[] Lights { get; private set; }
 
     public Collider normalCollider;
 
@@ -55,12 +56,16 @@ public class TorpedoControl : MonoBehaviour
             TurnPropeller.enabled = value;
             Drive.enabled = value;
 
+            foreach (var light in Lights)
+                light.enabled = value;
+
             Debug.Log("Targeting.enabled := " + Targeting.enabled);
 
             enabled = value;
         }
 
     }
+
 
 
     // Start is called before the first frame update
@@ -86,6 +91,8 @@ public class TorpedoControl : MonoBehaviour
         Drive = GetComponent<TorpedoDrive>();
         CollisionTrigger = GetComponentInChildren<CollisionTrigger>();
         CollisionTrigger.doNotCollideWith = origin;
+        Detonator.origin = origin;
+        Lights = GetComponentsInChildren<Light>();
     }
 
     // Update is called once per frame
@@ -93,6 +100,7 @@ public class TorpedoControl : MonoBehaviour
     {
         ProximityDetector.doNotCollideWith = origin;
         CollisionTrigger.doNotCollideWith = origin;
+        Detonator.origin = origin;
 
         if (normalCollider.isTrigger && !ProximityDetector.IsIntersectingWithExclusion
             && (origin != null && Vector3.Distance(transform.position, origin.position) > safetyOriginDistance))

@@ -68,43 +68,17 @@ public class TargetScanner : MonoBehaviour
     }
 
     private string[] excludePrefixes = new string[]{
-        "FloatingStone",
-        "FloatingStoneMedium",
-        "FloatingStoneSmall",
-        "Starship_",
-        "Coral_reef_",
-        "RabbitRay",
-        "metal",
-        "lithium",
-        "magnetite",
-        "uraninitecrystal",
-        "shale",
-        "quartz",
-        "salt",
-        "Bubble",
-        "Crash",
-        "limestone",
-        "sandstone",
-        "BladderFish",
+        "Coral_reef_shell_tunnel",
+        "Reefback",
         "BrainCoral",
-        "RepulsionCannon",
-        "Starship_cargo_damaged_",
-        "Wrecks_",
-        "Base_",
-        "Starship_cargo_opened",
-        "LaserCutterFragment",
-        "Map_Room_fragment_",
-        "seaglidefragment",
-        "Jumper",
-        "SpikePlantProjectile",
-        "Stalker"
+        "ReefbackBaby",
     };
 
-    private bool IsExcluded(string objectName)
+    private bool IsExcludedByName(string objectName)
     {
         return excludePrefixes.Any(x => objectName.StartsWith(x))
-            || CollisionTrigger.SmallFishNames.Any(x => objectName.StartsWith(x))
-            || objectName.Contains("Egg")
+            //|| CollisionTrigger.SmallFishNames.Any(x => objectName.StartsWith(x))
+            //|| objectName.Contains("Egg")
             || objectName.Contains("School")
             
             ;
@@ -127,7 +101,7 @@ public class TargetScanner : MonoBehaviour
             var candidates = Physics.OverlapSphere(ray.GetPoint(at), d / 2);
             foreach (var item in candidates)
             {
-                if (item.attachedRigidbody == null || item.isTrigger)
+                if (item.attachedRigidbody == null || item.isTrigger || !item.enabled)
                     continue;
                 if (exclude != null && item.transform.IsChildOf(exclude))
                     continue;
@@ -135,6 +109,8 @@ public class TargetScanner : MonoBehaviour
                     continue;
                 var t = TargetAdapter.ResolveTarget(item.attachedRigidbody.gameObject, item.attachedRigidbody);
                 if (t is null || t.IsInvincible || t.MaxHealth < 200 || !t.IsAlive)
+                    continue;
+                if (IsExcludedByName(item.gameObject.name))
                     continue;
 
                 //var distance = M.SqrDistance(transform.position, item.Rigidbody.transform.position);

@@ -5,7 +5,7 @@ using UnityEngine;
 public class TorpedoDrive : MonoBehaviour
 {
     private float acceleration = 500;
-    private float travelVelocity = 30;
+    private float travelVelocity = 35;
     private TurnPropeller turn;
     private Rigidbody rb;
     public float currentVelocity;

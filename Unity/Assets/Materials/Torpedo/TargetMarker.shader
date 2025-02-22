@@ -3,6 +3,7 @@
     Properties
     {
         _MainTex ("Texture", 2D) = "white" {}
+        _Health ("Health", Vector) = (0.5,1,1)
     }
     SubShader
     {
@@ -50,6 +51,7 @@
             sampler2D _MainTex;
             float4 _MainTex_ST;
             float3 _CameraCenter;
+            float3 _Health;
 
             v2f vert (appdata v)
             {
@@ -65,6 +67,11 @@
                 return o;
             }
 
+            float dd(float v)
+            {
+                return max(abs(ddx(v)),abs(ddy(v)));
+            }
+
             fixed4 frag (v2f i) : SV_Target
             {
                 float3 c3 = i.eyeObjectCenter.xyz / i.eyeObjectCenter.w;
@@ -75,14 +82,37 @@
                 // sample the texture
                 fixed4 col = (float4)1;
                 float cs = abs(dot(i.pointCamera, i.normal)) / (length(i.pointCamera) * length(i.normal));
-                float d = max(abs(ddx(cs)),abs(ddy(cs)));
-                float radial = 0.5 + 0.5 * sin(circularAngle * 3 + _Time.w);
-                float d2 = max(abs(ddx(radial)),abs(ddy(radial)));
-                col.a = 0.5 * (1.0 - smoothstep(0.6, 0.6+d*4, cs)) * smoothstep(0.2, 0.2+d2*2,radial );
-                col.rgb = float3(1,0.5,0.4)*1.5 * (1.0 - smoothstep(0.5, 0.5+d*4, cs))
-                        * smoothstep(0.4, 0.4+d*2, cs)
-                         * smoothstep(0.3, 0.3+d2*2,radial );
+                float d = dd(cs);
+                if (_Health.z < 0.5)
+                {
+                    float radial = 0.5 + 0.5 * sin(circularAngle * 3 + _Time.w);
+                    float d2 = max(abs(ddx(radial)),abs(ddy(radial)));
+                    col.a = 0.5 * (1.0 - smoothstep(0.6, 0.6+d*4, cs)) * smoothstep(0.2, 0.2+d2*2,radial );
+                    col.rgb = float3(1,0.5,0.4)*1.5 * (1.0 - smoothstep(0.5, 0.5+d*4, cs))
+                            * smoothstep(0.4, 0.4+d*2, cs)
+                             * smoothstep(0.3, 0.3+d2*2,radial );
+                }
+                else
+                {
+                    float circularAngleOne = (circularAngle + M_PI) / (2* M_PI);
+                    float circular2Fmod = fmod(circularAngleOne*2,1);
+                    float dc = dd(circular2Fmod);
+                    float flash = smoothstep(sqrt(750),sqrt(3000),  sqrt(_Health.y)) * 0.9;
+                    float relHealth = _Health.x / _Health.y;
+                    float radial = smoothstep(circular2Fmod-dc, circular2Fmod+dc,0.1 + 0.9 * relHealth);
+                    //float d2 = max(abs(ddx(radial)),abs(ddy(radial)));
+                    col.a = 0.5 * (1.0 - smoothstep(0.6, 0.6+d*4, cs)) * radial;
+                    col.rgb = float3(
+                        smoothstep(0.2, 0.4, 1-relHealth),
+                        smoothstep(0.2, 0.4, relHealth),
+                        0
+                        ) * (1.0 - smoothstep(0.5, 0.5+d*4, cs))
+                            * smoothstep(0.4, 0.4+d*2, cs)
+                            * ((1 - flash) + (cos(_Time.z* flash*10)*0.5 + 0.5)*flash)
+                             ;
 
+
+                }
                 clip(col.a - 0.1);
                 //circularAngle;
                 //tex2D(_MainTex, i.uv);
