@@ -36,7 +36,7 @@ public class TorpedoDirectAt : MonoBehaviour
             if (emulateRigidbody)
             {
                 var q = Quaternion.FromToRotation(transform.forward, targetDirection);
-                var actual  = Quaternion.Slerp(Quaternion.identity, q, Mathf.Min(maxRotThisFrame, error*2));
+                var actual  = Quaternion.Slerp(Quaternion.identity, q, Mathf.Min(maxRotThisFrame, error*0.06f));
                 transform.rotation = actual * transform.rotation;
             }
             else

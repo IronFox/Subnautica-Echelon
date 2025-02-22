@@ -68,7 +68,7 @@ public class TargetScanner : MonoBehaviour
     }
 
     private string[] excludePrefixes = new string[]{
-        "Coral_reef_shell_tunnel",
+        "Coral_reef_",
         "Reefback",
         "BrainCoral",
         "ReefbackBaby",
@@ -110,7 +110,7 @@ public class TargetScanner : MonoBehaviour
                 var t = TargetAdapter.ResolveTarget(item.attachedRigidbody.gameObject, item.attachedRigidbody);
                 if (t is null || t.IsInvincible || t.MaxHealth < 200 || !t.IsAlive)
                     continue;
-                if (IsExcludedByName(item.gameObject.name))
+                if (IsExcludedByName(item.attachedRigidbody.gameObject.name))
                     continue;
 
                 //var distance = M.SqrDistance(transform.position, item.Rigidbody.transform.position);

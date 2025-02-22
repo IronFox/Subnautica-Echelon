@@ -54,7 +54,8 @@ public class ProximityDetector : MonoBehaviour
             if (prediction != null && prediction.Exists)
             {
                 var dist = M.Distance(prediction.Position, transform.position)
-                    - prediction.GlobalSize.magnitude;
+                    //- prediction.GlobalSize.magnitude
+                    ;
                 if (dist < targetTriggerDistance)
                 {
                     ConsoleControl.Write($"Detected distance touch with target");

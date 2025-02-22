@@ -5,14 +5,18 @@ using UnityEngine;
 public class TorpedoDrive : MonoBehaviour
 {
     private float acceleration = 500;
-    private float travelVelocity = 35;
+    //private float travelVelocity = 35;
     private TurnPropeller turn;
     private Rigidbody rb;
+    public Rigidbody origin;
     public float currentVelocity;
     public float dragCompensated;
     public float finalAcceleration;
     //private float errorCorrection = 1f;
-    public float TravelVelocity => travelVelocity;
+    public float TravelVelocity => 
+        (origin == null || M.Distance(origin.position,rb.position) > 3)
+            ? 35
+            : 45;
 
     // Start is called before the first frame update
     void Start()
@@ -37,9 +41,9 @@ public class TorpedoDrive : MonoBehaviour
 
             //dragCompensated = travelVelocity * 2f;
 
-            var error = travelVelocity - forwardVelocity;
+            var error = TravelVelocity - forwardVelocity;
             dragCompensated = DragCompensation
-                .For(travelVelocity)
+                .For(TravelVelocity)
                 .Update(error, Time.fixedDeltaTime);
 
             finalAcceleration = Mathf.Min(acceleration, dragCompensated);

@@ -89,6 +89,7 @@ public class TorpedoControl : MonoBehaviour
         ParticleSystem = GetComponentInChildren<ParticleSystem>();
         SoundAdapter = GetComponent<SoundAdapter>();
         Drive = GetComponent<TorpedoDrive>();
+        Drive.origin = origin;
         CollisionTrigger = GetComponentInChildren<CollisionTrigger>();
         CollisionTrigger.doNotCollideWith = origin;
         Detonator.origin = origin;
@@ -101,6 +102,7 @@ public class TorpedoControl : MonoBehaviour
         ProximityDetector.doNotCollideWith = origin;
         CollisionTrigger.doNotCollideWith = origin;
         Detonator.origin = origin;
+        Drive.origin = origin;
 
         if (normalCollider.isTrigger && !ProximityDetector.IsIntersectingWithExclusion
             && (origin != null && Vector3.Distance(transform.position, origin.position) > safetyOriginDistance))
