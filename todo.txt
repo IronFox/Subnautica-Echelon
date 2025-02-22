@@ -1,5 +1,18 @@
 echelon todos:
 
+* disable all access to C:\temp both in the unity scene and the plugin. Redirect to Debug.*
+* sub: 
+	* add custom icon presumably via CraftingSprite
+	* when returning from outside water while free camera is active, free camera ship direction should copy falling vector
+	* add camera shake on overdrive
+	* restore all directions on undock from docked orientation
+	* propeller still rotates while docked
+	* increase all speeds +50%
+	* link mouse wheel to zoom axis
+	
+	* when opening inventory, only move camera on final state	 (done)
+	* transfer occlusion maps to albedo	(done)
+	* disable overdrive when moving backwards, reduce reverse speed to prevent backwards jumping (done)
 * explosions:
 	* reduce size (done, using KriptoFX)
 	* use Subnautica sound source to fix 3d issues (done)
@@ -7,20 +20,10 @@ echelon todos:
 	* pressure wave should use lit material but face normal to the inside (won't do, using KriptoFX)
 	* add smolder sphere (done, using KriptoFX)
 * torpedoes:
-	* model mesh
-	* split covers into two
-	* animate covers
-	* torpedo behavior (lock on targets)
-	* torpedo trigger explosion and damage targets
-	* deploy torpedo from ship on trigger press
-* sub: 
-	* when opening inventory, only move camera on final state
-	* propeller still rotates while docked
-	* restore all directions on undock from docked orientation
-	* increase all speeds +50%
-	* transfer occlusion maps to albedo	(done)
-	* add camera shake on overdrive or nearby explosion
-	* disable overdrive when moving backwards, reduce reverse speed to prevent backwards jumping. Alternatively: allow reverse jumps
-	* when returning from outside water while free camera is active, free camera ship direction should copy falling vector
+	* model mesh	 (done)
+	* split covers into two	(done)
+	* animate covers	(done)
+	* torpedo behavior (lock on targets, done)
+	* torpedo trigger explosion and damage targets	(done)
+	* deploy torpedo from ship on trigger press	(done)
 	
-* disable all access to C:\temp both in the unity scene and the plugin
