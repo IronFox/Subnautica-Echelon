@@ -7,6 +7,7 @@ public class NonCameraOrientation : MonoBehaviour, IDirectionSource
     public float rightRotationSpeed;
     public float upRotationSpeed;
     public bool isActive;
+    public bool outOfWater;
     private LockedEuler rot;
 
     public Vector3 Forward => rot.Forward;
@@ -24,7 +25,7 @@ public class NonCameraOrientation : MonoBehaviour, IDirectionSource
     // Update is called once per frame
     void Update()
     {
-        if (!isActive)
+        if (!isActive || outOfWater)
         {
             rot = LockedEuler.FromGlobal(transform);
         }

@@ -3,13 +3,13 @@ echelon todos:
 * disable all access to C:\temp both in the unity scene and the plugin. Redirect to Debug.*
 * sub: 
 	* add custom icon presumably via CraftingSprite
-	* when returning from outside water while free camera is active, free camera ship direction should copy falling vector
 	* add camera shake on overdrive
 	* restore all directions on undock from docked orientation
 	* propeller still rotates while docked
 	* increase all speeds +50%
 	* link mouse wheel to zoom axis
 	
+	* when returning from outside water while free camera is active, free camera ship direction should copy falling vector (done)
 	* when opening inventory, only move camera on final state	 (done)
 	* transfer occlusion maps to albedo	(done)
 	* disable overdrive when moving backwards, reduce reverse speed to prevent backwards jumping (done)

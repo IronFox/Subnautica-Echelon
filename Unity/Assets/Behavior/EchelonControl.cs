@@ -278,71 +278,70 @@ public class EchelonControl : MonoBehaviour
         var s = Mathf.Max(vec.x,vec.y, vec.z);
         return M.V3(s);
     }
-    // Update is called once per frame
-    void Update()
-    {
-        try
-        {
-            //ConsoleControl.Write($"isBoarded: {isBoarded}");
-            //ConsoleControl.Write($"isDocked: {isDocked}");
-            if (isBoarded && !isDocked)
-            {
-                var target = GetTarget();
-                //ConsoleControl.Write($"target: "+target.ToString());
-                if (target != null)
-                {
-                    if (!(target is PositionTargetable) && !target.Equals(lastValidTarget))
-                        ConsoleControl.Write($"New target acquired: {target}");
 
-                    lastValidTarget = target;
-                    if (targetMarker == null)
-                    {
-                        ConsoleControl.Write($"Creating target marker");
-                        targetMarker = Instantiate(targetMarkerPrefab, target.Position, Quaternion.identity);
-                        targetMarker.transform.localScale = SizeOf(target);
-                        targetHealthFeed = targetMarker.GetComponent<TargetHealthFeed>();
-                        if (targetHealthFeed != null)
-                            targetHealthFeed.target = (target as AdapterTargetable)?.TargetAdapter;
-                    }
-                    else
-                    {
-                        //Debug.Log($"Repositioning target marker");
-                        targetMarker.transform.position = target.Position;
-                        targetMarker.transform.localScale = SizeOf(target);
-                        if (targetHealthFeed != null)
-                            targetHealthFeed.target = (target as AdapterTargetable)?.TargetAdapter;
-                    }
+
+    private void ProcessTargeting()
+    {
+        if (isBoarded && !isDocked)
+        {
+            var target = GetTarget();
+            //ConsoleControl.Write($"target: "+target.ToString());
+            if (target != null)
+            {
+                if (!(target is PositionTargetable) && !target.Equals(lastValidTarget))
+                    ConsoleControl.Write($"New target acquired: {target}");
+
+                lastValidTarget = target;
+                if (targetMarker == null)
+                {
+                    ConsoleControl.Write($"Creating target marker");
+                    targetMarker = Instantiate(targetMarkerPrefab, target.Position, Quaternion.identity);
+                    targetMarker.transform.localScale = SizeOf(target);
+                    targetHealthFeed = targetMarker.GetComponent<TargetHealthFeed>();
+                    if (targetHealthFeed != null)
+                        targetHealthFeed.target = (target as AdapterTargetable)?.TargetAdapter;
                 }
                 else
                 {
-                    ConsoleControl.Write($"Destroying target marker");
-                    Destroy(targetMarker);
-                    targetMarker = null;
-                }
-
-                var firing = firingLeft ? leftLaunch : rightLaunch;
-
-                var doFire = triggerActive && !outOfWater;
-                firing.fireWithTarget = doFire ? target : null;
-                if (firing.CycleProgress > firing.CycleTime * 0.5f)
-                {
-                    ConsoleControl.Write($"Switching tube");
-                    firing.fireWithTarget = null;
-                    firingLeft = !firingLeft;
+                    //Debug.Log($"Repositioning target marker");
+                    targetMarker.transform.position = target.Position;
+                    targetMarker.transform.localScale = SizeOf(target);
+                    if (targetHealthFeed != null)
+                        targetHealthFeed.target = (target as AdapterTargetable)?.TargetAdapter;
                 }
             }
-            else if (targetMarker != null)
+            else
             {
                 ConsoleControl.Write($"Destroying target marker");
                 Destroy(targetMarker);
                 targetMarker = null;
             }
 
+            var firing = firingLeft ? leftLaunch : rightLaunch;
 
+            var doFire = triggerActive && !outOfWater;
+            firing.fireWithTarget = doFire ? target : null;
+            if (firing.CycleProgress > firing.CycleTime * 0.5f)
+            {
+                ConsoleControl.Write($"Switching tube");
+                firing.fireWithTarget = null;
+                firingLeft = !firingLeft;
+            }
+        }
+        else if (targetMarker != null)
+        {
+            ConsoleControl.Write($"Destroying target marker");
+            Destroy(targetMarker);
+            targetMarker = null;
+        }
+    }
 
-
-
-
+    // Update is called once per frame
+    void Update()
+    {
+        try
+        {
+            ProcessTargeting();
 
             if (currentlyBoarded != isBoarded)
             {
@@ -385,16 +384,11 @@ public class EchelonControl : MonoBehaviour
             }
 
 
-            //if (isBoarded && !isDocked && rb.isKinematic)
-            //{
-            //    ConsoleControl.Write($"Switching off kinematic mode");
-            //    rb.isKinematic = false;
-            //}
             rotateCamera.rotationAxisX = lookRightAxis;
             rotateCamera.rotationAxisY = lookUpAxis;
 
-
             positionCamera.positionBelowTarget = positionCameraBelowSub;
+
             if (currentlyBoarded && !isDocked)
             {
                 rotateCamera.enabled = true;
@@ -436,6 +430,7 @@ public class EchelonControl : MonoBehaviour
                     look.targetOrientation = outOfWater
                             ? fallOrientation
                             : inWaterDirectionSource;
+                nonCameraOrientation.outOfWater = outOfWater;
 
                 if (outOfWater)
                 {
