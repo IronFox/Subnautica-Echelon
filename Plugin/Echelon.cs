@@ -47,7 +47,10 @@ namespace Subnautica_Echelon
         {
             //Log.WriteLowFrequency(MyLogger.Channel.Two, $"MoveWithInput({moveInput})");
             currentInput = moveInput;
-            moveInput = new Vector3(moveInput.x, moveInput.y , moveInput.z * (1.5f + 3 * overdriveActive));
+            moveInput = new Vector3(
+                moveInput.x * (1 + 2 * overdriveActive),
+                moveInput.y * (1 + 2 * overdriveActive),
+                moveInput.z * (1.5f + 5 * overdriveActive));
             if (freeCamera)
                 moveInput = new Vector3(0, 0, moveInput.z);
             RB.AddRelativeForce(moveInput, ForceMode.VelocityChange);

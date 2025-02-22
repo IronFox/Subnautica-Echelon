@@ -6,9 +6,9 @@ echelon todos:
 	* add camera shake on overdrive
 	* restore all directions on undock from docked orientation
 	* propeller still rotates while docked
-	* increase all speeds +50%
 	* link mouse wheel to zoom axis
 	
+	* increase all speeds +50%	(done - only overdrive)
 	* when returning from outside water while free camera is active, free camera ship direction should copy falling vector (done)
 	* when opening inventory, only move camera on final state	 (done)
 	* transfer occlusion maps to albedo	(done)
