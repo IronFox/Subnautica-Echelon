@@ -2,6 +2,8 @@ echelon todos:
 
 * disable all access to C:\temp both in the unity scene and the plugin. Redirect to Debug.*
 * sub: 
+	* set recipe
+	* add energy drain and batteries
 	* add custom icon presumably via CraftingSprite
 	* add camera shake on overdrive
 	* restore all directions on undock from docked orientation

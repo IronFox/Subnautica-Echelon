@@ -46,14 +46,13 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   torpedoPrefab: {fileID: 2501418104200933177, guid: 140d7c8d9f700844c883dba6e90b66fc,
     type: 3}
-  relativeExitVelocity: 40
+  relativeExitVelocity: 80
   cover: {fileID: 0}
-  secondsToOpenCover: 0.5
+  secondsToOpenCover: 0.25
   secondsToFire: 1
   coverOpenPosition: {fileID: 0}
   noExplosions: 0
   overrideMaxLifetimeSeconds: 0
-  openSound: {fileID: 0}
   fireSound: {fileID: 4244463131336336650}
   myBody: {fileID: 0}
 --- !u!1 &1402143320969980528
