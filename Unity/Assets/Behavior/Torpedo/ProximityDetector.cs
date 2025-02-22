@@ -20,17 +20,20 @@ public class ProximityDetector : MonoBehaviour
 
     private void OnTriggerEnter(Collider collider)
     {
-        bool excluded = doNotCollideWith != null && collider.attachedRigidbody == doNotCollideWith;
+        bool excluded = PhysicsHelper.IsExcluded(collider, doNotCollideWith);
         if (excluded)
             isIntersectingWithExclusionCount++;
-        if (collider.isTrigger
-            || excluded
-            || Physics.GetIgnoreCollision(collider, regularCollider))
+        if (excluded
+            || collider.attachedRigidbody == null
+            || !PhysicsHelper.CanCollide(collider, regularCollider, true))
+        {
+            ConsoleControl.Write($"Cannot react to proximity of {collider.name} (excluded={excluded},nobody={collider.attachedRigidbody == null}, other={!PhysicsHelper.CanCollide(collider, regularCollider, true)}). Ignoring");
             return;
+        }
         var rb = collider.attachedRigidbody;
         var rbName = rb != null ? rb.name : "<null>";
-        ConsoleControl.Write($"Detected touch with {collider.name} attached to {rbName}. Exclusion is set to {doNotCollideWith}. Detonating");
-        
+        ConsoleControl.Write($"Detected proximity of {collider.name} attached to {rbName}. Exclusion is set to {doNotCollideWith}. Detonating");
+
         detonator.Detonate();
     }
 
@@ -45,22 +48,22 @@ public class ProximityDetector : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if (targetPredictor != null)
-        {
-            var prediction = targetPredictor.target;
-            if (prediction != null && prediction.Exists)
-            {
-                var dist = M.Distance(prediction.Position, transform.position)
-                    - prediction.GlobalSize.magnitude;
-                if (dist < targetTriggerDistance)
-                {
-                    ConsoleControl.Write($"Detected distance touch with target");
-                    detonator.Detonate();
-                }
-                //else
-                //    Debug.Log(dist);
-            }
+        //if (targetPredictor != null)
+        //{
+        //    var prediction = targetPredictor.target;
+        //    if (prediction != null && prediction.Exists)
+        //    {
+        //        var dist = M.Distance(prediction.Position, transform.position)
+        //            - prediction.GlobalSize.magnitude;
+        //        if (dist < targetTriggerDistance)
+        //        {
+        //            ConsoleControl.Write($"Detected distance touch with target");
+        //            detonator.Detonate();
+        //        }
+        //        //else
+        //        //    Debug.Log(dist);
+        //    }
 
-        }
+        //}
     }
 }

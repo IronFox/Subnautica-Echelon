@@ -13,7 +13,6 @@ public class TorpedoLaunchControl : MonoBehaviour
     public Transform coverOpenPosition;
     public bool noExplosions;
     public float overrideMaxLifetimeSeconds;
-    public SoundAdapter openSound;
     public SoundAdapter fireSound;
 
     private bool everOpened;
@@ -56,7 +55,7 @@ public class TorpedoLaunchControl : MonoBehaviour
 
             if (fired)
             {
-                openSound.play = false;
+                //openSound.play = false;
                 fireRecoverProgress += Time.deltaTime;
                 fireSound.play = true;
                 fireSound.volume = 1f - fireRecoverProgress / secondsToFire;
@@ -74,7 +73,7 @@ public class TorpedoLaunchControl : MonoBehaviour
             }
             else if (closing)
             {
-                openSound.play = true;
+                //openSound.play = true;
                 fireSound.play = false;
                 coverRecoveryProgress += Time.deltaTime;
                 //Debug.Log("Closing again @" + coverRecoveryProgress);
@@ -93,17 +92,17 @@ public class TorpedoLaunchControl : MonoBehaviour
             }
             else if (fireWithTarget != null)
             {
-                openSound.play = true;
+                //openSound.play = true;
                 fireSound.play = false;
                 if (torpedoInTube == null)
                     torpedoInTube = InstantiateTorpedo();
 
                 coverRedactionProgress += Time.deltaTime;
-                ConsoleControl.Write("Opening @" + coverRedactionProgress);
+                //ConsoleControl.Write("Opening @" + coverRedactionProgress);
                 everOpened = true;
                 if (coverRedactionProgress > secondsToOpenCover)
                 {
-                    openSound.play = false;
+                    //openSound.play = false;
                     fireSound.play = true;
                     coverRedactionProgress = secondsToOpenCover;
                     SetCover(1);
@@ -128,11 +127,11 @@ public class TorpedoLaunchControl : MonoBehaviour
                 if (everOpened)
                     ConsoleControl.Write("fireWithTarget is null");
                 everOpened = false;
-                openSound.play = false;
+                //openSound.play = false;
                 fireSound.play = false;
                 if (coverRedactionProgress > 0)
                 {
-                    openSound.play = true;
+                    //openSound.play = true;
 
                     coverRedactionProgress -= Time.deltaTime;
                     if (coverRedactionProgress < 0)
@@ -185,7 +184,7 @@ public class Torpedo
         Control.Detonator.noExplosion = noExplosions;
         Control.TargetPredictor.target = target;
 
-
+        
         if (overrideMaxFlightTime > 0)
             Control.MaxFlightTime.maxLifetimeSeconds = overrideMaxFlightTime;
         Control.IsLive = true;

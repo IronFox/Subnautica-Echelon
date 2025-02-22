@@ -5,9 +5,9 @@ using UnityEngine;
 public class TorpedoDrive : MonoBehaviour
 {
     private float acceleration = 500;
-    private float travelVelocity = 40;
+    private float travelVelocity = 30;
     private TurnPropeller turn;
-    private RigidbodyAdapter rb;
+    private Rigidbody rb;
     public float currentVelocity;
     public float dragCompensated;
     public float finalAcceleration;
@@ -18,7 +18,7 @@ public class TorpedoDrive : MonoBehaviour
     void Start()
     {
         turn = GetComponent<TurnPropeller>();
-        rb = GetComponent<RigidbodyAdapter>();
+        rb = GetComponent<Rigidbody>();
     }
 
     // Update is called once per frame
@@ -29,21 +29,23 @@ public class TorpedoDrive : MonoBehaviour
 
     void FixedUpdate()
     {
-        
+        if (!ActorAdapter.IsOutOfWater(gameObject, rb.position))
+        {
 
-        var forwardVelocity = currentVelocity = M.Dot( rb.velocity, transform.forward );
-        var sideVelocity = rb.velocity - transform.forward * forwardVelocity;
-        
-        //dragCompensated = travelVelocity * 2f;
+            var forwardVelocity = currentVelocity = M.Dot(rb.velocity, transform.forward);
+            var sideVelocity = rb.velocity - transform.forward * forwardVelocity;
 
-        var error = travelVelocity - forwardVelocity;
-        dragCompensated = DragCompensation
-            .For(travelVelocity)
-            .Update(error, Time.fixedDeltaTime);
+            //dragCompensated = travelVelocity * 2f;
 
-        finalAcceleration = Mathf.Min(acceleration, dragCompensated);
-        rb.AddRelativeForce(0, 0, finalAcceleration, ForceMode.Acceleration);
+            var error = travelVelocity - forwardVelocity;
+            dragCompensated = DragCompensation
+                .For(travelVelocity)
+                .Update(error, Time.fixedDeltaTime);
 
-        turn.speedScale = 0.1f + 0.9f*Mathf.Max(0f, finalAcceleration / acceleration);
+            finalAcceleration = Mathf.Min(acceleration, dragCompensated);
+            rb.AddRelativeForce(0, 0, finalAcceleration, ForceMode.Acceleration);
+
+            turn.speedScale = 0.1f + 0.9f * Mathf.Max(0f, finalAcceleration / acceleration);
+        }
     }
 }

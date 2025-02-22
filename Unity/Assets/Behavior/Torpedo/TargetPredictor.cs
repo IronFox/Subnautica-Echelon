@@ -126,6 +126,54 @@ public class TransformTargetable : ITargetable
     }
 }
 
+public class AdapterTargetable : ITargetable
+{
+    public TargetAdapter TargetAdapter { get; }
+
+    public Vector3 GlobalSize { get; }
+
+    public Vector3 Position => TargetAdapter.GameObject.transform.position;
+
+    public Vector3? InherentVelocity => TargetAdapter.Rigidbody.velocity;
+
+    public bool Exists => TargetAdapter.IsAlive;
+
+    public AdapterTargetable(TargetAdapter targetAdapter)
+    {
+        TargetAdapter = targetAdapter;
+        GlobalSize = SizeFromRigidbody(targetAdapter.Rigidbody);
+    }
+
+    public static Vector3 SizeFromRigidbody(Rigidbody rigidbody)
+    {
+        var colliders = rigidbody.transform.GetComponentsInChildren<Collider>();
+        if (colliders.Length > 0)
+        {
+            Bounds b = new Bounds(Vector3.zero, M.V3(float.MinValue));
+            foreach (var collider in colliders)
+            {
+                b.Encapsulate(collider.bounds);
+            }
+            return b.max - b.min;
+        }
+        else
+            return Vector3.zero;
+    }
+
+    public override string ToString() => $"AT Target {TargetAdapter.GameObject.name} (maxhealth={TargetAdapter.MaxHealth}, invincible={TargetAdapter.IsInvincible})";
+
+    public override bool Equals(object obj)
+    {
+        return obj is AdapterTargetable targetable &&
+               EqualityComparer<TargetAdapter>.Default.Equals(TargetAdapter, targetable.TargetAdapter);
+    }
+
+    public override int GetHashCode()
+    {
+        return -1904651305 + EqualityComparer<TargetAdapter>.Default.GetHashCode(TargetAdapter);
+    }
+}
+
 public class RigidbodyTargetable : ITargetable
 {
     public Rigidbody Rigidbody { get; }
@@ -141,20 +189,7 @@ public class RigidbodyTargetable : ITargetable
     public RigidbodyTargetable(Rigidbody rigidbody)
     {
         Rigidbody = rigidbody;
-
-        var colliders = Rigidbody.transform.GetComponentsInChildren<Collider>();
-        if (colliders.Length > 0)
-        {
-            Bounds b = new Bounds(Vector3.zero, M.V3(float.MinValue));
-            foreach (var collider in colliders)
-            {
-                b.Encapsulate(collider.bounds);
-            }
-            GlobalSize = b.max - b.min;
-        }
-        else
-            GlobalSize = Vector3.zero;
-
+        GlobalSize = AdapterTargetable.SizeFromRigidbody(rigidbody);
     }
 
     public override string ToString() => $"RB Target {Rigidbody.name}";

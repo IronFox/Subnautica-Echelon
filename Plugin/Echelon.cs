@@ -227,7 +227,6 @@ namespace Subnautica_Echelon
         public static GameObject model;
         private EchelonControl control;
         //private RotateCamera rotateCamera;
-        private PDA pda;
         private MyLogger EchLog { get; }
         private EchelonEngine engine;
 
@@ -503,13 +502,30 @@ namespace Subnautica_Echelon
 
                 control.outOfWater = !GetIsUnderwater();
 
-                control.cameraCenterIsCockpit = Player.main.pda.state != PDA.State.Closed;
+                
 
-                if (GameInput.GetKeyDown(MainPatcher.Config.toggleFreeCamera))
+                control.cameraCenterIsCockpit = Player.main.pda.state == PDA.State.Opened;
+
+                if (GameInput.GetKeyDown(MainPatcher.PluginConfig.toggleFreeCamera))
                     engine.freeCamera = control.freeCamera = !control.freeCamera;
 
 
-                engine.overdriveActive = GameInput.GetAnalogValueForButton(GameInput.Button.Sprint);
+                if (GameInput.GetButtonDown(GameInput.Button.Sprint) && MainPatcher.PluginConfig.boostToggle)
+                {
+                    if (control.forwardAxis > 0 && engine.overdriveActive > 0)
+                        engine.overdriveActive = 0;
+                }
+
+                if (MainPatcher.PluginConfig.boostToggle)
+                {
+                    if (control.forwardAxis <= 0)
+                        engine.overdriveActive = 0;
+                    else
+                        engine.overdriveActive = Mathf.Max(engine.overdriveActive,GameInput.GetAnalogValueForButton(GameInput.Button.Sprint));
+                }
+                else
+                    engine.overdriveActive = GameInput.GetAnalogValueForButton(GameInput.Button.Sprint);
+
 
                 control.overdriveActive = engine.overdriveActive > 0.5f;
 

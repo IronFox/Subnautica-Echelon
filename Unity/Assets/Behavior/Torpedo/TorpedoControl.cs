@@ -14,15 +14,16 @@ public class TorpedoControl : MonoBehaviour
 
     public TurnPropeller TurnPropeller { get; private set; }
     public ProximityDetector ProximityDetector { get; private set; }
-    public TorpedoTargeting Targeting {get; private set; }
-    public RigidbodyAdapter Rigidbody {get; private set;}
-    public TorpedoDrive Drive {get; private set; }
+    public TorpedoTargeting Targeting { get; private set; }
+    public Rigidbody Rigidbody { get; private set; }
+    public TorpedoDrive Drive { get; private set; }
+    public CollisionTrigger CollisionTrigger { get; private set; }
 
     public Collider normalCollider;
 
 
     //public float detonationProximity = 1;
-    
+
 
 
     public Rigidbody origin;
@@ -44,6 +45,7 @@ public class TorpedoControl : MonoBehaviour
             TargetPredictor.enabled = value;
             MaxFlightTime.enabled = value;
             ProximityDetector.enabled = value;
+            CollisionTrigger.enabled = value;
             Detonator.enabled = value;
             Targeting.enabled = value;
             TorpedoDirectAt.enabled = value;
@@ -53,7 +55,7 @@ public class TorpedoControl : MonoBehaviour
             TurnPropeller.enabled = value;
             Drive.enabled = value;
 
-            Debug.Log("Targeting.enabled := "+ Targeting.enabled);
+            Debug.Log("Targeting.enabled := " + Targeting.enabled);
 
             enabled = value;
         }
@@ -75,25 +77,36 @@ public class TorpedoControl : MonoBehaviour
         ProximityDetector = GetComponentInChildren<ProximityDetector>();
         Targeting = GetComponent<TorpedoTargeting>();
         ProximityDetector.doNotCollideWith = origin;
-        Rigidbody = GetComponent<RigidbodyAdapter>();
+        Rigidbody = GetComponent<Rigidbody>();
         MaxFlightTime = GetComponent<MaxFlightTime>();
         Detonator = GetComponent<Detonator>();
         TorpedoDirectAt = GetComponent<TorpedoDirectAt>();
         ParticleSystem = GetComponentInChildren<ParticleSystem>();
         SoundAdapter = GetComponent<SoundAdapter>();
         Drive = GetComponent<TorpedoDrive>();
+        CollisionTrigger = GetComponentInChildren<CollisionTrigger>();
+        CollisionTrigger.doNotCollideWith = origin;
     }
 
     // Update is called once per frame
     void Update()
     {
         ProximityDetector.doNotCollideWith = origin;
+        CollisionTrigger.doNotCollideWith = origin;
 
         if (normalCollider.isTrigger && !ProximityDetector.IsIntersectingWithExclusion
             && (origin != null && Vector3.Distance(transform.position, origin.position) > safetyOriginDistance))
         {
             ConsoleControl.Write($"Exited exlusion intersection. Restoring collider");
             normalCollider.isTrigger = false;
+        }
+    }
+
+    void FixedUpdate()
+    {
+        if (ActorAdapter.IsOutOfWater(gameObject, Rigidbody.position))
+        {
+            Detonator.Detonate();
         }
     }
 

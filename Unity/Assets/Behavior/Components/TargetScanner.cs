@@ -68,43 +68,54 @@ public class TargetScanner : MonoBehaviour
     }
 
     private string[] excludePrefixes = new string[]{
-        "HoopFishSchool",
-        "BoomerangFishSchool",
         "FloatingStone",
         "FloatingStoneMedium",
         "FloatingStoneSmall",
+        "Starship_",
         "Coral_reef_",
-        "Eyeye",
-        "Boomerang",
-        "JellyRay",
-        "GarryFish",
-        "Peeper",
         "RabbitRay",
         "metal",
+        "lithium",
+        "magnetite",
+        "uraninitecrystal",
+        "shale",
         "quartz",
         "salt",
         "Bubble",
-        "Floater",
         "Crash",
         "limestone",
+        "sandstone",
         "BladderFish",
         "BrainCoral",
-        "Reginald",
-        "SpadeFish",
-        "HoopFish",
+        "RepulsionCannon",
+        "Starship_cargo_damaged_",
+        "Wrecks_",
+        "Base_",
+        "Starship_cargo_opened",
+        "LaserCutterFragment",
+        "Map_Room_fragment_",
+        "seaglidefragment",
+        "Jumper",
+        "SpikePlantProjectile",
+        "Stalker"
     };
 
     private bool IsExcluded(string objectName)
     {
-        return excludePrefixes.Any(x => objectName.StartsWith(x));
+        return excludePrefixes.Any(x => objectName.StartsWith(x))
+            || CollisionTrigger.SmallFishNames.Any(x => objectName.StartsWith(x))
+            || objectName.Contains("Egg")
+            || objectName.Contains("School")
+            
+            ;
     }
 
-    public Rigidbody GetBestTarget(Transform exclude)
+    public TargetAdapter GetBestTarget(Transform exclude)
     {
         Ray ray = new Ray(transform.position, transform.forward);
 
         float closestDist = float.MaxValue;
-        Rigidbody closest = null;
+        TargetAdapter closest = null;
 
         float at = minDistance;
         while (at < maxDistance)
@@ -113,16 +124,17 @@ public class TargetScanner : MonoBehaviour
             float h = minDistance / minDistance * at;
             float d = Mathf.Min(w, h);
             
-            var candidates = Physics.BoxCastAll(ray.GetPoint(at), new Vector3(d, d, d) / 2, ray.direction);
+            var candidates = Physics.OverlapSphere(ray.GetPoint(at), d / 2);
             foreach (var item in candidates)
             {
-                if (item.rigidbody == null || item.collider.isTrigger)
+                if (item.attachedRigidbody == null || item.isTrigger)
                     continue;
                 if (exclude != null && item.transform.IsChildOf(exclude))
                     continue;
-                if (item.transform.GetComponent<TorpedoControl>() != null)
+                if (item.attachedRigidbody.transform.GetComponent<TorpedoControl>() != null)
                     continue;
-                if (IsExcluded(item.transform.name))
+                var t = TargetAdapter.ResolveTarget(item.attachedRigidbody.gameObject, item.attachedRigidbody);
+                if (t is null || t.IsInvincible || t.MaxHealth < 200 || !t.IsAlive)
                     continue;
 
                 //var distance = M.SqrDistance(transform.position, item.Rigidbody.transform.position);
@@ -133,7 +145,7 @@ public class TargetScanner : MonoBehaviour
                     continue;
                 if (closest == null || distance < closestDist)
                 {
-                    closest = item.rigidbody;
+                    closest = t;
                     closestDist = distance;
                 }
             }

@@ -4,7 +4,7 @@
 public class TorpedoTargeting : MonoBehaviour
 {
     private TargetPredictor predictor;
-    private RigidbodyAdapter rb;
+    private Rigidbody rb;
     private TorpedoDirectAt look;
     private TorpedoDrive drive;
 
@@ -21,7 +21,7 @@ public class TorpedoTargeting : MonoBehaviour
         Debug.Log("TorpedoTargeting: start()");
         look = GetComponent<TorpedoDirectAt>();
         predictor = GetComponent<TargetPredictor>();
-        rb = GetComponent<RigidbodyAdapter>();
+        rb = GetComponent<Rigidbody>();
         drive = GetComponent<TorpedoDrive>();
 
     }
@@ -121,7 +121,7 @@ public class TorpedoTargeting : MonoBehaviour
 
         var t = Mathf.Min(maxLookAheadSeconds,  solution.SmallestNonNegative ?? 0);
 
-        Debug.Log($"Lookahead @{t}");
+        //Debug.Log($"Lookahead @{t}");
 
         var relLookAheadTarget = rp + target.Value.Velocity * t;
 

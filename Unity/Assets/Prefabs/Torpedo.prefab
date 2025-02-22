@@ -12,7 +12,7 @@ GameObject:
   - component: {fileID: 2370097931541463982}
   - component: {fileID: 5217277410894573431}
   m_Layer: 0
-  m_Name: ExplosionTrigger
+  m_Name: ProximityTrigger
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -42,7 +42,7 @@ CapsuleCollider:
   m_Material: {fileID: 0}
   m_IsTrigger: 1
   m_Enabled: 1
-  m_Radius: 0.49999997
+  m_Radius: 0.5
   m_Height: 3
   m_Direction: 1
   m_Center: {x: 0.00000005960464, y: 9.313225e-10, z: 0.00000047683716}
@@ -183,8 +183,9 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 3025576928318911875}
+  - component: {fileID: 5092450404407072887}
   - component: {fileID: 4459133791306129189}
-  - component: {fileID: 7967347919173119232}
+  - component: {fileID: 6030259259240138672}
   - component: {fileID: 2501418104200933176}
   - component: {fileID: 6141264307191172702}
   - component: {fileID: 7521927918904332286}
@@ -193,6 +194,7 @@ GameObject:
   - component: {fileID: 8596132587207070730}
   - component: {fileID: 3761711288602698140}
   - component: {fileID: 4714040130784626947}
+  - component: {fileID: 4354811660002521645}
   m_Layer: 0
   m_Name: Torpedo
   m_TagString: Untagged
@@ -220,6 +222,22 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!54 &5092450404407072887
+Rigidbody:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2501418104200933177}
+  serializedVersion: 2
+  m_Mass: 100
+  m_Drag: 10
+  m_AngularDrag: 10
+  m_UseGravity: 0
+  m_IsKinematic: 0
+  m_Interpolate: 1
+  m_Constraints: 0
+  m_CollisionDetection: 3
 --- !u!114 &4459133791306129189
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -235,7 +253,7 @@ MonoBehaviour:
   normalCollider: {fileID: 4216335903275335655}
   origin: {fileID: 0}
   safetyOriginDistance: 10
---- !u!114 &7967347919173119232
+--- !u!114 &6030259259240138672
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -244,10 +262,12 @@ MonoBehaviour:
   m_GameObject: {fileID: 2501418104200933177}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: c4955d9606401834f8e9c865c2e1a685, type: 3}
+  m_Script: {fileID: 11500000, guid: 2134ccd5fe8faa54ba4d233225782c3b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  mass: 100
+  regularCollider: {fileID: 4216335903275335655}
+  detonator: {fileID: 3761711288602698140}
+  doNotCollideWith: {fileID: 0}
 --- !u!114 &2501418104200933176
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -366,6 +386,18 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   maxLifetimeSeconds: 15
   currentFlightTime: 0
+--- !u!114 &4354811660002521645
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2501418104200933177}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c1a9af8db1eb95c409900e7a4192fdb9, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &3097673172815291108
 GameObject:
   m_ObjectHideFlags: 0

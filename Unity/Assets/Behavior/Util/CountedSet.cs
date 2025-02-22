@@ -40,9 +40,7 @@ public class CountedSet<K>
             }
         }
         else
-        {
-            bool brk = true;
-        }
+        {}
     }
 
     public void Purge(K item)

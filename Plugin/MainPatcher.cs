@@ -28,7 +28,7 @@ namespace Subnautica_Echelon
     [BepInDependency(Nautilus.PluginInfo.PLUGIN_GUID, Nautilus.PluginInfo.PLUGIN_VERSION)]
     public class MainPatcher : BaseUnityPlugin
     {
-        internal static EchelonConfig Config { get; private set; }
+        internal static EchelonConfig PluginConfig { get; private set; }
 
 
         public void Awake()
@@ -51,7 +51,7 @@ namespace Subnautica_Echelon
             try
             {
                 Log.Write("MainPatcher.Start()");
-                Config = OptionsPanelHandler.RegisterModOptions<EchelonConfig>();
+                PluginConfig = OptionsPanelHandler.RegisterModOptions<EchelonConfig>();
                 var harmony = new Harmony(PluginInfo.PLUGIN_GUID);
                 harmony.PatchAll();
                 UWE.CoroutineHost.StartCoroutine(Register());
@@ -87,25 +87,42 @@ namespace Subnautica_Echelon
                 started = UWE.CoroutineHost.StartCoroutine(VehicleRegistrar.RegisterVehicle(sub,true));
 
                 AudioPatcher.Patcher = (source) => FreezeTimePatcher.Register(source);
-                RigidbodyAdapter.MakeRigidbody = (go, mass) =>
+                //ExplosionAdapter.HandleExplosion = (exp) =>
+                //{
+                //    WorldForces.AddExplosion(exp.Center, DayNightCycle.main.timePassed, exp.Magnitude, exp.Radius);
+                //};
+                ActorAdapter.IsOutOfWater = (go, pos) =>
+                {
+                    var wf = go.GetComponent<WorldForces>();
+                    return wf.IsAboveWater();
+                };
+                TargetAdapter.ResolveTarget = (go, rb) =>
+                {
+                    var mixin = go.GetComponent<LiveMixin>();
+                    if (mixin == null)
+                        return null;
+                    return new MixinTargetAdapter(go, rb, mixin);
+
+                };
+                RigidbodyPatcher.Patch = (go, rb) =>
                 {
                     try
                     {
-                        Log.Write($"Creating rigidbody for {go} with mass {mass}");
-                        var rb = go.EnsureComponent<Rigidbody>();
-                        rb.mass = mass;
+                        Log.Write($"Patching rigidbody for {go}");
                         rb.drag = 10f;
                         rb.angularDrag = 10f;
                         rb.useGravity = false;
+                        //rb.interpolation = RigidbodyInterpolation.Extrapolate;
+                        //rb.collisionDetectionMode = CollisionDetectionMode.ContinuousDynamic;
 
                         var worldForces = CopyComponent<WorldForces>(SeamothHelper.Seamoth.GetComponent<SeaMoth>().worldForces, go);
                         worldForces.useRigidbody = rb;
                         worldForces.underwaterGravity = 0f;
                         worldForces.aboveWaterGravity = 9.8f;
                         worldForces.waterDepth = 0f;
+                        worldForces.lockInterpolation = true;
 
-                        Log.Write("Rigidbody created: " + rb);
-                        return rb;
+                        Log.Write("Rigidbody patched: " + rb);
                     }
                     catch (Exception ex)
                     {

@@ -145,7 +145,7 @@ public class EchelonControl : MonoBehaviour
             cameraRoot = localizeInsteadOfMainCamera;
             if (cameraRoot == null)
                 cameraRoot = Camera.main.transform;
-
+            onboardLocalizedTransform = Parentage.FromLocal(cameraRoot);
 
             cameraIsInTrailspace = false;//just in case
             if (!currentCameraCenterIsCockpit)
@@ -237,7 +237,7 @@ public class EchelonControl : MonoBehaviour
         var t = scanner.GetBestTarget(transform);
         if (t != null)
         {
-            var target = new RigidbodyTargetable(t);
+            var target = new AdapterTargetable(t);
             return target;
         }
         var ray = new Ray(Camera.main.transform.position, Camera.main.transform.forward);
@@ -267,7 +267,9 @@ public class EchelonControl : MonoBehaviour
 
     private Vector3 SizeOf(ITargetable t)
     {
-        return M.Max(t.GlobalSize*2, 0.1f * M.Distance(t.Position, Camera.main.transform.position));
+        var vec = M.Max(t.GlobalSize*2, 0.1f * M.Distance(t.Position, Camera.main.transform.position));
+        var s = Mathf.Max(vec.x,vec.y, vec.z);
+        return M.V3(s);
     }
     // Update is called once per frame
     void Update()
@@ -309,10 +311,6 @@ public class EchelonControl : MonoBehaviour
                 var firing = firingLeft ? leftLaunch : rightLaunch;
 
                 var doFire = triggerActive && !outOfWater;
-                if (triggerActive)
-                    Debug.Log($"triggerActive");
-                if (doFire)
-                    Debug.Log($"doFire");
                 firing.fireWithTarget = doFire ? target : null;
                 if (firing.CycleProgress > firing.CycleTime * 0.5f)
                 {
@@ -513,8 +511,8 @@ public class EchelonControl : MonoBehaviour
         player.localEulerAngles = Vector3.zero;
     }
 
-    bool warnedAboutNoRb = false;
-    int roll = 0;
+    //bool warnedAboutNoRb = false;
+    //int roll = 0;
     //void FixedUpdate()
     //{
     //    if (currentlyBoarded && !outOfWater && !isDocked)
