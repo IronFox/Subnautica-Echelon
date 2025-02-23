@@ -504,7 +504,7 @@ public class EchelonControl : MonoBehaviour
             }
 
             if (look != null)
-                look.enabled = (isBoarded || outOfWater) && !isDocked;
+                look.enabled = (isBoarded || outOfWater) && !isDocked && !batteryDead && !powerOff;
 
             forwardFacingLeft.thrust = -backFacingLeft.thrust;
             forwardFacingRight.thrust = -backFacingRight.thrust;
