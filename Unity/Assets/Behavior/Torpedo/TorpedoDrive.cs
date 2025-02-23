@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class TorpedoDrive : MonoBehaviour
 {
-    private float acceleration = 500;
+    private float acceleration = 1000;
     //private float travelVelocity = 35;
     private TurnPropeller turn;
     private Rigidbody rb;
@@ -15,8 +15,8 @@ public class TorpedoDrive : MonoBehaviour
     //private float errorCorrection = 1f;
     public float TravelVelocity => 
         (origin == null || M.Distance(origin.position,rb.position) > 3)
-            ? 35
-            : 45;
+            ? 25
+            : 35;
 
     // Start is called before the first frame update
     void Start()

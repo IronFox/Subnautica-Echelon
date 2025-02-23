@@ -22,6 +22,7 @@ public class TorpedoControl : MonoBehaviour
 
     public Collider normalCollider;
 
+    public static bool ignoreNonTargetCollisions = false;
 
     //public float detonationProximity = 1;
 
@@ -105,7 +106,8 @@ public class TorpedoControl : MonoBehaviour
         Drive.origin = origin;
 
         if (normalCollider.isTrigger && !ProximityDetector.IsIntersectingWithExclusion
-            && (origin != null && Vector3.Distance(transform.position, origin.position) > safetyOriginDistance))
+            && (origin != null && Vector3.Distance(transform.position, origin.position) > safetyOriginDistance)
+            )
         {
             ConsoleControl.Write($"Exited exlusion intersection. Restoring collider");
             normalCollider.isTrigger = false;

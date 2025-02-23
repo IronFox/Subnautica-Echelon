@@ -511,15 +511,18 @@ namespace Subnautica_Echelon
 
                 if (GameInput.GetKeyDown(MainPatcher.PluginConfig.toggleFreeCamera))
                     engine.freeCamera = control.freeCamera = !control.freeCamera;
+                
+                var boostToggle = !MainPatcher.PluginConfig.holdToBoost;
 
+                TorpedoControl.ignoreNonTargetCollisions = MainPatcher.PluginConfig.ignoreTorpedoNonTargetCollisions;
 
-                if (GameInput.GetButtonDown(GameInput.Button.Sprint) && MainPatcher.PluginConfig.boostToggle)
+                if (GameInput.GetButtonDown(GameInput.Button.Sprint) && boostToggle)
                 {
                     if (control.forwardAxis > 0 && engine.overdriveActive > 0)
                         engine.overdriveActive = 0;
                 }
 
-                if (MainPatcher.PluginConfig.boostToggle)
+                if (boostToggle)
                 {
                     if (control.forwardAxis <= 0)
                         engine.overdriveActive = 0;

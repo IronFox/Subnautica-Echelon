@@ -9,6 +9,7 @@ public class CollisionTrigger : MonoBehaviour
     public Detonator detonator;
     public Rigidbody doNotCollideWith;
 
+
     public static string[] SmallFishNames = new string[]{
         "Eyeye",
         "Boomerang",
@@ -43,6 +44,9 @@ public class CollisionTrigger : MonoBehaviour
     }
     void OnCollisionEnter(Collision collision)
     {
+
+
+
         //if (collision.gameObject.name.StartsWith("Cube")
         //    || collision.gameObject.name.StartsWith("Sphere")
         //    )
@@ -50,22 +54,29 @@ public class CollisionTrigger : MonoBehaviour
         //if (SmallFishNames.Any(x => collision.gameObject.name.StartsWith(x)))
         //    return; //let's not detonate with these
 
-
         if (PhysicsHelper.CanCollide(collision.collider, regularCollider, doNotCollideWith))
         {
             var t = TargetAdapter.ResolveTarget(collision.gameObject, collision.rigidbody);
-            if (t != null && t.MaxHealth < 100)
+
+            if (t == null && TorpedoControl.ignoreNonTargetCollisions)
             {
-                ConsoleControl.Write($"Colliding instance {t} is too fragile: Killing & ignoring");
+                ConsoleControl.Write($"Flagging collisions with {collision.collider} to be ignored");
+                Physics.IgnoreCollision(collision.collider, regularCollider);
+                return;
+            }
+
+            if (t != null && t.MaxHealth < 200)
+            {
+                ConsoleControl.Write($"Colliding instance {t} is too fragile: Ramming & ignoring");
                 t.DealDamage(transform.position, 100, gameObject);
                 return;
             }
 
-            ConsoleControl.Write($"Reacting to collision with {collision.collider}: Detonating");
+            ConsoleControl.Write($"Reacting to collision with {collision.collider} (health={t?.MaxHealth}): Detonating");
             detonator.Detonate();
         }
         else
-            ConsoleControl.Write($"Ignoring collision with {collision.collider}");
+            ConsoleControl.Write($"Ignoring collision with {collision.collider} (cannot collide)");
     }
 
     // Update is called once per frame
