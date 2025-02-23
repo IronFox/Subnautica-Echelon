@@ -348,12 +348,19 @@ namespace Subnautica_Echelon
                 control.lookRightAxis = lookDelta.x * 0.1f;
                 control.lookUpAxis = lookDelta.y * 0.1f;
 
-                bool trigger = GameInput.GetAnalogValueForButton(GameInput.Button.LeftHand) > 0.1f;
-                if (trigger)
+                if (control.isBoarded && !control.isDocked && !control.outOfWater)
                 {
-                    if (powerMan.TrySpendEnergy(Time.deltaTime * 2f) == 0)
-                        trigger = false;
+                    bool trigger = GameInput.GetAnalogValueForButton(GameInput.Button.LeftHand) > 0.1f;
+                    if (trigger)
+                    {
+                        if (powerMan.TrySpendEnergy(Time.deltaTime * 2f) == 0)
+                            trigger = false;
+                    }
+                    control.triggerActive = trigger;
                 }
+                else
+                    control.triggerActive = false;
+
 
                 if (energyInterface != null)
                     energyInterface.ModifyCharge(
@@ -385,7 +392,6 @@ namespace Subnautica_Echelon
                 }
                 
 
-                control.triggerActive = trigger;
                 //var rb = GetComponent<Rigidbody>();
                 //rb.isKinematic = false;
                 //rb.mass = 10;
