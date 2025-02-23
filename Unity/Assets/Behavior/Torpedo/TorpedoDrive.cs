@@ -42,9 +42,11 @@ public class TorpedoDrive : MonoBehaviour
             //dragCompensated = travelVelocity * 2f;
 
             var error = TravelVelocity - forwardVelocity;
-            dragCompensated = DragCompensation
-                .For(TravelVelocity)
-                .Update(error, Time.fixedDeltaTime);
+            dragCompensated = error * 10;
+
+                //DragCompensation
+                //.For(TravelVelocity)
+                //.Update(error, Time.fixedDeltaTime);
 
             finalAcceleration = Mathf.Min(acceleration, dragCompensated);
             rb.AddRelativeForce(0, 0, finalAcceleration, ForceMode.Acceleration);
