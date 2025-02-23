@@ -13760,6 +13760,12 @@ MonoBehaviour:
   positionCameraBelowSub: 0
   isDocked: 0
   cameraCenterIsCockpit: 0
+  powerOff: 0
+  batteryDead: 0
+  lightsRenderers:
+  - {fileID: 8526027884062462929}
+  - {fileID: 5186376573211370038}
+  - {fileID: 216882890170916117}
   leftLaunch: {fileID: 3836783701516135665}
   rightLaunch: {fileID: 4259656812905478872}
   regularForwardAcc: 400

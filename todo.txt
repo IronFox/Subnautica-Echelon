@@ -3,13 +3,13 @@ echelon todos:
 * disable all access to C:\temp both in the unity scene and the plugin. Redirect to Debug.*
 * sub: 
 	* set recipe
-	* add energy drain and batteries
 	* add custom icon presumably via CraftingSprite
 	* add camera shake on overdrive
 	* restore all directions on undock from docked orientation
 	* propeller still rotates while docked
 	* link mouse wheel to zoom axis
 	
+	* add energy drain and batteries (done)
 	* increase all speeds +50%	(done - only overdrive)
 	* when returning from outside water while free camera is active, free camera ship direction should copy falling vector (done)
 	* when opening inventory, only move camera on final state	 (done)

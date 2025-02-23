@@ -24,6 +24,10 @@ public class EchelonControl : MonoBehaviour
     public bool positionCameraBelowSub;
     public bool isDocked;
     public bool cameraCenterIsCockpit;
+    public bool powerOff;
+    public bool batteryDead;
+
+    public MeshRenderer[] lightsRenderers = Array.Empty<MeshRenderer>();
 
     public TorpedoLaunchControl leftLaunch;
     public TorpedoLaunchControl rightLaunch;
@@ -342,6 +346,10 @@ public class EchelonControl : MonoBehaviour
         try
         {
             ProcessTargeting();
+
+            foreach (var r in lightsRenderers)
+                r.enabled = !batteryDead && !powerOff;
+
 
             if (currentlyBoarded != isBoarded)
             {

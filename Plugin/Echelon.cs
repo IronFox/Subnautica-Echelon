@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Reflection;
 using UnityEngine;
+using VehicleFramework;
 using VehicleFramework.Engines;
 using VehicleFramework.VehicleParts;
 using VehicleFramework.VehicleTypes;
@@ -107,13 +108,14 @@ namespace Subnautica_Echelon
     }
 
 
-    public class Echelon : Submersible
+    public class Echelon : Submersible, IPowerListener
     {
         public static GameObject model;
         private EchelonControl control;
         //private RotateCamera rotateCamera;
         private MyLogger EchLog { get; }
         private VoidDrive engine;
+        private AutoPilot autopilot;
         private EnergyInterface energyInterface;
         public Echelon()
         {
@@ -185,6 +187,8 @@ namespace Subnautica_Echelon
 
         }
 
+
+
         private void LocalInit()
         {
             if (!isInitialized)
@@ -193,12 +197,6 @@ namespace Subnautica_Echelon
                 isInitialized = true;
                 try
                 {
-                    //Engine = new VoidEngine();
-                    //CanLeviathanGrab = false;
-                    //stabilizeRoll = false;
-                    //sidewaysTorque = 0;
-                    //sidewardForce = 0;
-                    //forwardForce = 0;
                     autopilot = GetComponentInChildren<AutoPilot>();
 
                     if (autopilot != null && MainPatcher.PluginConfig.batteryChargeSpeed > 0)
@@ -341,7 +339,22 @@ namespace Subnautica_Echelon
                 control.lookRightAxis = lookDelta.x * 0.1f;
                 control.lookUpAxis = lookDelta.y * 0.1f;
 
-                if (control.isBoarded && !control.isDocked && !control.outOfWater)
+                bool lowPower = false;
+                bool criticalPower = false;
+                if (energyInterface != null)
+                {
+                    energyInterface.ModifyCharge(
+                        Time.deltaTime
+                        * 2.5f  //max 2.5 per second
+                        * MainPatcher.PluginConfig.batteryChargeSpeed / 100
+                        );
+                    energyInterface.GetValues(out var charge, out var capacity);
+                    lowPower = charge < capacity * 0.02f;
+                    criticalPower = charge < capacity * 0.01f;
+                }
+
+
+                if (control.isBoarded && !control.isDocked && !control.outOfWater && !lowPower)
                 {
                     bool trigger = GameInput.GetAnalogValueForButton(GameInput.Button.LeftHand) > 0.1f;
                     if (trigger)
@@ -354,14 +367,11 @@ namespace Subnautica_Echelon
                 else
                     control.triggerActive = false;
 
-
-                if (energyInterface != null)
-                    energyInterface.ModifyCharge(
-                        Time.deltaTime
-                        * 2.5f  //max 2.5 per second
-                        * MainPatcher.PluginConfig.batteryChargeSpeed / 100
-                        );
-                if (liveMixin != null && liveMixin.health < liveMixin.maxHealth && liveMixin.IsAlive())
+                if (
+                    liveMixin != null
+                    && liveMixin.health < liveMixin.maxHealth
+                    && liveMixin.IsAlive()
+                    && !criticalPower)
                 {
                     var healing = liveMixin.maxHealth
                         * Time.deltaTime
@@ -383,7 +393,7 @@ namespace Subnautica_Echelon
                     var actuallyHealed = clamped * energyTaken / energyDemand;
                     liveMixin.AddHealth(actuallyHealed);
                 }
-                
+
 
                 //var rb = GetComponent<Rigidbody>();
                 //rb.isKinematic = false;
@@ -392,15 +402,24 @@ namespace Subnautica_Echelon
                 //rb.drag = 10;
                 //rb.useGravity = true;
 
-                    //EchLog.WriteLowFrequency(MyLogger.Channel.One,
-                    //    $"pm={GetPilotingMode()}, ctrl={IsUnderCommand}," +
-                    //    $" engine.enabled={VFEngine?.enabled}," +
-                    //    $" pda={Player.main.GetPDA().isOpen}," +
-                    //    $" av={!AvatarInputHandler.main || AvatarInputHandler.main.IsEnabled()}," +
-                    //    $" charge={GetComponent<EnergyInterface>().hasCharge}");
-                control.forwardAxis = engine.currentInput.z;
-                control.rightAxis = engine.currentInput.x;
-                control.upAxis = engine.currentInput.y;
+                //EchLog.WriteLowFrequency(MyLogger.Channel.One,
+                //    $"pm={GetPilotingMode()}, ctrl={IsUnderCommand}," +
+                //    $" engine.enabled={VFEngine?.enabled}," +
+                //    $" pda={Player.main.GetPDA().isOpen}," +
+                //    $" av={!AvatarInputHandler.main || AvatarInputHandler.main.IsEnabled()}," +
+                //    $" charge={GetComponent<EnergyInterface>().hasCharge}");
+                if (engine.insufficientPower)
+                {
+                    control.forwardAxis = 0;
+                    control.rightAxis = 0;
+                    control.upAxis = 0;
+                }
+                else
+                {
+                    control.forwardAxis = engine.currentInput.z;
+                    control.rightAxis = engine.currentInput.x;
+                    control.upAxis = engine.currentInput.y;
+                }
 
                 control.outOfWater = !GetIsUnderwater();
                 if (Player.main.pda.state == PDA.State.Closed)
@@ -428,15 +447,21 @@ namespace Subnautica_Echelon
                         engine.overdriveActive = 0;
                 }
 
+                bool canBoost = !engine.insufficientPower
+                    && !lowPower
+                    ;
+
                 if (boostToggle)
                 {
-                    if (control.forwardAxis <= 0)
+                    if (control.forwardAxis <= 0 || !canBoost)
                         engine.overdriveActive = 0;
                     else
                         engine.overdriveActive = Mathf.Max(engine.overdriveActive,GameInput.GetAnalogValueForButton(GameInput.Button.Sprint));
                 }
                 else
-                    engine.overdriveActive = control.forwardAxis > 0 ? GameInput.GetAnalogValueForButton(GameInput.Button.Sprint) : 0;
+                    engine.overdriveActive = control.forwardAxis > 0 && canBoost
+                        ? GameInput.GetAnalogValueForButton(GameInput.Button.Sprint)
+                        : 0;
 
 
                 control.overdriveActive = engine.overdriveActive > 0.5f;
@@ -454,6 +479,42 @@ namespace Subnautica_Echelon
             {
                 Log.Write("Echelon.Update()", ex);
             }
+        }
+
+        public void OnPowerUp()
+        {
+            control.powerOff = false;
+        }
+
+        public void OnPowerDown()
+        {
+            control.powerOff = true;
+        }
+
+        public void OnBatteryDead()
+        {
+            control.batteryDead = true;
+        }
+
+        public void OnBatteryRevive()
+        {
+            control.batteryDead = false;
+        }
+
+        public void OnBatterySafe()
+        {
+        }
+
+        public void OnBatteryLow()
+        {
+        }
+
+        public void OnBatteryNearlyEmpty()
+        {
+        }
+
+        public void OnBatteryDepleted()
+        {
         }
 
         public override int MaxHealth => 10000;
