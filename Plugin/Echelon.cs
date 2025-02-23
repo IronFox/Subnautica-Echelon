@@ -356,7 +356,34 @@ namespace Subnautica_Echelon
                 }
 
                 if (energyInterface != null)
-                    energyInterface.ModifyCharge(Time.deltaTime * MainPatcher.PluginConfig.batteryChargeSpeed / 100);
+                    energyInterface.ModifyCharge(
+                        Time.deltaTime
+                        * 2.5f  //max 2.5 per second
+                        * MainPatcher.PluginConfig.batteryChargeSpeed / 100
+                        );
+                if (liveMixin != null && liveMixin.health < liveMixin.maxHealth && liveMixin.IsAlive())
+                {
+                    var healing = liveMixin.maxHealth
+                        * Time.deltaTime
+                        * 0.01f //max = 1% of max health per second
+                        * MainPatcher.PluginConfig.selfHealingSpeed / 100   //default will be 10 seconds per 1%
+                        ;
+                    
+                    var clamped = Mathf.Min(healing, liveMixin.maxHealth - liveMixin.health);
+                    var effective = healing / clamped;
+
+                    float energyDemand = 
+                        10 //max 10 energy per second
+                        * Time.deltaTime
+                        * MainPatcher.PluginConfig.selfHealingSpeed / 100   //if slower, cost less
+                        * effective //if clamped, cost less
+                        ;
+
+                    var energyTaken = Mathf.Abs(powerMan.TrySpendEnergy(energyDemand));
+                    var actuallyHealed = clamped * energyTaken / energyDemand;
+                    liveMixin.AddHealth(actuallyHealed);
+                }
+                
 
                 control.triggerActive = trigger;
                 //var rb = GetComponent<Rigidbody>();

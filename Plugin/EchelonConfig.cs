@@ -15,5 +15,7 @@ public class EchelonConfig : ConfigFile
     public float boostAccelerationPercent = 200;
     [Slider("Nuclear Battery Energy Output %", Step = 1f, DefaultValue = 20, Min = 0, Max = 100)]
     public float batteryChargeSpeed = 20f;
+    [Slider("Self Healing %", Step = 1f, DefaultValue = 10, Min = 0, Max = 100)]
+    public float selfHealingSpeed = 10f;
 
 }
