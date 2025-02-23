@@ -199,22 +199,15 @@ namespace Subnautica_Echelon
                     //sidewaysTorque = 0;
                     //sidewardForce = 0;
                     //forwardForce = 0;
-                    //backwardForce = 0;
-                    //verticalForce = 0;
-                    //onGroundForceMultiplier = 0;
+                    autopilot = GetComponentInChildren<AutoPilot>();
 
-                    //var dummy = new GameObject("DummyPhysics");
-                    //var dummyRb = dummy.AddComponent<Rigidbody>();
-                    //dummyRb.isKinematic = true;
-                    //dummy.transform.parent = transform;
-                    //useRigidbody = dummyRb;
+                    if (autopilot != null && MainPatcher.PluginConfig.batteryChargeSpeed > 0)
+                    {
+                        autopilot.apVoice.voice = Helper.Clone(autopilot.apVoice.voice);
+                        autopilot.apVoice.voice.PowerLow = null;
+                        autopilot.apVoice.voice.BatteriesNearlyEmpty = null;
 
-                    //VFEngine = Engine = gameObject.AddComponent<EchelonEngine>();
-
-
-
-
-                    //EchLog.Write($"Start on rb");
+                    }
 
                     energyInterface = GetComponent<EnergyInterface>();
                     control = GetComponent<EchelonControl>();
