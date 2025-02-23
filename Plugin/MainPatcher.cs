@@ -101,6 +101,11 @@ namespace Subnautica_Echelon
                     var mixin = go.GetComponent<LiveMixin>();
                     if (mixin == null)
                         return null;
+                    var vehicle = go.GetComponent<Vehicle>();
+                    if (vehicle != null)
+                        return null;    //don't target vehicles
+                    if (go.name.Contains("Cyclops-MainPrefab"))
+                        return null;    //don't target cyclops
                     return new MixinTargetAdapter(go, rb, mixin);
 
                 };

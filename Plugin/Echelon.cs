@@ -10,124 +10,6 @@ using VehicleFramework.VehicleTypes;
 
 namespace Subnautica_Echelon
 {
-    public class EchelonEngine : ModVehicleEngine
-    {
-        private MyLogger Log { get; }
-        public EchelonEngine()
-        {
-            Log = new MyLogger(this);
-            //AngularDrag = 10;
-            
-        }
-
-        public float overdriveActive;
-        public Vector3 currentInput;
-        public bool freeCamera;
-
-        public override void Awake()
-        {
-            WhistleFactor = 1.5f;
-            base.Awake();
-        }
-        public override void Start()
-        {
-            base.Start();
-        }
-        public override void ControlRotation()
-        {
-        }
-
-        //public override void KillMomentum()
-        //{
-        //    Log.WriteLowFrequency(MyLogger.Channel.Three, ($"KillMomentum()"));
-        //    RB.velocity = Vector3.zero;
-        //}
-
-        protected override void MoveWithInput(Vector3 moveInput)
-        {
-            //Log.WriteLowFrequency(MyLogger.Channel.Two, $"MoveWithInput({moveInput})");
-            currentInput = moveInput;
-            moveInput = new Vector3(
-                moveInput.x * (1 + 2 * overdriveActive),
-                moveInput.y * (1 + 2 * overdriveActive),
-                moveInput.z * (1.5f + 5 * overdriveActive));
-            if (freeCamera)
-                moveInput = new Vector3(0, 0, moveInput.z);
-            RB.AddRelativeForce(moveInput, ForceMode.VelocityChange);
-        }
-
-        //public override void ExecutePhysicsMove()
-        //{
-        //    Log.WriteLowFrequency(MyLogger.Channel.Five, $"Move()");
-        //    //base.RB.AddForce(base.MV.transform.forward * 1e10f * Time.fixedDeltaTime, ForceMode.VelocityChange);
-        //    base.RB.AddForce(base.MV.transform.forward * 10000f * Time.fixedDeltaTime, ForceMode.VelocityChange);
-        //    Log.WriteLowFrequency(MyLogger.Channel.Six, $"Velocity = {RB.velocity}");
-        //}
-
-        //public void Update()
-        //{
-        //    if (!CanMove())
-        //        Log.WriteLowFrequency(MyLogger.Channel.One, $"Cannot move");
-        //    else if (!CanTakeInputs())
-        //        Log.WriteLowFrequency(MyLogger.Channel.One, $"Cannot take inputs");
-        //    else
-        //        Log.WriteLowFrequency(MyLogger.Channel.One, $"All go");
-        //}
-    }
-
-
-    public class Method1<T>
-    {
-        public Method1(MethodInfo method, Component control)
-        {
-            Method = method;
-            Control = control;
-        }
-
-
-        public void Invoke(T p)
-        {
-            try
-            {
-                Method.Invoke(Control, new object[] { p });
-            }
-            catch (Exception ex)
-            {
-                Log.Write("Caught exception while trying to invoke " + Method.Name + " on " + Control.name);
-                Log.Write(ex);
-            }
-        }
-
-        public MethodInfo Method { get; }
-        public Component Control { get; }
-    }
-
-    public class FieldAccess<T>
-    {
-        private T lastValue;
-        public FieldAccess(FieldInfo propertyInfo, Component control)
-        {
-            Field = propertyInfo;
-            Control= control;
-            lastValue = Get();
-            Log.Write($"Initial value of {Field.Name} of {Control.name} determined: {lastValue}");
-        }
-
-        public T Get() => (T)Field.GetValue(Control);
-        public void Set(T value)
-        {
-            if (!value.Equals(lastValue))
-            {
-                Log.Write($"Updating {Field.Name} of {Control.name} {lastValue} -> {value}");
-                Field.SetValue(Control, value);
-                lastValue = value;
-            }
-        }
-
-        public FieldInfo Field { get; }
-        public Component Control { get; }
-    }
-
 
     public static class Log
     {
@@ -231,8 +113,8 @@ namespace Subnautica_Echelon
         private EchelonControl control;
         //private RotateCamera rotateCamera;
         private MyLogger EchLog { get; }
-        private EchelonEngine engine;
-
+        private VoidDrive engine;
+        private EnergyInterface energyInterface;
         public Echelon()
         {
             EchLog = new MyLogger(this);
@@ -275,25 +157,6 @@ namespace Subnautica_Echelon
         }
 
 
-        private FieldAccess<T> RequireField<T>(Component control, string propertyName)
-        {
-            var t = control.GetType();
-            var p = t.GetField(propertyName);
-            if (p == null)
-                throw new KeyNotFoundException($"Unable to find field {propertyName} on instance {control.name} of type {t.Name}. Found fields are " + string.Join(",", Helper.Names(t.GetFields())));
-            return new FieldAccess<T>(p, control);
-        }
-
-
-        private Method1<T> RequireMethod1<T>(Component control, string methodName)
-        {
-            var t = control.GetType();
-            var p = t.GetMethod(methodName);
-            if (p == null)
-                throw new KeyNotFoundException($"Unable to find method {methodName} on instance {control.name} of type {t.Name}");
-            return new Method1<T>(p, control);
-        }
-
         private bool isInitialized = false;
 
         public override void Awake()
@@ -306,7 +169,7 @@ namespace Subnautica_Echelon
                 //analyzer.LogToJson(existing, $@"C:\temp\logs\oldEngine.json");
                 Destroy(existing);
             }
-            VFEngine = Engine = engine = gameObject.AddComponent<EchelonEngine>();
+            VFEngine = Engine = engine = gameObject.AddComponent<VoidDrive>();
             EchLog.Write($"Assigned new engine");
 
 
@@ -353,7 +216,7 @@ namespace Subnautica_Echelon
 
                     //EchLog.Write($"Start on rb");
 
-
+                    energyInterface = GetComponent<EnergyInterface>();
                     control = GetComponent<EchelonControl>();
                     //rotateCamera = GetComponentInChildren<RotateCamera>();
 
@@ -485,7 +348,17 @@ namespace Subnautica_Echelon
                 control.lookRightAxis = lookDelta.x * 0.1f;
                 control.lookUpAxis = lookDelta.y * 0.1f;
 
-                control.triggerActive = GameInput.GetAnalogValueForButton(GameInput.Button.LeftHand) > 0.1f;
+                bool trigger = GameInput.GetAnalogValueForButton(GameInput.Button.LeftHand) > 0.1f;
+                if (trigger)
+                {
+                    if (powerMan.TrySpendEnergy(Time.deltaTime * 2f) == 0)
+                        trigger = false;
+                }
+
+                if (energyInterface != null)
+                    energyInterface.ModifyCharge(Time.deltaTime * MainPatcher.PluginConfig.batteryChargeSpeed / 100);
+
+                control.triggerActive = trigger;
                 //var rb = GetComponent<Rigidbody>();
                 //rb.isKinematic = false;
                 //rb.mass = 10;
@@ -493,12 +366,12 @@ namespace Subnautica_Echelon
                 //rb.drag = 10;
                 //rb.useGravity = true;
 
-                //EchLog.WriteLowFrequency(MyLogger.Channel.One,
-                //    $"pm={GetPilotingMode()}, ctrl={IsUnderCommand}," +
-                //    $" engine.enabled={VFEngine?.enabled}," +
-                //    $" pda={Player.main.GetPDA().isOpen}," +
-                //    $" av={!AvatarInputHandler.main || AvatarInputHandler.main.IsEnabled()}," +
-                //    $" charge={GetComponent<EnergyInterface>().hasCharge}");
+                    //EchLog.WriteLowFrequency(MyLogger.Channel.One,
+                    //    $"pm={GetPilotingMode()}, ctrl={IsUnderCommand}," +
+                    //    $" engine.enabled={VFEngine?.enabled}," +
+                    //    $" pda={Player.main.GetPDA().isOpen}," +
+                    //    $" av={!AvatarInputHandler.main || AvatarInputHandler.main.IsEnabled()}," +
+                    //    $" charge={GetComponent<EnergyInterface>().hasCharge}");
                 control.forwardAxis = engine.currentInput.z;
                 control.rightAxis = engine.currentInput.x;
                 control.upAxis = engine.currentInput.y;
@@ -643,6 +516,37 @@ namespace Subnautica_Echelon
                     EchLog.Write($"Upgrades interface not found");
                 return rs;
 
+            }
+
+        }
+
+        public override List<VehicleBattery> Batteries
+        {
+            get
+            {
+                var rs = new List<VehicleBattery>();
+
+
+                var batteries = transform.Find("Batteries");
+
+                if (batteries != null)
+                {
+                    for (int i = 0; i < batteries.childCount; i++)
+                    {
+                        var b = batteries.GetChild(i);
+                        if (b != null)
+                        {
+                            rs.Add(new VehicleBattery
+                            {
+                                BatterySlot = b.gameObject,
+                                BatteryProxy = b
+                            });
+                        }
+                    }
+                }
+                else
+                    Log.Write($"Unable to locate 'Batteries' child");
+                return rs;
             }
 
         }

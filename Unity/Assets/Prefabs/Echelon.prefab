@@ -1689,8 +1689,8 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2490671966012197066}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0.406, y: 0, z: -2.165}
-  m_LocalScale: {x: 0.60676, y: 0.49567, z: 0.29139}
+  m_LocalPosition: {x: 0, y: -0.773, z: 1.304}
+  m_LocalScale: {x: 0.5, y: 0.2, z: 0.5}
   m_Children: []
   m_Father: {fileID: 7858723241877434807}
   m_RootOrder: 6
@@ -7447,8 +7447,8 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 4723203366338518493}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -0.243, y: 0, z: -2.087}
-  m_LocalScale: {x: 1, y: 0.35582, z: 1}
+  m_LocalPosition: {x: 0, y: 0, z: -2.087}
+  m_LocalScale: {x: 1.5, y: 0.35582, z: 1}
   m_Children: []
   m_Father: {fileID: 7301127472261037302}
   m_RootOrder: 0
@@ -13803,6 +13803,7 @@ MonoBehaviour:
   rightRotationSpeed: 0
   upRotationSpeed: 0
   isActive: 0
+  outOfWater: 0
 --- !u!114 &2507723206073229886
 MonoBehaviour:
   m_ObjectHideFlags: 0
