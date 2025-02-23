@@ -72,7 +72,7 @@ namespace Subnautica_Echelon
             float energyNeeded = M.Sqr(moveDirection) * (
                 0.05f
                 +
-                2f * overdriveActive * M.Sqr(BoostRelative)
+                1f * overdriveActive * M.Sqr(BoostRelative)
                 );
             MV.powerMan.TrySpendEnergy(energyNeeded * Time.fixedDeltaTime);
         }
