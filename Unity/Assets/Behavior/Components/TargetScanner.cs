@@ -72,6 +72,7 @@ public class TargetScanner : MonoBehaviour
         "Reefback",
         "BrainCoral",
         "ReefbackBaby",
+        "EscapePod",
     };
 
     private bool IsExcludedByName(string objectName)

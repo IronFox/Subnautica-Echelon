@@ -43,6 +43,13 @@ public class RotateCamera : MonoBehaviour
 
     public bool IsTransitionDone => transitionProgress >= 1;
 
+    public void CopyOrientationFrom(Transform t)
+    {
+        current = LockedEuler.FromGlobal(t);
+    }
+
+
+
     public void BeginTransitionTo(Transform t)
     {
         //Debug.Log($"Begin transition to {t}");

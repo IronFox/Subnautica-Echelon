@@ -494,10 +494,16 @@ public class EchelonControl : MonoBehaviour
                     nonCameraOrientation.rightRotationSpeed = 0;
                     nonCameraOrientation.upRotationSpeed = 0;
                 }
+                if (isDocked)
+                {
+                    //trailSpace.transform.forward = transform.forward;
+                    rotateCamera.CopyOrientationFrom(transform);
+                }
+
                 rotateCamera.enabled = false;
                 positionCamera.zoomAxis = 0;
                 backFacingLeft.thrust = 0;
-                backFacingLeft.thrust = 0;
+                backFacingRight.thrust = 0;
                 if (look != null)
                     look.targetOrientation = fallOrientation;
 

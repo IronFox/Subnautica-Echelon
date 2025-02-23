@@ -17,7 +17,7 @@ namespace Subnautica_Echelon
         public Vector3 currentInput;
         public bool freeCamera;
         public bool triggerActive;
-        public bool insufficientPower;
+        //public bool insufficientPower;
 
         public override void Awake()
         {
@@ -77,7 +77,7 @@ namespace Subnautica_Echelon
                 );
             var neededNow = energyNeeded * Time.fixedDeltaTime;
             var drained = Mathf.Abs(MV.powerMan.TrySpendEnergy(neededNow));
-            insufficientPower = drained < neededNow * 0.8f;
+            //insufficientPower = drained < neededNow * 0.8f;
         }
 
     }
