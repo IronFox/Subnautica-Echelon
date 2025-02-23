@@ -7,6 +7,10 @@ public class EchelonConfig : ConfigFile
 {
     [Keybind("Input to Toggle Free Camera ")]
     public KeyCode toggleFreeCamera = KeyCode.F;
+    [Keybind("Input to Reduce the 3rd Person Camera")]
+    public KeyCode altZoomIn = KeyCode.None;
+    [Keybind("Input to Increase the 3rd Person Camera")]
+    public KeyCode altZoomOut = KeyCode.None;
     [Toggle("Hold Sprint to Boost")]
     public bool holdToBoost = false;
     [Toggle("Ignore Torpedo Non-Target Collisions")]

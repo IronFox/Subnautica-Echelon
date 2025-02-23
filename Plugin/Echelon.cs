@@ -410,8 +410,15 @@ namespace Subnautica_Echelon
                 control.upAxis = engine.currentInput.y;
 
                 control.outOfWater = !GetIsUnderwater();
+                if (Player.main.pda.state == PDA.State.Closed)
+                {
+                    control.zoomAxis = -Input.GetAxis("Mouse ScrollWheel")
+                        + 
+                        ((Input.GetKey(MainPatcher.PluginConfig.altZoomOut) ? 1f : 0f)
+                        - (Input.GetKey(MainPatcher.PluginConfig.altZoomIn) ? 1f : 0f)) * 0.02f
+                        ;
+                }
 
-                
 
                 control.cameraCenterIsCockpit = Player.main.pda.state == PDA.State.Opened;
 
