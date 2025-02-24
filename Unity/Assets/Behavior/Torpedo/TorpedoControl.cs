@@ -93,6 +93,7 @@ public class TorpedoControl : MonoBehaviour
         Drive.origin = origin;
         CollisionTrigger = GetComponentInChildren<CollisionTrigger>();
         CollisionTrigger.doNotCollideWith = origin;
+        CollisionTrigger.target = TargetPredictor.target;
         Detonator.origin = origin;
         Lights = GetComponentsInChildren<Light>();
     }
@@ -104,6 +105,7 @@ public class TorpedoControl : MonoBehaviour
         CollisionTrigger.doNotCollideWith = origin;
         Detonator.origin = origin;
         Drive.origin = origin;
+        CollisionTrigger.target = TargetPredictor.target;
 
         if (normalCollider.isTrigger && !ProximityDetector.IsIntersectingWithExclusion
             && (origin != null && Vector3.Distance(transform.position, origin.position) > safetyOriginDistance)

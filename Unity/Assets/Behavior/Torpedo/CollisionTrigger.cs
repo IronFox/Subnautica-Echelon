@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
@@ -8,7 +9,7 @@ public class CollisionTrigger : MonoBehaviour
     public Collider regularCollider;
     public Detonator detonator;
     public Rigidbody doNotCollideWith;
-
+    public ITargetable target;
 
     public static string[] SmallFishNames = new string[]{
         "Eyeye",
@@ -65,7 +66,7 @@ public class CollisionTrigger : MonoBehaviour
                 return;
             }
 
-            if (t != null && t.MaxHealth < 200)
+            if (t != null && t.MaxHealth < 200 && !IsTarget(collision.collider.attachedRigidbody.gameObject))
             {
                 ConsoleControl.Write($"Colliding instance {t} is too fragile: Ramming & ignoring");
                 t.DealDamage(transform.position, 100, gameObject);
@@ -77,6 +78,13 @@ public class CollisionTrigger : MonoBehaviour
         }
         else
             ConsoleControl.Write($"Ignoring collision with {collision.collider} (cannot collide)");
+    }
+
+    private bool IsTarget(GameObject gameObject)
+    {
+        if (target == null)
+            return false;
+        return target.Is(gameObject);
     }
 
     // Update is called once per frame

@@ -81,6 +81,8 @@ public interface ITargetable
     Vector3 Position { get; }
     Vector3? InherentVelocity { get; }
     bool Exists { get; }
+
+    bool Is(GameObject gameObject);
 }
 
 
@@ -124,6 +126,9 @@ public class TransformTargetable : ITargetable
     {
         return -1190553613 + EqualityComparer<Transform>.Default.GetHashCode(Transform);
     }
+
+    public bool Is(GameObject gameObject)
+        => Transform != null && Transform.gameObject == gameObject;
 }
 
 public class AdapterTargetable : ITargetable
@@ -172,6 +177,9 @@ public class AdapterTargetable : ITargetable
     {
         return -1904651305 + EqualityComparer<TargetAdapter>.Default.GetHashCode(TargetAdapter);
     }
+
+    public bool Is(GameObject gameObject)
+        => TargetAdapter.GameObject == gameObject;
 }
 
 public class RigidbodyTargetable : ITargetable
@@ -203,6 +211,9 @@ public class RigidbodyTargetable : ITargetable
     {
         return -1854442488 + EqualityComparer<Rigidbody>.Default.GetHashCode(Rigidbody);
     }
+
+    public bool Is(GameObject gameObject)
+        => Rigidbody != null && Rigidbody.gameObject == gameObject;
 }
 
 public class PositionTargetable : ITargetable
@@ -230,6 +241,9 @@ public class PositionTargetable : ITargetable
     {
         return -425505606 + Position.GetHashCode();
     }
+
+    public bool Is(GameObject gameObject)
+        => false;
 
     public bool Exists => true;
 
