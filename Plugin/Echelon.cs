@@ -234,6 +234,145 @@ namespace Subnautica_Echelon
         }
 
 
+        private void ProcessEnergyRecharge(ref float energyChange, out bool lowPower, out bool criticalPower)
+        {
+
+            if (energyInterface != null)
+            {
+                float recharge =
+                      2.5f  //max 2.5 per second
+                    * MainPatcher.PluginConfig.batteryChargeSpeed / 100;
+                energyChange += recharge;
+
+                energyInterface.ModifyCharge(
+                    Time.deltaTime
+                    * recharge
+                    );
+                energyInterface.GetValues(out var energyCharge, out var energyCapacity);
+                lowPower = energyCharge < energyCapacity * 0.02f;
+                criticalPower = energyCharge < energyCapacity * 0.01f;
+
+
+            }
+            else
+            {
+                lowPower = false;
+                criticalPower = false;
+            }
+
+        }
+        private void ProcessTrigger(bool lowPower, ref float energyChange)
+        {
+            if (control.isBoarded && !control.isDocked && !control.outOfWater && !lowPower)
+            {
+                bool trigger = GameInput.GetAnalogValueForButton(GameInput.Button.LeftHand) > 0.1f;
+                if (trigger)
+                {
+                    float drain = 2f;
+                    energyChange -= drain;
+                    if (powerMan.TrySpendEnergy(Time.deltaTime * drain) == 0)
+                        trigger = false;
+                }
+                control.triggerActive = trigger;
+            }
+            else
+                control.triggerActive = false;
+
+        }
+
+        private void ProcessRegeneration(bool criticalPower, ref float energyChange)
+        {
+            if (
+                liveMixin != null
+                && liveMixin.health < liveMixin.maxHealth
+                && liveMixin.IsAlive()
+                && !criticalPower)
+            {
+                var healing = liveMixin.maxHealth
+                    * Time.deltaTime
+                    * 0.01f //max = 1% of max health per second
+                    * MainPatcher.PluginConfig.selfHealingSpeed / 100   //default will be 10 seconds per 1%
+                    ;
+
+                var clamped = Mathf.Min(healing, liveMixin.maxHealth - liveMixin.health);
+                var effective = healing / clamped;
+
+                float energyDemand =
+                    10 //max 10 energy per second
+                    * Time.deltaTime
+                    * MainPatcher.PluginConfig.selfHealingSpeed / 100   //if slower, cost less
+                    * effective //if clamped, cost less
+                    ;
+
+                var energyTaken = Mathf.Abs(powerMan.TrySpendEnergy(energyDemand));
+                var actuallyHealed = clamped * energyTaken / energyDemand;
+                liveMixin.AddHealth(actuallyHealed);
+
+                energyChange -= energyDemand / Time.deltaTime;
+            }
+        }
+
+        private void ForwardControlAxes()
+        {
+            if (control.batteryDead || control.powerOff)
+            {
+                control.forwardAxis = 0;
+                control.rightAxis = 0;
+                control.upAxis = 0;
+            }
+            else
+            {
+                control.forwardAxis = engine.currentInput.z;
+                control.rightAxis = engine.currentInput.x;
+                control.upAxis = engine.currentInput.y;
+            }
+        }
+
+        private void ProcessBoost(bool lowPower)
+        {
+
+            var boostToggle = !MainPatcher.PluginConfig.holdToBoost;
+
+
+            if (GameInput.GetButtonDown(GameInput.Button.Sprint) && boostToggle)
+            {
+                if (control.forwardAxis > 0 && engine.overdriveActive > 0)
+                    engine.overdriveActive = 0;
+            }
+
+            bool canBoost =
+                //!engine.insufficientPower
+                //&&
+                !lowPower
+                ;
+
+            if (boostToggle)
+            {
+                if (control.forwardAxis <= 0 || !canBoost)
+                    engine.overdriveActive = 0;
+                else
+                    engine.overdriveActive = Mathf.Max(engine.overdriveActive, GameInput.GetAnalogValueForButton(GameInput.Button.Sprint));
+            }
+            else
+                engine.overdriveActive = control.forwardAxis > 0 && canBoost
+                    ? GameInput.GetAnalogValueForButton(GameInput.Button.Sprint)
+                    : 0;
+
+
+            control.overdriveActive = engine.overdriveActive > 0.5f;
+        }
+
+        /// <summary>
+        /// Redetects proximity to the ocean surface and forwards the state to control
+        /// </summary>
+        private void RepositionCamera()
+        {
+            if (transform.position.y >= Ocean.GetOceanLevel() - 5 && transform.position.y < 1)
+                control.positionCameraBelowSub = true;
+            else if (transform.position.y < Ocean.GetOceanLevel() - 10 || transform.position.y > 2)
+                control.positionCameraBelowSub = false;
+        }
+
         public override void Update()
         {
             try
@@ -245,89 +384,17 @@ namespace Subnautica_Echelon
                 control.lookRightAxis = lookDelta.x * 0.1f;
                 control.lookUpAxis = lookDelta.y * 0.1f;
 
-                bool lowPower = false;
-                bool criticalPower = false;
-                if (energyInterface != null)
-                {
-                    energyInterface.ModifyCharge(
-                        Time.deltaTime
-                        * 2.5f  //max 2.5 per second
-                        * MainPatcher.PluginConfig.batteryChargeSpeed / 100
-                        );
-                    energyInterface.GetValues(out var charge, out var capacity);
-                    lowPower = charge < capacity * 0.02f;
-                    criticalPower = charge < capacity * 0.01f;
-                }
-
-
-                if (control.isBoarded && !control.isDocked && !control.outOfWater && !lowPower)
-                {
-                    bool trigger = GameInput.GetAnalogValueForButton(GameInput.Button.LeftHand) > 0.1f;
-                    if (trigger)
-                    {
-                        if (powerMan.TrySpendEnergy(Time.deltaTime * 2f) == 0)
-                            trigger = false;
-                    }
-                    control.triggerActive = trigger;
-                }
-                else
-                    control.triggerActive = false;
-
-                if (
-                    liveMixin != null
-                    && liveMixin.health < liveMixin.maxHealth
-                    && liveMixin.IsAlive()
-                    && !criticalPower)
-                {
-                    var healing = liveMixin.maxHealth
-                        * Time.deltaTime
-                        * 0.01f //max = 1% of max health per second
-                        * MainPatcher.PluginConfig.selfHealingSpeed / 100   //default will be 10 seconds per 1%
-                        ;
-                    
-                    var clamped = Mathf.Min(healing, liveMixin.maxHealth - liveMixin.health);
-                    var effective = healing / clamped;
-
-                    float energyDemand = 
-                        10 //max 10 energy per second
-                        * Time.deltaTime
-                        * MainPatcher.PluginConfig.selfHealingSpeed / 100   //if slower, cost less
-                        * effective //if clamped, cost less
-                        ;
-
-                    var energyTaken = Mathf.Abs(powerMan.TrySpendEnergy(energyDemand));
-                    var actuallyHealed = clamped * energyTaken / energyDemand;
-                    liveMixin.AddHealth(actuallyHealed);
-                }
-
-
-                //var rb = GetComponent<Rigidbody>();
-                //rb.isKinematic = false;
-                //rb.mass = 10;
-                //rb.angularDrag = 10;
-                //rb.drag = 10;
-                //rb.useGravity = true;
-
-                //EchLog.WriteLowFrequency(MyLogger.Channel.One,
-                //    $"pm={GetPilotingMode()}, ctrl={IsUnderCommand}," +
-                //    $" engine.enabled={VFEngine?.enabled}," +
-                //    $" pda={Player.main.GetPDA().isOpen}," +
-                //    $" av={!AvatarInputHandler.main || AvatarInputHandler.main.IsEnabled()}," +
-                //    $" charge={GetComponent<EnergyInterface>().hasCharge}");
-                if (control.batteryDead || control.powerOff)
-                {
-                    control.forwardAxis = 0;
-                    control.rightAxis = 0;
-                    control.upAxis = 0;
-                }
-                else
-                {
-                    control.forwardAxis = engine.currentInput.z;
-                    control.rightAxis = engine.currentInput.x;
-                    control.upAxis = engine.currentInput.y;
-                }
+                float energyChange = -engine.lastDrainPerSecond;
+                ProcessEnergyRecharge( ref energyChange, out var lowPower, out var criticalPower );
+                ProcessTrigger(lowPower, ref energyChange);
+                ProcessRegeneration(criticalPower, ref energyChange);
+                ForwardControlAxes();
 
                 control.outOfWater = !GetIsUnderwater();
+                control.cameraCenterIsCockpit = Player.main.pda.state == PDA.State.Opened;
+                control.isDocked = docked;
+                TorpedoControl.ignoreNonTargetCollisions = MainPatcher.PluginConfig.ignoreTorpedoNonTargetCollisions;
+
                 if (Player.main.pda.state == PDA.State.Closed)
                 {
                     control.zoomAxis = -Input.GetAxis("Mouse ScrollWheel")
@@ -337,49 +404,20 @@ namespace Subnautica_Echelon
                         ;
                 }
 
-
-                control.cameraCenterIsCockpit = Player.main.pda.state == PDA.State.Opened;
-
                 if (GameInput.GetKeyDown(MainPatcher.PluginConfig.toggleFreeCamera))
                     engine.freeCamera = control.freeCamera = !control.freeCamera;
-                
-                var boostToggle = !MainPatcher.PluginConfig.holdToBoost;
 
-                TorpedoControl.ignoreNonTargetCollisions = MainPatcher.PluginConfig.ignoreTorpedoNonTargetCollisions;
+                ProcessBoost(lowPower);
+                RepositionCamera();
 
-                if (GameInput.GetButtonDown(GameInput.Button.Sprint) && boostToggle)
+                if (energyInterface != null)
                 {
-                    if (control.forwardAxis > 0 && engine.overdriveActive > 0)
-                        engine.overdriveActive = 0;
+                    energyInterface.GetValues(out var energyCharge, out var energyCapacity);
+
+                    control.maxEnergy = energyCapacity;
+                    control.currentEnergy = energyCharge;
+                    control.energyChange = energyChange*10;
                 }
-
-                bool canBoost = 
-                    //!engine.insufficientPower
-                    //&&
-                    !lowPower
-                    ;
-
-                if (boostToggle)
-                {
-                    if (control.forwardAxis <= 0 || !canBoost)
-                        engine.overdriveActive = 0;
-                    else
-                        engine.overdriveActive = Mathf.Max(engine.overdriveActive,GameInput.GetAnalogValueForButton(GameInput.Button.Sprint));
-                }
-                else
-                    engine.overdriveActive = control.forwardAxis > 0 && canBoost
-                        ? GameInput.GetAnalogValueForButton(GameInput.Button.Sprint)
-                        : 0;
-
-
-                control.overdriveActive = engine.overdriveActive > 0.5f;
-
-                if (transform.position.y >= Ocean.GetOceanLevel() - 5 && transform.position.y < 1)
-                    control.positionCameraBelowSub = true;
-                else if (transform.position.y < Ocean.GetOceanLevel() - 10 || transform.position.y > 2)
-                    control.positionCameraBelowSub = false;
-
-                control.isDocked = docked;
 
                 base.Update();
             }
@@ -388,6 +426,7 @@ namespace Subnautica_Echelon
                 Log.Write("Echelon.Update()", ex);
             }
         }
+
 
         public void OnPowerUp()
         {

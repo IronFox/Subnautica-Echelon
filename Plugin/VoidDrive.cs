@@ -17,6 +17,7 @@ namespace Subnautica_Echelon
         public Vector3 currentInput;
         public bool freeCamera;
         public bool triggerActive;
+        public float lastDrainPerSecond;
         //public bool insufficientPower;
 
         public override void Awake()
@@ -70,11 +71,12 @@ namespace Subnautica_Echelon
         {
 
             moveDirection = GetEffectiveMoveInput(moveDirection);
-            float energyNeeded = M.Sqr(moveDirection) * (
+            float energyNeeded = lastDrainPerSecond = M.Sqr(moveDirection) * (
                 0.05f
                 +
                 1f * overdriveActive * M.Sqr(BoostRelative)
                 );
+            
             var neededNow = energyNeeded * Time.fixedDeltaTime;
             var drained = Mathf.Abs(MV.powerMan.TrySpendEnergy(neededNow));
             //insufficientPower = drained < neededNow * 0.8f;

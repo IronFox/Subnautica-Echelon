@@ -27,6 +27,10 @@ public class EchelonControl : MonoBehaviour
     public bool powerOff;
     public bool batteryDead;
 
+    public float maxEnergy;
+    public float currentEnergy;
+    public float energyChange;
+
     public MeshRenderer[] lightsRenderers = Array.Empty<MeshRenderer>();
 
     public TorpedoLaunchControl leftLaunch;
@@ -43,7 +47,7 @@ public class EchelonControl : MonoBehaviour
     public bool triggerActive;
     private DateTime lastTriggerTime = DateTime.MinValue;
 
-    
+    private EnergyLevel energyLevel;
 
     private Transform cameraRoot;
     private TargetScanner scanner;
@@ -210,6 +214,7 @@ public class EchelonControl : MonoBehaviour
         rotateCamera = trailSpace.GetComponent<RotateCamera>();
         positionCamera = trailSpace.GetComponent<PositionCamera>();
         fallOrientation = GetComponent<FallOrientation>();
+        energyLevel = GetComponentInChildren<EnergyLevel>();
         if (look != null)
             look.targetOrientation = inWaterDirectionSource = new TransformDirectionSource(trailSpace);
     }
@@ -346,6 +351,11 @@ public class EchelonControl : MonoBehaviour
         try
         {
             ProcessTargeting();
+
+            energyLevel.currentChange = energyChange;
+            energyLevel.maxEnergy = maxEnergy;
+            energyLevel.currentEnergy = currentEnergy;
+
 
             foreach (var r in lightsRenderers)
                 r.enabled = !batteryDead && !powerOff;
