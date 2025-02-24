@@ -337,11 +337,17 @@ public class EchelonControl : MonoBehaviour
                 firingLeft = !firingLeft;
             }
         }
-        else if (targetMarker != null)
+        else
         {
-            ConsoleControl.Write($"Destroying target marker");
-            Destroy(targetMarker);
-            targetMarker = null;
+            leftLaunch.fireWithTarget = null;
+            rightLaunch.fireWithTarget = null;
+
+            if (targetMarker != null)
+            {
+                ConsoleControl.Write($"Destroying target marker");
+                Destroy(targetMarker);
+                targetMarker = null;
+            }
         }
     }
 
