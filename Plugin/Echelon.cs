@@ -263,7 +263,8 @@ namespace Subnautica_Echelon
         }
         private void ProcessTrigger(bool lowPower, ref float energyChange)
         {
-            if (control.isBoarded && !control.isDocked && !control.outOfWater && !lowPower)
+            if (control.isBoarded && !control.isDocked && !control.outOfWater && !lowPower
+                && Player.main.pda.state == PDA.State.Closed)
             {
                 bool trigger = GameInput.GetAnalogValueForButton(GameInput.Button.LeftHand) > 0.1f;
                 if (trigger)
