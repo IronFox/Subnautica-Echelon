@@ -73,16 +73,25 @@ public class TargetScanner : MonoBehaviour
         "BrainCoral",
         "ReefbackBaby",
         "EscapePod",
+        "ThermalPlant",
+        "CuteFish",
+    };
+
+    private string[] alwaysTarget = new string[] {
+        "Warper"
     };
 
     private bool IsExcludedByName(string objectName)
     {
         return excludePrefixes.Any(x => objectName.StartsWith(x))
-            //|| CollisionTrigger.SmallFishNames.Any(x => objectName.StartsWith(x))
-            //|| objectName.Contains("Egg")
             || objectName.Contains("School")
             
             ;
+    }
+
+    private bool AlwaysIncludeByName(string objectName)
+    {
+        return alwaysTarget.Any(x => objectName.StartsWith(x));
     }
 
     public TargetAdapter GetBestTarget(Transform exclude)
@@ -109,7 +118,9 @@ public class TargetScanner : MonoBehaviour
                 if (item.attachedRigidbody.transform.GetComponent<TorpedoControl>() != null)
                     continue;
                 var t = TargetAdapter.ResolveTarget(item.attachedRigidbody.gameObject, item.attachedRigidbody);
-                if (t is null || t.IsInvincible || t.MaxHealth < 200 || !t.IsAlive)
+                if (t is null || t.IsInvincible || !t.IsAlive)
+                    continue;
+                if (t.MaxHealth < 200 && !AlwaysIncludeByName(item.attachedRigidbody.gameObject.name))
                     continue;
                 if (IsExcludedByName(item.attachedRigidbody.gameObject.name))
                     continue;
