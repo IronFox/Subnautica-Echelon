@@ -32,6 +32,16 @@ namespace Subnautica_Echelon
 
         public static Atlas.Sprite craftingSprite;
         public override Atlas.Sprite CraftingSprite => craftingSprite;
+        public override string Description => "The Echelon is a high-speed sub-aquatic superiority craft";
+        public override string EncyclopediaEntry =>
+            "The Echelon is designed with the most demanding environments in mind with extensive hunter seeker capabilities. " +
+            "It features automatic integrity and power recovery, and onboard smart torpedo manufacturing. " +
+            "Its advanced user interfacing enables holographic sensor reconstruction for increased environmental awareness. " +
+            "Automatic targeting and target integrity analysis supports threat classification and prioritization. "+
+            "Finally, fired torpedoes intercept locked targets with high efficiency while built-in safety " +
+            "mechanics avoid harming the origin craft.\n"+
+            "You can craft it at any Mobile Vehicle Bay."
+            ;
 
         public static void GetAssets()
         {
