@@ -4,6 +4,7 @@ using System.IO;
 using System.Reflection;
 using UnityEngine;
 using VehicleFramework;
+using VehicleFramework.Assets;
 using VehicleFramework.Engines;
 using VehicleFramework.VehicleParts;
 using VehicleFramework.VehicleTypes;
@@ -28,6 +29,9 @@ namespace Subnautica_Echelon
             EchLog = new MyLogger(this);
             EchLog.Write($"Constructed");
         }
+
+        public static Atlas.Sprite craftingSprite;
+        public override Atlas.Sprite CraftingSprite => craftingSprite;
 
         public static void GetAssets()
         {

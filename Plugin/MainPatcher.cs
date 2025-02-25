@@ -7,13 +7,16 @@ using RootMotion.FinalIK;
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
+using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 using UnityEngine;
 using UnityEngine.Assertions;
 using UWE;
 using VehicleFramework;
+using VehicleFramework.Assets;
 using VehicleFramework.Patches;
 using VehicleFramework.VehicleTypes;
 using static OVRHaptics;
@@ -84,7 +87,21 @@ namespace Subnautica_Echelon
                 Log.Write("model loaded: " + Echelon.model.name);
                 var sub = Echelon.model.EnsureComponent<Echelon>();
                 Log.Write("echelon attached: "+sub.name);
+
+                var path = Path.Combine(Path.GetDirectoryName( Assembly.GetExecutingAssembly().Location), "echelon.png");
+                Log.Write($"Trying to load sprite from {path}");
+                try
+                {
+
+                    Echelon.craftingSprite = SpriteHelper.GetSprite(path);
+                }
+                catch (Exception ex)
+                {
+                    Log.Write(ex);
+                }
+
                 started = UWE.CoroutineHost.StartCoroutine(VehicleRegistrar.RegisterVehicle(sub,true));
+
 
                 AudioPatcher.Patcher = (source) => FreezeTimePatcher.Register(source);
                 //ExplosionAdapter.HandleExplosion = (exp) =>
