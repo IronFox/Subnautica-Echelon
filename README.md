@@ -53,6 +53,10 @@ In order to run the mod, you need to copy the following files directly into that
 
 If you intend to frequently change things, you should probably create a .bat or some other script file that automates this deployment
 
+## Notes about the recipes
+The current version of vehicle framework (1.6.1) does not register changes in the build recipe of the craft.
+If you change values in the Recipe property of the Echelon class, you will have to delete [Subnautica]\BepInEx\plugins\VehicleFramework\recipes\Echelon_recipe.json before the next game start
+
 ## Start
 Once copied, the game should pick up the mod automatically. To check if everything went fine, check 
 [Subnautica]\BepInEx\LogOutput.log

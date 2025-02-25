@@ -45,6 +45,20 @@ namespace Subnautica_Echelon
             "You can craft it at any Mobile Vehicle Bay."
             ;
 
+        public override Dictionary<TechType, int> Recipe =>
+            new Dictionary<TechType, int> {
+                { TechType.PowerCell, 1 },
+                { TechType.Welder, 1 },
+                { TechType.AdvancedWiringKit, 2 },
+                { TechType.Aerogel, 2 },
+                { TechType.UraniniteCrystal, 5 },
+                { TechType.Diamond, 2 },
+                { TechType.Magnetite, 2 },
+                { TechType.Kyanite, 2 },
+                { TechType.PlasteelIngot, 4 },
+            };
+
+
         public static void GetAssets()
         {
             try
