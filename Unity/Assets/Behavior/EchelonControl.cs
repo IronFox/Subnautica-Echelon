@@ -27,9 +27,9 @@ public class EchelonControl : MonoBehaviour
     public bool powerOff;
     public bool batteryDead;
 
+    private readonly Queue<(float Level, DateTime Captured)> energyHistory = new Queue<(float Level, DateTime Captured)>();
     public float maxEnergy;
     public float currentEnergy;
-    public float energyChange;
 
     public MeshRenderer[] lightsRenderers = Array.Empty<MeshRenderer>();
 
@@ -364,10 +364,20 @@ public class EchelonControl : MonoBehaviour
         {
             ProcessTargeting();
 
-            energyLevel.currentChange = energyChange;
+            while (energyHistory.Count > 0 &&
+                (DateTime.Now - energyHistory.Peek().Captured) > TimeSpan.FromSeconds(1))
+                energyHistory.Dequeue();
+            if (energyHistory.Count > 0)
+            {
+                float energyChange = (float)((currentEnergy - energyHistory.Peek().Level) / (DateTime.Now - energyHistory.Peek().Captured).TotalSeconds) * 20f;
+                energyLevel.currentChange = energyChange;
+            }
+            else
+                energyLevel.currentChange = 0;
+
             energyLevel.maxEnergy = maxEnergy;
             energyLevel.currentEnergy = currentEnergy;
-
+            energyHistory.Enqueue((currentEnergy, DateTime.Now));
 
             foreach (var r in lightsRenderers)
                 r.enabled = !batteryDead && !powerOff;

@@ -250,7 +250,7 @@ namespace Subnautica_Echelon
         }
 
 
-        private void ProcessEnergyRecharge(ref float energyChange, out bool lowPower, out bool criticalPower)
+        private void ProcessEnergyRecharge(out bool lowPower, out bool criticalPower)
         {
 
             if (energyInterface != null)
@@ -258,7 +258,6 @@ namespace Subnautica_Echelon
                 float recharge =
                       2.5f  //max 2.5 per second
                     * MainPatcher.PluginConfig.batteryChargeSpeed / 100;
-                energyChange += recharge;
 
                 energyInterface.ModifyCharge(
                     Time.deltaTime
@@ -277,7 +276,7 @@ namespace Subnautica_Echelon
             }
 
         }
-        private void ProcessTrigger(bool lowPower, ref float energyChange)
+        private void ProcessTrigger(bool lowPower)
         {
             if (control.isBoarded && !control.isDocked && !control.outOfWater && !lowPower
                 && Player.main.pda.state == PDA.State.Closed)
@@ -286,7 +285,6 @@ namespace Subnautica_Echelon
                 if (trigger)
                 {
                     float drain = 2f;
-                    energyChange -= drain;
                     powerMan.TrySpendEnergy(Time.deltaTime * drain);
                 }
                 control.triggerActive = trigger;
@@ -296,7 +294,7 @@ namespace Subnautica_Echelon
 
         }
 
-        private void ProcessRegeneration(bool criticalPower, ref float energyChange)
+        private void ProcessRegeneration(bool criticalPower)
         {
             if (
                 liveMixin != null
@@ -324,7 +322,6 @@ namespace Subnautica_Echelon
                 var actuallyHealed = clamped * energyTaken / energyDemand;
                 liveMixin.AddHealth(actuallyHealed);
 
-                energyChange -= energyDemand / Time.deltaTime;
             }
         }
 
@@ -400,10 +397,9 @@ namespace Subnautica_Echelon
                 control.lookRightAxis = lookDelta.x * 0.1f;
                 control.lookUpAxis = lookDelta.y * 0.1f;
 
-                float energyChange = -engine.lastDrainPerSecond;
-                ProcessEnergyRecharge( ref energyChange, out var lowPower, out var criticalPower );
-                ProcessTrigger(lowPower, ref energyChange);
-                ProcessRegeneration(criticalPower, ref energyChange);
+                ProcessEnergyRecharge( out var lowPower, out var criticalPower );
+                ProcessTrigger(lowPower);
+                ProcessRegeneration(criticalPower);
                 ForwardControlAxes();
 
                 control.outOfWater = !GetIsUnderwater();
@@ -432,7 +428,6 @@ namespace Subnautica_Echelon
 
                     control.maxEnergy = energyCapacity;
                     control.currentEnergy = energyCharge;
-                    control.energyChange = energyChange*10;
                 }
 
                 base.Update();
