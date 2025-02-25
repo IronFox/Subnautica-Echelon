@@ -285,8 +285,7 @@ namespace Subnautica_Echelon
                 {
                     float drain = 2f;
                     energyChange -= drain;
-                    if (powerMan.TrySpendEnergy(Time.deltaTime * drain) == 0)
-                        trigger = false;
+                    powerMan.TrySpendEnergy(Time.deltaTime * drain);
                 }
                 control.triggerActive = trigger;
             }
