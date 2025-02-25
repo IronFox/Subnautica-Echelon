@@ -30,8 +30,10 @@ namespace Subnautica_Echelon
             EchLog.Write($"Constructed");
         }
 
-        public static Atlas.Sprite craftingSprite;
-        public override Atlas.Sprite CraftingSprite => craftingSprite;
+        public static Atlas.Sprite craftingSprite, pingSprite;
+        public static Atlas.Sprite emptySprite = new Atlas.Sprite(Texture2D.blackTexture);
+        public override Atlas.Sprite CraftingSprite => craftingSprite ?? base.CraftingSprite;
+        public override Atlas.Sprite PingSprite => pingSprite ?? base.PingSprite;
         public override string Description => "The Echelon is a high-speed sub-aquatic superiority craft";
         public override string EncyclopediaEntry =>
             "The Echelon is designed with the most demanding environments in mind with extensive hunter seeker capabilities. " +

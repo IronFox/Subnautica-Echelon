@@ -44,11 +44,12 @@ Compile Subnautica Echelon project for **release**. It cannot be run outside Sub
 
 ## Assembly
 The target mod directory should be in [Subnautica]\BepInEx\plugins\Echelon.
-In order to run the mod, you need to copy the following files directly into that directory:
+In order to run the mod, you need to copy the following files directly into that directory (no subdirectories):
 1) [clone]\Unity\Assets\AssetBundles\echelon
 2) [clone]\Plugin\bin\Release\net4.7.2\Subnautica Echelon.dll
 3) [build]\Subnautica Echelon_Data\Managed\EchelonScripts.dll
 4) [clone]\echelon.png
+4) [clone]\outline.png
 
 If you intend to frequently change things, you should probably create a .bat or some other script file that automates this deployment
 
