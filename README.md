@@ -48,8 +48,9 @@ In order to run the mod, you need to copy the following files directly into that
 1) [clone]\Unity\Assets\AssetBundles\echelon
 2) [clone]\Plugin\bin\Release\net4.7.2\Subnautica Echelon.dll
 3) [build]\Subnautica Echelon_Data\Managed\EchelonScripts.dll
+4) [clone]\echelon.png
 
-If you intend to change things, you should probably create a .bat or some other script file that automates this deployment
+If you intend to frequently change things, you should probably create a .bat or some other script file that automates this deployment
 
 ## Start
 Once copied, the game should pick up the mod automatically. To check if everything went fine, check 
