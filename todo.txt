@@ -2,11 +2,22 @@ echelon todos:
 
 * disable all access to C:\temp both in the unity scene and the plugin. Redirect to Debug.*
 * sub: 
-	* set recipe
-	* add custom icon presumably via CraftingSprite
-	* add camera shake on overdrive
-	* add storage and upgrade access
-	
+	* fix flickering of battery change bar (currently computed via queue, determine approximation of exactly one second ago)
+	* add healing visualisation using hull geometry and animated additive shader
+	* add debug panel that shows various status values on the hud (switch on/off via F7, make configurable)
+	* increase torpedo damage +50%. Make damage configurable
+	* decrease torpedo tube open/clode animation time
+	* block torpedo launch if vehicle speed is too high
+	* make target markers flat sprites
+	* add target name, health, max health, and current speed as text next to marker
+	* add option to automatically fire at warpers
+	* add option for off-board sentry mode (sub turns and fires at targets automatically that approach the player)
+	* do not explode torpedoes if close to the player (Camera.main when off-boarded)
+	* add camera shake on overdrive (use Random.insideUnitSphere)
+
+	* add storage and upgrade access (upgrades maybe later, storage no)
+	* add custom icon presumably via CraftingSprite (done)
+	* set recipe (done)
 	* propeller still rotates while docked (fixed)
 	* link mouse wheel to zoom axis (done)
 	* restore all directions on undock from docked orientation (done)
