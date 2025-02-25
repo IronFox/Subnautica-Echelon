@@ -77,6 +77,7 @@ public class EchelonControl : MonoBehaviour
     private bool currentCameraCenterIsCockpit;
     private bool cameraIsInTrailspace;
 
+    private bool wasEverBoarded;
     private enum CameraState
     {
         IsFree,
@@ -146,6 +147,8 @@ public class EchelonControl : MonoBehaviour
 
     public void Onboard(Transform localizeInsteadOfMainCamera = null)
     {
+        wasEverBoarded = true;
+
         if (!currentlyBoarded)
         {
             ConsoleControl.Write($"Onboarding");
@@ -329,6 +332,9 @@ public class EchelonControl : MonoBehaviour
             var firing = firingLeft ? leftLaunch : rightLaunch;
 
             var doFire = triggerActive && !outOfWater;
+
+            // Debug.Log($"doFire={doFire} (triggerActive={triggerActive}, outOfWater={outOfWater})");
+
             firing.fireWithTarget = doFire ? target : null;
             if (firing.CycleProgress > firing.CycleTime * 0.5f)
             {
@@ -526,7 +532,7 @@ public class EchelonControl : MonoBehaviour
             }
 
             if (look != null)
-                look.enabled = (isBoarded || outOfWater) && !isDocked && !batteryDead && !powerOff;
+                look.enabled = (isBoarded || (outOfWater && wasEverBoarded)) && !isDocked && !batteryDead && !powerOff;
 
             forwardFacingLeft.thrust = -backFacingLeft.thrust;
             forwardFacingRight.thrust = -backFacingRight.thrust;
