@@ -11,6 +11,8 @@ public class ExplosionController : MonoBehaviour
 
     private float time;
 
+    public static float explosionDamage = 1500;
+
     public const float ExplosionRadius = 15;
 
     // Start is called before the first frame update
@@ -25,7 +27,7 @@ public class ExplosionController : MonoBehaviour
             if (t != null && t.IsAlive)
             {
                 float distance = M.Distance(transform.position,t.GameObject.transform.position); 
-                float dmg = 1000 / (1f + distance * 0.1f);
+                float dmg = explosionDamage / (1f + distance * 0.1f);
                 ConsoleControl.Write($"Dealing {dmg} damage to {t} at health {t.CurrentHealth} and distance {distance}");
                 t.DealDamage(transform.position, dmg, gameObject);
                 ConsoleControl.Write($"Health now at {t.CurrentHealth}");

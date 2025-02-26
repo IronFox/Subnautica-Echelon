@@ -420,6 +420,7 @@ namespace Subnautica_Echelon
             {
                 LocalInit();
 
+                ExplosionController.explosionDamage = MainPatcher.PluginConfig.torpedoDamage;
 
                 Vector2 lookDelta = GameInput.GetLookDelta();
                 control.lookRightAxis = lookDelta.x * 0.1f;
