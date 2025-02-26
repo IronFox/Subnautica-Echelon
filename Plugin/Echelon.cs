@@ -267,7 +267,8 @@ namespace Subnautica_Echelon
         private void ProcessEnergyRecharge(out bool lowPower, out bool criticalPower)
         {
 
-            if (energyInterface != null)
+            if (energyInterface != null
+                && !IngameMenu.main.gameObject.activeSelf)
             {
                 float recharge =
                       2.5f  //max 2.5 per second
@@ -292,8 +293,11 @@ namespace Subnautica_Echelon
         }
         private void ProcessTrigger(bool lowPower)
         {
-            if (control.isBoarded && !control.isDocked && !control.outOfWater && !lowPower
-                && Player.main.pda.state == PDA.State.Closed)
+            if (control.isBoarded && !control.isDocked
+                && !control.outOfWater && !lowPower
+                && Player.main.pda.state == PDA.State.Closed
+                && !IngameMenu.main.gameObject.activeSelf
+                )
             {
                 bool trigger = GameInput.GetAnalogValueForButton(GameInput.Button.LeftHand) > 0.1f;
                 if (trigger)
@@ -320,12 +324,13 @@ namespace Subnautica_Echelon
                 {
                     var healing = liveMixin.maxHealth
                         * Time.deltaTime
-                        * 0.01f //max = 1% of max health per second
-                        * MainPatcher.PluginConfig.selfHealingSpeed / 100   //default will be 10 seconds per 1%
+                        * 0.02f //max = 2% of max health per second
+                        * MainPatcher.PluginConfig.selfHealingSpeed / 100   //default will be 5 seconds per 1%
                         ;
 
                     var clamped = Mathf.Min(healing, liveMixin.maxHealth - liveMixin.health);
                     var effective = clamped / healing;
+                    //Debug.Log($"Healing at delta={Time.deltaTime}");
                     float energyDemand =
                         10 //max 10 energy per second
                         * Time.deltaTime
@@ -498,7 +503,7 @@ namespace Subnautica_Echelon
         {
         }
 
-        public override int MaxHealth => 10000;
+        public override int MaxHealth => 2000;
         public override int NumModules => 0;
         public override int BaseCrushDepth => 10000;
 
