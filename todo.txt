@@ -5,9 +5,9 @@ echelon todos:
 
 * sub: 
 	* add trailing camera flash light
-	* block torpedo launch if vehicle speed is too high
+	* block torpedo launch if vehicle speed is too high (>20m/s forward)
 	* make target markers flat sprites
-	* add target name, health, max health, and current speed as text next to marker
+	* add target name, health, max health, distance, and current speed as text next to marker
 	* add option to automatically fire at warpers
 	* decrease torpedo tube open/close animation time
 	* add option for off-board sentry mode (sub turns and fires at targets automatically that approach the player)
