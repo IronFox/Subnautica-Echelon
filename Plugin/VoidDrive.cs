@@ -74,7 +74,7 @@ namespace Subnautica_Echelon
             float energyNeeded = lastDrainPerSecond = M.Sqr(moveDirection) * (
                 0.05f
                 +
-                1f * overdriveActive * M.Sqr(BoostRelative)
+                1f * overdriveActive /** M.Sqr(BoostRelative)*/
                 );
             
             var neededNow = energyNeeded * Time.fixedDeltaTime;
