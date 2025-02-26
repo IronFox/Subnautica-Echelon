@@ -4,7 +4,6 @@ echelon todos:
 * update version number *
 
 * sub: 
-	* fix flickering of battery change bar (currently computed via queue, determine approximation of exactly one second ago)
 	* add healing visualisation using hull geometry and animated additive shader
 	* increase torpedo damage +50%. Make damage configurable
 	* decrease torpedo tube open/clode animation time
@@ -17,6 +16,7 @@ echelon todos:
 	* add camera shake on overdrive (use Random.insideUnitSphere)
 	* torpedos fired with no target should always collide with terrain
 
+	* fix flickering of battery change bar (it's as good as it gets)
 	* add debug panel that shows various status values on the hud (not yet configurable, done)
 	* accelerate torpedoes (again, done)
 	* add storage and upgrade access (upgrades maybe later, storage no)

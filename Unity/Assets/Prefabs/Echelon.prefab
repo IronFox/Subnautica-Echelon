@@ -7458,6 +7458,7 @@ MonoBehaviour:
   maxDistance: 500
   minWidth: 0.6
   minHeight: 0.4
+  lastScanTime: 0
 --- !u!1 &4496354415318109886
 GameObject:
   m_ObjectHideFlags: 0
@@ -14151,8 +14152,8 @@ MonoBehaviour:
   cameraCenterIsCockpit: 0
   powerOff: 0
   batteryDead: 0
-  maxEnergy: 0.5
-  currentEnergy: 1
+  maxEnergy: 1
+  currentEnergy: 0.5
   lightsRenderers:
   - {fileID: 8526027884062462929}
   - {fileID: 5186376573211370038}

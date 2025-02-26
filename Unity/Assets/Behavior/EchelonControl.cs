@@ -27,7 +27,7 @@ public class EchelonControl : MonoBehaviour
     public bool powerOff;
     public bool batteryDead;
 
-    private readonly Queue<(float Level, DateTime Captured)> energyHistory = new Queue<(float Level, DateTime Captured)>();
+    private readonly FloatTimeFrame energyHistory = new FloatTimeFrame(TimeSpan.FromSeconds(2));
     public float maxEnergy=0.5f;
     public float currentEnergy=1;
 
@@ -404,13 +404,11 @@ public class EchelonControl : MonoBehaviour
             statusConsole.Set(StatusProperty.FixedTimeDelta, Time.fixedDeltaTime);
             statusConsole.Set(StatusProperty.TargetScanTime, scanner.lastScanTime);
 
-
-            while (energyHistory.Count > 0 &&
-                (DateTime.Now - energyHistory.Peek().Captured) > TimeSpan.FromSeconds(1))
-                energyHistory.Dequeue();
-            if (energyHistory.Count > 0)
+            energyHistory.Add(currentEnergy);
+            var edge = energyHistory.GetEdge();
+            if (edge.HasValue)
             {
-                float energyChange = (float)((currentEnergy - energyHistory.Peek().Level) / (DateTime.Now - energyHistory.Peek().Captured).TotalSeconds) * 20f;
+                float energyChange = (currentEnergy - edge.Value) * 5f;
                 energyLevel.currentChange = energyChange;
             }
             else
@@ -418,7 +416,6 @@ public class EchelonControl : MonoBehaviour
 
             energyLevel.maxEnergy = maxEnergy;
             energyLevel.currentEnergy = currentEnergy;
-            energyHistory.Enqueue((currentEnergy, DateTime.Now));
 
             foreach (var r in lightsRenderers)
                 r.enabled = !batteryDead && !powerOff;
