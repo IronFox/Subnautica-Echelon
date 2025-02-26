@@ -325,8 +325,7 @@ namespace Subnautica_Echelon
                         ;
 
                     var clamped = Mathf.Min(healing, liveMixin.maxHealth - liveMixin.health);
-                    var effective = healing / clamped;
-
+                    var effective = clamped / healing;
                     float energyDemand =
                         10 //max 10 energy per second
                         * Time.deltaTime
