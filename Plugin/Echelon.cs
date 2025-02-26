@@ -320,7 +320,8 @@ namespace Subnautica_Echelon
                 if (liveMixin.health < liveMixin.maxHealth
                     && liveMixin.IsAlive()
                     && !criticalPower
-                    && !IngameMenu.main.gameObject.activeSelf)
+                    && !IngameMenu.main.gameObject.activeSelf
+                    && MainPatcher.PluginConfig.selfHealingSpeed > 0)
                 {
                     var healing = liveMixin.maxHealth
                         * Time.deltaTime
