@@ -28,8 +28,11 @@ public class EchelonControl : MonoBehaviour
     public bool batteryDead;
 
     private readonly FloatTimeFrame energyHistory = new FloatTimeFrame(TimeSpan.FromSeconds(2));
-    public float maxEnergy=0.5f;
-    public float currentEnergy=1;
+    public float maxEnergy=1;
+    public float currentEnergy=0.5f;
+    public float maxHealth = 1;
+    public float currentHealth = 0.5f;
+    public bool isHealing;
 
     public MeshRenderer[] lightsRenderers = Array.Empty<MeshRenderer>();
 
@@ -56,6 +59,8 @@ public class EchelonControl : MonoBehaviour
     public DriveControl backFacingLeft;
     public DriveControl forwardFacingRight;
     public DriveControl backFacingRight;
+
+    public HealingLight healingLight;
 
     public Transform trailSpace;
     public Transform trailSpaceCameraContainer;
@@ -403,6 +408,11 @@ public class EchelonControl : MonoBehaviour
             statusConsole.Set(StatusProperty.TimeDelta, Time.deltaTime);
             statusConsole.Set(StatusProperty.FixedTimeDelta, Time.fixedDeltaTime);
             statusConsole.Set(StatusProperty.TargetScanTime, scanner.lastScanTime);
+            statusConsole.Set(StatusProperty.Health, currentHealth);
+            statusConsole.Set(StatusProperty.MaxHealth, maxHealth);
+            statusConsole.Set(StatusProperty.IsHealing, isHealing);
+
+            healingLight.isHealing = isHealing;
 
             energyHistory.Add(currentEnergy);
             var edge = energyHistory.GetEdge();
@@ -610,43 +620,4 @@ public class EchelonControl : MonoBehaviour
         player.localEulerAngles = Vector3.zero;
     }
 
-    //bool warnedAboutNoRb = false;
-    //int roll = 0;
-    //void FixedUpdate()
-    //{
-    //    if (currentlyBoarded && !outOfWater && !isDocked)
-    //    {
-    //        if (rb == null)
-    //        {
-    //            if (!warnedAboutNoRb)
-    //            {
-    //                warnedAboutNoRb = true;
-    //                ConsoleControl.Write($"Warning: rb is null. Cannot move");
-    //            }
-    //            return;
-    //        }
-    //        var forwardAccel = forwardAxis * (regularForwardAcc + (overdriveActive && forwardAxis > 0 ? overdriveForwardAcc : 0));
-
-    //        //forwardAccel = forwardAxis * 1e10f;  //turbo debug
-    //        bool log = ((roll++) % 100) == 0;
-    //        if (log)
-    //            ConsoleControl.Write($"Accel: {forwardAccel} {freeCamera} {rb.name}, fps: {1f/Time.fixedTime}");
-    //        try
-    //        {
-    //            rb.AddRelativeForce(0, 0, forwardAccel, ForceMode.Acceleration);
-    //            if (!freeCamera)
-    //            {
-    //                //var rAxis = M.FlatNormalized(transform.right);
-    //                rb.AddForce(look.targetOrientation.Right * rightAxis * strafeAcc, ForceMode.Acceleration);
-    //                rb.AddForce(look.targetOrientation.Up * upAxis * strafeAcc, ForceMode.Acceleration);
-    //            }
-    //            if (log)
-    //                ConsoleControl.Write($"Done: {forwardAccel} {rb.name}, fps: {1f / Time.fixedTime}");
-    //        }
-    //        catch (Exception ex)
-    //        {
-    //            ConsoleControl.WriteException("FixedUpdate()",ex);
-    //        }
-    //    }
-    //}
 }

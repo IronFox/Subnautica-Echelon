@@ -4,18 +4,19 @@ echelon todos:
 * update version number *
 
 * sub: 
-	* add healing visualisation using hull geometry and animated additive shader
+	* add trailing camera flash light
 	* increase torpedo damage +50%. Make damage configurable
-	* decrease torpedo tube open/clode animation time
 	* block torpedo launch if vehicle speed is too high
 	* make target markers flat sprites
 	* add target name, health, max health, and current speed as text next to marker
 	* add option to automatically fire at warpers
+	* decrease torpedo tube open/close animation time
 	* add option for off-board sentry mode (sub turns and fires at targets automatically that approach the player)
 	* do not explode torpedoes if close to the player (Camera.main when off-boarded)
 	* add camera shake on overdrive (use Random.insideUnitSphere)
 	* torpedos fired with no target should always collide with terrain
 
+	* add healing visualisation using hull geometry and animated additive shader (done)
 	* fix flickering of battery change bar (it's as good as it gets)
 	* add debug panel that shows various status values on the hud (not yet configurable, done)
 	* accelerate torpedoes (again, done)

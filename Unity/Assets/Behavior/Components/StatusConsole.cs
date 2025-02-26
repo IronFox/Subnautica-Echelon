@@ -83,5 +83,8 @@ public enum StatusProperty
     TimeDelta,
     FixedTimeDelta,
     TargetScanTime,
+    Health,
+    MaxHealth,
+    IsHealing,
 }
 

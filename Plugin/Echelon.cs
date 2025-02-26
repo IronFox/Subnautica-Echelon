@@ -310,31 +310,40 @@ namespace Subnautica_Echelon
 
         private void ProcessRegeneration(bool criticalPower)
         {
-            if (
-                liveMixin != null
-                && liveMixin.health < liveMixin.maxHealth
-                && liveMixin.IsAlive()
-                && !criticalPower)
+            control.isHealing = false;
+            if (liveMixin != null)
             {
-                var healing = liveMixin.maxHealth
-                    * Time.deltaTime
-                    * 0.01f //max = 1% of max health per second
-                    * MainPatcher.PluginConfig.selfHealingSpeed / 100   //default will be 10 seconds per 1%
-                    ;
+                if (liveMixin.health < liveMixin.maxHealth
+                    && liveMixin.IsAlive()
+                    && !criticalPower)
+                {
+                    var healing = liveMixin.maxHealth
+                        * Time.deltaTime
+                        * 0.01f //max = 1% of max health per second
+                        * MainPatcher.PluginConfig.selfHealingSpeed / 100   //default will be 10 seconds per 1%
+                        ;
 
-                var clamped = Mathf.Min(healing, liveMixin.maxHealth - liveMixin.health);
-                var effective = healing / clamped;
+                    var clamped = Mathf.Min(healing, liveMixin.maxHealth - liveMixin.health);
+                    var effective = healing / clamped;
 
-                float energyDemand =
-                    10 //max 10 energy per second
-                    * Time.deltaTime
-                    * MainPatcher.PluginConfig.selfHealingSpeed / 100   //if slower, cost less
-                    * effective //if clamped, cost less
-                    ;
+                    float energyDemand =
+                        10 //max 10 energy per second
+                        * Time.deltaTime
+                        * MainPatcher.PluginConfig.selfHealingSpeed / 100   //if slower, cost less
+                        * effective //if clamped, cost less
+                        ;
 
-                var energyTaken = Mathf.Abs(powerMan.TrySpendEnergy(energyDemand));
-                var actuallyHealed = clamped * energyTaken / energyDemand;
-                liveMixin.AddHealth(actuallyHealed);
+                    var energyTaken = Mathf.Abs(powerMan.TrySpendEnergy(energyDemand));
+                    var actuallyHealed = clamped * energyTaken / energyDemand;
+                    liveMixin.AddHealth(actuallyHealed);
+                    control.isHealing = true;
+
+                }
+                
+                    
+
+                control.maxHealth = liveMixin.maxHealth;
+                control.currentHealth = liveMixin.health;
 
             }
         }
