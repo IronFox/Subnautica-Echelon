@@ -1,6 +1,8 @@
 echelon todos:
 
 * disable all access to C:\temp both in the unity scene and the plugin. Redirect to Debug.*
+* update version number *
+
 * sub: 
 	* fix flickering of battery change bar (currently computed via queue, determine approximation of exactly one second ago)
 	* add healing visualisation using hull geometry and animated additive shader
@@ -14,7 +16,9 @@ echelon todos:
 	* add option for off-board sentry mode (sub turns and fires at targets automatically that approach the player)
 	* do not explode torpedoes if close to the player (Camera.main when off-boarded)
 	* add camera shake on overdrive (use Random.insideUnitSphere)
+	* torpedos fired with no target should always collide with terrain
 
+	* accelerate torpedoes (again, done)
 	* add storage and upgrade access (upgrades maybe later, storage no)
 	* add custom icon presumably via CraftingSprite (done)
 	* set recipe (done)

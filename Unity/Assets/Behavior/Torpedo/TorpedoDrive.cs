@@ -13,10 +13,8 @@ public class TorpedoDrive : MonoBehaviour
     public float dragCompensated;
     public float finalAcceleration;
     //private float errorCorrection = 1f;
-    public float TravelVelocity => 
-        (origin == null || M.Distance(origin.position,rb.position) > 3)
-            ? 25
-            : 35;
+    public readonly float TravelVelocity = 45;
+    public float throttle = 1;
 
     // Start is called before the first frame update
     void Start()
@@ -41,8 +39,8 @@ public class TorpedoDrive : MonoBehaviour
 
             //dragCompensated = travelVelocity * 2f;
 
-            var error = TravelVelocity - forwardVelocity;
-            dragCompensated = error * 10;
+            var error = TravelVelocity* throttle - forwardVelocity;
+            dragCompensated = error * 15;
 
                 //DragCompensation
                 //.For(TravelVelocity)
