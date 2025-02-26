@@ -315,7 +315,8 @@ namespace Subnautica_Echelon
             {
                 if (liveMixin.health < liveMixin.maxHealth
                     && liveMixin.IsAlive()
-                    && !criticalPower)
+                    && !criticalPower
+                    && !IngameMenu.main.gameObject.activeSelf)
                 {
                     var healing = liveMixin.maxHealth
                         * Time.deltaTime
@@ -430,7 +431,7 @@ namespace Subnautica_Echelon
                 control.isDocked = docked;
                 TorpedoControl.ignoreNonTargetCollisions = MainPatcher.PluginConfig.ignoreTorpedoNonTargetCollisions;
 
-                if (Player.main.pda.state == PDA.State.Closed)
+                if (Player.main.pda.state == PDA.State.Closed && !IngameMenu.main.gameObject.activeSelf)
                 {
                     control.zoomAxis = -Input.GetAxis("Mouse ScrollWheel")
                         + 
