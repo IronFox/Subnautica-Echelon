@@ -24,6 +24,8 @@ public class PositionCamera : MonoBehaviour
 
     private TargetScanner scanner;
 
+    public float DistanceToTarget => distanceToTarget;
+
     void Start()
     {
         scanner= GetComponentInChildren<TargetScanner>();

@@ -7,7 +7,7 @@ using static UnityEngine.GraphicsBuffer;
 
 public class EchelonControl : MonoBehaviour
 {
-    public KeyCode logStateKey = KeyCode.F7;
+    public KeyCode openConsoleKey = KeyCode.F7;
 
     public GameObject targetMarkerPrefab;
     public float forwardAxis;
@@ -28,8 +28,8 @@ public class EchelonControl : MonoBehaviour
     public bool batteryDead;
 
     private readonly Queue<(float Level, DateTime Captured)> energyHistory = new Queue<(float Level, DateTime Captured)>();
-    public float maxEnergy;
-    public float currentEnergy;
+    public float maxEnergy=0.5f;
+    public float currentEnergy=1;
 
     public MeshRenderer[] lightsRenderers = Array.Empty<MeshRenderer>();
 
@@ -58,9 +58,12 @@ public class EchelonControl : MonoBehaviour
     public DriveControl backFacingRight;
 
     public Transform trailSpace;
+    public Transform trailSpaceCameraContainer;
+    public Canvas trailSpaceCanvas;
     //public Transform cockpitRoot;
     //public Transform headCenter;
     public Transform seat;
+    public StatusConsole statusConsole;
 
     private RotateCamera rotateCamera;
     private PositionCamera positionCamera;
@@ -68,7 +71,7 @@ public class EchelonControl : MonoBehaviour
     private FallOrientation fallOrientation;
 
     private DirectAt look;
-    //private Rigidbody rb;
+    private Rigidbody rb;
     private bool currentlyBoarded;
 
     private Parentage onboardLocalizedTransform;
@@ -101,7 +104,12 @@ public class EchelonControl : MonoBehaviour
             ConsoleControl.Write("Moving camera to trailspace");
             cameraMove = Parentage.FromLocal(cameraRoot);
 
-            cameraRoot.parent = trailSpace;
+            cameraRoot.parent = trailSpaceCameraContainer;
+
+            ConsoleControl.Write($"Assigning {Camera.main} as worldCamera of {trailSpaceCanvas}");
+            trailSpaceCanvas.worldCamera = Camera.main;
+            trailSpaceCanvas.planeDistance = Mathf.Max(Camera.main.nearClipPlane * 1.1f, 2f);
+            ConsoleControl.Write($"Set clip plane to distance {trailSpaceCanvas.planeDistance}");
             TransformDescriptor.LocalIdentity.ApplyTo(cameraRoot);
             ConsoleControl.Write("Moved");
         }
@@ -114,6 +122,9 @@ public class EchelonControl : MonoBehaviour
             cameraIsInTrailspace = false;
             ConsoleControl.Write("Moving camera out of trailspace");
             cameraMove.Restore();
+            statusConsole.enabled = trailSpaceCanvas.enabled = false;
+            trailSpaceCanvas.worldCamera = null;
+
             ConsoleControl.Write("Moved");
         }
     }
@@ -212,7 +223,7 @@ public class EchelonControl : MonoBehaviour
     {
         scanner = trailSpace.GetComponentInChildren<TargetScanner>();
         nonCameraOrientation = GetComponent<NonCameraOrientation>();
-        //rb = GetComponent<Rigidbody>();
+        rb = GetComponent<Rigidbody>();
         look = GetComponent<DirectAt>();
         rotateCamera = trailSpace.GetComponent<RotateCamera>();
         positionCamera = trailSpace.GetComponent<PositionCamera>();
@@ -297,6 +308,7 @@ public class EchelonControl : MonoBehaviour
         if (isBoarded && !isDocked)
         {
             var target = GetTarget();
+            statusConsole.Set(StatusProperty.Target, target);
             //ConsoleControl.Write($"target: "+target.ToString());
             if (target != null)
             {
@@ -342,12 +354,16 @@ public class EchelonControl : MonoBehaviour
                 firing.fireWithTarget = null;
                 firingLeft = !firingLeft;
             }
+            statusConsole.Set(StatusProperty.LeftLauncherTarget, leftLaunch.fireWithTarget);
+            statusConsole.Set(StatusProperty.RightLauncherTarget, rightLaunch.fireWithTarget);
         }
         else
         {
             leftLaunch.fireWithTarget = null;
             rightLaunch.fireWithTarget = null;
-
+            statusConsole.Set(StatusProperty.Target, null);
+            statusConsole.Set(StatusProperty.LeftLauncherTarget,null);
+            statusConsole.Set(StatusProperty.RightLauncherTarget, null);
             if (targetMarker != null)
             {
                 ConsoleControl.Write($"Destroying target marker");
@@ -355,6 +371,9 @@ public class EchelonControl : MonoBehaviour
                 targetMarker = null;
             }
         }
+        statusConsole.Set(StatusProperty.LeftLauncherProgress, leftLaunch.CycleProgress / leftLaunch.CycleTime);
+        statusConsole.Set(StatusProperty.RightLauncherProgress, rightLaunch.CycleProgress / rightLaunch.CycleTime);
+
     }
 
     // Update is called once per frame
@@ -363,6 +382,28 @@ public class EchelonControl : MonoBehaviour
         try
         {
             ProcessTargeting();
+            
+            statusConsole.Set(StatusProperty.EnergyLevel, currentEnergy);
+            statusConsole.Set(StatusProperty.EnergyCapacity, maxEnergy);
+            statusConsole.Set(StatusProperty.BatteryDead, batteryDead);
+            statusConsole.Set(StatusProperty.PowerOff, powerOff);
+            statusConsole.Set(StatusProperty.IsBoarded, currentlyBoarded);
+            statusConsole.Set(StatusProperty.IsOutOfWater, outOfWater);
+            statusConsole.Set(StatusProperty.LookRightAxis, lookRightAxis);
+            statusConsole.Set(StatusProperty.LookUpAxis, lookUpAxis);
+            statusConsole.Set(StatusProperty.ForwardAxis, forwardAxis);
+            statusConsole.Set(StatusProperty.RightAxis, rightAxis);
+            statusConsole.Set(StatusProperty.UpAxis, upAxis);
+            statusConsole.Set(StatusProperty.OverdriveActive, overdriveActive);
+            statusConsole.Set(StatusProperty.CameraDistance, positionCamera.DistanceToTarget);
+            statusConsole.Set(StatusProperty.PositionCameraBelowSub, positionCamera.positionBelowTarget);
+            statusConsole.Set(StatusProperty.Velocity, rb.velocity.magnitude);
+            statusConsole.Set(StatusProperty.FreeCamera, freeCamera);
+            statusConsole.Set(StatusProperty.IsDocked, isDocked);
+            statusConsole.Set(StatusProperty.TimeDelta, Time.deltaTime);
+            statusConsole.Set(StatusProperty.FixedTimeDelta, Time.fixedDeltaTime);
+            statusConsole.Set(StatusProperty.TargetScanTime, scanner.lastScanTime);
+
 
             while (energyHistory.Count > 0 &&
                 (DateTime.Now - energyHistory.Peek().Captured) > TimeSpan.FromSeconds(1))
@@ -400,26 +441,34 @@ public class EchelonControl : MonoBehaviour
                     MoveCameraToTrailSpace();
             }
 
-
-            if (Input.GetKeyDown(logStateKey))
+            if (Input.GetKeyDown(openConsoleKey))
             {
-                ConsoleControl.Write("Capturing debug information v3");
+                if (currentlyBoarded)
+                {
+                    statusConsole.enabled = trailSpaceCanvas.enabled = !trailSpaceCanvas.enabled;
+                    ConsoleControl.Write($"Toggled canvas visibility to {trailSpaceCanvas.enabled}");
 
-                ConsoleControl.Write($"3rd person camera at {trailSpace.position}");
-                ConsoleControl.Write($"Main camera at {cameraRoot.position}");
-                //ConsoleControl.Write($"Cockpit center at {cockpitRoot.position}");
+                    //ConsoleControl.Write("Capturing debug information v3");
+
+                    //ConsoleControl.Write($"3rd person camera at {trailSpace.position}");
+                    //ConsoleControl.Write($"Main camera at {cameraRoot.position}");
+                    ////ConsoleControl.Write($"Cockpit center at {cockpitRoot.position}");
 
 
-                //ConsoleControl.Write($"RigidBody.isKinematic="+rb.isKinematic);
-                //ConsoleControl.Write($"RigidBody.constraints="+rb.constraints);
-                //ConsoleControl.Write($"RigidBody.collisionDetectionMode=" +rb.collisionDetectionMode);
-                //ConsoleControl.Write($"RigidBody.drag=" +rb.drag);
-                //ConsoleControl.Write($"RigidBody.mass=" +rb.mass);
-                //ConsoleControl.Write($"RigidBody.useGravity=" +rb.useGravity);
-                //ConsoleControl.Write($"RigidBody.velocity=" +rb.velocity);
-                //ConsoleControl.Write($"RigidBody.worldCenterOfMass=" +rb.worldCenterOfMass);
+                    ////ConsoleControl.Write($"RigidBody.isKinematic="+rb.isKinematic);
+                    ////ConsoleControl.Write($"RigidBody.constraints="+rb.constraints);
+                    ////ConsoleControl.Write($"RigidBody.collisionDetectionMode=" +rb.collisionDetectionMode);
+                    ////ConsoleControl.Write($"RigidBody.drag=" +rb.drag);
+                    ////ConsoleControl.Write($"RigidBody.mass=" +rb.mass);
+                    ////ConsoleControl.Write($"RigidBody.useGravity=" +rb.useGravity);
+                    ////ConsoleControl.Write($"RigidBody.velocity=" +rb.velocity);
+                    ////ConsoleControl.Write($"RigidBody.worldCenterOfMass=" +rb.worldCenterOfMass);
 
-                LogComposition(transform);
+                    //LogComposition(transform);
+
+                }
+                else
+                    ConsoleControl.Write($"Not currently boarded. Ignoring console key");
 
             }
 

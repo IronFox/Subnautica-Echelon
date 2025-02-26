@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
@@ -10,10 +11,13 @@ public class TargetScanner : MonoBehaviour
     public float minWidth = 0.6f;
     public float minHeight = 0.4f;
 
+    public float lastScanTime = 0;
+
     private float lastMinDistance;
     private float lastMaxDistance;
     private float lastWidth;
     private float lastHeight;
+
 
     private readonly CountedSet<RigidbodyReference> viableTargets 
         = new CountedSet<RigidbodyReference>();
@@ -96,6 +100,8 @@ public class TargetScanner : MonoBehaviour
 
     public TargetAdapter GetBestTarget(Transform exclude)
     {
+        var started = DateTime.Now;
+
         Ray ray = new Ray(transform.position, transform.forward);
 
         float closestDist = float.MaxValue;
@@ -139,6 +145,10 @@ public class TargetScanner : MonoBehaviour
             }
             at += d;
         }
+
+        var elapsed = DateTime.Now - started;
+        lastScanTime = (float)elapsed.TotalSeconds;
+
         return closest;
     }
 
