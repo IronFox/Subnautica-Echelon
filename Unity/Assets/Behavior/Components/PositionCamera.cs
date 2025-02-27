@@ -17,7 +17,7 @@ public class PositionCamera : MonoBehaviour
     public bool positionBelowTarget;
     public Collider shipCollider;
 
-    private float boxHeight;
+    private float verticalOffset;
 
     private float h = 0;
     public float zoomAxis;
@@ -36,7 +36,8 @@ public class PositionCamera : MonoBehaviour
         ConsoleControl.Write($"Valid 3rd person camera distance range is [{minDistanceToTarget},{maxDistanceToTarget}]");
         distanceToTarget = Mathf.Clamp( distanceToTarget, minDistanceToTarget, maxDistanceToTarget );
         ConsoleControl.Write($"3rd camera distance set to {distanceToTarget}");
-        boxHeight = referenceBoundingBox.size.y * referenceBoundingBox.transform.localScale.y;
+        verticalOffset = 
+            referenceBoundingBox.size.y * referenceBoundingBox.transform.localScale.y * 1.5f;
     }
 
     private string loggedCollider;
@@ -49,7 +50,7 @@ public class PositionCamera : MonoBehaviour
         scanner.minDistance = distanceToTarget;
 
 
-        var wantH = positionBelowTarget ? -boxHeight : boxHeight;
+        var wantH = positionBelowTarget ? -verticalOffset : verticalOffset;
 
         h += (wantH - h) * 2f * Mathf.Min(Time.deltaTime, 1f);
 

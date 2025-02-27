@@ -415,9 +415,9 @@ namespace Subnautica_Echelon
         /// </summary>
         private void RepositionCamera()
         {
-            if (transform.position.y >= Ocean.GetOceanLevel() - 5 && transform.position.y < 1)
+            if (transform.position.y >= Ocean.GetOceanLevel() - 15 && transform.position.y < 1)
                 control.positionCameraBelowSub = true;
-            else if (transform.position.y < Ocean.GetOceanLevel() - 10 || transform.position.y > 2)
+            else if (transform.position.y < Ocean.GetOceanLevel() - 20 || transform.position.y > 2)
                 control.positionCameraBelowSub = false;
         }
 
