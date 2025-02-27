@@ -6,12 +6,12 @@ echelon todos:
 * sub: 
 	* block torpedo launch if vehicle speed is too high (>20m/s forward). Show onscreen warning when trying anyway
 	* add option to automatically fire at warpers
-	* decrease torpedo tube open/close animation time
 	* add option for off-board sentry mode (sub turns and fires at targets automatically that approach the player)
 	* do not explode torpedoes if close to the player (Camera.main when off-boarded)
 	* add camera shake on overdrive (use Random.insideUnitSphere)
 	* torpedos fired with no target should always collide with terrain
 
+	* decrease torpedo tube open/close animation time (configurable, needs more work)
 	* add target name, health, max health, distance, and current speed as text next to marker (done)
 	* make target markers flat sprites (done)
 	* disable uh oh voice (done, tried other voices, all worse)

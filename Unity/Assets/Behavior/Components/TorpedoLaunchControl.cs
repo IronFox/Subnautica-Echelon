@@ -8,12 +8,14 @@ public class TorpedoLaunchControl : MonoBehaviour
     public GameObject torpedoPrefab;
     public float relativeExitVelocity=200;
     public Transform cover;
-    public float secondsToOpenCover = 0.5f;
-    public float secondsToFire = 1f;
+    public float secondsToOpenCover => (60/torpedoesPerMinute)*0.25f;
+    public float secondsToFire = (60/torpedoesPerMinute) * 0.5f;
     public Transform coverOpenPosition;
     public bool noExplosions;
     public float overrideMaxLifetimeSeconds;
     public SoundAdapter fireSound;
+
+    public static float torpedoesPerMinute = 15f;
 
     private bool everOpened;
 
@@ -58,7 +60,7 @@ public class TorpedoLaunchControl : MonoBehaviour
                 //openSound.play = false;
                 fireRecoverProgress += Time.deltaTime;
                 fireSound.play = true;
-                fireSound.volume = 1f - fireRecoverProgress / secondsToFire;
+                fireSound.volume = M.Saturate(1f - fireRecoverProgress / secondsToFire);
                 //Debug.Log("Waiting for fire recovery @" + fireRecoverProgress);
                 if (fireRecoverProgress > secondsToFire)
                 {

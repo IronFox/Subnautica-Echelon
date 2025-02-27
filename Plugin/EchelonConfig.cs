@@ -21,7 +21,9 @@ public class EchelonConfig : ConfigFile
     public float batteryChargeSpeed = 20f;
     [Slider("Self Healing %", Step = 1f, DefaultValue = 10, Min = 0, Max = 100)]
     public float selfHealingSpeed = 10f;
-    [Slider("Torpedo Damage", Step = 100, DefaultValue = 1500, Min = 100, Max = 3000)]
+    [Slider("Torpedo Damage", Step = 10, DefaultValue = 1500, Min = 10, Max = 3000)]
     public float torpedoDamage = 1500f;
+    [Slider("Torpedoes per Minute", Step = 1, DefaultValue = 15, Min = 5, Max = 60)]
+    public float torpedoesPerMinute = 15;
 
 }
