@@ -4,8 +4,10 @@ echelon todos:
 * update version number *
 
 * sub: 
-	* add trailing camera flash light
-	* block torpedo launch if vehicle speed is too high (>20m/s forward)
+	* scale explosion
+	* check load savegame with boarded echelon
+	* disable uh oh voice
+	* block torpedo launch if vehicle speed is too high (>20m/s forward). Show onscreen warning when trying anyway
 	* make target markers flat sprites
 	* add target name, health, max health, distance, and current speed as text next to marker
 	* add option to automatically fire at warpers
@@ -15,11 +17,10 @@ echelon todos:
 	* add camera shake on overdrive (use Random.insideUnitSphere)
 	* torpedos fired with no target should always collide with terrain
 
-	* increase torpedo damage +50%. Make damage configurable (done)
+	* add trailing camera flash light (done)
 	* add healing visualisation using hull geometry and animated additive shader (done)
 	* fix flickering of battery change bar (it's as good as it gets)
 	* add debug panel that shows various status values on the hud (not yet configurable, done)
-	* accelerate torpedoes (again, done)
 	* add storage and upgrade access (upgrades maybe later, storage no)
 	* add custom icon presumably via CraftingSprite (done)
 	* set recipe (done)
@@ -33,12 +34,14 @@ echelon todos:
 	* transfer occlusion maps to albedo	(done)
 	* disable overdrive when moving backwards, reduce reverse speed to prevent backwards jumping (done)
 * explosions:
+	* increase torpedo damage +50%. Make damage configurable (done)
 	* reduce size (done, using KriptoFX)
 	* use Subnautica sound source to fix 3d issues (done)
 	* add light source (done, using KriptoFX)
 	* pressure wave should use lit material but face normal to the inside (won't do, using KriptoFX)
 	* add smolder sphere (done, using KriptoFX)
 * torpedoes:
+	* accelerate torpedoes (again, done)
 	* model mesh	 (done)
 	* split covers into two	(done)
 	* animate covers	(done)

@@ -64,7 +64,7 @@ public class EchelonControl : MonoBehaviour
 
     public Transform trailSpace;
     public Transform trailSpaceCameraContainer;
-    public Canvas trailSpaceCanvas;
+    //public Canvas trailSpaceCanvas;
     //public Transform cockpitRoot;
     //public Transform headCenter;
     public Transform seat;
@@ -108,13 +108,8 @@ public class EchelonControl : MonoBehaviour
             cameraIsInTrailspace = true;
             ConsoleControl.Write("Moving camera to trailspace");
             cameraMove = Parentage.FromLocal(cameraRoot);
-
             cameraRoot.parent = trailSpaceCameraContainer;
 
-            ConsoleControl.Write($"Assigning {Camera.main} as worldCamera of {trailSpaceCanvas}");
-            trailSpaceCanvas.worldCamera = Camera.main;
-            trailSpaceCanvas.planeDistance = Mathf.Max(Camera.main.nearClipPlane * 1.1f, 2f);
-            ConsoleControl.Write($"Set clip plane to distance {trailSpaceCanvas.planeDistance}");
             TransformDescriptor.LocalIdentity.ApplyTo(cameraRoot);
             ConsoleControl.Write("Moved");
         }
@@ -127,39 +122,11 @@ public class EchelonControl : MonoBehaviour
             cameraIsInTrailspace = false;
             ConsoleControl.Write("Moving camera out of trailspace");
             cameraMove.Restore();
-            statusConsole.enabled = trailSpaceCanvas.enabled = false;
-            trailSpaceCanvas.worldCamera = null;
-
             ConsoleControl.Write("Moved");
         }
     }
 
-    private readonly List<(string Name, Renderer Renderer)> unhide = new List<(string Nasme, Renderer Renderer)>();
-    private void Hide(Transform t, Transform[] branchesNotToHide)
-    {
-        if (branchesNotToHide.Contains(t))
-        {
-            ConsoleControl.Write($"Encountered {t.name}. Not hiding this branch");
-            return;
-        }
-        var rs = t.GetComponents<SkinnedMeshRenderer>();    
-        if (rs != null && rs.Length > 0)
-        {
 
-            ConsoleControl.Write($"Hiding {t.name}");
-            foreach (var r in rs)
-            {
-                if (r != null)
-                {
-                    unhide.Add((r.name,r));
-                    r.enabled = false;
-                }
-            }
-        }
- 
-        for (int i = 0; i < t.childCount; i++)
-            Hide(t.GetChild(i), branchesNotToHide);
-    }
 
     public void Onboard(Transform localizeInsteadOfMainCamera = null)
     {
@@ -168,6 +135,10 @@ public class EchelonControl : MonoBehaviour
         if (!currentlyBoarded)
         {
             ConsoleControl.Write($"Onboarding");
+
+            var listeners = BoardingListeners.Off(this, trailSpace);
+
+            listeners.SignalOnboardingBegin();
 
             cameraRoot = localizeInsteadOfMainCamera;
             if (cameraRoot == null)
@@ -183,6 +154,7 @@ public class EchelonControl : MonoBehaviour
 
             currentlyBoarded = isBoarded = true;
 
+            listeners.SignalOnboardingEnd();
         }
     }
 
@@ -193,25 +165,15 @@ public class EchelonControl : MonoBehaviour
         if (currentlyBoarded)
         {
             ConsoleControl.Write($"Offboarding");
+            var listeners = BoardingListeners.Off(this, trailSpace);
             try
             {
 
+                listeners.SignalOffBoardingBegin();
 
                 MoveCameraOutOfTrailSpace();
                 ConsoleControl.Write($"Restoring parentage");
                 onboardLocalizedTransform.Restore();
-
-                ConsoleControl.Write($"Unhiding renderers ({unhide.Count})");
-                foreach (var r in unhide)
-                {
-                    if (r.Renderer != null)
-                    {
-                        ConsoleControl.Write($"Unhiding {r.Renderer.name}");
-                        r.Renderer.enabled = true;
-                    }
-                    else
-                        ConsoleControl.Write($"Lost invisible {r.Name}");
-                }
             }
             finally
             {
@@ -219,6 +181,8 @@ public class EchelonControl : MonoBehaviour
                 ConsoleControl.Write($"Reintegration trail space");
                 trailSpace.parent = transform;
             }
+
+            listeners.SignalOffBoardingEnd();
 
         }
     }
@@ -452,8 +416,7 @@ public class EchelonControl : MonoBehaviour
             {
                 if (currentlyBoarded)
                 {
-                    statusConsole.enabled = trailSpaceCanvas.enabled = !trailSpaceCanvas.enabled;
-                    ConsoleControl.Write($"Toggled canvas visibility to {trailSpaceCanvas.enabled}");
+                    statusConsole.ToggleVisibility();
 
                     //ConsoleControl.Write("Capturing debug information v3");
 
