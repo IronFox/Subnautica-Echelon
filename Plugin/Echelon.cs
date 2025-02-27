@@ -137,9 +137,15 @@ namespace Subnautica_Echelon
 
                     if (autopilot != null && MainPatcher.PluginConfig.batteryChargeSpeed > 0)
                     {
+                        //"Airon" - weird, partially indecipherable low energy voice
+                        //"Chels-E" - high-pitched panicky
+                        //"Mikjaw"/"Salli" - just bad
+                        //"Turtle" - missing?
+                        //autopilot.apVoice.voice = VoiceManager.GetVoice("Salli");
                         autopilot.apVoice.voice = Helper.Clone(autopilot.apVoice.voice);
                         autopilot.apVoice.voice.PowerLow = null;
                         autopilot.apVoice.voice.BatteriesNearlyEmpty = null;
+                        autopilot.apVoice.voice.UhOh = null;
 
                     }
 

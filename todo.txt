@@ -4,8 +4,6 @@ echelon todos:
 * update version number *
 
 * sub: 
-	* check load savegame with boarded echelon
-	* disable uh oh voice
 	* block torpedo launch if vehicle speed is too high (>20m/s forward). Show onscreen warning when trying anyway
 	* make target markers flat sprites
 	* add target name, health, max health, distance, and current speed as text next to marker
@@ -16,6 +14,8 @@ echelon todos:
 	* add camera shake on overdrive (use Random.insideUnitSphere)
 	* torpedos fired with no target should always collide with terrain
 
+	* disable uh oh voice (done, tried other voices, all worse)
+	* check load savegame with boarded echelon (done, works)
 	* add trailing camera flash light (done)
 	* add healing visualisation using hull geometry and animated additive shader (done)
 	* fix flickering of battery change bar (it's as good as it gets)
