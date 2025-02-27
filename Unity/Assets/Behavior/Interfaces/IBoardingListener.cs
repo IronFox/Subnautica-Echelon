@@ -31,43 +31,16 @@ public class CommonBoardingListener : MonoBehaviour, IBoardingListener
     {}
 }
 
-public class BoardingListeners
+public class BoardingListeners : ListenerSet<IBoardingListener>
 {
-    public IBoardingListener[] Listeners { get; }
+    
 
-    public BoardingListeners(HashSet<IBoardingListener> listeners)
-    {
-        IBoardingListener[] listenersArray = new IBoardingListener[listeners.Count];
-        listeners.CopyTo(listenersArray);
-        Listeners = listenersArray;
-    }
+    public BoardingListeners(HashSet<IBoardingListener> listeners):base(listeners)
+    {}
 
-    public static BoardingListeners Off(params Component[] origins)
+    public static BoardingListeners Of(params Component[] origins)
     {
-        HashSet<IBoardingListener> listeners = new HashSet<IBoardingListener>();
-        foreach (var o in origins)
-        {
-            var listenerArray = o.GetComponentsInChildren<IBoardingListener>();
-            foreach (var listener in listenerArray)
-                listeners.Add(listener);
-        }
-        
-        return new BoardingListeners(listeners);
-    }
-
-    private void Do(string name, Action<IBoardingListener> action)
-    {
-        foreach (var listener in Listeners)
-        {
-            try
-            {
-                action(listener);
-            }
-            catch (Exception e)
-            {
-                ConsoleControl.WriteException(name+" on "+listener, e);
-            }
-        }
+        return Make<BoardingListeners>(origins);
     }
 
     public void SignalOnboardingBegin()

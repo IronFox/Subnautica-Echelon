@@ -32,7 +32,7 @@ public class StatusConsole : CommonBoardingListener
         canvas.worldCamera = Camera.main;
         canvas.planeDistance = Mathf.Max(Camera.main.nearClipPlane * 1.1f, 2f);
         ConsoleControl.Write($"Set clip plane to distance {canvas.planeDistance}");
-        //canvas.enabled = true;
+        canvas.enabled = true;
         
     }
 
@@ -46,7 +46,7 @@ public class StatusConsole : CommonBoardingListener
     public void ToggleVisibility()
     {
         enabled = !enabled;
-        canvas.enabled = enabled;
+        statusText.enabled = enabled;
         ConsoleControl.Write($"Toggled canvas visibility to {enabled}");
     }
 
@@ -54,7 +54,8 @@ public class StatusConsole : CommonBoardingListener
     // Start is called before the first frame update
     void Start()
     {
-        canvas = GetComponent<Canvas>();
+        if (canvas == null)
+            canvas = GetComponent<Canvas>();
     }
 
     // Update is called once per frame

@@ -89,7 +89,14 @@ public static class M
         var x1 = (-b + root) / a2;
         return QuadraticSolution.Two(x0, x1);
     }
-    
+
+    public static float Round(float velocitv, int digits)
+    {
+        float scale = Mathf.Pow(10, digits);
+        return Mathf.Round(velocitv * scale) / scale;
+    }
+
+    public static Vector2 V2(float v) => new Vector2(v, v);
 }
 
 

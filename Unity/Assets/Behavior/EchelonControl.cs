@@ -136,7 +136,7 @@ public class EchelonControl : MonoBehaviour
         {
             ConsoleControl.Write($"Onboarding");
 
-            var listeners = BoardingListeners.Off(this, trailSpace);
+            var listeners = BoardingListeners.Of(this, trailSpace);
 
             listeners.SignalOnboardingBegin();
 
@@ -165,7 +165,7 @@ public class EchelonControl : MonoBehaviour
         if (currentlyBoarded)
         {
             ConsoleControl.Write($"Offboarding");
-            var listeners = BoardingListeners.Off(this, trailSpace);
+            var listeners = BoardingListeners.Of(this, trailSpace);
             try
             {
 
@@ -264,11 +264,11 @@ public class EchelonControl : MonoBehaviour
     private TargetHealthFeed targetHealthFeed;
     private ITargetable lastValidTarget;
 
-    private Vector3 SizeOf(ITargetable t)
+    private float SizeOf(ITargetable t)
     {
         var vec = M.Max(t.GlobalSize*2, 0.1f * M.Distance(t.Position, Camera.main.transform.position));
         var s = Mathf.Max(vec.x,vec.y, vec.z);
-        return M.V3(s);
+        return s;
     }
 
 
@@ -281,6 +281,9 @@ public class EchelonControl : MonoBehaviour
             //ConsoleControl.Write($"target: "+target.ToString());
             if (target != null)
             {
+                var targetSize = SizeOf(target);
+                TargetListeners.Of(this, trailSpace).SignalNewTarget(target, targetSize);
+
                 if (!(target is PositionTargetable) && !target.Equals(lastValidTarget))
                     ConsoleControl.Write($"New target acquired: {target}");
 
@@ -289,8 +292,9 @@ public class EchelonControl : MonoBehaviour
                 {
                     ConsoleControl.Write($"Creating target marker");
                     targetMarker = Instantiate(targetMarkerPrefab, target.Position, Quaternion.identity);
-                    targetMarker.transform.localScale = SizeOf(target);
+                    targetMarker.transform.localScale = M.V3(targetSize);
                     targetHealthFeed = targetMarker.GetComponent<TargetHealthFeed>();
+                    targetHealthFeed.owner = this;
                     if (targetHealthFeed != null)
                         targetHealthFeed.target = (target as AdapterTargetable)?.TargetAdapter;
                 }
@@ -298,16 +302,19 @@ public class EchelonControl : MonoBehaviour
                 {
                     //Debug.Log($"Repositioning target marker");
                     targetMarker.transform.position = target.Position;
-                    targetMarker.transform.localScale = SizeOf(target);
+                    targetMarker.transform.localScale = M.V3(targetSize);
                     if (targetHealthFeed != null)
                         targetHealthFeed.target = (target as AdapterTargetable)?.TargetAdapter;
                 }
             }
             else
             {
+                if (lastValidTarget != null)
+                    TargetListeners.Of(this, trailSpace).SignalNewTarget(null, 1);
                 ConsoleControl.Write($"Destroying target marker");
                 Destroy(targetMarker);
                 targetMarker = null;
+                lastValidTarget = null;
             }
 
             var firing = firingLeft ? leftLaunch : rightLaunch;

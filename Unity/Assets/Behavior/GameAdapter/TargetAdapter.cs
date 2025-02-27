@@ -28,10 +28,10 @@ public class CommonTargetAdapter : TargetAdapter
     public override Rigidbody Rigidbody { get; }
     public int GameObjectInstanceId { get; }
 
-    private float _currentHealth = 100;
+    private float _currentHealth = 1000;
     public override float CurrentHealth => _currentHealth;
 
-    public override float MaxHealth => 100;
+    public override float MaxHealth => 1000;
 
     public CommonTargetAdapter(GameObject source, Rigidbody rigidbody)
     {
