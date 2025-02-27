@@ -4,7 +4,6 @@ echelon todos:
 * update version number *
 
 * sub: 
-	* scale explosion
 	* check load savegame with boarded echelon
 	* disable uh oh voice
 	* block torpedo launch if vehicle speed is too high (>20m/s forward). Show onscreen warning when trying anyway
@@ -34,6 +33,7 @@ echelon todos:
 	* transfer occlusion maps to albedo	(done)
 	* disable overdrive when moving backwards, reduce reverse speed to prevent backwards jumping (done)
 * explosions:
+	* scale explosion (done x2)
 	* increase torpedo damage +50%. Make damage configurable (done)
 	* reduce size (done, using KriptoFX)
 	* use Subnautica sound source to fix 3d issues (done)
