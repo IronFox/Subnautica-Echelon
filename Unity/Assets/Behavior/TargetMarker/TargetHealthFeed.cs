@@ -6,10 +6,10 @@ public class TargetHealthFeed : MonoBehaviour
 {
     // Start is called before the first frame update
     public TargetAdapter target;
-    public Material material;
+    private Material material;
     void Start()
     {
-        
+        material = GetComponent<MeshRenderer>().materials[0];
     }
 
     // Update is called once per frame
