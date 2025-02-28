@@ -4,7 +4,6 @@ echelon todos:
 * update version number *
 
 * sub: 
-	* increase sub base speed, reduce default boost speed accordingly
 	* show all alternative targets
 	* add option to automatically fire at warpers
 	* add option for off-board sentry mode (sub turns and fires at targets automatically that approach the player)
@@ -12,6 +11,7 @@ echelon todos:
 	* add camera shake on overdrive (use Random.insideUnitSphere)
 	* torpedos fired with no target should always collide with terrain
 
+	* increase sub base speed, reduce default boost speed accordingly (increased by +50%, no change to boost)
 	* decrease torpedo tube open/close animation time (configurable, needs more work)
 	* add target name, health, max health, distance, and current speed as text next to marker (done)
 	* make target markers flat sprites (done)
