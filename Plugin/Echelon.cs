@@ -339,9 +339,9 @@ namespace Subnautica_Echelon
                     var effective = clamped / healing;
                     //Debug.Log($"Healing at delta={Time.deltaTime}");
                     float energyDemand =
-                        10 //max 10 energy per second
+                        1 //max 1 energy per second
                         * Time.deltaTime
-                        * MainPatcher.PluginConfig.selfHealingSpeed / 100   //if slower, cost less
+                        //* MainPatcher.PluginConfig.selfHealingSpeed / 100   //if slower, cost less
                         * effective //if clamped, cost less
                         ;
 
