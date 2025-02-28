@@ -33,7 +33,7 @@ public class StatusConsole : CommonBoardingListener
         canvas.planeDistance = Mathf.Max(Camera.main.nearClipPlane * 1.1f, 2f);
         ConsoleControl.Write($"Set clip plane to distance {canvas.planeDistance}");
         canvas.enabled = true;
-        
+        enabled = statusText.enabled = false;
     }
 
     public override void SignalOffBoardingEnd()
@@ -113,5 +113,7 @@ public enum StatusProperty
     Health,
     MaxHealth,
     IsHealing,
+    TriggerActive,
+    OnboardingCooldown,
 }
 
