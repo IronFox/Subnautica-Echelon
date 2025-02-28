@@ -26,6 +26,7 @@ public class EchelonControl : MonoBehaviour
     public bool cameraCenterIsCockpit;
     public bool powerOff;
     public bool batteryDead;
+    private DateTime lastOnboarded;
 
     private readonly FloatTimeFrame energyHistory = new FloatTimeFrame(TimeSpan.FromSeconds(2));
     public float maxEnergy=1;
@@ -131,7 +132,7 @@ public class EchelonControl : MonoBehaviour
     public void Onboard(Transform localizeInsteadOfMainCamera = null)
     {
         wasEverBoarded = true;
-
+        lastOnboarded = DateTime.Now;
         if (!currentlyBoarded)
         {
             ConsoleControl.Write($"Onboarding");
@@ -264,6 +265,7 @@ public class EchelonControl : MonoBehaviour
     private TargetHealthFeed targetHealthFeed;
     private ITargetable lastValidTarget;
 
+    private bool OnboardingCooldown => DateTime.Now - lastOnboarded < TimeSpan.FromSeconds(1);
     private float SizeOf(ITargetable t)
     {
         var vec = M.Max(t.GlobalSize*2, 0.1f * M.Distance(t.Position, Camera.main.transform.position));
@@ -319,7 +321,7 @@ public class EchelonControl : MonoBehaviour
 
             var firing = firingLeft ? leftLaunch : rightLaunch;
 
-            var doFire = triggerActive && !outOfWater;
+            var doFire = triggerActive && !outOfWater && !OnboardingCooldown;
 
             // Debug.Log($"doFire={doFire} (triggerActive={triggerActive}, outOfWater={outOfWater})");
 
@@ -382,6 +384,8 @@ public class EchelonControl : MonoBehaviour
             statusConsole.Set(StatusProperty.Health, currentHealth);
             statusConsole.Set(StatusProperty.MaxHealth, maxHealth);
             statusConsole.Set(StatusProperty.IsHealing, isHealing);
+            statusConsole.Set(StatusProperty.TriggerActive, triggerActive);
+            statusConsole.Set(StatusProperty.OnboardingCooldown, OnboardingCooldown);
 
             healingLight.isHealing = isHealing;
 
