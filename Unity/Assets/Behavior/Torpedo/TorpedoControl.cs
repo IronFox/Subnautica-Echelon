@@ -113,6 +113,7 @@ public class TorpedoControl : MonoBehaviour
         {
             ConsoleControl.Write($"Exited exlusion intersection. Restoring collider");
             normalCollider.isTrigger = false;
+            Drive.triggerActive = false;
         }
     }
 

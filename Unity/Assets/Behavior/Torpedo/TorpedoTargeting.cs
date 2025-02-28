@@ -132,8 +132,7 @@ public class TorpedoTargeting : MonoBehaviour
         Debug.DrawLine(transform.position, transform.position + relLookAheadTarget, Color.red);
 
 
-        look.targetDirection = relLookAheadTarget.normalized;
-
+        drive.targetDirection = look.targetDirection = relLookAheadTarget.normalized;
 
 
         ////var directAt = RelativeSolution();// relLookAheadTarget.normalized;
@@ -146,7 +145,7 @@ public class TorpedoTargeting : MonoBehaviour
         //    var directAt = (error.magnitude > 1 ? error : wantSpeedPerSecond).normalized;
 
 
-        drive.throttle = M.Max(0, M.Dot(look.targetDirection, rb.velocity.normalized))*0.8f + 0.2f;// * 0.5f;
+        //drive.throttle = M.Max(0, M.Dot(look.targetDirection, rb.velocity.normalized))*0.8f + 0.2f;// * 0.5f;
 
         //}
         //Debug.Log(mag + " => "+directAt);

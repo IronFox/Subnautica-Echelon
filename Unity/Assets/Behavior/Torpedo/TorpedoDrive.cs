@@ -12,15 +12,19 @@ public class TorpedoDrive : MonoBehaviour
     public float currentVelocity;
     public float dragCompensated;
     public float finalAcceleration;
+    public bool triggerActive = true;
+    public Vector3 targetDirection;
     //private float errorCorrection = 1f;
     public readonly float TravelVelocity = 45;
-    public float throttle = 1;
+    //public float throttle = 1;
+    
 
     // Start is called before the first frame update
     void Start()
     {
         turn = GetComponent<TurnPropeller>();
         rb = GetComponent<Rigidbody>();
+        targetDirection = transform.forward;
     }
 
     // Update is called once per frame
@@ -33,22 +37,33 @@ public class TorpedoDrive : MonoBehaviour
     {
         if (!ActorAdapter.IsOutOfWater(gameObject, rb.position))
         {
+            if (triggerActive)
+            {
+                rb.AddRelativeForce(0, 0, acceleration*0.5f, ForceMode.Acceleration);
+                return;
+            }
 
-            var forwardVelocity = currentVelocity = M.Dot(rb.velocity, transform.forward);
-            var sideVelocity = rb.velocity - transform.forward * forwardVelocity;
+
+
+
+
+            var forwardVelocity = currentVelocity = M.Dot(rb.velocity, targetDirection);
+            var sideVelocity = rb.velocity - targetDirection * forwardVelocity;
 
             //dragCompensated = travelVelocity * 2f;
 
-            var error = TravelVelocity* throttle - forwardVelocity;
-            dragCompensated = error * 15;
+
+
+            var error = TravelVelocity - forwardVelocity;
+            dragCompensated = error > 0 ? error * 15 : error;
 
                 //DragCompensation
                 //.For(TravelVelocity)
                 //.Update(error, Time.fixedDeltaTime);
 
             finalAcceleration = Mathf.Min(acceleration, dragCompensated);
-            rb.AddRelativeForce(0, 0, finalAcceleration, ForceMode.Acceleration);
-
+            rb.AddForce(targetDirection * finalAcceleration, ForceMode.Acceleration);
+            rb.AddForce(-sideVelocity, ForceMode.VelocityChange);
             turn.speedScale = 0.1f + 0.9f * Mathf.Max(0f, finalAcceleration / acceleration);
         }
     }
