@@ -9,11 +9,11 @@ namespace Subnautica_Echelon
         private LiveMixin mixin;
 
         public MixinTargetAdapter(GameObject go, Rigidbody rb, LiveMixin mixin)
+            :base(go.GetInstanceID())
         {
             this.go = go;
             this.rb = rb;
             this.mixin = mixin;
-            GameObjectInstanceId = go.GetInstanceID();
         }
 
 
@@ -22,7 +22,7 @@ namespace Subnautica_Echelon
 
         public override GameObject GameObject => go;
 
-        public int GameObjectInstanceId { get; }
+        
 
         public override float CurrentHealth => mixin.health;
 

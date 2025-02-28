@@ -7,35 +7,101 @@ using UnityEngine;
 public class TrailSpaceTargetText : CommonTargetListener
 {
     public RectTransform parentCanvas;
-    public TextMeshProUGUI textMesh;
+    //public TextMeshProUGUI textMesh;
+    public GameObject targetTextPrefab;
     // Start is called before the first frame update
+
+    public TrailSpaceTargetText()
+    {
+        pool = new TargetPool<TextMeshProUGUI>(
+            t => t.gameObject,
+            t =>
+            {
+                var instance = Instantiate(targetTextPrefab, transform);
+                var textMesh = instance.GetComponent<TextMeshProUGUI>();
+                return textMesh;
+            });
+    }
+
+
     void Start()
     {
         
     }
 
+    [ColorUsage(true, true)]
+    public Color primaryTextColor = Color.white;
+    [ColorUsage(true, true)]
+    public Color secondaryTextColor = Color.white;
 
-    private Vector2 Project(Vector3 point)
+    public static TextDisplay textDisplay = TextDisplay.All;
+
+    private Vector2? Project(Vector3 point)
     {
         var p = Camera.main.WorldToScreenPoint(point);
+        if (p.z < 0)
+            return null;
         p.x /= Screen.width;
         p.y /= Screen.height;
         return p;
     }
 
+    private bool IsTarget(int gameObjectInstanceId)
+    {
+        switch (textDisplay)
+        {
+            case TextDisplay.All:
+                return Environment.IsTarget(gameObjectInstanceId);
+            case TextDisplay.Focused:
+                return MainAdapterTarget.TargetAdapter.GameObjectInstanceId == gameObjectInstanceId;
+            case TextDisplay.None:
+                return false;
+        }
+        return false;
+    }
+
+    private IEnumerable<AdapterTargetable> Targets()
+    {
+        switch (textDisplay) {
+            case TextDisplay.All:
+                if (Environment != null)
+                    foreach (var t in Environment.Targets)
+                        yield return t;
+                yield break;
+            case TextDisplay.Focused:
+                if (MainAdapterTarget != null)
+                    yield return MainAdapterTarget;
+                yield break;
+            case TextDisplay.None:
+                yield break;
+            }
+    }
+
+    private readonly TargetPool<TextMeshProUGUI> pool;
+
+//    private readonly Dictionary<int, TextMeshProUGUI> map = new Dictionary<int, TextMeshProUGUI>();
+
     // Update is called once per frame
     void Update()
     {
-        if (AdapterTarget != null)
+        pool.Map<(Vector2 Screen, Vector2 Screen2) >(Targets(), t =>
         {
-            var screen = Project(Target.Position);
+
+            var screen = Project(t.Position);
+            var screen2 = Project(t.Position + Camera.main.transform.right * Echelon.SizeOf(t));
+            if (screen is null || screen2 is null)
+                return null;
+
+            return (Screen: screen.Value, Screen2: screen2.Value);
+        },
+        (textMesh, s, t) =>
+        {
+            bool isPrimary = t.Equals(MainAdapterTarget);
+            var screen = s.Screen;
+            var screen2 = s.Screen2;
             screen -= M.V2(0.5f);
-            var screen2 = Project(Target.Position + Camera.main.transform.right * TargetSize);
             screen2 -= M.V2(0.5f);
             float onScreenSize = (screen2.x - screen.x);
-
-
-
 
             float w = parentCanvas.rect.width;
             float h = parentCanvas.rect.height;
@@ -48,33 +114,41 @@ public class TrailSpaceTargetText : CommonTargetListener
 
             textMesh.rectTransform.SetSizeWithCurrentAnchors(RectTransform.Axis.Horizontal, myWidth);
             textMesh.rectTransform.SetSizeWithCurrentAnchors(RectTransform.Axis.Vertical, myHeight);
-            textMesh.rectTransform.localPosition = M.V3(w * screen.x + myWidth/2 + offset , h * screen.y - myHeight/2 + voffset, 0);
+            textMesh.rectTransform.localPosition = M.V3(w * screen.x + myWidth / 2 + offset, h * screen.y - myHeight / 2 + voffset, 0);
 
 
 
             StringBuilder builder = new StringBuilder();
-            var name = AdapterTarget.GameObject.name;
+            var name = t.TargetAdapter.GameObject.name;
             if (name.EndsWith("(Clone)"))
                 builder.Append(name.Substring(0, name.Length - 7));
             else
                 builder.Append(name);
             builder.Append(" ")
-                .Append(Mathf.Round(AdapterTarget.CurrentHealth))
+                .Append(Mathf.Round(t.TargetAdapter.CurrentHealth))
                 .Append(" / ")
-                .Append(AdapterTarget.MaxHealth)
+                .Append(t.TargetAdapter.MaxHealth)
                 .Append("\n");
-            float range = (AdapterTarget.GameObject.transform.position - transform.parent. position).magnitude;
+            float range = (t.Position - Echelon.transform.position).magnitude;
             builder.Append(Mathf.Round(range)).Append("m\n");
-            float velocity = AdapterTarget.Rigidbody.velocity.magnitude;
+            float velocity = t.TargetAdapter.Rigidbody.velocity.magnitude;
             builder.Append(M.Round(velocity, 1)).Append("m/s\n");
 
 
+            textMesh.color = isPrimary ? primaryTextColor : secondaryTextColor;
 
             textMesh.text = builder.ToString();
-            
+
             textMesh.enabled = true;
-        }
-        else
-            textMesh.enabled = false;
+
+        });
+
     }
+}
+
+public enum TextDisplay
+{
+    None,
+    Focused,
+    All
 }

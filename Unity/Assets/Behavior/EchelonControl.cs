@@ -3,7 +3,6 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
-using static UnityEngine.GraphicsBuffer;
 
 public class EchelonControl : MonoBehaviour
 {
@@ -225,9 +224,13 @@ public class EchelonControl : MonoBehaviour
 
     }
 
+    private readonly TargetEnvironment targetEnvironment = new TargetEnvironment();
+
     private ITargetable GetTarget()
     {
-        var t = scanner.GetBestTarget(transform);
+        targetEnvironment.Update(transform.position, 1000, transform, trailSpace);
+
+        var t = scanner.GetBestTarget(targetEnvironment);
         if (t != null)
         {
             var target = new AdapterTargetable(t);
@@ -261,12 +264,19 @@ public class EchelonControl : MonoBehaviour
 
 
     private IDirectionSource inWaterDirectionSource;
-    private GameObject targetMarker;
-    private TargetHealthFeed targetHealthFeed;
+    private readonly TargetPool<TargetMarker> targetMarkers;
     private ITargetable lastValidTarget;
 
+    public EchelonControl()
+    {
+        targetMarkers = new TargetPool<TargetMarker>(
+            tm => tm.GameObject,
+            ta => TargetMarker.Make(targetMarkerPrefab, ta, this)
+            );
+    }
+
     private bool OnboardingCooldown => DateTime.Now - lastOnboarded < TimeSpan.FromSeconds(1);
-    private float SizeOf(ITargetable t)
+    public float SizeOf(ITargetable t)
     {
         var vec = M.Max(t.GlobalSize*2, 0.1f * M.Distance(t.Position, Camera.main.transform.position));
         var s = Mathf.Max(vec.x,vec.y, vec.z);
@@ -281,41 +291,36 @@ public class EchelonControl : MonoBehaviour
             var target = GetTarget();
             statusConsole.Set(StatusProperty.Target, target);
             //ConsoleControl.Write($"target: "+target.ToString());
+
+            targetMarkers.Map<bool>(targetEnvironment, t => true,
+                (tm, b, t) =>
+                {
+                    tm.MoveTo(t.Position);
+                    var targetSize = SizeOf(t);
+                    tm.Scale(targetSize);
+                    tm.TargetHealthFeed.isPrimary = t.Equals(target);
+                });
+
+
+
             if (target != null)
             {
                 var targetSize = SizeOf(target);
-                TargetListeners.Of(this, trailSpace).SignalNewTarget(target, targetSize);
+                TargetListeners.Of(this, trailSpace).SignalNewTarget(this, targetEnvironment, target);
 
                 if (!(target is PositionTargetable) && !target.Equals(lastValidTarget))
                     ConsoleControl.Write($"New target acquired: {target}");
 
                 lastValidTarget = target;
-                if (targetMarker == null)
-                {
-                    ConsoleControl.Write($"Creating target marker");
-                    targetMarker = Instantiate(targetMarkerPrefab, target.Position, Quaternion.identity);
-                    targetMarker.transform.localScale = M.V3(targetSize);
-                    targetHealthFeed = targetMarker.GetComponent<TargetHealthFeed>();
-                    targetHealthFeed.owner = this;
-                    if (targetHealthFeed != null)
-                        targetHealthFeed.target = (target as AdapterTargetable)?.TargetAdapter;
-                }
-                else
-                {
-                    //Debug.Log($"Repositioning target marker");
-                    targetMarker.transform.position = target.Position;
-                    targetMarker.transform.localScale = M.V3(targetSize);
-                    if (targetHealthFeed != null)
-                        targetHealthFeed.target = (target as AdapterTargetable)?.TargetAdapter;
-                }
+
+                
             }
             else
             {
                 if (lastValidTarget != null)
-                    TargetListeners.Of(this, trailSpace).SignalNewTarget(null, 1);
+                    TargetListeners.Of(this, trailSpace).SignalNewTarget(this, targetEnvironment, null);
                 ConsoleControl.Write($"Destroying target marker");
-                Destroy(targetMarker);
-                targetMarker = null;
+
                 lastValidTarget = null;
             }
 
@@ -342,12 +347,8 @@ public class EchelonControl : MonoBehaviour
             statusConsole.Set(StatusProperty.Target, null);
             statusConsole.Set(StatusProperty.LeftLauncherTarget,null);
             statusConsole.Set(StatusProperty.RightLauncherTarget, null);
-            if (targetMarker != null)
-            {
-                ConsoleControl.Write($"Destroying target marker");
-                Destroy(targetMarker);
-                targetMarker = null;
-            }
+
+            targetMarkers.Clear();
         }
         statusConsole.Set(StatusProperty.LeftLauncherProgress, leftLaunch.CycleProgress / leftLaunch.CycleTime);
         statusConsole.Set(StatusProperty.RightLauncherProgress, rightLaunch.CycleProgress / rightLaunch.CycleTime);
@@ -594,4 +595,40 @@ public class EchelonControl : MonoBehaviour
         player.localEulerAngles = Vector3.zero;
     }
 
+}
+
+
+internal class TargetMarker
+{
+    public GameObject GameObject { get; }
+    public TargetHealthFeed TargetHealthFeed { get; }
+    public TargetMarker(GameObject go)
+    {
+        GameObject = go;
+        TargetHealthFeed = GameObject.GetComponent<TargetHealthFeed>();
+    }
+
+    internal static TargetMarker Make(GameObject targetMarkerPrefab, AdapterTargetable target, EchelonControl echelon)
+    {
+        var rs = GameObject.Instantiate(targetMarkerPrefab, target.Position, Quaternion.identity);
+        var tm = new TargetMarker(rs);
+        tm.TargetHealthFeed.owner = echelon;
+        tm.TargetHealthFeed.target = target.TargetAdapter;
+        return tm;
+    }
+
+    public void Scale(float targetSize)
+    {
+        GameObject.transform.localScale = M.V3(targetSize);
+    }
+
+    public void MoveTo(Vector3 position)
+    {
+        GameObject.transform.position = position;
+    }
+
+    public void Destroy()
+    {
+        GameObject.Destroy(GameObject);
+    }
 }

@@ -11,6 +11,8 @@ public class TargetHealthFeed : MonoBehaviour
     public EchelonControl owner;
     private Material material;
     private TextMeshProUGUI meshPro;
+    public bool isPrimary;
+    public float fadeIn = 0;
 
     void Start()
     {
@@ -21,10 +23,13 @@ public class TargetHealthFeed : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        fadeIn = M.Saturate(fadeIn + Time.deltaTime*0.5f);
         if (target != null)
             material.SetVector("_Health", M.V3(target.CurrentHealth, target.MaxHealth,1));
         else
             material.SetVector("_Health", M.V3(0));
+        material.SetFloat("_IsPrimary", isPrimary ? 1 : 0);
+        material.SetFloat("_FadeIn", fadeIn);
 
     }
 }

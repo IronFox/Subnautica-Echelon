@@ -7,20 +7,26 @@ using UnityEngine;
 /// </summary>
 public interface ITargetListener
 {
-    void SignalNewTarget(ITargetable target, float targetSize);
+    void SignalNewTarget(
+        EchelonControl echelon,
+        ReadOnlyTargetEnvironment environment,
+        ITargetable mainTarget);
 }
 
 
 public class CommonTargetListener : MonoBehaviour, ITargetListener
 {
-    protected ITargetable Target { get; private set; }
-    protected TargetAdapter AdapterTarget { get; private set; }
-    protected float TargetSize { get; private set; }
-    public void SignalNewTarget(ITargetable target, float targetSize)
+    protected ITargetable MainTarget { get; private set; }
+    protected AdapterTargetable MainAdapterTarget { get; private set; }
+    protected ReadOnlyTargetEnvironment Environment { get; private set; }
+    protected EchelonControl Echelon { get; private set; }
+
+    public void SignalNewTarget(EchelonControl echelon, ReadOnlyTargetEnvironment environment, ITargetable mainTarget)
     {
-        Target = target;
-        AdapterTarget = (target as AdapterTargetable)?.TargetAdapter;
-        TargetSize = targetSize;
+        MainTarget = mainTarget;
+        MainAdapterTarget = (mainTarget as AdapterTargetable);
+        Environment = environment;
+        Echelon = echelon;
     }
 }
 
@@ -37,8 +43,8 @@ public class TargetListeners : ListenerSet<ITargetListener>
         return Make<TargetListeners>(origins);
     }
 
-    public void SignalNewTarget(ITargetable t, float targetSize)
-        => Do(nameof(SignalNewTarget), listener => listener.SignalNewTarget(t, targetSize));
+    public void SignalNewTarget(EchelonControl echelon, ReadOnlyTargetEnvironment environment, ITargetable mainTarget)
+        => Do(nameof(SignalNewTarget), listener => listener.SignalNewTarget(echelon, environment, mainTarget));
 }
 
 

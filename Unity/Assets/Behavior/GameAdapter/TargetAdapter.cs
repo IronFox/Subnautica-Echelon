@@ -7,6 +7,7 @@ public abstract class TargetAdapter
 {
     public abstract Rigidbody Rigidbody { get; }
     public abstract GameObject GameObject { get; }
+    public int GameObjectInstanceId { get; }
     public abstract float CurrentHealth { get; }
     public abstract float MaxHealth { get; }
 
@@ -19,6 +20,11 @@ public abstract class TargetAdapter
 
     public static Func<GameObject, Rigidbody, TargetAdapter> ResolveTarget { get; set; }
         = (go,rb) => new CommonTargetAdapter(go,rb);
+
+    protected TargetAdapter(int gameObjectInstanceId)
+    {
+        GameObjectInstanceId = gameObjectInstanceId;
+    }
 }
 
 
@@ -26,7 +32,6 @@ public class CommonTargetAdapter : TargetAdapter
 {
     public override GameObject GameObject { get; }
     public override Rigidbody Rigidbody { get; }
-    public int GameObjectInstanceId { get; }
 
     private float _currentHealth = 1000;
     public override float CurrentHealth => _currentHealth;
@@ -34,10 +39,10 @@ public class CommonTargetAdapter : TargetAdapter
     public override float MaxHealth => 1000;
 
     public CommonTargetAdapter(GameObject source, Rigidbody rigidbody)
+        :base(source.GetInstanceID())
     {
         GameObject = source;
         Rigidbody = rigidbody;
-        GameObjectInstanceId = source.GetInstanceID();
 
     }
 

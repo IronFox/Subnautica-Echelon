@@ -1,6 +1,7 @@
 using Nautilus.Options.Attributes;
 using Nautilus.Json;
 using UnityEngine;
+using System;
 
 [Menu("Echelon Options")]
 public class EchelonConfig : ConfigFile
@@ -23,7 +24,9 @@ public class EchelonConfig : ConfigFile
     public float selfHealingSpeed = 10f;
     [Slider("Torpedo Damage", Step = 10, DefaultValue = 1500, Min = 10, Max = 3000)]
     public float torpedoDamage = 1500f;
-    [Slider("Torpedoes per Minute", Step = 1, DefaultValue = 15, Min = 5, Max = 60)]
-    public float torpedoesPerMinute = 15;
+    [Slider("Torpedoes per Minute", Step = 1, DefaultValue = 30, Min = 5, Max = 180)]
+    public float torpedoesPerMinute = 30;
+    [Choice("Target Text", nameof(TextDisplay.None), nameof(TextDisplay.Focused), nameof(TextDisplay.All))]
+    public TextDisplay textDisplay = TextDisplay.All;
 
 }

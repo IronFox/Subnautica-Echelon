@@ -8,6 +8,9 @@
         _CameraY("CameraY",Vector) = (0,1,0)
         _CameraCenter("Camera Center", Vector) = (0,0,-10)
         _Scale("Scale", Range(0.1,10)) = 1
+        _FadeIn("FadeIn", Range(0,1)) = 1
+        [MaterialToggle] _IsPrimary ("Is Primary", Float) = 1
+        
     }
     SubShader
     {
@@ -55,6 +58,8 @@
             float3 _Health;
             float3 _ObjCenter;
             float _Scale;
+            float _IsPrimary;
+            float _FadeIn;
 
             v2f vert (appdata v)
             {
@@ -99,19 +104,20 @@
 
                 float circularAngle = atan2(xy.y,xy.x);
 
+                float radial = 0.5 + 0.5 * sin(circularAngle * 3 + _Time.w);
+                float radialDD = dd(radial);
+
                 if (_Health.z < 0.5)
                 {
-                    float radial = 0.5 + 0.5 * sin(circularAngle * 3 + _Time.w);
-                    float radialR = dd(radial);
                     //alpha *= 0.5 * (1.0 - smoothstep(0.6, 0.6+d*4, cs)) * smoothstep(0.2, 0.2+d2*2,radial );
                     c.rgb = float3(1,0.5,0.4)*1.5 //* (1.0 - smoothstep(0.5, 0.5+d*4, cs))
                             //* smoothstep(0.4, 0.4+d*2, cs)
-                            // * smoothstep(0.3, 0.3+radialR*2,radial )
+                            // * smoothstep(0.3, 0.3+radialDD*2,radial )
                             * hardRange(0.85,0.94, r, rd)
-                            * smoothstep(0.38, 0.38+radialR*2,radial );
+                            * smoothstep(0.38, 0.38+radialDD*2,radial );
                             ;
 
-                    alpha *= smoothstep(0.3, 0.3+radialR*2,radial );
+                    alpha *= smoothstep(0.3, 0.3+radialDD*2,radial );
                 }
                 else
                 {
@@ -120,9 +126,9 @@
                     float circular2FmodDD = dd(circular2Fmod);
                     float flash = smoothstep(sqrt(750),sqrt(3000),  sqrt(_Health.y)) * 0.9;
                     float relHealth = _Health.x / _Health.y;
-                    float radial = hardRange(0, 0.1 + 0.9 * relHealth, circular2Fmod, circular2FmodDD);
+                    float radialH = hardRange(0, 0.1 + 0.9 * relHealth, circular2Fmod, circular2FmodDD);
                     //float d2 = max(abs(ddx(radial)),abs(ddy(radial)));
-                    alpha *= 0.5 * radial;
+                    alpha *= 0.5 * radialH;
                     c.rgb = float3(
                         smoothstep(0.2, 0.4, 1-relHealth),
                         smoothstep(0.2, 0.4, relHealth),
@@ -133,10 +139,27 @@
                             * ((1 - flash) + (cos(_Time.z* flash*10)*0.5 + 0.5)*flash)
                              ;
 
+                    
+                    alpha *= 0.1 + 0.9 * _IsPrimary;
+                    if (_IsPrimary > 0.5)
+                    {
+                    alpha = max(alpha, 
+                        hardRange(0.6,0.8,r, rd)
+                        * smoothstep(0.3, 0.3+radialDD*2,radial )
+                        );
+                    //c.rgb = (float3)radial;
 
+                    c.rgb += float3(1,0.5,0.4)*1.5 //* (1.0 - smoothstep(0.5, 0.5+d*4, cs))
+                    //         //* smoothstep(0.4, 0.4+d*2, cs)
+                              * smoothstep(0.38, 0.38+radialDD*2,radial )
+                              * hardRange(0.65,0.75, r, rd)
+                    //         * 
+                             ;
+                    }
+                    // alpha *= smoothstep(0.3, 0.3+radialDD*2,radial );
                 }
 
-                c.a = alpha;
+                c.a = alpha * _FadeIn;
                 return c;
                
             }
