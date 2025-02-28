@@ -4,7 +4,8 @@ echelon todos:
 * update version number *
 
 * sub: 
-	* block torpedo launch if vehicle speed is too high (>20m/s forward). Show onscreen warning when trying anyway
+	* increase sub base speed, reduce default boost speed accordingly
+	* show all alternative targets
 	* add option to automatically fire at warpers
 	* add option for off-board sentry mode (sub turns and fires at targets automatically that approach the player)
 	* do not explode torpedoes if close to the player (Camera.main when off-boarded)
@@ -41,6 +42,7 @@ echelon todos:
 	* pressure wave should use lit material but face normal to the inside (won't do, using KriptoFX)
 	* add smolder sphere (done, using KriptoFX)
 * torpedoes:
+	* block torpedo launch if vehicle speed is too high (>20m/s forward) (found different solution)
 	* accelerate torpedoes (again, done)
 	* model mesh	 (done)
 	* split covers into two	(done)
