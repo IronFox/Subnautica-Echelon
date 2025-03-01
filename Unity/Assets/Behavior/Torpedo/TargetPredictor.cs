@@ -81,7 +81,7 @@ public interface ITargetable
     Vector3 Position { get; }
     Vector3? InherentVelocity { get; }
     bool Exists { get; }
-
+    int GameObjectInstanceId { get; }
     bool Is(GameObject gameObject);
 }
 
@@ -98,9 +98,12 @@ public class TransformTargetable : ITargetable
 
     public bool Exists => Transform != null;
 
+    public int GameObjectInstanceId { get; }
+
     public TransformTargetable(Transform transform)
     {
         Transform = transform;
+        GameObjectInstanceId = transform.gameObject.GetInstanceID();
 
         var colliders = Transform.GetComponentsInChildren<Collider>();
         if (colliders.Length > 0)
@@ -143,9 +146,12 @@ public class AdapterTargetable : ITargetable
 
     public bool Exists => TargetAdapter.IsAlive;
 
+    public int GameObjectInstanceId { get; }
+
     public AdapterTargetable(TargetAdapter targetAdapter)
     {
         TargetAdapter = targetAdapter;
+        GameObjectInstanceId = targetAdapter.GameObjectInstanceId;
         GlobalSize = SizeFromRigidbody(targetAdapter.Rigidbody);
     }
 
@@ -194,9 +200,12 @@ public class RigidbodyTargetable : ITargetable
 
     public bool Exists => Rigidbody != null;
 
+    public int GameObjectInstanceId { get; }
+
     public RigidbodyTargetable(Rigidbody rigidbody)
     {
         Rigidbody = rigidbody;
+        GameObjectInstanceId = rigidbody.gameObject.GetInstanceID();
         GlobalSize = AdapterTargetable.SizeFromRigidbody(rigidbody);
     }
 
@@ -247,5 +256,5 @@ public class PositionTargetable : ITargetable
 
     public bool Exists => true;
 
-
+    public int GameObjectInstanceId { get; } = -1;
 }

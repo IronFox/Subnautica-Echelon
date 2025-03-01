@@ -84,7 +84,7 @@ public class TrailSpaceTargetText : CommonTargetListener
     // Update is called once per frame
     void Update()
     {
-        pool.Map<(Vector2 Screen, Vector2 Screen2) >(Targets(), t =>
+        pool.FilterAndUpdate<(Vector2 Screen, Vector2 Screen2) >(Targets(), t =>
         {
 
             var screen = Project(t.Position);

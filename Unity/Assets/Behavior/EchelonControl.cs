@@ -292,8 +292,12 @@ public class EchelonControl : MonoBehaviour
             statusConsole.Set(StatusProperty.Target, target);
             //ConsoleControl.Write($"target: "+target.ToString());
 
-            targetMarkers.Map<bool>(targetEnvironment, t => true,
-                (tm, b, t) =>
+
+            IEnumerable<ITargetable> set = targetEnvironment.Targets;
+            if (target != null && !(target is AdapterTargetable))
+                set = set.Append(target);
+            targetMarkers.UpdateAll(set, 
+                (tm, t) =>
                 {
                     tm.MoveTo(t.Position);
                     var targetSize = SizeOf(t);
@@ -608,12 +612,12 @@ internal class TargetMarker
         TargetHealthFeed = GameObject.GetComponent<TargetHealthFeed>();
     }
 
-    internal static TargetMarker Make(GameObject targetMarkerPrefab, AdapterTargetable target, EchelonControl echelon)
+    internal static TargetMarker Make(GameObject targetMarkerPrefab, ITargetable target, EchelonControl echelon)
     {
         var rs = GameObject.Instantiate(targetMarkerPrefab, target.Position, Quaternion.identity);
         var tm = new TargetMarker(rs);
         tm.TargetHealthFeed.owner = echelon;
-        tm.TargetHealthFeed.target = target.TargetAdapter;
+        tm.TargetHealthFeed.target = (target as AdapterTargetable)?.TargetAdapter;
         return tm;
     }
 

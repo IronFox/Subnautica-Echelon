@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
+using static UnityEngine.GraphicsBuffer;
 
 public class TargetScanner : MonoBehaviour
 {
@@ -77,6 +78,8 @@ public class TargetScanner : MonoBehaviour
             //var distance = M.SqrDistance(transform.position, item.Rigidbody.transform.position);
             var rayDistance = M.Distance(ray, t.TargetAdapter.GameObject.transform.position);
             if (rayDistance.DistanceAlongRay < reference.DistanceAlongRay)
+                continue;
+            if (rayDistance.DistanceAlongRay * 0.3f < rayDistance.DistanceToClosesPointOnRay)
                 continue;
             var distance = rayDistance.DistanceAlongRay + rayDistance.DistanceToClosesPointOnRay * 10;
 
@@ -220,7 +223,7 @@ public class TargetPool<T>
     /// <param name="instantiate">Function to create a new instance for a target not previously mapped</param>
     public TargetPool(
         Func<T, GameObject> getGameObject,
-        Func<AdapterTargetable, T> instantiate
+        Func<ITargetable, T> instantiate
         )
     {
         GetGameObject = getGameObject;
@@ -228,7 +231,7 @@ public class TargetPool<T>
     }
 
     public Func<T, GameObject> GetGameObject { get; }
-    public Func<AdapterTargetable, T> Instantiate { get; }
+    public Func<ITargetable, T> Instantiate { get; }
 
     /// <summary>
     /// Removes a single instance from the local map
@@ -281,44 +284,44 @@ public class TargetPool<T>
     /// <summary>
     /// Maps a set of targets to instances
     /// </summary>
-    /// <typeparam name="Status">Transfer type between <paramref name="filter"/> and <paramref name="apply"/></typeparam>
+    /// <typeparam name="Status">Transfer type between <paramref name="filter"/> and <paramref name="update"/></typeparam>
     /// <param name="env">Target source</param>
     /// <param name="filter">
     /// Filter function that produces a non-null value
-    /// for consumption by <paramref name="apply"/>
+    /// for consumption by <paramref name="update"/>
     /// iff an instance should exist for this target,
     /// null if not. If this function returns null,
-    /// <paramref name="apply"/> is not called for that target</param>
-    /// <param name="apply">
+    /// <paramref name="update"/> is not called for that target</param>
+    /// <param name="update">
     /// Function to call for existing or newly created instances.
     /// Receives the instance, target, and transfer data from <paramref name="filter"/>
     /// </param>
-    public void Map<Status>(
+    public void FilterAndUpdate<Status>(
         ReadOnlyTargetEnvironment env,
         Func<AdapterTargetable, Status?> filter,
-        Action<T, Status, AdapterTargetable> apply)
+        Action<T, Status, AdapterTargetable> update)
         where Status : struct
-        => Map(env.Targets, filter, apply);
+        => FilterAndUpdate(env.Targets, filter, update);
 
     /// <summary>
     /// Maps a set of targets to instances
     /// </summary>
-    /// <typeparam name="Status">Transfer type between <paramref name="filter"/> and <paramref name="apply"/></typeparam>
+    /// <typeparam name="Status">Transfer type between <paramref name="filter"/> and <paramref name="update"/></typeparam>
     /// <param name="targets">Target source</param>
     /// <param name="filter">
     /// Filter function that produces a non-null value
-    /// for consumption by <paramref name="apply"/>
+    /// for consumption by <paramref name="update"/>
     /// iff an instance should exist for this target,
     /// null if not. If this function returns null,
-    /// <paramref name="apply"/> is not called for that target</param>
-    /// <param name="apply">
+    /// <paramref name="update"/> is not called for that target</param>
+    /// <param name="update">
     /// Function to call for existing or newly created instances.
     /// Receives the instance, target, and transfer data from <paramref name="filter"/>
     /// </param>
-    public void Map<Status>(
+    public void FilterAndUpdate<Status>(
         IEnumerable<AdapterTargetable> targets,
         Func<AdapterTargetable, Status?> filter,
-        Action<T, Status, AdapterTargetable> apply)
+        Action<T, Status, AdapterTargetable> update)
         where Status : struct
     {
         try
@@ -327,7 +330,7 @@ public class TargetPool<T>
             touched.Clear();
             foreach (var t in targets)
             {
-                var goid = t.TargetAdapter.GameObjectInstanceId;
+                var goid = t.GameObjectInstanceId;
                 var status = filter(t);
                 if (status is null)
                 {
@@ -348,7 +351,7 @@ public class TargetPool<T>
                         continue;
                     }
                 }
-                apply(instance, status.Value, t);
+                update(instance, status.Value, t);
                 touched.Add(goid);
             }
 
@@ -375,6 +378,67 @@ public class TargetPool<T>
         catch (Exception ex)
         {
             ConsoleControl.WriteException(nameof(TargetPool<T>) + ".Map()", ex);
+
+        }
+    }
+
+    /// <summary>
+    /// Executes the provided update function on all given targetables
+    /// </summary>
+    /// <param name="envTargets"></param>
+    /// <param name="update"></param>
+    public void UpdateAll(
+        IEnumerable<ITargetable> envTargets,
+        Action<T, ITargetable> update)
+    {
+        try
+        {
+            remove.Clear();
+            touched.Clear();
+            foreach (var t in envTargets)
+            {
+                var goid = t.GameObjectInstanceId;
+                if (!map.TryGetValue(goid, out var instance))
+                {
+                    try
+                    {
+                        ConsoleControl.Write($"Creating {typeof(T).Name} for target {t}");
+                        instance = Instantiate(t);
+                        map.Add(goid, instance);
+                    }
+                    catch (Exception ex)
+                    {
+                        ConsoleControl.WriteException(nameof(TargetPool<T>) + $".Instantiate({t})", ex);
+                        continue;
+                    }
+                }
+                update(instance, t);
+                touched.Add(goid);
+            }
+
+            remove.AddRange(map.Where(x => !touched.Contains(x.Key)));
+
+            foreach (var p in remove)
+            {
+                var instance = p.Value;
+                ConsoleControl.Write($"Destroying {typeof(T).Name} {p.Key}");
+                try
+                {
+                    GameObject.Destroy(GetGameObject(instance));
+                }
+                catch (Exception ex)
+                {
+                    ConsoleControl.WriteException(nameof(TargetPool<T>) + ".Flush(" + p.Key + ")", ex);
+                }
+                finally
+                {
+                    map.Remove(p.Key);
+                }
+            }
+        }
+        catch (Exception ex)
+        {
+            ConsoleControl.WriteException(nameof(TargetPool<T>) + ".UpdateAllWithExtra()", ex);
 
         }
     }
