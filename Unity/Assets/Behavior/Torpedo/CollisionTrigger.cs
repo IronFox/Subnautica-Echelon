@@ -59,7 +59,19 @@ public class CollisionTrigger : MonoBehaviour
         {
             var t = TargetAdapter.ResolveTarget(collision.gameObject, collision.rigidbody);
 
-            if (t == null && TorpedoControl.ignoreNonTargetCollisions)
+            bool ignoreNonTargets = false;
+            switch (TorpedoControl.terrainCollisions)
+            {
+                case TorpedoTerrainCollisions.IgnoreWhenTargeted:
+                    ignoreNonTargets = (target is AdapterTargetable);
+                    break;
+                case TorpedoTerrainCollisions.AlwaysIgnore:
+                    ignoreNonTargets = true;
+                    break;
+                case TorpedoTerrainCollisions.NeverIgnore:
+                    break;
+            }
+            if (t == null && ignoreNonTargets)
             {
                 ConsoleControl.Write($"Flagging collisions with {collision.collider} to be ignored");
                 Physics.IgnoreCollision(collision.collider, regularCollider);

@@ -14,8 +14,12 @@ public class EchelonConfig : ConfigFile
     public KeyCode altZoomOut = KeyCode.None;
     [Toggle("Hold Sprint to Boost")]
     public bool holdToBoost = false;
-    [Toggle("Ignore Torpedo Non-Target Collisions")]
-    public bool ignoreTorpedoNonTargetCollisions = true;
+    [Choice("Torpedo Terrain Collisions",
+        nameof(TorpedoTerrainCollisions.NeverIgnore),
+        nameof(TorpedoTerrainCollisions.IgnoreWhenTargeted),
+        nameof(TorpedoTerrainCollisions.AlwaysIgnore)
+        )]
+    public TorpedoTerrainCollisions torpedoTerrainCollisions = TorpedoTerrainCollisions.IgnoreWhenTargeted;
     [Slider("Boost Acceleration %", Step = 1f, DefaultValue = 150, Min = 0, Max = 300)]
     public float boostAccelerationPercent = 150;
     [Slider("Nuclear Battery Energy Output %", Step = 1f, DefaultValue = 20, Min = 0, Max = 100)]
@@ -24,8 +28,8 @@ public class EchelonConfig : ConfigFile
     public float selfHealingSpeed = 10f;
     [Slider("Torpedo Damage", Step = 10, DefaultValue = 1500, Min = 10, Max = 3000)]
     public float torpedoDamage = 1500f;
-    [Slider("Torpedoes per Minute", Step = 1, DefaultValue = 30, Min = 5, Max = 180)]
-    public float torpedoesPerMinute = 30;
+    [Slider("Torpedoes per Minute", Step = 1, DefaultValue = 60, Min = 5, Max = 360)]
+    public float torpedoesPerMinute = 60;
     [Choice("Target Text", nameof(TextDisplay.None), nameof(TextDisplay.Focused), nameof(TextDisplay.All))]
     public TextDisplay textDisplay = TextDisplay.All;
 

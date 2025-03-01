@@ -445,7 +445,7 @@ namespace Subnautica_Echelon
                 control.outOfWater = !GetIsUnderwater();
                 control.cameraCenterIsCockpit = Player.main.pda.state == PDA.State.Opened;
                 control.isDocked = docked;
-                TorpedoControl.ignoreNonTargetCollisions = MainPatcher.PluginConfig.ignoreTorpedoNonTargetCollisions;
+                TorpedoControl.terrainCollisions = MainPatcher.PluginConfig.torpedoTerrainCollisions;
 
                 if (Player.main.pda.state == PDA.State.Closed && !IngameMenu.main.gameObject.activeSelf)
                 {

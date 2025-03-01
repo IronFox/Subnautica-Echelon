@@ -22,7 +22,7 @@ public class TorpedoControl : MonoBehaviour
 
     public Collider normalCollider;
 
-    public static bool ignoreNonTargetCollisions = false;
+    public static TorpedoTerrainCollisions terrainCollisions = TorpedoTerrainCollisions.IgnoreWhenTargeted;
 
     //public float detonationProximity = 1;
 
@@ -127,4 +127,11 @@ public class TorpedoControl : MonoBehaviour
 
 
 
+}
+
+public enum TorpedoTerrainCollisions
+{
+    NeverIgnore,
+    IgnoreWhenTargeted,
+    AlwaysIgnore
 }

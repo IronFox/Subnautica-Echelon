@@ -9,8 +9,8 @@ echelon todos:
 	* add option for off-board sentry mode (sub turns and fires at targets automatically that approach the player)
 	* do not explode torpedoes if close to the player (Camera.main when off-boarded)
 	* add camera shake on overdrive (use Random.insideUnitSphere)
-	* torpedos fired with no target should always collide with terrain
 
+	* torpedos fired with no target should always collide with terrain (configurable via option)
 	* show all alternative targets (done)
 	* increase sub base speed, reduce default boost speed accordingly (increased by +50%, no change to boost)
 	* decrease torpedo tube open/close animation time (configurable, needs more work)
