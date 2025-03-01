@@ -9,6 +9,7 @@ public class EchelonControl : MonoBehaviour
     public KeyCode openConsoleKey = KeyCode.F7;
 
     public GameObject targetMarkerPrefab;
+    public GameObject targetDirectionMarkerPrefab;
     public float forwardAxis;
     public float rightAxis;
     public float upAxis;
@@ -265,13 +266,18 @@ public class EchelonControl : MonoBehaviour
 
     private IDirectionSource inWaterDirectionSource;
     private readonly TargetPool<TargetMarker> targetMarkers;
+    private readonly TargetPool<TargetDirectionMarker> targetDirectionMarkers;
     private ITargetable lastValidTarget;
-
+    public static TargetArrows targetArrows = TargetArrows.DangerousAndCriticialTargets;
     public EchelonControl()
     {
         targetMarkers = new TargetPool<TargetMarker>(
-            tm => tm.GameObject,
+            (tm, immediately) => tm.Destroy(immediately),
             ta => TargetMarker.Make(targetMarkerPrefab, ta, this)
+            );
+        targetDirectionMarkers = new TargetPool<TargetDirectionMarker>(
+            (tm, immediately) => tm.Destroy(immediately),
+            ta => TargetDirectionMarker.Make(targetDirectionMarkerPrefab, ta, this)
             );
     }
 
@@ -304,7 +310,11 @@ public class EchelonControl : MonoBehaviour
                     tm.Scale(targetSize);
                     tm.TargetHealthFeed.isPrimary = t.Equals(target);
                 });
-
+            if (targetArrows != TargetArrows.None)
+                targetDirectionMarkers.UpdateAll(targetEnvironment.Targets,
+                    (tm, t) => { });
+            else
+                targetDirectionMarkers.Purge();
 
 
             if (target != null)
@@ -352,7 +362,8 @@ public class EchelonControl : MonoBehaviour
             statusConsole.Set(StatusProperty.LeftLauncherTarget,null);
             statusConsole.Set(StatusProperty.RightLauncherTarget, null);
 
-            targetMarkers.Clear();
+            targetMarkers.Purge();
+            targetDirectionMarkers.Purge();
         }
         statusConsole.Set(StatusProperty.LeftLauncherProgress, leftLaunch.CycleProgress / leftLaunch.CycleTime);
         statusConsole.Set(StatusProperty.RightLauncherProgress, rightLaunch.CycleProgress / rightLaunch.CycleTime);
@@ -601,6 +612,33 @@ public class EchelonControl : MonoBehaviour
 
 }
 
+internal class TargetDirectionMarker
+{
+    public GameObject GameObject { get; }
+    public DirectMarkerAtTarget Control { get; }
+    public TargetDirectionMarker(GameObject go)
+    {
+        GameObject = go;
+        Control = GameObject.GetComponent<DirectMarkerAtTarget>();
+    }
+    public void Destroy(bool immediately)
+    {
+        if (immediately)
+            GameObject.Destroy(GameObject);
+        else
+            Control.target = null;
+    }
+
+    internal static TargetDirectionMarker Make(GameObject targetDirectionMarkerPrefab, ITargetable target, EchelonControl echelon)
+    {
+        var rs = GameObject.Instantiate(targetDirectionMarkerPrefab, target.Position, Quaternion.identity);
+        var tm = new TargetDirectionMarker(rs);
+        tm.Control.target = target;
+        tm.Control.adapterTarget = target as AdapterTargetable;
+        tm.Control.echelon = echelon;
+        return tm;
+    }
+}
 
 internal class TargetMarker
 {
@@ -631,8 +669,16 @@ internal class TargetMarker
         GameObject.transform.position = position;
     }
 
-    public void Destroy()
+    public void Destroy(bool immediately)
     {
         GameObject.Destroy(GameObject);
     }
 }
+
+public enum TargetArrows
+{
+    DangerousAndCriticialTargets,
+    CriticalOnly,
+    None
+}
+

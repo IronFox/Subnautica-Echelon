@@ -14,7 +14,7 @@ public class TrailSpaceTargetText : CommonTargetListener
     public TrailSpaceTargetText()
     {
         pool = new TargetPool<TextMeshProUGUI>(
-            t => t.gameObject,
+            (t, immediately) => Destroy(t.gameObject),
             t =>
             {
                 var instance = Instantiate(targetTextPrefab, transform);

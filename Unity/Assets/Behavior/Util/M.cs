@@ -17,6 +17,7 @@ public static class M
     public static Vector3 V3(float v) => new Vector3(v, v, v);
     public static Vector3 V3(float x, float y, float z) => new Vector3(x, y, z);
     public static Vector4 V4(float v) => new Vector4(v, v, v, v);
+    public static Vector4 V4(Vector3 v, float w) => new Vector4(v.x, v.y, v.z, w);
     public static Vector4 V4(float x, float y, float z, float w) => new Vector4(x, y, z, w);
 
     public static float Saturate(float x) => Mathf.Clamp01(x);

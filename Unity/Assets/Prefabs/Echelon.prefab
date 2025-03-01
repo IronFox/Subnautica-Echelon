@@ -14343,6 +14343,8 @@ MonoBehaviour:
   openConsoleKey: 288
   targetMarkerPrefab: {fileID: 5521679142702348905, guid: 6240db53657f06544a78d85e687ba8d4,
     type: 3}
+  targetDirectionMarkerPrefab: {fileID: 8691401899087712267, guid: 250712c21cb88f54c8839fc4d71b333c,
+    type: 3}
   forwardAxis: 0
   rightAxis: 0
   upAxis: 0

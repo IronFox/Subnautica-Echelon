@@ -32,5 +32,7 @@ public class EchelonConfig : ConfigFile
     public float torpedoesPerMinute = 60;
     [Choice("Target Text", nameof(TextDisplay.None), nameof(TextDisplay.Focused), nameof(TextDisplay.All))]
     public TextDisplay textDisplay = TextDisplay.All;
+    [Choice("Target Arrows", nameof(TargetArrows.DangerousAndCriticialTargets), nameof(TargetArrows.CriticalOnly), nameof(TargetArrows.None))]
+    public TargetArrows targetArrows = TargetArrows.DangerousAndCriticialTargets;
 
 }

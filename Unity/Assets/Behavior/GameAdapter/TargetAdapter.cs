@@ -20,6 +20,7 @@ public abstract class TargetAdapter
 
     public static Func<GameObject, Rigidbody, TargetAdapter> ResolveTarget { get; set; }
         = (go,rb) => new CommonTargetAdapter(go,rb);
+    public abstract bool IsCriticalTarget { get; }
 
     protected TargetAdapter(int gameObjectInstanceId)
     {
@@ -36,13 +37,18 @@ public class CommonTargetAdapter : TargetAdapter
     private float _currentHealth = 1000;
     public override float CurrentHealth => _currentHealth;
 
-    public override float MaxHealth => 1000;
+    public override float MaxHealth { get; } = 1000;
 
+    public override bool IsCriticalTarget { get; }
     public CommonTargetAdapter(GameObject source, Rigidbody rigidbody)
         :base(source.GetInstanceID())
     {
         GameObject = source;
+        var hp = GameObject.GetComponent<HealthProperty>();
+        if (hp != null)
+            _currentHealth = MaxHealth = hp.health;
         Rigidbody = rigidbody;
+        IsCriticalTarget = TargetScanner.IsCriticalTarget(source);
 
     }
 

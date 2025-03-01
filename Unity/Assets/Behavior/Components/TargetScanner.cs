@@ -54,7 +54,8 @@ public class TargetScanner : MonoBehaviour
             
             ;
     }
-
+    public static bool IsCriticalTarget(GameObject gameObject)
+        => AlwaysIncludeByName(gameObject.name);
     public static bool AlwaysIncludeByName(string objectName)
     {
         return alwaysTarget.Any(x => objectName.StartsWith(x));
@@ -120,7 +121,7 @@ public class TargetScanner : MonoBehaviour
             //Rebuild();
         }
     }
-    
+
 
 }
 
@@ -219,18 +220,18 @@ public class TargetPool<T>
     /// <summary>
     /// Constructs a new pool
     /// </summary>
-    /// <param name="getGameObject">Function to resolve the game object of an instance (for destruction)</param>
+    /// <param name="destroy">Action to destroy an instance when removed from the local pool</param>
     /// <param name="instantiate">Function to create a new instance for a target not previously mapped</param>
     public TargetPool(
-        Func<T, GameObject> getGameObject,
+        Action<T, bool> destroy,
         Func<ITargetable, T> instantiate
         )
     {
-        GetGameObject = getGameObject;
+        Destroy = destroy;
         Instantiate = instantiate;
     }
 
-    public Func<T, GameObject> GetGameObject { get; }
+    public Action<T, bool> Destroy { get; }
     public Func<ITargetable, T> Instantiate { get; }
 
     /// <summary>
@@ -243,7 +244,7 @@ public class TargetPool<T>
         {
             try
             {
-                GameObject.Destroy(GetGameObject(instance));
+                Destroy(instance, false);
             }
             catch (Exception ex)
             {
@@ -258,9 +259,9 @@ public class TargetPool<T>
 
     /// <summary>
     /// Completely flushes the local pool.
-    /// All instances associated with targets are destroyed.
+    /// All instances associated with targets are destroyed immediately.
     /// </summary>
-    public void Clear()
+    public void Purge()
     {
         foreach (var p in map)
         {
@@ -268,7 +269,7 @@ public class TargetPool<T>
             ConsoleControl.Write($"Destroying {typeof(T).Name} {p.Key}");
             try
             {
-                GameObject.Destroy(GetGameObject(instance));
+                Destroy(instance, true);
             }
             catch (Exception ex)
             {
@@ -363,7 +364,7 @@ public class TargetPool<T>
                 ConsoleControl.Write($"Destroying {typeof(T).Name} {p.Key}");
                 try
                 {
-                    GameObject.Destroy(GetGameObject(instance));
+                    Destroy(instance, false);
                 }
                 catch (Exception ex)
                 {
@@ -424,7 +425,7 @@ public class TargetPool<T>
                 ConsoleControl.Write($"Destroying {typeof(T).Name} {p.Key}");
                 try
                 {
-                    GameObject.Destroy(GetGameObject(instance));
+                    Destroy(instance, false);
                 }
                 catch (Exception ex)
                 {

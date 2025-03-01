@@ -4,12 +4,12 @@ echelon todos:
 * update version number *
 
 * sub: 
-	* add glowing markers around sub for surrounding targets
 	* add option to automatically fire at warpers
 	* add option for off-board sentry mode (sub turns and fires at targets automatically that approach the player)
 	* do not explode torpedoes if close to the player (Camera.main when off-boarded)
 	* add camera shake on overdrive (use Random.insideUnitSphere)
 
+	* add glowing markers around sub for surrounding targets (done, configurable)
 	* torpedos fired with no target should always collide with terrain (configurable via option)
 	* show all alternative targets (done)
 	* increase sub base speed, reduce default boost speed accordingly (increased by +50%, no change to boost)

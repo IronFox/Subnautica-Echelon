@@ -428,10 +428,9 @@ namespace Subnautica_Echelon
                 LocalInit();
 
                 TorpedoLaunchControl.torpedoesPerMinute = MainPatcher.PluginConfig.torpedoesPerMinute;
-
                 ExplosionController.explosionDamage = MainPatcher.PluginConfig.torpedoDamage;
-
                 TrailSpaceTargetText.textDisplay = MainPatcher.PluginConfig.textDisplay;
+                EchelonControl.targetArrows = MainPatcher.PluginConfig.targetArrows;
 
                 Vector2 lookDelta = GameInput.GetLookDelta();
                 control.lookRightAxis = lookDelta.x * 0.1f;

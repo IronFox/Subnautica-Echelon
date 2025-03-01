@@ -80,6 +80,8 @@ public interface ITargetable
     Vector3 GlobalSize { get; }
     Vector3 Position { get; }
     Vector3? InherentVelocity { get; }
+
+    bool IsCriticalTarget { get; }
     bool Exists { get; }
     int GameObjectInstanceId { get; }
     bool Is(GameObject gameObject);
@@ -100,10 +102,13 @@ public class TransformTargetable : ITargetable
 
     public int GameObjectInstanceId { get; }
 
+    public bool IsCriticalTarget { get; }
+
     public TransformTargetable(Transform transform)
     {
         Transform = transform;
         GameObjectInstanceId = transform.gameObject.GetInstanceID();
+        IsCriticalTarget = TargetScanner.IsCriticalTarget(transform.gameObject);
 
         var colliders = Transform.GetComponentsInChildren<Collider>();
         if (colliders.Length > 0)
@@ -139,6 +144,7 @@ public class AdapterTargetable : ITargetable
     public TargetAdapter TargetAdapter { get; }
 
     public Vector3 GlobalSize { get; }
+    public bool IsCriticalTarget { get; }
 
     public Vector3 Position => TargetAdapter.GameObject.transform.position;
 
@@ -153,6 +159,7 @@ public class AdapterTargetable : ITargetable
         TargetAdapter = targetAdapter;
         GameObjectInstanceId = targetAdapter.GameObjectInstanceId;
         GlobalSize = SizeFromRigidbody(targetAdapter.Rigidbody);
+        IsCriticalTarget = targetAdapter.IsCriticalTarget;
     }
 
     public static Vector3 SizeFromRigidbody(Rigidbody rigidbody)
@@ -197,6 +204,7 @@ public class RigidbodyTargetable : ITargetable
     public Vector3? InherentVelocity => Exists ? Rigidbody.velocity : (Vector3 ? )null;
 
     public Vector3 GlobalSize { get; }
+    public bool IsCriticalTarget { get; }
 
     public bool Exists => Rigidbody != null;
 
@@ -207,6 +215,7 @@ public class RigidbodyTargetable : ITargetable
         Rigidbody = rigidbody;
         GameObjectInstanceId = rigidbody.gameObject.GetInstanceID();
         GlobalSize = AdapterTargetable.SizeFromRigidbody(rigidbody);
+        IsCriticalTarget = TargetScanner.IsCriticalTarget(rigidbody.gameObject);
     }
 
     public override string ToString() => $"RB Target {Rigidbody.name}";
@@ -257,4 +266,6 @@ public class PositionTargetable : ITargetable
     public bool Exists => true;
 
     public int GameObjectInstanceId { get; } = -1;
+
+    public bool IsCriticalTarget => false;
 }

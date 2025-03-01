@@ -14,6 +14,7 @@ namespace Subnautica_Echelon
             this.go = go;
             this.rb = rb;
             this.mixin = mixin;
+            IsCriticalTarget = TargetScanner.IsCriticalTarget(go);
         }
 
 
@@ -30,6 +31,8 @@ namespace Subnautica_Echelon
 
         public override bool IsAlive => go != null && mixin.IsAlive();
         public override bool IsInvincible => mixin.invincible;
+
+        public override bool IsCriticalTarget { get; }
 
         public override void DealDamage(Vector3 origin, float damage, GameObject dealer)
         {

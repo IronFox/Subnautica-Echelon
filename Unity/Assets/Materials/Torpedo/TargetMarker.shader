@@ -3,7 +3,7 @@
     Properties
     {
         _MainTex ("Texture", 2D) = "white" {}
-        _Health ("Health", Vector) = (0.5,1,1)
+        _Health ("Health", Vector) = (0.5,1,1,0)
         _CameraX("CameraX", Vector) = (1,0,0)
         _CameraY("CameraY",Vector) = (0,1,0)
         _CameraCenter("Camera Center", Vector) = (0,0,-10)
@@ -55,7 +55,7 @@
             float3 _CameraCenter;
             float3 _CameraX;
             float3 _CameraY;
-            float3 _Health;
+            float4 _Health;
             float3 _ObjCenter;
             float _Scale;
             float _IsPrimary;
@@ -124,7 +124,7 @@
                     float circularAngleOne = (circularAngle + M_PI) / (2* M_PI);
                     float circular2Fmod = fmod(circularAngleOne*2,1);
                     float circular2FmodDD = dd(circular2Fmod);
-                    float flash = smoothstep(sqrt(750),sqrt(3000),  sqrt(_Health.y)) * 0.9;
+                    float flash = _Health.w * 0.9;
                     float relHealth = _Health.x / _Health.y;
                     float radialH = hardRange(0, 0.1 + 0.9 * relHealth, circular2Fmod, circular2FmodDD);
                     //float d2 = max(abs(ddx(radial)),abs(ddy(radial)));
