@@ -15069,7 +15069,6 @@ GameObject:
   - component: {fileID: 5520461974488889419}
   - component: {fileID: 4771993204722575318}
   - component: {fileID: 8526027884062462929}
-  - component: {fileID: 44351300496075031}
   m_Layer: 0
   m_Name: Hull Emission Light
   m_TagString: Untagged
@@ -15138,19 +15137,6 @@ MeshRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
---- !u!114 &44351300496075031
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 8042473525343986965}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 4b861a3c10b54d949ae05e478784a7a4, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  emissionMap: {fileID: 2800000, guid: 39bc4c0891189a64e95d794add85c892, type: 3}
 --- !u!1 &8043305197636289226
 GameObject:
   m_ObjectHideFlags: 0
@@ -15536,15 +15522,15 @@ PrefabInstance:
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 79ee4f3f52d67374683a236723570b8a, type: 3}
---- !u!4 &358423859201862970 stripped
-Transform:
-  m_CorrespondingSourceObject: {fileID: 367112996754252716, guid: 79ee4f3f52d67374683a236723570b8a,
-    type: 3}
-  m_PrefabInstance: {fileID: 135494787220835990}
-  m_PrefabAsset: {fileID: 0}
 --- !u!198 &2815871491246593094 stripped
 ParticleSystem:
   m_CorrespondingSourceObject: {fileID: 2806485808818690768, guid: 79ee4f3f52d67374683a236723570b8a,
+    type: 3}
+  m_PrefabInstance: {fileID: 135494787220835990}
+  m_PrefabAsset: {fileID: 0}
+--- !u!4 &358423859201862970 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 367112996754252716, guid: 79ee4f3f52d67374683a236723570b8a,
     type: 3}
   m_PrefabInstance: {fileID: 135494787220835990}
   m_PrefabAsset: {fileID: 0}
@@ -15885,6 +15871,12 @@ PrefabInstance:
       objectReference: {fileID: 6782049186316361483}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: d9a4961627282754f8adeb48e4099d85, type: 3}
+--- !u!4 &1345015803845183013 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 5794600956658866444, guid: d9a4961627282754f8adeb48e4099d85,
+    type: 3}
+  m_PrefabInstance: {fileID: 4810119697115701033}
+  m_PrefabAsset: {fileID: 0}
 --- !u!114 &3836783701516135665 stripped
 MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: 8646352818163184600, guid: d9a4961627282754f8adeb48e4099d85,
@@ -15897,12 +15889,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8d908e1910b85d446adb9520a4d03604, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
---- !u!4 &1345015803845183013 stripped
-Transform:
-  m_CorrespondingSourceObject: {fileID: 5794600956658866444, guid: d9a4961627282754f8adeb48e4099d85,
-    type: 3}
-  m_PrefabInstance: {fileID: 4810119697115701033}
-  m_PrefabAsset: {fileID: 0}
 --- !u!1001 &5540363632323184896
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -15997,12 +15983,6 @@ PrefabInstance:
       objectReference: {fileID: 2213038655503902190}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: d9a4961627282754f8adeb48e4099d85, type: 3}
---- !u!4 &2056418250519449612 stripped
-Transform:
-  m_CorrespondingSourceObject: {fileID: 5794600956658866444, guid: d9a4961627282754f8adeb48e4099d85,
-    type: 3}
-  m_PrefabInstance: {fileID: 5540363632323184896}
-  m_PrefabAsset: {fileID: 0}
 --- !u!114 &4259656812905478872 stripped
 MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: 8646352818163184600, guid: d9a4961627282754f8adeb48e4099d85,
@@ -16015,3 +15995,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8d908e1910b85d446adb9520a4d03604, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!4 &2056418250519449612 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 5794600956658866444, guid: d9a4961627282754f8adeb48e4099d85,
+    type: 3}
+  m_PrefabInstance: {fileID: 5540363632323184896}
+  m_PrefabAsset: {fileID: 0}

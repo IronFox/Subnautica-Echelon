@@ -27,5 +27,6 @@ public class CameraFeed : MonoBehaviour
         material.SetVector("_CameraX", Camera.main.transform.right);
         material.SetVector("_CameraY", Camera.main.transform.up);
         material.SetFloat("_Scale", scale);
+ 
     }
 }

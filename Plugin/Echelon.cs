@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Reflection;
+using System.Runtime.InteropServices;
 using UnityEngine;
 using VehicleFramework;
 using VehicleFramework.Assets;
@@ -65,7 +66,12 @@ namespace Subnautica_Echelon
             {
                 Log.Write("Echelon.GetAssets()");
                 var modPath = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
-                var bundlePath = Path.Combine(modPath, "echelon");
+                string bundlePath;
+
+                if (RuntimeInformation.IsOSPlatform(OSPlatform.OSX))
+                    bundlePath = Path.Combine(modPath, "echelon.osx");
+                else
+                    bundlePath = Path.Combine(modPath, "echelon");
                 Log.Write($"Trying to load asset bundle from '{bundlePath}'");
                 if (!File.Exists(bundlePath))
                     Log.Write("This file does not appear to exist");
