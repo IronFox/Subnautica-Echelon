@@ -1,7 +1,7 @@
 echelon todos:
 
-* disable all access to C:\temp both in the unity scene and the plugin. Redirect to Debug.*
-* update version number *
+* disable all access to C:\temp both in the unity scene and the plugin. Redirect to Debug. *done*
+* update version number  *done*
 
 * sub: 
 	* add option to automatically fire at warpers

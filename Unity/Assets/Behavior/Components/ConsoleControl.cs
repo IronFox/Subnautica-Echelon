@@ -60,8 +60,10 @@ public class ConsoleControl : MonoBehaviour
 
     public static void WriteException(string whileDoing, Exception ex)
     {
-        Write($"Caught exception during {whileDoing}: {ex.Message}");
-        Write(ex.StackTrace);
+        Debug.LogError($"Caught exception during {whileDoing}: {ex.Message}");
+        //Write(ex.StackTrace);
+        
+        Debug.LogException(ex);
     }
 
 
@@ -73,11 +75,11 @@ public class ConsoleControl : MonoBehaviour
         var line = new Line(text);
         foreach (var control in Instances)
             control.AddLine(line);
-        if (Instances.Count == 0)
-            StaticLines.Add(line);
+        //if (Instances.Count == 0)
+        //    StaticLines.Add(line);
 
-        Directory.CreateDirectory(@"C:\Temp\Logs");
-        File.AppendAllText(@"C:\Temp\Logs\log.txt", $"{DateTimeOffset.Now:HH:mm:ss.fff} {text} \r\n");
+        //Directory.CreateDirectory(@"C:\Temp\Logs");
+        //File.AppendAllText(@"C:\Temp\Logs\log.txt", $"{DateTimeOffset.Now:HH:mm:ss.fff} {text} \r\n");
 
     }
 

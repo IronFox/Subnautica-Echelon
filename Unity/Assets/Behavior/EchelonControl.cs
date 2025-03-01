@@ -284,7 +284,7 @@ public class EchelonControl : MonoBehaviour
     private bool OnboardingCooldown => DateTime.Now - lastOnboarded < TimeSpan.FromSeconds(1);
     public float SizeOf(ITargetable t)
     {
-        var vec = M.Max(t.GlobalSize*2, 0.1f * M.Distance(t.Position, Camera.main.transform.position));
+        var vec = M.Max(t.GlobalSize*1.5f, 0.1f * M.Distance(t.Position, Camera.main.transform.position));
         var s = Mathf.Max(vec.x,vec.y, vec.z);
         return s;
     }

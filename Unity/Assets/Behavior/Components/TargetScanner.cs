@@ -45,7 +45,7 @@ public class TargetScanner : MonoBehaviour
     };
 
     private static string[] alwaysTarget = new string[] {
-        "Warper"
+        "Warper",
     };
 
     public static bool IsExcludedByName(string objectName)

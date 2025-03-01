@@ -304,34 +304,33 @@ internal class OverflowGuard
     public readonly Counter arrayElements = new Counter($"ArrayElement",10000);
 
 
-    private static void WriteLine(string line)
-    {
-        File.AppendAllText(@"C:\Temp\Logs\json.log", $"{line}\r\n");
-    }
+    //private static void WriteLine(string line)
+    //{
+    //    File.AppendAllText(@"C:\Temp\Logs\json.log", $"{line}\r\n");
+    //}
 
 
     internal void SignalNewArray(string name)
     {
-        WriteLine($"+Array[{name}]");
-        arrays.Inc();
+        //WriteLine($"+Array[{name}]");
+        //arrays.Inc();
     }
 
     internal void SignalNewArrayElement()
     {
-        WriteLine($"+ArrayElement");
-        arrayElements.Inc();
+        //WriteLine($"+ArrayElement");
+        //arrayElements.Inc();
     }
 
     internal void SignalNewObject(string name)
     {
-        WriteLine($"+Object[{name}]");
-        objects.Inc();
+        //WriteLine($"+Object[{name}]");
+        //objects.Inc();
     }
 
     internal void SignalNewProperty(string name)
     {
-        WriteLine($"+Property[{name}]");
-        //properties.Inc();
+        //WriteLine($"+Property[{name}]");
     }
 
     internal void SignalNewValue()
@@ -341,7 +340,7 @@ internal class OverflowGuard
 
     internal void SignalPropertyAccess(PropertyInfo f)
     {
-        WriteLine($"+PAccess[{f.Name}] type {f.PropertyType.Name}");
+        //WriteLine($"+PAccess[{f.Name}] type {f.PropertyType.Name}");
     }
 }
 

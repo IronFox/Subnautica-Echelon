@@ -516,7 +516,7 @@ namespace Subnautica_Echelon
 
         public override int MaxHealth => 2000;
         public override int NumModules => 0;
-        public override int BaseCrushDepth => 10000;
+        public override int BaseCrushDepth => 1700;
 
         public override string vehicleDefaultName => "Echelon";
 

@@ -45,19 +45,21 @@ namespace Subnautica_Echelon
         }
         public static void Write(string message)
         {
-            File.AppendAllText(@"C:\Temp\Logs\log.txt", $"{DateTimeOffset.Now:HH:mm:ss.fff} {message}\r\n");
+            Debug.Log(message);
+            //File.AppendAllText(@"C:\Temp\Logs\log.txt", $"{DateTimeOffset.Now:HH:mm:ss.fff} {message}\r\n");
 
         }
 
         public static void Write(Exception ex)
         {
-            Write(ex.GetType().Name);
-            Write(ex.Message);
-            Write(ex.StackTrace);
+            Debug.LogException(ex);
+            //Write(ex.GetType().Name);
+            //Write(ex.Message);
+            //Write(ex.StackTrace);
         }
         public static void Write(string whileDoing, Exception caughtException)
         {
-            Write($"Caught exception during {whileDoing}");
+            Debug.LogError($"Caught exception during {whileDoing}");
             Write(caughtException);
         }
     }
