@@ -524,7 +524,7 @@ namespace Subnautica_Echelon
         }
 
         public override int MaxHealth => 2000;
-        public override int NumModules => 0;
+        public override int NumModules => 8;
         public override int BaseCrushDepth => 1700;
 
         public override string vehicleDefaultName => "Echelon";
@@ -581,6 +581,34 @@ namespace Subnautica_Echelon
         public override GameObject BoundingBox => transform.Find("BoundingBox").gameObject;
         public override PilotingStyle pilotingStyle => PilotingStyle.Other;
 
+        public override List<VehicleStorage> ModularStorages
+        {
+            get
+            {
+                var root = transform.Find("StorageRoot").gameObject;
+                var rs = new List<VehicleStorage>();
+                if (root == null)
+                    return rs;
+                for (int i = 0; i < 4; i++)
+                {
+                    var name = $"Storage{i}";
+                    var storageTransform = root.transform.Find(name);
+                    if (storageTransform == null)
+                    {
+                        storageTransform = new GameObject("name").transform;
+                        storageTransform.parent = root.transform;
+                    }
+                    rs.Add(new VehicleStorage
+                    {
+                        Container = storageTransform.gameObject,
+                        Height = 2,
+                        Width = 2
+                    });
+                }
+                return rs;
+
+            }
+        }
         public override List<GameObject> WaterClipProxies
         {
             get
