@@ -8,15 +8,8 @@ public class TargetScanner : MonoBehaviour
 {
     public float minDistance = 1;
     public float maxDistance = 500;
-    public float minWidth = 0.6f;
-    public float minHeight = 0.4f;
 
     public float lastScanTime = 0;
-
-    private float lastMinDistance;
-    private float lastMaxDistance;
-    private float lastWidth;
-    private float lastHeight;
 
 
     private readonly CountedSet<RigidbodyReference> viableTargets 
@@ -98,29 +91,6 @@ public class TargetScanner : MonoBehaviour
         lastScanTime = (float)elapsed.TotalSeconds;
 
         return closest;
-    }
-
-    // Update is called once per frame
-    void Update()
-    {
-        minHeight = Mathf.Tan(M.DegToRad(Camera.main.fieldOfView)) 
-            * minDistance
-            * 0.1f;
-        minWidth = minHeight * Camera.main.aspect;
-
-
-        if (lastWidth != minWidth
-            || lastHeight != minHeight
-            || lastMaxDistance != maxDistance
-            || lastMinDistance != minDistance
-            )
-        {
-            lastWidth = minWidth;
-            lastHeight = minHeight;
-            lastMaxDistance = maxDistance;
-            lastMinDistance = minDistance;
-            //Rebuild();
-        }
     }
 
 

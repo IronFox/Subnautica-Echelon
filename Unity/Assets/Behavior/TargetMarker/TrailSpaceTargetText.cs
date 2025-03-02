@@ -36,9 +36,9 @@ public class TrailSpaceTargetText : CommonTargetListener
 
     public static TextDisplay textDisplay = TextDisplay.All;
 
-    private Vector2? Project(Vector3 point)
+    private Vector2? Project(Camera camera, Vector3 point)
     {
-        var p = Camera.main.WorldToScreenPoint(point);
+        var p = camera.WorldToScreenPoint(point);
         if (p.z < 0)
             return null;
         p.x /= Screen.width;
@@ -84,11 +84,15 @@ public class TrailSpaceTargetText : CommonTargetListener
     // Update is called once per frame
     void Update()
     {
+        var camera = CameraUtil.GetCamera(nameof(TrailSpaceTargetText));
+        if (camera == null)
+            return;
+
         pool.FilterAndUpdate<(Vector2 Screen, Vector2 Screen2) >(Targets(), t =>
         {
 
-            var screen = Project(t.Position);
-            var screen2 = Project(t.Position + Camera.main.transform.right * Echelon.SizeOf(t));
+            var screen = Project(camera, t.Position);
+            var screen2 = Project(camera, t.Position + camera.transform.right * Echelon.SizeOf(t));
             if (screen is null || screen2 is null)
                 return null;
 

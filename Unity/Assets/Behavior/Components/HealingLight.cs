@@ -34,7 +34,6 @@ public class HealingLight : MonoBehaviour
         float actualIntensity = (float)(Math.Sin(t*2)*0.2 + 0.6) * intensity;
 
         material.SetFloat("_HealingVisibility", actualIntensity * 0.5f);
-        material.SetVector("_CameraAt", Camera.main.transform.position);
         myRenderer.enabled = actualIntensity > 0;
         myLight.intensity = actualIntensity;
         myLight.enabled = actualIntensity > 0;

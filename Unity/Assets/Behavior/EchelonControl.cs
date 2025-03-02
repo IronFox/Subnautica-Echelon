@@ -107,10 +107,12 @@ public class EchelonControl : MonoBehaviour
         if (!cameraIsInTrailspace)
         {
             cameraIsInTrailspace = true;
-            ConsoleControl.Write("Moving camera to trailspace");
+            ConsoleControl.Write("Moving camera to trailspace. Setting secondary fallback camera transform");
+            
+            CameraUtil.secondaryFallbackCameraTransform = trailSpaceCameraContainer;
+
             cameraMove = Parentage.FromLocal(cameraRoot);
             cameraRoot.parent = trailSpaceCameraContainer;
-
             TransformDescriptor.LocalIdentity.ApplyTo(cameraRoot);
             ConsoleControl.Write("Moved");
         }
@@ -121,7 +123,11 @@ public class EchelonControl : MonoBehaviour
         if (cameraIsInTrailspace)
         {
             cameraIsInTrailspace = false;
-            ConsoleControl.Write("Moving camera out of trailspace");
+
+            ConsoleControl.Write("Moving camera out of trailspace. Unsetting secondary fallback camera transform");
+            
+            CameraUtil.secondaryFallbackCameraTransform = null;
+
             cameraMove.Restore();
             ConsoleControl.Write("Moved");
         }
@@ -144,6 +150,8 @@ public class EchelonControl : MonoBehaviour
             cameraRoot = localizeInsteadOfMainCamera;
             if (cameraRoot == null)
                 cameraRoot = Camera.main.transform;
+            ConsoleControl.Write($"Setting {cameraRoot} as cameraRoot");
+            CameraUtil.primaryFallbackCameraTransform = cameraRoot;
             onboardLocalizedTransform = Parentage.FromLocal(cameraRoot);
 
             cameraIsInTrailspace = false;//just in case
@@ -237,30 +245,35 @@ public class EchelonControl : MonoBehaviour
             var target = new AdapterTargetable(t);
             return target;
         }
-        var ray = new Ray(Camera.main.transform.position, Camera.main.transform.forward);
-        var candidates = Physics.RaycastAll(ray);
-        float closestAt = 500;
-        Vector3? targetLocation = null;
-        foreach (var candidate in candidates)
+        var camera = CameraUtil.GetTransform(nameof(EchelonControl));
+        if (camera != null)
         {
-            if (candidate.collider.gameObject.transform.IsChildOf(transform))
-                continue;
-            if (candidate.collider.isTrigger || !candidate.collider.enabled)
-                continue;
-            //if (candidate.rigidbody != null &&
-            //    candidate.rigidbody.isKinematic
-            //    )
-            //    continue;
-            var dist = candidate.distance;
-            if (dist < closestAt)
+            var ray = new Ray(camera.position, camera.forward);
+            var candidates = Physics.RaycastAll(ray);
+            float closestAt = 500;
+            Vector3? targetLocation = null;
+            foreach (var candidate in candidates)
             {
-                closestAt = dist;
-                targetLocation = candidate.point;
+                if (candidate.collider.gameObject.transform.IsChildOf(transform))
+                    continue;
+                if (candidate.collider.isTrigger || !candidate.collider.enabled)
+                    continue;
+                //if (candidate.rigidbody != null &&
+                //    candidate.rigidbody.isKinematic
+                //    )
+                //    continue;
+                var dist = candidate.distance;
+                if (dist < closestAt)
+                {
+                    closestAt = dist;
+                    targetLocation = candidate.point;
+                }
             }
+            if (targetLocation.HasValue)
+                return new PositionTargetable(targetLocation.Value);
+            return new PositionTargetable(ray.GetPoint(500f));
         }
-        if (targetLocation.HasValue)
-            return new PositionTargetable(targetLocation.Value);
-        return new PositionTargetable(ray.GetPoint(500f));
+        return null;
     }
 
 
@@ -284,8 +297,14 @@ public class EchelonControl : MonoBehaviour
     private bool OnboardingCooldown => DateTime.Now - lastOnboarded < TimeSpan.FromSeconds(1);
     public float SizeOf(ITargetable t)
     {
-        var vec = M.Max(t.GlobalSize*1.5f, 0.1f * M.Distance(t.Position, Camera.main.transform.position));
+
+        var vec = t.GlobalSize * 1.5f;
         var s = Mathf.Max(vec.x,vec.y, vec.z);
+
+        var camera = CameraUtil.GetTransform(nameof(EchelonControl) + '.' + nameof(SizeOf));
+        if (camera != null)
+            s = M.Max(s, 0.1f * M.Distance(t.Position, camera.position));
+
         return s;
     }
 

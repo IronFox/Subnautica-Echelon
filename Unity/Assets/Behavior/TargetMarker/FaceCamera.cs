@@ -14,6 +14,8 @@ public class FaceCamera : MonoBehaviour
     void Update()
     {
         //Debug.Log(Camera.main.transform.right);
-        transform.rotation = Camera.main.transform.rotation;
+        var camera = CameraUtil.GetTransform(nameof(FaceCamera));
+        if (camera != null)
+            transform.rotation = camera.rotation;
     }
 }

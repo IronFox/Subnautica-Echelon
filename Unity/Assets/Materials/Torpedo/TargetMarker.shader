@@ -6,7 +6,6 @@
         _Health ("Health", Vector) = (0.5,1,1,0)
         _CameraX("CameraX", Vector) = (1,0,0)
         _CameraY("CameraY",Vector) = (0,1,0)
-        _CameraCenter("Camera Center", Vector) = (0,0,-10)
         _Scale("Scale", Range(0.1,10)) = 1
         _FadeIn("FadeIn", Range(0,1)) = 1
         [MaterialToggle] _IsPrimary ("Is Primary", Float) = 1
@@ -52,7 +51,6 @@
 
             sampler2D _MainTex;
             float4 _MainTex_ST;
-            float3 _CameraCenter;
             float3 _CameraX;
             float3 _CameraY;
             float4 _Health;
@@ -65,7 +63,7 @@
             {
                 v2f o;
                 //float3 objCenter = mul(UNITY_MATRIX_M,float4(0,0,0,1)).xyz;
-                float3 dir = (_ObjCenter - _CameraCenter);
+                float3 dir = (_ObjCenter - _WorldSpaceCameraPos);
                 float3 y = normalize(cross(_CameraX,dir));
                 float3 x = normalize(cross(dir,_CameraY));
 

@@ -43,7 +43,7 @@
             };
 
             float _HealingVisibility;
-            float3 _CameraAt;
+            
     		sampler2D _NoiseTexture0;
     		sampler2D _NoiseTexture1;
 
@@ -72,7 +72,7 @@
 
                 col.rgb = intensity * _HealingVisibility * float3(0,1,0.3);
 
-                float fresnel = pow(dot(normalize(_CameraAt - i.world), i.n),4);
+                float fresnel = pow(dot(normalize(_WorldSpaceCameraPos - i.world), i.n),4);
                 col.rgb *= 1 - fresnel;
                 col.rgb *= noise3 * noise2;
 

@@ -28,12 +28,18 @@ public class StatusConsole : CommonBoardingListener
 
     public override void SignalOnboardingBegin()
     {
-        ConsoleControl.Write($"Assigning {Camera.main} as worldCamera of {canvas}");
+        var camera = CameraUtil.GetCamera(nameof(StatusConsole));
+        if (camera == null)
+        {
+            Debug.LogError($"Cannot assign camera as worldCamera. Canvas remains off");
+            return;
+        }
+        ConsoleControl.Write($"Assigning {camera} as worldCamera of {canvas}");
         if (canvas == null)
             canvas = GetComponent<Canvas>();
 
-        canvas.worldCamera = Camera.main;
-        canvas.planeDistance = Mathf.Max(Camera.main.nearClipPlane * 1.1f, 2f);
+        canvas.worldCamera = camera;
+        canvas.planeDistance = Mathf.Max(camera.nearClipPlane * 1.1f, 2f);
         ConsoleControl.Write($"Set clip plane to distance {canvas.planeDistance}");
         canvas.enabled = true;
         enabled = statusText.enabled = false;

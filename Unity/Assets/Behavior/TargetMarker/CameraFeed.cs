@@ -23,9 +23,12 @@ public class CameraFeed : MonoBehaviour
         float scale = M.Max(transform.localScale.x, transform.localScale.y, transform.localScale.z);
         filter.sharedMesh.bounds = new Bounds(Vector3.zero, Vector3.one*scale);
         material.SetVector("_ObjCenter", transform.position);
-        material.SetVector("_CameraCenter", Camera.main.transform.position);
-        material.SetVector("_CameraX", Camera.main.transform.right);
-        material.SetVector("_CameraY", Camera.main.transform.up);
+        var camera = CameraUtil.GetTransform(nameof(CameraFeed));
+        if (camera != null)
+        {
+            material.SetVector("_CameraX", camera.right);
+            material.SetVector("_CameraY", camera.up);
+        }
         material.SetFloat("_Scale", scale);
  
     }
