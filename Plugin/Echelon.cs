@@ -589,14 +589,16 @@ namespace Subnautica_Echelon
                 var rs = new List<VehicleStorage>();
                 if (root == null)
                     return rs;
-                for (int i = 0; i < 4; i++)
+                for (int i = 0; i < 8; i++)
                 {
                     var name = $"Storage{i}";
                     var storageTransform = root.transform.Find(name);
                     if (storageTransform == null)
                     {
-                        storageTransform = new GameObject("name").transform;
+                        storageTransform = new GameObject(name).transform;
                         storageTransform.parent = root.transform;
+                        storageTransform.localPosition = M.V3(i);
+                        Debug.Log($"Creating new storage transform {storageTransform} in {root} @{storageTransform.localPosition} => {storageTransform.position}");
                     }
                     rs.Add(new VehicleStorage
                     {
