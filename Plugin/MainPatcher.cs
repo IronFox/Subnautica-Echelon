@@ -91,6 +91,20 @@ namespace Subnautica_Echelon
                 return null;
             }
         }
+        private static Sprite LoadSpriteRaw(string filename)
+        {
+            var path = Path.Combine(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location),filename);
+            Log.Write($"Trying to load sprite from {path}");
+            try
+            {
+                return SpriteHelper.GetSpriteRaw(path);
+            }
+            catch (Exception ex)
+            {
+                Log.Write(ex);
+                return null;
+            }
+        }
 
         public IEnumerator Register()
         {
@@ -103,8 +117,10 @@ namespace Subnautica_Echelon
                 var sub = Echelon.model.EnsureComponent<Echelon>();
                 Log.Write("echelon attached: "+sub.name);
 
-                Echelon.craftingSprite = LoadSprite("echelon.png");
-                Echelon.pingSprite = LoadSprite("outline.png") ?? Echelon.emptySprite;
+                Echelon.craftingSprite = LoadSprite("images/echelon.png");
+                Echelon.pingSprite = LoadSprite("images/outline.png") ?? Echelon.emptySprite;
+                Echelon.saveFileSprite = LoadSpriteRaw("images/outline.png");
+                Echelon.moduleBackground = LoadSpriteRaw("images/moduleBackground.png");
                 started = UWE.CoroutineHost.StartCoroutine(VehicleRegistrar.RegisterVehicle(sub,true));
 
 

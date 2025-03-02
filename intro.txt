@@ -1,0 +1,112 @@
+When the Alterra space exploration no-weapon hippie division won't stop coming back in pieces or feces, it's up to the Alterra military research division to save the day. Or at least blow something up. Contrary to common believe, Alterra managers do like exploding things as much as the next person. Unless it's Alterra assets exploding, then possibly less so.
+
+Thus introducing the certification-free edition of one of Alterra's most successful sub-aquatic obliteration vehicles, the Echelon.
+While it doesn't sport the same cool black paint or doomsday arsenal as its deadlier brother,  it's still a step up from the typical Reaper-mouth-sized coffins normally available to Alterra personnel. You're welcome.
+In a nutshell:
+Exceptional, boost-driven maneuverability with leapfrog capability.
+Smart onboard holographic projection of virtual environment with target lock and status recognition.
+Rated for a lifetime of 30 years, a built-in nuclear battery provides a low but steady energy supply.
+High resilience against any damages.
+Self-healing capabilities.
+Smart torpedoes with intercept capability and safety mechanics.
+Onboard torpedo production, using materials filtered from the drive water flow.
+
+Please be aware that Alterra is not responsible for accidents resulting from inappropriate speeds, particularly when leapfrogging out of the water.
+Here's a note from the designers in case you get stuck on land:
+Don't leapfrog onto solid ground. We haven't quite figured out what the sub is doing or why it's doing what it's doing, but it does not like solid ground.
+If you're lucky, it wiggles its way back into the water. Whether the pilot is still alive at that point is apparently of no concern to the Echelon's drive computer.
+
+Some additional notes:
+Control areas:
+The sub can be entered from the top (see marked hatch).
+The rear section, where the glowing energy charge display is located, can be used to access the one battery used by the sub.
+It can be replaced by a full and/or ion battery.
+Currently, modules are not supported and there is no access to any storage.
+
+Visual Enhancements:
+The Echelon enforces a third-person camera at all times. Use the mouse (or controller right stick) to look around. Depending on the current mode,
+the sub may or may not orientate accordingly.
+The sub continuously monitors its surroundings and marks relevant targets in up to 1km distance (though the game may not actually spawn creates at 1km away).
+This target display shows the current health as a circular bar around targets. Particularly strong or otherwise dangerous targets will cause it to pulse.
+The bar changes colors depending on how healthy that target still is.
+Depending on settings, text will appear next to each target marker, showing its the name, health, speed, and distance.
+This feature can be disabled or limited via the options menu (Target Text). Although I could not test it, I believe this to be the most VR-problematic feature.
+If you play this in VR, you may have to display on-screen text entirely.
+Additionally, arrows are shown to highlight dangerous and/or critical targets in the vicinity.
+The arrows will become more apparent as the target gets closer and start to flash within 100m distance.
+The color depends on the threat-assessment: red arrows indicate a critically dangerous target, yellow just dangerous.
+As of the time of writing, only shockers are classified as dangerous. Aggressive leviathans and warpers are considered critically dangerous.
+Depend on settings (Target Arrows), these arrows can be limited to critically dangerous or disabled entirely.
+Every target marker on screen can be focused on by pointing the camera at it. While focused, a second rotating ring appears inside the target marker.
+This is the currently active target, which will be locked by any fired torpedoes.
+If no target is currently focused, the animated ring will appear near the crosshair.
+Torpedoes fired in this mode will simply try to reach the closest ray intersection beneath the crosshair.
+If there is none, the target is a virtual point 500 meters forward.
+The sub has a energy bar on the rear section that shows the current battery level and changes. It will change color depending on the current charge.
+Animated bars on the outside visualize the current charge change speed.
+If the battery charge falls dangerously low, pulsing yellow or read backgrounds will appear.
+Controls:
+By default, the sub is in direct control mode, which means it will orientate itself to always point in the direction you're currently looking if it can.
+Similar to other subs, the Echelon will move in all 6 possible directions depending on input.
+The run-key (as running while not swimming, possibly Shift) will enable boost mode, pushing the sub much faster through the water.
+By default, this key is toggle boost-mode but this can be changed in the settings.
+The F-Keyboard key (configurable) can be used to switch into free-camera mode.
+While in this mode, the sub will not auto-align to the look direction but instead maintain its current heading.
+The inputs, normally used to strafe up/down and left/right, are now used to alter its heading.
+The sub cannot strafe while in this mode.
+The left hand trigger (mouse left button on mouse/keyboard) will cause the sub to continuously fire torpedoes at whatever
+you've targeted or are looking at (see previous chapter).
+The speed at which torpedoes are released can be configured in the settings (Torpedoes per Minute), though this number appear to not be very precise atm.
+Since the torpedo tubes need to open before the torpedo can be fired, just pressing the trigger and immediately releasing it may not actually fire any torpedoes.
+Torpedoes are fired alternatingely from the left and right tubes.
+While firing, the sub's battery will be drained 2 energy points per second.
+Power Management:
+The Echelon features a nuclear battery that provides a continuous charge to the regular battery.
+The charge speed can be changed in the options menu (Nuclear Battery Energy Output %). Right now 100% means a normal battery is recharged slightly over 1% each second.
+By default it will recharge around 0.2% per second. You can completely disable recharging this way (set it to 0%).
+The sub detects low and critical power states.
+If they sub battery level drops below 2%, boosting and torpedo firing are no longer possible, but self-healing will continue.
+At 1%, the sub goes into critical battery state, disallowing self-healing but still providing normal manuverability.
+If the nuclear battery charge speed is set to 0 or otherwise too low, the battery can actually die in this mode, shutting down oxygen production and any mobility.
+Once dead, the battery can no longer be charged (this is a built-in feature of the game) and must be replaced.
+Self Healing:
+If damage to the sub is detected, the on-board self-repair system will activate.
+While active, a green patterned glow will surround the sub and illuminate dark areas.
+The speed, at which the sub heals itself, can be configured in the settings (Self Healing %).
+At maximum, the sub will heal 2% per second. By default it will heal 0.2% health per second.
+Self-healing can be completely switched off this way (just set it 0%).
+While active, healing will consume 1 battery charge point per second.
+Torpedoes:
+Early on, it was decided that torpedoes would be the weapon of choice for this sub.
+As it turned out, that was not the best decision and may change in the future.
+Subnautica has a very inconsistent way of handling terrain colliders outside the immediate range of the player.
+After around 50 meters, there is no guarantee that the colliders even exist, or that they align with the visual representation.
+Therefore, by default torpedoes will ignore terrain colliders if fired at a locked target.
+If fired straigh ahead without target, they will collide with the terrain (or any invisible collider they encounter).
+If randomly exploding torpedoes are starting to drive you nuts, you can disable all collisions in the options menu (Torpedo Terrain Collisions).
+Or, if you feel like you're not nuts enough yet, you can enable it for all torpedoes.
+Note that after 100 meters or so, torpedoes will always clip through the terrain, regardless of this setting, because the game does not provide any colliders there.
+Explosion damage can be scaled via another option (Torpedo Damage). This value is the absolute damage at explosion distance 0.
+Since most explosions occur at least at a somewhat greater distance, the effective damage will be less than this value.
+If the torpedo explodes within damage distance of its origin sub, it will not explode and just disintegrate.
+So, if a reaper got hold of you, firing torpedoes at it will do nothing. The torpedoes will be shot, but they'll just disappear because you're too close.
+Do not get grabbed by anything or just wait it out.
+Some questions you may have, and possibly ansers:
+1) Are you nuts?
+Professionally so.
+2) Can we have a first-person camera?
+Possibly but since the sub has no windows (structural weakness etc), at best I could put a camera out front of the nose.
+But you need to complain loud enough if you want this feature.
+For now I'm assuming people prefer the 3rd person camera and are fed up with the lack of such (like me).
+3) This mod is unbalanced
+Yes. Its very nature is inherently unbalanced. The game normally wants you to run and hide from its predators and be punished if you don't.
+The biggest weapon it gives you is a knife.
+This mod takes this order and turns it upside down. The Echelon is nothing short of a reaper shredding machine.
+With high maneuverability, environment awareness, self healing, and lethal torpedoes, its core design philosophy contradicts the game's normal limitations.
+If you don't like escaping those limitations, this mod is probably not for you.
+4) I can float through ruins even if there is no water there
+Noted. Right now I haven't the faintest why this happens or how I can prevent it.
+I can only assume that the game devs never anticipated small subs to even reach those depths.
+There appears to be some water current that tries to prevent entry of the lowest ruin but the Echelon is just too fast for that.
+5) Can I use your stuff?
+Knock yourself out. If you sell it succesfully, consider hiring me.
