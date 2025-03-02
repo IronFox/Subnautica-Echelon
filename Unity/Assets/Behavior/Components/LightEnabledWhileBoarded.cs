@@ -4,23 +4,23 @@ using UnityEngine;
 
 public class LightEnabledWhileBoarded : CommonBoardingListener
 {
-    private Light light;
+    private Light myLight;
     // Start is called before the first frame update
     void Start()
     {
-        light = GetComponent<Light>();
+        myLight = GetComponent<Light>();
     }
 
     public override void SignalOnboardingBegin()
     {
-        if (light != null)
-            light.enabled = true;
+        if (myLight != null)
+            myLight.enabled = true;
     }
 
     public override void SignalOffBoardingBegin()
     {
-        if (light != null)
-            light.enabled = false;
+        if (myLight != null)
+            myLight.enabled = false;
     }
 
 }
