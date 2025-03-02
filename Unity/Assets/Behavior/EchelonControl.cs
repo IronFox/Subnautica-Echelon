@@ -292,7 +292,7 @@ public class EchelonControl : MonoBehaviour
 
     private void ProcessTargeting()
     {
-        if (isBoarded && !isDocked)
+        if (isBoarded && !isDocked && !cameraCenterIsCockpit)
         {
             var target = GetTarget();
             statusConsole.Set(StatusProperty.Target, target);
@@ -475,7 +475,7 @@ public class EchelonControl : MonoBehaviour
 
             positionCamera.positionBelowTarget = positionCameraBelowSub;
 
-            if (currentlyBoarded && !isDocked)
+            if (currentlyBoarded && !isDocked && !cameraCenterIsCockpit)
             {
                 rotateCamera.enabled = true;
 
