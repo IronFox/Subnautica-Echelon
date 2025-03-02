@@ -88,7 +88,7 @@ public class PositionCamera : MonoBehaviour
                 if (loggedCollider != hit.transform.name)
                 {
                     loggedCollider = hit.transform.name;
-                    ConsoleControl.Write("Camera collision with " + hit.transform.name);
+                    //ConsoleControl.Write("Camera collision with " + hit.transform.name);
                     //HierarchyAnalyzer analyzer = new HierarchyAnalyzer();
                     //analyzer.LogToJson(hit.transform, $@"C:\temp\logs\hit{DateTime.Now:yyyy-MM-dd HH_mm_ss}.json");
                 }
