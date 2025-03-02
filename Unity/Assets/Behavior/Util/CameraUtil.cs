@@ -21,30 +21,59 @@ public static class CameraUtil
     }
     public static Camera GetCamera(string requester)
     {
-        var t = GetTransform(requester);
-        if (t == null)
-            return null;
-        var c = t.GetComponent<Camera>();
-        if (c == null)
-            c = t.GetComponentInChildren<Camera>();
-        if (c == null)
-            Warn($"Warning: No camera component found in {t}. Returning null to {requester}");
-        return c;
+        return Get(requester, true).Camera;
     }
     public static Transform GetTransform(string requester)
     {
+        return Get(requester, false).Transform;
+    }
+
+    private static Camera GetCameraOf(Transform t)
+    {
+        var c = t.GetComponent<Camera>();
+        if (c == null)
+            c = t.GetComponentInChildren<Camera>();
+        return c;
+    }
+
+    private static (Transform Transform, Camera Camera) FromCamera(Camera camera)
+    {
+        return (camera.transform, camera);
+    }
+    private static bool CheckTransform(Transform t, bool requireCamera, out (Transform Transform, Camera Camera) rs)
+    {
+        if (!requireCamera)
+        {
+            rs = (t, null);
+            return true;
+        }
+
+        if (t != null)
+        {
+            var c = GetCameraOf(t);
+            if (c != null)
+            {
+                rs = (t, c);
+                return true;
+            }
+        }
+        rs = (null, null);
+        return false;
+    }
+    private static (Transform Transform, Camera Camera) Get(string requester, bool requireCamera)
+    {
         if (Camera.main != null)
-            return Camera.main.transform;
+            return FromCamera(Camera.main);
         Warn("Warning: Camera.main is null");
-        if (primaryFallbackCameraTransform == null)
-            return primaryFallbackCameraTransform;
+        if (CheckTransform(primaryFallbackCameraTransform, requireCamera, out var rs))
+            return rs;
         Warn("Warning: Primary fallback camera is null");
-        if (secondaryFallbackCameraTransform == null)
-            return secondaryFallbackCameraTransform;
+        if (CheckTransform(secondaryFallbackCameraTransform, requireCamera, out rs))
+            return rs;
         Warn("Warning: Secondary fallback camera is null");
 
         if (Camera.current != null)
-            return Camera.current.transform;
+            return FromCamera(Camera.current);
         Warn("Warning: Camera.current is null");
 
         foreach (var c in Camera.allCameras)
@@ -52,11 +81,11 @@ public static class CameraUtil
             if (c.isActiveAndEnabled)
             {
                 Warn($"Warning: Returning unusual camera {c.name} to {requester}");
-                return c.transform;
+                return FromCamera(c);
             }
         }
         Warn($"Warning: No active and enabled camera found. Returning null to {requester}");
-        return null;
+        return (null,null);
     }
 
 }
