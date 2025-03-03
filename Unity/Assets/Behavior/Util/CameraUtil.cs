@@ -9,15 +9,19 @@ public static class CameraUtil
     public static Transform primaryFallbackCameraTransform;
     public static Transform secondaryFallbackCameraTransform;
 
-    private static Dictionary<string, DateTime> lastSent;
+    private static readonly Dictionary<string, DateTime> lastSent = new Dictionary<string, DateTime>();
     private static void Warn(string msg)
     {
-        var now = DateTime.Now;
-        if (!lastSent.TryGetValue(msg, out DateTime dt) || now - dt > TimeSpan.FromSeconds(10))
+        try
         {
-            lastSent[msg] = now;
-            Debug.LogWarning(msg);
+            var now = DateTime.Now;
+            if (!lastSent.TryGetValue(msg, out DateTime dt) || now - dt > TimeSpan.FromSeconds(10))
+            {
+                lastSent[msg] = now;
+                Debug.LogWarning(msg);
+            }
         }
+        catch { }   //ignore this one
     }
     public static Camera GetCamera(string requester)
     {
