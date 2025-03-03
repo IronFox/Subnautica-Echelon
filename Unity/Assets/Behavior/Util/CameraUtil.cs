@@ -9,7 +9,8 @@ public static class CameraUtil
     public static Transform primaryFallbackCameraTransform;
     public static Transform secondaryFallbackCameraTransform;
 
-    private static readonly Dictionary<string, DateTime> lastSent = new Dictionary<string, DateTime>();
+    private static readonly Dictionary<string, DateTime> lastSent
+        = new Dictionary<string, DateTime>();
     private static void Warn(string msg)
     {
         try
@@ -66,30 +67,38 @@ public static class CameraUtil
     }
     private static (Transform Transform, Camera Camera) Get(string requester, bool requireCamera)
     {
-        if (Camera.main != null)
-            return FromCamera(Camera.main);
-        Warn("Warning: Camera.main is null");
-        if (CheckTransform(primaryFallbackCameraTransform, requireCamera, out var rs))
-            return rs;
-        Warn("Warning: Primary fallback camera is null");
-        if (CheckTransform(secondaryFallbackCameraTransform, requireCamera, out rs))
-            return rs;
-        Warn("Warning: Secondary fallback camera is null");
-
-        if (Camera.current != null)
-            return FromCamera(Camera.current);
-        Warn("Warning: Camera.current is null");
-
-        foreach (var c in Camera.allCameras)
+        try
         {
-            if (c.isActiveAndEnabled)
+            if (Camera.main != null)
+                return FromCamera(Camera.main);
+            Warn("Warning: Camera.main is null");
+            if (CheckTransform(primaryFallbackCameraTransform, requireCamera, out var rs))
+                return rs;
+            Warn("Warning: Primary fallback camera is null");
+            if (CheckTransform(secondaryFallbackCameraTransform, requireCamera, out rs))
+                return rs;
+            Warn("Warning: Secondary fallback camera is null");
+
+            if (Camera.current != null)
+                return FromCamera(Camera.current);
+            Warn("Warning: Camera.current is null");
+
+            foreach (var c in Camera.allCameras)
             {
-                Warn($"Warning: Returning unusual camera {c.name} to {requester}");
-                return FromCamera(c);
+                if (c.isActiveAndEnabled)
+                {
+                    Warn($"Warning: Returning unusual camera {c.name} to {requester}");
+                    return FromCamera(c);
+                }
             }
+            Warn($"Warning: No active and enabled camera found. Returning null to {requester}");
+            return (null, null);
         }
-        Warn($"Warning: No active and enabled camera found. Returning null to {requester}");
-        return (null,null);
+        catch (Exception ex)
+        {
+            Warn(ex.ToString());
+            return (null, null);
+        }
     }
 
 }
