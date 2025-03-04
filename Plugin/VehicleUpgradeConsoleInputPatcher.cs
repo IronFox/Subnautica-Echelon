@@ -36,7 +36,7 @@ namespace Subnautica_Echelon
         [HarmonyPatch(nameof(VehicleUpgradeConsoleInput.OnHandHover))]
         public static void VehicleUpgradeConsoleInputOnHandHoverPostfix(VehicleUpgradeConsoleInput __instance, Sequence ___sequence)
         {
-            Debug.Log("VehicleUpgradeConsoleInputOnHandHoverPostfix");
+            //Debug.Log("VehicleUpgradeConsoleInputOnHandHoverPostfix");
             // control opening the modules hatch
             if (__instance.GetComponentInParent<Echelon>() != null)
             {
@@ -53,7 +53,7 @@ namespace Subnautica_Echelon
         [HarmonyPatch("OpenPDA")]
         public static void VehicleUpgradeConsoleInputOpenPDAPostfix(VehicleUpgradeConsoleInput __instance, Sequence ___sequence)
         {
-            Debug.Log("VehicleUpgradeConsoleInputOpenPDAPostfix");
+            //Debug.Log("VehicleUpgradeConsoleInputOpenPDAPostfix");
             // control opening the modules hatch
             if (__instance.GetComponentInParent<EchelonControl>() != null)
             {
@@ -65,7 +65,7 @@ namespace Subnautica_Echelon
         [HarmonyPatch("OnClosePDA")]
         public static void VehicleUpgradeConsoleInputOnClosePDAPostfix(VehicleUpgradeConsoleInput __instance, Sequence ___sequence)
         {
-            Debug.Log("VehicleUpgradeConsoleInputOnClosePDAPostfix");
+            //Debug.Log("VehicleUpgradeConsoleInputOnClosePDAPostfix");
             // control opening the modules hatch
             if (__instance.GetComponentInParent<EchelonControl>() != null)
             {
