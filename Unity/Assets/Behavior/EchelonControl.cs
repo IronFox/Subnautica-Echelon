@@ -26,6 +26,7 @@ public class EchelonControl : MonoBehaviour
     public bool cameraCenterIsCockpit;
     public bool powerOff;
     public bool batteryDead;
+    public bool openUpgradeCover;
     private DateTime lastOnboarded;
 
     private readonly FloatTimeFrame energyHistory = new FloatTimeFrame(TimeSpan.FromSeconds(2));
@@ -41,6 +42,7 @@ public class EchelonControl : MonoBehaviour
     public TorpedoLaunchControl rightLaunch;
 
     private bool firingLeft = true;
+    private CoverAnimation upgradeCoverAnimation;
 
     public float regularForwardAcc = 400;
     public float overdriveForwardAcc = 800;
@@ -199,6 +201,7 @@ public class EchelonControl : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
+        upgradeCoverAnimation = GetComponentInChildren<CoverAnimation>();
         scanner = trailSpace.GetComponentInChildren<TargetScanner>();
         nonCameraOrientation = GetComponent<NonCameraOrientation>();
         rb = GetComponent<Rigidbody>();
@@ -308,6 +311,37 @@ public class EchelonControl : MonoBehaviour
         return s;
     }
 
+    private bool coverWasOpen = true;   //call SignalCoverClosed() at start
+    private void ProcessUpgradeCover()
+    {
+        if (openUpgradeCover)
+        {
+            if (upgradeCoverAnimation.IsAtBeginning)
+            {
+                var hideOnCoverOpen = GetComponentsInChildren<HideIfModuleCoverClosed>();
+                foreach (var c in hideOnCoverOpen)
+                    c.SignalCoverOpening();
+            }
+            else
+                coverWasOpen = true;
+            upgradeCoverAnimation.animateForward = true;
+        }
+        else
+        {
+            upgradeCoverAnimation.animateForward = false;
+            if (upgradeCoverAnimation.IsAtBeginning)
+            {
+                if (coverWasOpen)
+                {
+                    coverWasOpen = false;
+                    var hideOnCoverOpen = GetComponentsInChildren<HideIfModuleCoverClosed>();
+                    foreach (var c in hideOnCoverOpen)
+                        c.SignalCoverClosed();
+                }
+            }
+        }
+
+    }
 
     private void ProcessTargeting()
     {
@@ -395,7 +429,9 @@ public class EchelonControl : MonoBehaviour
         try
         {
             ProcessTargeting();
-            
+            ProcessUpgradeCover();
+
+
             statusConsole.Set(StatusProperty.EnergyLevel, currentEnergy);
             statusConsole.Set(StatusProperty.EnergyCapacity, maxEnergy);
             statusConsole.Set(StatusProperty.BatteryDead, batteryDead);
@@ -421,6 +457,7 @@ public class EchelonControl : MonoBehaviour
             statusConsole.Set(StatusProperty.IsHealing, isHealing);
             statusConsole.Set(StatusProperty.TriggerActive, triggerActive);
             statusConsole.Set(StatusProperty.OnboardingCooldown, OnboardingCooldown);
+            statusConsole.Set(StatusProperty.OpenUpgradeCover, openUpgradeCover);
 
             healingLight.isHealing = isHealing;
 

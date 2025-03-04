@@ -634,12 +634,33 @@ namespace Subnautica_Echelon
             {
                 var rs = new List<VehicleUpgrades>();
                 var ui = transform.Find("UpgradesInterface");
+                var plugs = transform.Find("Module Plugs");
+
+                var plugProxies = new List<Transform >();
+                if (plugs != null)
+                {
+                    for (int i = 0; i < plugs.childCount; i++)
+                    {
+                        var plug = plugs.GetChild(i);
+                        var position = plug.Find("Module Position");
+                        if (position != null)
+                            plugProxies.Add(position);
+                        else
+                            EchLog.Write($"Plug {plug.name} does not have a 'Module Position' child");
+                    }
+                }
+                else
+                    EchLog.Write($"Plugs not found");
+
+                EchLog.Write($"Determined {plugProxies.Count} plug(s)");
+
                 if (ui != null)
                 {
                     rs.Add(new VehicleUpgrades
                     {
                         Interface = ui.gameObject,
                         Flap = ui.gameObject,
+                        ModuleProxies = plugProxies
                     });
                 }
                 else

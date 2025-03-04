@@ -46,6 +46,11 @@ public static class M
         return t * t * (3f - (2f * t));
     }
 
+    public static float LinearStep(float a, float b, float x)
+    {
+        return (x - a) / (b - a);
+    }
+
     public static float Dot(Vector3 right, Vector3 delta)
         => Vector3.Dot(right, delta);
 
@@ -100,6 +105,8 @@ public static class M
     }
 
     public static Vector2 V2(float v) => new Vector2(v, v);
+
+
 }
 
 

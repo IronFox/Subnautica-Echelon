@@ -126,5 +126,6 @@ public enum StatusProperty
     IsHealing,
     TriggerActive,
     OnboardingCooldown,
+    OpenUpgradeCover,
 }
 
