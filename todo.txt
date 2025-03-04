@@ -1,14 +1,24 @@
 echelon todos:
 
+
+* reduce launch debug log verbosity
+* create modules with core functionality as versions with increasing efficiency
+* add target paint objects that capture per-target information instead of using multiple dictionaries
+* add camera shake on overdrive (use Random.insideUnitSphere)
+* rework readme in repo, add details, fix typoes
+
+maybe later:
+* add option to automatically fire at warpers
+* add option for off-board sentry mode (sub turns and fires at targets automatically that approach the player)
+* do not explode torpedoes if close to the player (Camera.main when off-boarded)
+
+
+
+
 * disable all access to C:\temp both in the unity scene and the plugin. Redirect to Debug. *done*
 * update version number  *done*
 
 * sub: 
-	* add option to automatically fire at warpers
-	* add option for off-board sentry mode (sub turns and fires at targets automatically that approach the player)
-	* do not explode torpedoes if close to the player (Camera.main when off-boarded)
-	* add camera shake on overdrive (use Random.insideUnitSphere)
-
 	* add glowing markers around sub for surrounding targets (done, configurable)
 	* torpedos fired with no target should always collide with terrain (configurable via option)
 	* show all alternative targets (done)
