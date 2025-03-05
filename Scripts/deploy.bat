@@ -1,8 +1,8 @@
 set "installPath=G:\SteamLibrary\steamapps\common\Subnautica"
 set "buildPath=..\..\BuildTarget"
 
-rmdir /Q /S "%installPath%\BepInEx\plugins\Echelon\images"
-del /Q "%installPath%\BepInEx\plugins\Echelon\*.*"
+rmdir /Q /S "%installPath%\BepInEx\plugins\Echelon"
+mkdir "%installPath%\BepInEx\plugins\Echelon"
 
 copy /Y "%buildPath%\Subnautica Echelon_Data\Managed\EchelonScripts.dll" "%installPath%\BepInEx\plugins\Echelon"
 copy /Y "..\Unity\Assets\AssetBundles\Windows\echelon" "%installPath%\BepInEx\plugins\Echelon"
