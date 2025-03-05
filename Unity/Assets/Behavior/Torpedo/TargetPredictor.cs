@@ -27,7 +27,7 @@ public class TargetPredictor : MonoBehaviour, ITargetPredictor
 
     void FixedUpdate()
     {
-        if (target?.Equals(lastTarget) == true)
+        if (target?.Equals(lastTarget) == true && target.Exists)
         {
             observedVelocity = target.InherentVelocity ?? (target.Position - lastPosition) / Time.fixedDeltaTime;
             lastPosition = target.Position;
