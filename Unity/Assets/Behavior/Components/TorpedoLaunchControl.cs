@@ -223,7 +223,9 @@ public class Torpedo
         Control.techLevel = techLevel;
         Control.IsLive = false;
         torpedo.transform.localPosition = Vector3.zero;
+        //this compensates a bit that torpedoes are crossly misplaced at high velocities:
         torpedo.transform.position += origin.GetPointVelocity(owner.position) * 0.025f;
+
         torpedo.transform.localEulerAngles = Vector3.zero;
 
         //Debug.Log($"Torpedo created");
