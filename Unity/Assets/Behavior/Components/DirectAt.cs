@@ -42,7 +42,7 @@ public class DirectAt : MonoBehaviour
     {
         rotX = RotateHorizontal();
         //RotateDirect();
-        RotateZ(rb, -rotX/5);
+        RotateZ(rb, -rotX/5, targetOrientation.ZImpact);
         if (rotateUpDown)
             RotateUpDown();
 
@@ -55,7 +55,7 @@ public class DirectAt : MonoBehaviour
 
     //}
 
-    public static void RotateZ(Rigidbody rb, float targetZ)
+    public static void RotateZ(Rigidbody rb, float targetZ, float targetImpact)
     {
         var axis = rb.transform.forward;
         //var correct = -Vector3.Dot(rb.angularVelocity, axis);
@@ -73,7 +73,7 @@ public class DirectAt : MonoBehaviour
             wantTurn = 0;
         //SignedMin(delta * horizontalRotationAcceleration, maxHorizontalRotationSpeed);
         float haveTurn = -Vector3.Dot(rb.angularVelocity, axis) * 180 / Mathf.PI;
-        float error = wantTurn - haveTurn;
+        float error = (wantTurn - haveTurn) * targetImpact;
         float accel = error * 10 * 0.02f;
 
         //SignedMin((wantTurn - haveTurn)*10, 10);
@@ -95,7 +95,7 @@ public class DirectAt : MonoBehaviour
             wantTurn = 0;
         //SignedMin(delta * horizontalRotationAcceleration, maxHorizontalRotationSpeed);
         float haveTurn = Vector3.Dot( rb.angularVelocity, axis) * 180 / Mathf.PI;
-        float error = wantTurn - haveTurn;
+        float error = (wantTurn - haveTurn) * targetOrientation.Impact;
         
 
         float accel = error * 10 * 0.02f;
@@ -157,7 +157,7 @@ public class DirectAt : MonoBehaviour
         //SignedMin(delta * horizontalRotationAcceleration, maxHorizontalRotationSpeed);
         //float haveTurn = -Vector3.Dot(rb.angularVelocity, axis) * 180 / Mathf.PI;
         float haveTurn = rb.angularVelocity.y * 180 / Mathf.PI;
-        float error = wantTurn - haveTurn;
+        float error = (wantTurn - haveTurn) * targetOrientation.Impact;
         float accel = error * 10 * 0.02f;
 
         //SignedMin((wantTurn - haveTurn)*10, 10);

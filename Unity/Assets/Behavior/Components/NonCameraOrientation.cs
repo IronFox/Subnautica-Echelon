@@ -14,6 +14,10 @@ public class NonCameraOrientation : MonoBehaviour, IDirectionSource
     public Vector3 Right => rot.Right;
     public Vector3 Up => rot.Up;
 
+    public float Impact => 1f;
+
+    public float ZImpact => 1f;
+
     // Start is called before the first frame update
     void Start()
     {

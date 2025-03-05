@@ -15,6 +15,7 @@ public class FallOrientation : MonoBehaviour, IDirectionSource
     }
 
     public Vector3 debugForward;
+    private float lastVelocity;
 
     public Vector3 Forward => rot.Forward;
     public Vector3 Right => rot.Right;
@@ -25,7 +26,7 @@ public class FallOrientation : MonoBehaviour, IDirectionSource
     void Update()
     {
         var dir = rb.velocity;
-        var mag = dir.magnitude;
+        var mag = lastVelocity = dir.magnitude;
         if (mag < 0.5f)
             dir = transform.forward;
         else
@@ -35,4 +36,8 @@ public class FallOrientation : MonoBehaviour, IDirectionSource
 
         debugForward = Forward;
     }
+
+    public float Impact => 1f - 1f / (1f + 0.1f * lastVelocity);
+        //M.Smoothstep(3, 10, lastVelocity);
+    public float ZImpact => Impact * 0.1f;
 }

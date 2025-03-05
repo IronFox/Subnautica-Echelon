@@ -18,6 +18,7 @@ maybe later:
 * update version number  *done*
 
 * general:
+	* scale falling alignment with speed (done)
 	* reduce launch debug log verbosity (done)
 
 * sub: 
