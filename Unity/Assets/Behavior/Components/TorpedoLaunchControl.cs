@@ -17,7 +17,11 @@ public class TorpedoLaunchControl : MonoBehaviour
 
     public static float torpedoesPerMinute = 15f;
 
+#pragma warning disable IDE0052 // Remove unread private members
+#pragma warning disable CS0414
     private bool everOpened;
+#pragma warning restore CS0414
+#pragma warning restore IDE0052 // Remove unread private members
 
     private Torpedo torpedoInTube;
 
