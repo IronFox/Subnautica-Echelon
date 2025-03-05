@@ -37,7 +37,7 @@ namespace Subnautica_Echelon
                     float worldDistance = distance;
 
                     distance /= halfDistance / M.Sqrt2;
-                    Log.Write($"Distance modified by halfDistance({halfDistance}): {distance}");
+                    //Log.Write($"Distance modified by halfDistance({halfDistance}): {distance}");
 
                     float volume = M.Saturate(1f / (distance * distance) - (1f / (cfg.MaxDistance * cfg.MaxDistance)));
                     rolloff.Add(new VECTOR
@@ -45,7 +45,7 @@ namespace Subnautica_Echelon
                         x = worldDistance,
                         y = volume
                     });
-                    Log.Write($"Rolloff added: {worldDistance},{volume}");
+                    //Log.Write($"Rolloff added: {worldDistance},{volume}");
                 }
                 var rolloffArray = rolloff.ToArray();
 
@@ -88,7 +88,7 @@ namespace Subnautica_Echelon
                 var component = cfg.Owner.AddComponent<FModComponent>();
                 
                 channel.isPlaying(out var isPlaying);
-                Log.Write($"Sound created (isPlaying={isPlaying})");
+                //Log.Write($"Sound created (isPlaying={isPlaying})");
                 var rs = component.sound = new FModSound(cfg, channel, sound, component, rolloffArray);
 
                 return rs;

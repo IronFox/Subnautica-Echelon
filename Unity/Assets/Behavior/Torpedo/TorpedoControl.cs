@@ -60,7 +60,7 @@ public class TorpedoControl : MonoBehaviour
             foreach (var light in Lights)
                 light.enabled = value;
 
-            Debug.Log("Targeting.enabled := " + Targeting.enabled);
+            //Debug.Log("Targeting.enabled := " + Targeting.enabled);
 
             enabled = value;
         }
@@ -72,7 +72,7 @@ public class TorpedoControl : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        Debug.Log("Torpedo: start()");
+        //Debug.Log("Torpedo: start()");
         LoadComponents();
     }
 
@@ -111,7 +111,7 @@ public class TorpedoControl : MonoBehaviour
             && (origin != null && Vector3.Distance(transform.position, origin.position) > safetyOriginDistance)
             )
         {
-            ConsoleControl.Write($"Exited exlusion intersection. Restoring collider");
+            //ConsoleControl.Write($"Exited exlusion intersection. Restoring collider");
             normalCollider.isTrigger = false;
             Drive.triggerActive = false;
         }

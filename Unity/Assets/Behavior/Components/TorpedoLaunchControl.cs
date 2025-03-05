@@ -65,7 +65,7 @@ public class TorpedoLaunchControl : MonoBehaviour
                 if (fireRecoverProgress > secondsToFire)
                 {
                     fireRecoverProgress = secondsToFire;
-                    ConsoleControl.Write("Recovered from firing. Closing again");
+                    //ConsoleControl.Write("Recovered from firing. Closing again");
                     fired = false;
                     coverRecoveryProgress = 0;
                     SetCover(1);
@@ -81,7 +81,7 @@ public class TorpedoLaunchControl : MonoBehaviour
                 //Debug.Log("Closing again @" + coverRecoveryProgress);
                 if (coverRecoveryProgress > secondsToOpenCover)
                 {
-                    ConsoleControl.Write("Closed");
+                    //ConsoleControl.Write("Closed");
                     closing = false;
 
                     SetCover(0);
@@ -108,7 +108,7 @@ public class TorpedoLaunchControl : MonoBehaviour
                     fireSound.play = true;
                     coverRedactionProgress = secondsToOpenCover;
                     SetCover(1);
-                    ConsoleControl.Write("Firing");
+                    //ConsoleControl.Write("Firing");
                     fired = true;
 
                     torpedoInTube.Launch(
@@ -117,7 +117,7 @@ public class TorpedoLaunchControl : MonoBehaviour
                         noExplosions,
                         overrideMaxLifetimeSeconds);
                     lastTorpedo = torpedoInTube;
-                    ConsoleControl.Write("Releasing fired torpedo");
+                    //ConsoleControl.Write("Releasing fired torpedo");
                     torpedoInTube = null;
 
                 }
@@ -126,8 +126,8 @@ public class TorpedoLaunchControl : MonoBehaviour
             }
             else
             {
-                if (everOpened)
-                    ConsoleControl.Write("fireWithTarget is null");
+                //if (everOpened)
+                //    ConsoleControl.Write("fireWithTarget is null");
                 everOpened = false;
                 //openSound.play = false;
                 fireSound.play = false;
@@ -167,7 +167,7 @@ public class TorpedoLaunchControl : MonoBehaviour
 
     private Torpedo InstantiateTorpedo()
     {
-        Debug.Log($"Creating torpedo");
+        //Debug.Log($"Creating torpedo");
         var torpedo = Instantiate(torpedoPrefab, transform);
         return new Torpedo(myBody, torpedo);
 
@@ -214,7 +214,7 @@ public class Torpedo
         torpedo.transform.localPosition = Vector3.zero;
         torpedo.transform.localEulerAngles = Vector3.zero;
 
-        Debug.Log($"Torpedo created");
+        //Debug.Log($"Torpedo created");
 
     }
 

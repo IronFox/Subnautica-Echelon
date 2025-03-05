@@ -18,7 +18,7 @@ public class TorpedoTargeting : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        Debug.Log("TorpedoTargeting: start()");
+        //Debug.Log("TorpedoTargeting: start()");
         look = GetComponent<TorpedoDirectAt>();
         predictor = GetComponent<TargetPredictor>();
         rb = GetComponent<Rigidbody>();

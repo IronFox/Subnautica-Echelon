@@ -27,7 +27,7 @@ public class ProximityDetector : MonoBehaviour
             || collider.attachedRigidbody == null
             || !PhysicsHelper.CanCollide(collider, regularCollider, true))
         {
-            ConsoleControl.Write($"Cannot react to proximity of {collider.name} (excluded={excluded},nobody={collider.attachedRigidbody == null}, other={!PhysicsHelper.CanCollide(collider, regularCollider, true)}). Ignoring");
+            //ConsoleControl.Write($"Cannot react to proximity of {collider.name} (excluded={excluded},nobody={collider.attachedRigidbody == null}, other={!PhysicsHelper.CanCollide(collider, regularCollider, true)}). Ignoring");
             return;
         }
         var rb = collider.attachedRigidbody;

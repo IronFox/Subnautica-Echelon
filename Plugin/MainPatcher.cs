@@ -151,7 +151,7 @@ namespace Subnautica_Echelon
                 {
                     try
                     {
-                        Log.Write($"Patching rigidbody for {go}");
+                        //Log.Write($"Patching rigidbody for {go}");
                         rb.drag = 10f;
                         rb.angularDrag = 10f;
                         rb.useGravity = false;
@@ -165,7 +165,7 @@ namespace Subnautica_Echelon
                         worldForces.waterDepth = 0f;
                         worldForces.lockInterpolation = true;
 
-                        Log.Write("Rigidbody patched: " + rb);
+                        //Log.Write("Rigidbody patched: " + rb);
                     }
                     catch (Exception ex)
                     {

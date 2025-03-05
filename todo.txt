@@ -1,7 +1,6 @@
 echelon todos:
 
 
-* reduce launch debug log verbosity
 * create modules with core functionality as versions with increasing efficiency
 * add target paint objects that capture per-target information instead of using multiple dictionaries
 * add camera shake on overdrive (use Random.insideUnitSphere)
@@ -17,6 +16,9 @@ maybe later:
 
 * disable all access to C:\temp both in the unity scene and the plugin. Redirect to Debug. *done*
 * update version number  *done*
+
+* general:
+	* reduce launch debug log verbosity (done)
 
 * sub: 
 	* add glowing markers around sub for surrounding targets (done, configurable)

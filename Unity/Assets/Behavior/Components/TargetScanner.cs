@@ -237,7 +237,7 @@ public class TargetPool<T>
         foreach (var p in map)
         {
             var instance = p.Value;
-            ConsoleControl.Write($"Destroying {typeof(T).Name} {p.Key}");
+            //ConsoleControl.Write($"Destroying {typeof(T).Name} {p.Key}");
             try
             {
                 Destroy(instance, true);
@@ -313,7 +313,7 @@ public class TargetPool<T>
                 {
                     try
                     {
-                        ConsoleControl.Write($"Creating {typeof(T).Name} for target {t}");
+                        //ConsoleControl.Write($"Creating {typeof(T).Name} for target {t}");
                         instance = Instantiate(t);
                         map.Add(goid, instance);
                     }
@@ -332,7 +332,7 @@ public class TargetPool<T>
             foreach (var p in remove)
             {
                 var instance = p.Value;
-                ConsoleControl.Write($"Destroying {typeof(T).Name} {p.Key}");
+                //ConsoleControl.Write($"Destroying {typeof(T).Name} {p.Key}");
                 try
                 {
                     Destroy(instance, false);
@@ -374,7 +374,7 @@ public class TargetPool<T>
                 {
                     try
                     {
-                        ConsoleControl.Write($"Creating {typeof(T).Name} for target {t}");
+                        //ConsoleControl.Write($"Creating {typeof(T).Name} for target {t}");
                         instance = Instantiate(t);
                         map.Add(goid, instance);
                     }
@@ -393,7 +393,7 @@ public class TargetPool<T>
             foreach (var p in remove)
             {
                 var instance = p.Value;
-                ConsoleControl.Write($"Destroying {typeof(T).Name} {p.Key}");
+                //ConsoleControl.Write($"Destroying {typeof(T).Name} {p.Key}");
                 try
                 {
                     Destroy(instance, false);

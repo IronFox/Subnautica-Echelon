@@ -7,7 +7,7 @@ public static class AudioPatcher
     {
         if (Patcher != null)
         {
-            ConsoleControl.Write($"Patching audio source {source.name}");
+            //ConsoleControl.Write($"Patching audio source {source.name}");
             Patcher(source);
         }
         else
@@ -22,7 +22,7 @@ public static class AudioPatcher
             return;
         }
         var sources = transform.GetComponentsInChildren<AudioSource>();
-        ConsoleControl.Write($"Patching {sources.Length} audio sources found in {transform.name}");
+        //ConsoleControl.Write($"Patching {sources.Length} audio sources found in {transform.name}");
         foreach (var source in sources)
             Patcher(source);
     }

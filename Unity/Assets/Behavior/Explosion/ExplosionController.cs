@@ -28,9 +28,9 @@ public class ExplosionController : MonoBehaviour
             {
                 float distance = M.Distance(transform.position,t.GameObject.transform.position); 
                 float dmg = explosionDamage / (1f + distance * 0.1f);
-                ConsoleControl.Write($"Dealing {dmg} damage to {t} at health {t.CurrentHealth} and distance {distance}");
+                //ConsoleControl.Write($"Dealing {dmg} damage to {t} at health {t.CurrentHealth} and distance {distance}");
                 t.DealDamage(transform.position, dmg, gameObject);
-                ConsoleControl.Write($"Health now at {t.CurrentHealth}");
+                //ConsoleControl.Write($"Health now at {t.CurrentHealth}");
             }
         }
     }

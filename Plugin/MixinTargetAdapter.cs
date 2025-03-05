@@ -38,7 +38,7 @@ namespace Subnautica_Echelon
         {
             Log.Write($"Dealing {damage} damage to {GameObject.name}");
             mixin.TakeDamage(damage,origin,dealer: dealer);
-            Log.Write($"Health now at {mixin.health}");
+            //Log.Write($"Health now at {mixin.health}");
         }
 
         public override bool Equals(object obj)

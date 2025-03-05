@@ -375,8 +375,8 @@ public class EchelonControl : MonoBehaviour
                 var targetSize = SizeOf(target);
                 TargetListeners.Of(this, trailSpace).SignalNewTarget(this, targetEnvironment, target);
 
-                if (!(target is PositionTargetable) && !target.Equals(lastValidTarget))
-                    ConsoleControl.Write($"New target acquired: {target}");
+                //if (!(target is PositionTargetable) && !target.Equals(lastValidTarget))
+                //    ConsoleControl.Write($"New target acquired: {target}");
 
                 lastValidTarget = target;
 
@@ -386,7 +386,7 @@ public class EchelonControl : MonoBehaviour
             {
                 if (lastValidTarget != null)
                     TargetListeners.Of(this, trailSpace).SignalNewTarget(this, targetEnvironment, null);
-                ConsoleControl.Write($"Destroying target marker");
+                //ConsoleControl.Write($"Destroying target marker");
 
                 lastValidTarget = null;
             }

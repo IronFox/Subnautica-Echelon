@@ -73,7 +73,7 @@ public class CollisionTrigger : MonoBehaviour
             }
             if (t == null && ignoreNonTargets)
             {
-                ConsoleControl.Write($"Flagging collisions with {collision.collider} to be ignored");
+                //ConsoleControl.Write($"Flagging collisions with {collision.collider} to be ignored");
                 Physics.IgnoreCollision(collision.collider, regularCollider);
                 return;
             }
