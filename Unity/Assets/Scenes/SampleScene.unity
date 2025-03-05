@@ -1925,6 +1925,16 @@ PrefabInstance:
       propertyPath: m_Name
       value: Echelon
       objectReference: {fileID: 0}
+    - target: {fileID: 5519261214424765450, guid: 90a2bc4f316bae74e996df61913f6a52,
+        type: 3}
+      propertyPath: torpedoMark
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 7858723241877434807, guid: 90a2bc4f316bae74e996df61913f6a52,
+        type: 3}
+      propertyPath: m_RootOrder
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 7858723241877434807, guid: 90a2bc4f316bae74e996df61913f6a52,
         type: 3}
       propertyPath: m_LocalRotation.w

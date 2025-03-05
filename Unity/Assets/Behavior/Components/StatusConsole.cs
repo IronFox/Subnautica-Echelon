@@ -127,5 +127,6 @@ public enum StatusProperty
     TriggerActive,
     OnboardingCooldown,
     OpenUpgradeCover,
+    TorpedoMark,
 }
 

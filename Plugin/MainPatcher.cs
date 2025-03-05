@@ -32,6 +32,8 @@ namespace Subnautica_Echelon
     public class MainPatcher : BaseUnityPlugin
     {
         internal static EchelonConfig PluginConfig { get; private set; }
+        internal const string WorkBenchTab = "Storage";
+        internal static string ImagesFolder { get; } = Path.Combine(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location), "images");
 
 
         public void Awake()
@@ -58,6 +60,8 @@ namespace Subnautica_Echelon
                 var harmony = new Harmony(PluginInfo.PLUGIN_GUID);
                 harmony.PatchAll();
                 UWE.CoroutineHost.StartCoroutine(Register());
+
+
                 Log.Write("MainPatcher.Start() done");
             }
             catch (Exception ex)
@@ -123,12 +127,20 @@ namespace Subnautica_Echelon
                 Echelon.moduleBackground = LoadSpriteRaw("images/moduleBackground.png");
                 started = UWE.CoroutineHost.StartCoroutine(VehicleRegistrar.RegisterVehicle(sub,true));
 
+                VehicleFramework.Admin.UpgradeCompat compat = new VehicleFramework.Admin.UpgradeCompat
+                {
+                    skipCyclops = true,
+                    skipModVehicle = false,
+                    skipSeamoth = true,
+                    skipExosuit = true
+                };
+                TorpedoModule.Mk1Type = VehicleFramework.Admin.UpgradeRegistrar.RegisterUpgrade(new TorpedoModule(0), compat).forModVehicle;
+                TorpedoModule.Mk2Type = VehicleFramework.Admin.UpgradeRegistrar.RegisterUpgrade(new TorpedoModule(1), compat).forModVehicle;
+                TorpedoModule.Mk3Type = VehicleFramework.Admin.UpgradeRegistrar.RegisterUpgrade(new TorpedoModule(2), compat).forModVehicle;
+
+
 
                 AudioPatcher.Patcher = (source) => FreezeTimePatcher.Register(source);
-                //ExplosionAdapter.HandleExplosion = (exp) =>
-                //{
-                //    WorldForces.AddExplosion(exp.Center, DayNightCycle.main.timePassed, exp.Magnitude, exp.Radius);
-                //};
                 ActorAdapter.IsOutOfWater = (go, pos) =>
                 {
                     var wf = go.GetComponent<WorldForces>();

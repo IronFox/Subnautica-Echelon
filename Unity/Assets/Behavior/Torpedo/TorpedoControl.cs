@@ -31,6 +31,7 @@ public class TorpedoControl : MonoBehaviour
     public Rigidbody origin;
     public float safetyOriginDistance = 5;
 
+    public int techLevel;
 
     public bool IsLive
     {
@@ -86,6 +87,8 @@ public class TorpedoControl : MonoBehaviour
         Rigidbody = GetComponent<Rigidbody>();
         MaxFlightTime = GetComponent<MaxFlightTime>();
         Detonator = GetComponent<Detonator>();
+        Detonator.origin = origin;
+        Detonator.techLevel = techLevel;
         TorpedoDirectAt = GetComponent<TorpedoDirectAt>();
         ParticleSystem = GetComponentInChildren<ParticleSystem>();
         SoundAdapter = GetComponent<SoundAdapter>();
@@ -94,7 +97,7 @@ public class TorpedoControl : MonoBehaviour
         CollisionTrigger = GetComponentInChildren<CollisionTrigger>();
         CollisionTrigger.doNotCollideWith = origin;
         CollisionTrigger.target = TargetPredictor.target;
-        Detonator.origin = origin;
+
         Lights = GetComponentsInChildren<Light>();
     }
 
@@ -104,6 +107,7 @@ public class TorpedoControl : MonoBehaviour
         ProximityDetector.doNotCollideWith = origin;
         CollisionTrigger.doNotCollideWith = origin;
         Detonator.origin = origin;
+        Detonator.techLevel = techLevel;
         Drive.origin = origin;
         CollisionTrigger.target = TargetPredictor.target;
 

@@ -25,6 +25,7 @@ namespace Subnautica_Echelon
         private VoidDrive engine;
         private AutoPilot autopilot;
         private EnergyInterface energyInterface;
+        private int[] moduleCounts = new int[Enum.GetValues(typeof(EchelonModule)).Length];
         public Echelon()
         {
             EchLog = new MyLogger(this);
@@ -54,10 +55,8 @@ namespace Subnautica_Echelon
                 { TechType.PowerCell, 1 },
                 { TechType.Welder, 1 },
                 { TechType.AdvancedWiringKit, 2 },
-                { TechType.Aerogel, 2 },
                 { TechType.UraniniteCrystal, 5 },
                 { TechType.Diamond, 2 },
-                { TechType.Magnetite, 2 },
                 { TechType.Kyanite, 2 },
                 { TechType.PlasteelIngot, 4 },
             };
@@ -430,16 +429,29 @@ namespace Subnautica_Echelon
                 control.positionCameraBelowSub = false;
         }
 
+        private bool HasModule(EchelonModule module)
+            => moduleCounts[(int)module] > 0;
+
+        private int HighestModule(params EchelonModule[] m)
+        {
+            for (int i = m.Length-1; i >= 0; i--)
+                if (HasModule(m[i]))
+                    return i + 1;
+            return 0;
+        }
+
         public override void Update()
         {
             try
             {
                 LocalInit();
 
-                TorpedoLaunchControl.torpedoesPerMinute = MainPatcher.PluginConfig.torpedoesPerMinute;
-                ExplosionController.explosionDamage = MainPatcher.PluginConfig.torpedoDamage;
                 TrailSpaceTargetText.textDisplay = MainPatcher.PluginConfig.textDisplay;
                 EchelonControl.targetArrows = MainPatcher.PluginConfig.targetArrows;
+
+                control.torpedoMark = 
+                    HighestModule(EchelonModule.TorpedoMk1, EchelonModule.TorpedoMk2, EchelonModule.TorpedoMk3)
+                    ;
 
                 Vector2 lookDelta = GameInput.GetLookDelta();
                 control.lookRightAxis = lookDelta.x * 0.1f;
@@ -521,6 +533,22 @@ namespace Subnautica_Echelon
 
         public void OnBatteryDepleted()
         {
+        }
+
+        internal void ChangeCounts(EchelonModule moduleType, bool isAdded)
+        {
+            if (isAdded)
+                moduleCounts[(int)moduleType]++;
+            else
+            {
+                if (moduleCounts[(int)moduleType] == 0)
+                {
+                    Debug.LogError($"Decrementing {moduleType} to less than zero. Ignoring");
+                    return;
+                }
+                moduleCounts[(int)moduleType]--;
+            }
+            Debug.Log($"Changed counts of {moduleType} to {moduleCounts[(int)moduleType]}");
         }
 
         public override int MaxHealth => 2000;

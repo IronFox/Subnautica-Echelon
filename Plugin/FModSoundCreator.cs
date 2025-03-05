@@ -140,13 +140,14 @@ namespace Subnautica_Echelon
 
         internal void Update(float timeDelta)
         {
+            Vector3 vpos = Vector3.zero, velocity = Vector3.zero;
             try
             {
                 var position = Component.transform.position;
-                var velocity = (position - lastPosition) / timeDelta;
+                velocity = (position - lastPosition) / timeDelta;
                 lastPosition = position;
-
-
+                vpos = position;
+                
                 var pos = new VECTOR
                 {
                     x = position.x,
@@ -177,7 +178,7 @@ namespace Subnautica_Echelon
             }
             catch (Exception ex)
             {
-                Log.Write($"FModSound.Update({timeDelta})", ex);
+                Log.Write($"FModSound.Update({timeDelta}) [{vpos},{velocity}] ", ex);
             }
         }
 

@@ -9,6 +9,7 @@
         _Scale("Scale", Range(0.1,10)) = 1
         _FadeIn("FadeIn", Range(0,1)) = 1
         [MaterialToggle] _IsPrimary ("Is Primary", Float) = 1
+        [MaterialToggle] _IsLocked ("Is Locked", Float) = 1
         
     }
     SubShader
@@ -57,6 +58,7 @@
             float3 _ObjCenter;
             float _Scale;
             float _IsPrimary;
+            float _IsLocked;
             float _FadeIn;
 
             v2f vert (appdata v)
@@ -107,15 +109,18 @@
 
                 if (_Health.z < 0.5)
                 {
-                    //alpha *= 0.5 * (1.0 - smoothstep(0.6, 0.6+d*4, cs)) * smoothstep(0.2, 0.2+d2*2,radial );
-                    c.rgb = float3(1,0.5,0.4)*1.5 //* (1.0 - smoothstep(0.5, 0.5+d*4, cs))
-                            //* smoothstep(0.4, 0.4+d*2, cs)
-                            // * smoothstep(0.3, 0.3+radialDD*2,radial )
-                            * hardRange(0.85,0.94, r, rd)
-                            * smoothstep(0.38, 0.38+radialDD*2,radial );
-                            ;
+                    if (_IsLocked > 0.5)
+                    {
+                        //alpha *= 0.5 * (1.0 - smoothstep(0.6, 0.6+d*4, cs)) * smoothstep(0.2, 0.2+d2*2,radial );
+                        c.rgb = float3(1,0.5,0.4)*1.5 //* (1.0 - smoothstep(0.5, 0.5+d*4, cs))
+                                //* smoothstep(0.4, 0.4+d*2, cs)
+                                // * smoothstep(0.3, 0.3+radialDD*2,radial )
+                                * hardRange(0.85,0.94, r, rd)
+                                * smoothstep(0.38, 0.38+radialDD*2,radial );
+                                ;
 
-                    alpha *= smoothstep(0.3, 0.3+radialDD*2,radial );
+                        alpha *= smoothstep(0.3, 0.3+radialDD*2,radial );
+                    }
                 }
                 else
                 {
@@ -139,20 +144,20 @@
 
                     
                     alpha *= 0.1 + 0.9 * _IsPrimary;
-                    if (_IsPrimary > 0.5)
+                    if (_IsLocked > 0.5)
                     {
-                    alpha = max(alpha, 
-                        hardRange(0.6,0.8,r, rd)
-                        * smoothstep(0.3, 0.3+radialDD*2,radial )
-                        );
-                    //c.rgb = (float3)radial;
+                        alpha = max(alpha, 
+                            hardRange(0.6,0.8,r, rd)
+                            * smoothstep(0.3, 0.3+radialDD*2,radial )
+                            );
+                        //c.rgb = (float3)radial;
 
-                    c.rgb += float3(1,0.5,0.4)*1.5 //* (1.0 - smoothstep(0.5, 0.5+d*4, cs))
-                    //         //* smoothstep(0.4, 0.4+d*2, cs)
-                              * smoothstep(0.38, 0.38+radialDD*2,radial )
-                              * hardRange(0.65,0.75, r, rd)
-                    //         * 
-                             ;
+                        c.rgb += float3(1,0.5,0.4)*1.5 //* (1.0 - smoothstep(0.5, 0.5+d*4, cs))
+                        //         //* smoothstep(0.4, 0.4+d*2, cs)
+                                  * smoothstep(0.38, 0.38+radialDD*2,radial )
+                                  * hardRange(0.65,0.75, r, rd)
+                        //         * 
+                                 ;
                     }
                     // alpha *= smoothstep(0.3, 0.3+radialDD*2,radial );
                 }

@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
+using static UnityEngine.GraphicsBuffer;
 
 public class EchelonControl : MonoBehaviour
 {
@@ -16,6 +17,15 @@ public class EchelonControl : MonoBehaviour
     public float zoomAxis;
     public float lookRightAxis;
     public float lookUpAxis;
+
+    public int torpedoMark; //0 = disabled, 1 = Mk1, 2 = Mk2, 3 = Mk3
+
+    /*
+    Frequency = 60 * Mathf.Pow(2, mk);
+        ExplosionRadius = 15f/4 * Mathf.Pow(2,mk);
+        Damage = 1500f / 4 * Mathf.Pow(2, mk);
+    */
+
 
     public bool overdriveActive;
     public bool outOfWater;
@@ -240,7 +250,6 @@ public class EchelonControl : MonoBehaviour
 
     private ITargetable GetTarget()
     {
-        targetEnvironment.Update(transform.position, 1000, transform, trailSpace);
 
         var t = scanner.GetBestTarget(targetEnvironment);
         if (t != null)
@@ -345,23 +354,34 @@ public class EchelonControl : MonoBehaviour
 
     private void ProcessTargeting()
     {
+        rightLaunch.torpedoTechLevel
+            = leftLaunch.torpedoTechLevel
+            = Math.Max(0,torpedoMark-1);
+
+
         if (isBoarded && !isDocked && !cameraCenterIsCockpit)
         {
+            targetEnvironment.Update(transform.position, 1000, transform, trailSpace);
             var target = GetTarget();
             statusConsole.Set(StatusProperty.Target, target);
             //ConsoleControl.Write($"target: "+target.ToString());
 
 
             IEnumerable<ITargetable> set = targetEnvironment.Targets;
-            if (target != null && !(target is AdapterTargetable))
+            if (target != null
+                && torpedoMark > 0
+                && !(target is AdapterTargetable))
                 set = set.Append(target);
+
             targetMarkers.UpdateAll(set, 
                 (tm, t) =>
                 {
                     tm.MoveTo(t.Position);
                     var targetSize = SizeOf(t);
                     tm.Scale(targetSize);
-                    tm.TargetHealthFeed.isPrimary = t.Equals(target);
+                    var primary = t.Equals(target);
+                    tm.TargetHealthFeed.isPrimary = primary;
+                    tm.TargetHealthFeed.isLocked = primary && torpedoMark > 0;
                 });
             if (targetArrows != TargetArrows.None)
                 targetDirectionMarkers.UpdateAll(targetEnvironment.Targets,
@@ -369,11 +389,11 @@ public class EchelonControl : MonoBehaviour
             else
                 targetDirectionMarkers.Purge();
 
+            TargetListeners.Of(this, trailSpace).SignalNewTarget(this, targetEnvironment, target);
 
             if (target != null)
             {
                 var targetSize = SizeOf(target);
-                TargetListeners.Of(this, trailSpace).SignalNewTarget(this, targetEnvironment, target);
 
                 //if (!(target is PositionTargetable) && !target.Equals(lastValidTarget))
                 //    ConsoleControl.Write($"New target acquired: {target}");
@@ -384,8 +404,6 @@ public class EchelonControl : MonoBehaviour
             }
             else
             {
-                if (lastValidTarget != null)
-                    TargetListeners.Of(this, trailSpace).SignalNewTarget(this, targetEnvironment, null);
                 //ConsoleControl.Write($"Destroying target marker");
 
                 lastValidTarget = null;
@@ -393,7 +411,9 @@ public class EchelonControl : MonoBehaviour
 
             var firing = firingLeft ? leftLaunch : rightLaunch;
 
-            var doFire = triggerActive && !outOfWater && !OnboardingCooldown;
+            var doFire = triggerActive
+                        && torpedoMark > 0
+                        && !outOfWater && !OnboardingCooldown;
 
             // Debug.Log($"doFire={doFire} (triggerActive={triggerActive}, outOfWater={outOfWater})");
 
@@ -458,6 +478,7 @@ public class EchelonControl : MonoBehaviour
             statusConsole.Set(StatusProperty.TriggerActive, triggerActive);
             statusConsole.Set(StatusProperty.OnboardingCooldown, OnboardingCooldown);
             statusConsole.Set(StatusProperty.OpenUpgradeCover, openUpgradeCover);
+            statusConsole.Set(StatusProperty.TorpedoMark, torpedoMark);
 
             healingLight.isHealing = isHealing;
 

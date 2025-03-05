@@ -303,6 +303,11 @@ public class TargetPool<T>
             foreach (var t in targets)
             {
                 var goid = t.GameObjectInstanceId;
+                if (!t.Exists)
+                {
+                    Flush(goid);
+                    continue;
+                }
                 var status = filter(t);
                 if (status is null)
                 {

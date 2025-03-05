@@ -11,15 +11,25 @@ public class ExplosionController : MonoBehaviour
 
     private float time;
 
-    public static float explosionDamage = 1500;
+    //public static float explosionDamage = 1500;
 
-    public const float ExplosionRadius = 15;
+    public float ExplosionDamage => 2000f / 25 * Mathf.Pow(5, techLevel);
+
+    public static float ExplosionRadiusAt(int techLevel) => 15f / 4 * Mathf.Pow(2, techLevel);
+    public float ExplosionRadius => ExplosionRadiusAt(techLevel);
+
+    public int techLevel;
 
     // Start is called before the first frame update
     void Start()
     {
         lights = GetComponentsInChildren<Light>();
-        ExplosionAdapter.HandleExplosion((gameObject, transform.position, 50, 100));
+
+
+
+        var exp = transform.GetChild(0);
+        exp.localScale = M.V3(ExplosionRadius * 2f / 15f);
+
 
         foreach (var env in GetCurrentEnvironment())
         {
@@ -27,7 +37,7 @@ public class ExplosionController : MonoBehaviour
             if (t != null && t.IsAlive)
             {
                 float distance = M.Distance(transform.position,t.GameObject.transform.position); 
-                float dmg = explosionDamage / (1f + distance * 0.1f);
+                float dmg = ExplosionDamage / (1f + distance * 0.1f);
                 //ConsoleControl.Write($"Dealing {dmg} damage to {t} at health {t.CurrentHealth} and distance {distance}");
                 t.DealDamage(transform.position, dmg, gameObject);
                 //ConsoleControl.Write($"Health now at {t.CurrentHealth}");

@@ -8,14 +8,18 @@ public class TorpedoLaunchControl : MonoBehaviour
     public GameObject torpedoPrefab;
     public float relativeExitVelocity=200;
     public Transform cover;
-    public float secondsToOpenCover => (60/torpedoesPerMinute)*0.25f;
-    public float secondsToFire = (60/torpedoesPerMinute) * 0.5f;
+    public float secondsToOpenCover => (60/TorpedoesPerMinute)*0.25f;
+    public float secondsToFire => (60/TorpedoesPerMinute) * 0.5f;
     public Transform coverOpenPosition;
     public bool noExplosions;
     public float overrideMaxLifetimeSeconds;
     public SoundAdapter fireSound;
 
-    public static float torpedoesPerMinute = 15f;
+    /// <summary>
+    /// Zero-based torpedo tech level
+    /// </summary>
+    public int torpedoTechLevel;
+    public float TorpedoesPerMinute => 20 + torpedoTechLevel * 12;
 
 #pragma warning disable IDE0052 // Remove unread private members
 #pragma warning disable CS0414
@@ -64,7 +68,7 @@ public class TorpedoLaunchControl : MonoBehaviour
                 //openSound.play = false;
                 fireRecoverProgress += Time.deltaTime;
                 fireSound.play = true;
-                fireSound.volume = M.Saturate(1f - fireRecoverProgress / secondsToFire);
+                fireSound.volume = M.Saturate(1f - fireRecoverProgress / Mathf.Min(1,secondsToFire));
                 //Debug.Log("Waiting for fire recovery @" + fireRecoverProgress);
                 if (fireRecoverProgress > secondsToFire)
                 {
@@ -173,9 +177,11 @@ public class TorpedoLaunchControl : MonoBehaviour
     {
         //Debug.Log($"Creating torpedo");
         var torpedo = Instantiate(torpedoPrefab, transform);
-        return new Torpedo(myBody, torpedo);
+        return new Torpedo(myBody, transform, torpedo, torpedoTechLevel);
 
     }
+
+    
 }
 
 
@@ -208,14 +214,16 @@ public class Torpedo
         GameObject.Destroy(GameObject);
     }
 
-    public Torpedo(Rigidbody origin, GameObject torpedo)
+    public Torpedo(Rigidbody origin, Transform owner, GameObject torpedo, int techLevel)
     {
         GameObject = torpedo;
 
         Control = torpedo.GetComponent<TorpedoControl>();
         Control.origin = origin;
+        Control.techLevel = techLevel;
         Control.IsLive = false;
         torpedo.transform.localPosition = Vector3.zero;
+        torpedo.transform.position += origin.GetPointVelocity(owner.position) * 0.025f;
         torpedo.transform.localEulerAngles = Vector3.zero;
 
         //Debug.Log($"Torpedo created");

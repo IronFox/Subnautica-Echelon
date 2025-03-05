@@ -12,6 +12,7 @@ public class TargetHealthFeed : MonoBehaviour
     private Material material;
     private TextMeshProUGUI meshPro;
     public bool isPrimary;
+    public bool isLocked;
     public float fadeIn = 0;
 
     private static float lowerCriticalHealthSqrt = Mathf.Sqrt(750);
@@ -44,6 +45,7 @@ public class TargetHealthFeed : MonoBehaviour
         else
             material.SetVector("_Health", M.V4(0));
         material.SetFloat("_IsPrimary", isPrimary ? 1 : 0);
+        material.SetFloat("_IsLocked", isLocked ? 1 : 0);
         material.SetFloat("_FadeIn", fadeIn);
 
     }
