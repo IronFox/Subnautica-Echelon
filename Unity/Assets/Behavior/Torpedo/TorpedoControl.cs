@@ -29,7 +29,7 @@ public class TorpedoControl : MonoBehaviour
 
 
     public Rigidbody origin;
-    public float safetyOriginDistance = 10;
+    public float safetyOriginDistance = 5;
 
 
     public bool IsLive
