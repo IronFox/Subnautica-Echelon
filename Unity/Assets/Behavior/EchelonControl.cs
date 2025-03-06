@@ -60,7 +60,12 @@ public class EchelonControl : MonoBehaviour
     public float rotationDegreesPerSecond = 50;
     public float waterDrag = 10;
     public float airDrag = 0.1f;
-    public bool triggerActive;
+    public bool triggerActive;  //captures continuous holding
+    public bool triggerWasActivated; //captures trigger key down
+
+    private bool maintainTriggerUntilFired;
+    private ITargetable maintainTarget;
+
     private DateTime lastTriggerTime = DateTime.MinValue;
 
     private EnergyLevel energyLevel;
@@ -352,11 +357,21 @@ public class EchelonControl : MonoBehaviour
 
     }
 
+    public bool IsFiring => (triggerActive || maintainTriggerUntilFired)
+                            && isBoarded
+                            && !isDocked
+                            && !cameraCenterIsCockpit
+                            && torpedoMark > 0
+                            && !outOfWater && !OnboardingCooldown;
+
     private void ProcessTargeting()
     {
         rightLaunch.torpedoTechLevel
             = leftLaunch.torpedoTechLevel
             = Math.Max(0,torpedoMark-1);
+
+        
+
 
 
         if (isBoarded && !isDocked && !cameraCenterIsCockpit)
@@ -411,9 +426,22 @@ public class EchelonControl : MonoBehaviour
 
             var firing = firingLeft ? leftLaunch : rightLaunch;
 
-            var doFire = triggerActive
-                        && torpedoMark > 0
-                        && !outOfWater && !OnboardingCooldown;
+
+            if (triggerWasActivated)
+            {
+                maintainTriggerUntilFired = true;
+                maintainTarget = target;
+            }
+            else if (triggerActive)
+            {
+                maintainTarget = target;
+            }
+
+            if (maintainTriggerUntilFired && !triggerActive && maintainTarget.Exists)
+                target = maintainTarget;
+
+
+            var doFire = IsFiring;
 
             // Debug.Log($"doFire={doFire} (triggerActive={triggerActive}, outOfWater={outOfWater})");
 
@@ -423,6 +451,7 @@ public class EchelonControl : MonoBehaviour
                 ConsoleControl.Write($"Switching tube");
                 firing.fireWithTarget = null;
                 firingLeft = !firingLeft;
+                maintainTriggerUntilFired = false;
             }
             statusConsole.Set(StatusProperty.LeftLauncherTarget, leftLaunch.fireWithTarget);
             statusConsole.Set(StatusProperty.RightLauncherTarget, rightLaunch.fireWithTarget);

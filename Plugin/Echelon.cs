@@ -313,16 +313,16 @@ namespace Subnautica_Echelon
                 && !IngameMenu.main.gameObject.activeSelf
                 )
             {
-                bool trigger = GameInput.GetAnalogValueForButton(GameInput.Button.LeftHand) > 0.1f;
-                if (trigger)
+                control.triggerActive = GameInput.GetAnalogValueForButton(GameInput.Button.LeftHand) > 0.1f;
+                control.triggerWasActivated = GameInput.GetButtonDown(GameInput.Button.LeftHand);
+                if (control.IsFiring)
                 {
                     float drain = 2f;
                     powerMan.TrySpendEnergy(Time.deltaTime * drain);
                 }
-                control.triggerActive = trigger;
             }
             else
-                control.triggerActive = false;
+                control.triggerWasActivated = control.triggerActive = false;
 
         }
 
@@ -553,7 +553,12 @@ namespace Subnautica_Echelon
 
         public override int MaxHealth => 2000;
         public override int NumModules => 8;
-        public override int BaseCrushDepth => 1700;
+        public override int BaseCrushDepth => 300;
+        public override int CrushDepthUpgrade1 => 200;
+
+        public override int CrushDepthUpgrade2 => 600;
+
+        public override int CrushDepthUpgrade3 => 600;
 
         public override string vehicleDefaultName => "Echelon";
 

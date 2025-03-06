@@ -24,6 +24,7 @@ public class MotionSimulation : MonoBehaviour
         control.freeCamera = Input.GetMouseButton(1);
         control.zoomAxis = -Input.GetAxis("Mouse ScrollWheel");
         control.triggerActive = Input.GetKey(KeyCode.Mouse0);
+        control.triggerWasActivated = Input.GetKeyDown(KeyCode.Mouse0);
         
     }
 
