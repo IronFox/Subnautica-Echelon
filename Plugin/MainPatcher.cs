@@ -33,7 +33,8 @@ namespace Subnautica_Echelon
     {
         internal static EchelonConfig PluginConfig { get; private set; }
         internal const string WorkBenchTab = "Storage";
-        internal static string ImagesFolder { get; } = Path.Combine(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location), "images");
+        internal static string RootFolder { get; } = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
+        internal static string ImagesFolder { get; } = Path.Combine(RootFolder, "images");
 
 
         public void Awake()
@@ -41,6 +42,10 @@ namespace Subnautica_Echelon
             try
             {
                 Log.Write($"MainPatcher.Awake()");
+
+                RecipePurger.Purge();
+
+
                 Echelon.GetAssets();
                 Log.Write($"MainPatcher.Awake() done");
 
