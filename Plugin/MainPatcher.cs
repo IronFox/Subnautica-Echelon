@@ -81,7 +81,7 @@ namespace Subnautica_Echelon
             return copy as T;
         }
 
-        private static Atlas.Sprite LoadSprite(string filename)
+        public static Atlas.Sprite LoadSprite(string filename)
         {
             var path = Path.Combine(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location),filename);
             Log.Write($"Trying to load sprite from {path}");
@@ -134,6 +134,7 @@ namespace Subnautica_Echelon
                     skipSeamoth = true,
                     skipExosuit = true
                 };
+                TorpedoModule.torpedoSprite = LoadSprite("images/torpedo.png");
                 TorpedoModule.Mk1Type = VehicleFramework.Admin.UpgradeRegistrar.RegisterUpgrade(new TorpedoModule(0), compat).forModVehicle;
                 TorpedoModule.Mk2Type = VehicleFramework.Admin.UpgradeRegistrar.RegisterUpgrade(new TorpedoModule(1), compat).forModVehicle;
                 TorpedoModule.Mk3Type = VehicleFramework.Admin.UpgradeRegistrar.RegisterUpgrade(new TorpedoModule(2), compat).forModVehicle;

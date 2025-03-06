@@ -29,9 +29,15 @@ public class TorpedoModule : ModVehicleUpgrade
             displayName = $"Echelon",
             icon = Echelon.craftingSprite,
             name = $"echelonupgradetab"
-            }
+            },
+        new CraftingNode{
+            displayName= $"Torpedoes",
+            icon = torpedoSprite,
+            name = $"echelontorpedoupgrades"
+        }
     };
-
+    internal static Atlas.Sprite torpedoSprite;
+    private Atlas.Sprite icon;
     public CustomPrefab CustomPrefab { get; private set; }
     public TechType TechType => CustomPrefab?.Info.TechType ?? TechType.None;
 
@@ -39,7 +45,25 @@ public class TorpedoModule : ModVehicleUpgrade
 
     public override string DisplayName => $"Echelon Torpedo System Mk {Mk+1}";
 
-    public override string Description => $"Add torpedo deployment capabilities to the Echelon (Mk {Mk+1})";
+    public override string Description
+    {
+        get
+        {
+            switch (Mk)
+            {
+                case 0:
+                    return $"Adds basic torpedo deployment capabilities to the Echelon (Mk {Mk + 1}). Does not stack";
+                case 1:
+                    return $"Adds advanced torpedo deployment capabilities to the Echelon (Mk {Mk + 1}). Does not stack";
+                case 2:
+                    return $"Adds superior torpedo deployment capabilities to the Echelon (Mk {Mk + 1}). Does not stack";
+
+            }
+            return "Unsupported mark "+Mk;
+        }
+
+
+    }
 
     /// <summary>
     /// 3 mks (0-2)
@@ -62,6 +86,8 @@ public class TorpedoModule : ModVehicleUpgrade
             default:
                 throw new ArgumentException($"Mk is out of range [0,2]",nameof(mk));
         }
+
+        icon = Subnautica_Echelon.MainPatcher.LoadSprite($"images/torpedo{mk+1}.png");
 
         //craftingPath.Add(new CraftingNode
         //{
@@ -136,6 +162,8 @@ public class TorpedoModule : ModVehicleUpgrade
             }
         }
     }
+
+    public override Atlas.Sprite Icon => icon ?? base.Icon;
 
     public static TechType Mk1Type { get; internal set; }
     public static TechType Mk2Type { get; internal set; }
