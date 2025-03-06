@@ -35,6 +35,7 @@ public class TargetScanner : MonoBehaviour
         "ThermalPlant",
         "CuteFish",
         "SeaTreader",
+        "MapRoomCamera",
     };
 
     private static string[] alwaysTarget = new string[] {
