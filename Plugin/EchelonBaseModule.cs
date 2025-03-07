@@ -1,4 +1,5 @@
 ﻿using Subnautica_Echelon;
+using System;
 using System.Collections.Generic;
 using UnityEngine;
 using VehicleFramework.UpgradeTypes;
@@ -45,6 +46,8 @@ public abstract class EchelonBaseModule : ModVehicleUpgrade
 
     public override void OnAdded(AddActionParams param)
     {
+        var now = DateTime.Now;
+        Debug.Log($"[{now:HH:mm:ss.fff}] EchelonBaseModule[{Module}].OnAdded(vehicle={param.vehicle},isAdded={param.isAdded},slot={param.slotID})");
         var echelon = param.vehicle as Echelon;
         if (echelon == null)
         {
@@ -52,7 +55,7 @@ public abstract class EchelonBaseModule : ModVehicleUpgrade
             ErrorMessage.AddWarning("This upgrade only compatible with the Echelon!");
             return;
         }
-        echelon.ChangeCounts(Module, true);
+        echelon.SetModuleCount(Module, GetNumberInstalled(echelon));
     }
     public override void OnRemoved(AddActionParams param)
     {
@@ -61,7 +64,7 @@ public abstract class EchelonBaseModule : ModVehicleUpgrade
         {
             return;
         }
-        echelon.ChangeCounts(Module, false);
+        echelon.SetModuleCount(Module, GetNumberInstalled(echelon));
     }
 
     public override Atlas.Sprite Icon => icon ?? base.Icon;

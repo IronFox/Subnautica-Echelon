@@ -279,6 +279,8 @@ namespace Subnautica_Echelon
             }
         }
 
+        private int GetTorpedoMark() => HighestModule(EchelonModule.TorpedoMk1, EchelonModule.TorpedoMk2, EchelonModule.TorpedoMk3);
+        private int GetBatteryMark() => HighestModule(EchelonModule.NuclearBatteryMk1, EchelonModule.NuclearBatteryMk2);
 
         private void ProcessEnergyRecharge(out bool lowPower, out bool criticalPower)
         {
@@ -286,7 +288,7 @@ namespace Subnautica_Echelon
             if (energyInterface != null
                 && !IngameMenu.main.gameObject.activeSelf)
             {
-                int batteryMk = HighestModule(EchelonModule.NuclearBatteryMk1, EchelonModule.NuclearBatteryMk2);
+                int batteryMk = GetBatteryMark();
 
                 float level = Mathf.Pow(2,batteryMk);
 
@@ -460,9 +462,7 @@ namespace Subnautica_Echelon
                 TrailSpaceTargetText.textDisplay = MainPatcher.PluginConfig.textDisplay;
                 EchelonControl.targetArrows = MainPatcher.PluginConfig.targetArrows;
 
-                control.torpedoMark = 
-                    HighestModule(EchelonModule.TorpedoMk1, EchelonModule.TorpedoMk2, EchelonModule.TorpedoMk3)
-                    ;
+                control.torpedoMark = GetTorpedoMark();
 
                 Vector2 lookDelta = GameInput.GetLookDelta();
                 control.lookRightAxis = lookDelta.x * 0.1f;
@@ -546,19 +546,17 @@ namespace Subnautica_Echelon
         {
         }
 
-        internal void ChangeCounts(EchelonModule moduleType, bool isAdded)
+        internal void SetModuleCount(EchelonModule moduleType, int count)
         {
-            if (isAdded)
-                moduleCounts[(int)moduleType]++;
-            else
-            {
-                if (moduleCounts[(int)moduleType] == 0)
-                {
-                    Debug.LogError($"Decrementing {moduleType} to less than zero. Ignoring");
-                    return;
-                }
-                moduleCounts[(int)moduleType]--;
-            }
+            var tm = GetTorpedoMark();
+            var bm = GetBatteryMark();
+            moduleCounts[(int)moduleType] = count;
+            var tm2 = GetTorpedoMark();
+            var bm2 = GetBatteryMark();
+            if (tm != tm2)
+                ErrorMessage.AddMessage($"{vehicleName} torpedo capability changed to {(tm2 > 0 ? $"Mk{tm2}":"None")}");
+            if (bm != bm2)
+                ErrorMessage.AddMessage($"{vehicleName} nuclear battery level changed to {(bm2 > 0 ? $"Mk{bm2}" : "Basic")}");
             Debug.Log($"Changed counts of {moduleType} to {moduleCounts[(int)moduleType]}");
         }
 
