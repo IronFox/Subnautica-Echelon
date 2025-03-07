@@ -329,16 +329,20 @@ namespace Subnautica_Echelon
         private void ProcessRegeneration(bool criticalPower)
         {
             control.isHealing = false;
+
+            var delta = Time.deltaTime;
+
             if (liveMixin != null)
             {
                 if (liveMixin.health < liveMixin.maxHealth
                     && liveMixin.IsAlive()
                     && !criticalPower
                     && !IngameMenu.main.gameObject.activeSelf
-                    && MainPatcher.PluginConfig.selfHealingSpeed > 0)
+                    && MainPatcher.PluginConfig.selfHealingSpeed > 0
+                    && delta > 0)
                 {
                     var healing = liveMixin.maxHealth
-                        * Time.deltaTime
+                        * delta
                         * 0.02f //max = 2% of max health per second
                         * MainPatcher.PluginConfig.selfHealingSpeed / 100   //default will be 5 seconds per 1%
                         ;
@@ -348,19 +352,20 @@ namespace Subnautica_Echelon
                     //Debug.Log($"Healing at delta={Time.deltaTime}");
                     float energyDemand =
                         1 //max 1 energy per second
-                        * Time.deltaTime
+                        * delta
                         //* MainPatcher.PluginConfig.selfHealingSpeed / 100   //if slower, cost less
                         * effective //if clamped, cost less
                         ;
 
-                    var energyTaken = Mathf.Abs(powerMan.TrySpendEnergy(energyDemand));
-                    var actuallyHealed = clamped * energyTaken / energyDemand;
+                    powerMan.TrySpendEnergy(energyDemand);
+
+
+                    var actuallyHealed = clamped;
                     liveMixin.AddHealth(actuallyHealed);
                     control.isHealing = true;
 
                 }
-                
-                    
+
 
                 control.maxHealth = liveMixin.maxHealth;
                 control.currentHealth = liveMixin.health;
