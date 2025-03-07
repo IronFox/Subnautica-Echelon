@@ -56,9 +56,10 @@ namespace Subnautica_Echelon
                 { TechType.PowerCell, 1 },
                 { TechType.Welder, 1 },
                 { TechType.AdvancedWiringKit, 2 },
-                { TechType.UraniniteCrystal, 5 },
+                { TechType.UraniniteCrystal, 3 },
+                { TechType.Lead, 3 },
                 { TechType.Diamond, 2 },
-                { TechType.Kyanite, 2 },
+                //{ TechType.Kyanite, 2 },
                 { TechType.PlasteelIngot, 4 },
             };
 
