@@ -9,6 +9,7 @@ using VehicleFramework.Assets;
 using VehicleFramework.Engines;
 using VehicleFramework.VehicleParts;
 using VehicleFramework.VehicleTypes;
+using static PDAScanner;
 
 
 namespace Subnautica_Echelon
@@ -143,7 +144,7 @@ namespace Subnautica_Echelon
                 {
                     autopilot = GetComponentInChildren<AutoPilot>();
 
-                    if (autopilot != null && MainPatcher.PluginConfig.batteryChargeSpeed > 0)
+                    if (autopilot != null/* && MainPatcher.PluginConfig.batteryChargeSpeed > 0*/)
                     {
                         //"Airon" - weird, partially indecipherable low energy voice
                         //"Chels-E" - high-pitched panicky
@@ -284,9 +285,13 @@ namespace Subnautica_Echelon
             if (energyInterface != null
                 && !IngameMenu.main.gameObject.activeSelf)
             {
+                int batteryMk = HighestModule(EchelonModule.NuclearBatteryMk1, EchelonModule.NuclearBatteryMk2);
+
+                float level = Mathf.Pow(2,batteryMk);
+
                 float recharge =
-                      2.5f  //max 2.5 per second
-                    * MainPatcher.PluginConfig.batteryChargeSpeed / 100;
+                      0.4f  //max 1.6 per second
+                    * level;
 
                 energyInterface.ModifyCharge(
                     Time.deltaTime

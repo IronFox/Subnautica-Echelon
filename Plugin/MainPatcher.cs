@@ -143,7 +143,9 @@ namespace Subnautica_Echelon
                 TorpedoModule.Mk1Type = VehicleFramework.Admin.UpgradeRegistrar.RegisterUpgrade(new TorpedoModule(0), compat).forModVehicle;
                 TorpedoModule.Mk2Type = VehicleFramework.Admin.UpgradeRegistrar.RegisterUpgrade(new TorpedoModule(1), compat).forModVehicle;
                 TorpedoModule.Mk3Type = VehicleFramework.Admin.UpgradeRegistrar.RegisterUpgrade(new TorpedoModule(2), compat).forModVehicle;
-
+                NuclearBatteryModule.batterySprite = LoadSprite("images/nuclearBattery.png");
+                NuclearBatteryModule.Mk1Type = VehicleFramework.Admin.UpgradeRegistrar.RegisterUpgrade(new NuclearBatteryModule(0), compat).forModVehicle;
+                NuclearBatteryModule.Mk2Type = VehicleFramework.Admin.UpgradeRegistrar.RegisterUpgrade(new NuclearBatteryModule(1), compat).forModVehicle;
 
 
                 AudioPatcher.Patcher = (source) => FreezeTimePatcher.Register(source);

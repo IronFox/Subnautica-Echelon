@@ -14,32 +14,20 @@ using VehicleFramework;
 using VehicleFramework.Assets;
 using VehicleFramework.UpgradeTypes;
 
-public class TorpedoModule : ModVehicleUpgrade
+public class TorpedoModule : EchelonBaseModule
 {
     public int Mk { get; }
-    public EchelonModule Module { get; }
 
-    //public readonly float Frequency;
-    //public readonly float ExplosionRadius;
-    //public readonly float Damage;
-
-    public List<CraftingNode> craftingPath = new List<CraftingNode>()
+    public static CraftingNode TorpedoGroupNode => new CraftingNode
     {
-        new CraftingNode{
-            displayName = $"Echelon",
-            icon = Echelon.craftingSprite,
-            name = $"echelonupgradetab"
-            },
-        new CraftingNode{
-            displayName= $"Torpedoes",
-            icon = torpedoSprite,
-            name = $"echelontorpedoupgrades"
-        }
+        displayName = $"Torpedoes",
+        icon = torpedoSprite,
+        name = $"echelontorpedoupgrades"
     };
+
+
+
     internal static Atlas.Sprite torpedoSprite;
-    private Atlas.Sprite icon;
-    public CustomPrefab CustomPrefab { get; private set; }
-    public TechType TechType => CustomPrefab?.Info.TechType ?? TechType.None;
 
     public override string ClassId => $"EchelonTorpedoModule{Mk}";
 
@@ -65,65 +53,30 @@ public class TorpedoModule : ModVehicleUpgrade
 
     }
 
+    public static EchelonModule MarkToModule(int mk)
+    {
+        switch (mk)
+        {
+            case 0:
+                return EchelonModule.TorpedoMk1;
+            case 1:
+                return EchelonModule.TorpedoMk2;
+            case 2:
+                return EchelonModule.TorpedoMk3;
+            default:
+                throw new ArgumentException($"Mk is out of range [0,2]", nameof(mk));
+        }
+    }
+
     /// <summary>
     /// 3 mks (0-2)
     /// </summary>
     /// <param name="mk"></param>
-    public TorpedoModule(int mk/*, Atlas.Sprite sprite*/)
+    public TorpedoModule(int mk): base(MarkToModule(mk), TorpedoGroupNode)
     {
         Mk = mk;
-        switch (mk)
-        {
-            case 0:
-                Module = EchelonModule.TorpedoMk1;
-                break;
-            case 1:
-                Module = EchelonModule.TorpedoMk2;
-                break;
-            case 2:
-                Module = EchelonModule.TorpedoMk3;
-                break;
-            default:
-                throw new ArgumentException($"Mk is out of range [0,2]",nameof(mk));
-        }
-
-        icon = Subnautica_Echelon.MainPatcher.LoadSprite($"images/torpedo{mk+1}.png");
-
-        //craftingPath.Add(new CraftingNode
-        //{
-        //    displayName = DisplayName,
-        //    name = ClassId,
-        //    icon = sprite
-        //});
-    }
-    public override void OnAdded(AddActionParams param)
-    {
-        var echelon = param.vehicle as Echelon;
-        if (echelon == null)
-        {
-            Debug.LogError($"Added to incompatible vehicle {param.vehicle}");
-            ErrorMessage.AddWarning("This upgrade only compatible with the Echelon!");
-            return;
-        }
-        echelon.ChangeCounts(Module, true);
-    }
-    public override void OnRemoved(AddActionParams param)
-    {
-        var echelon = param.vehicle as Echelon;
-        if (echelon == null)
-        {
-            return;
-        }
-        echelon.ChangeCounts(Module, false);
     }
 
-    public override List<CraftingNode> CraftingPath 
-    {
-        get => craftingPath;
-        set => craftingPath = value;
-    }
-
-    public override bool IsVehicleSpecific => true;
 
     //public override CraftTree.Type FabricatorType => Mk == 0 ? CraftTree.Type.Fabricator : CraftTree.Type.Workbench;
 
@@ -163,7 +116,6 @@ public class TorpedoModule : ModVehicleUpgrade
         }
     }
 
-    public override Atlas.Sprite Icon => icon ?? base.Icon;
 
     public static TechType Mk1Type { get; internal set; }
     public static TechType Mk2Type { get; internal set; }

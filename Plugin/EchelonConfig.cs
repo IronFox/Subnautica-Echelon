@@ -22,8 +22,6 @@ public class EchelonConfig : ConfigFile
     public TorpedoTerrainCollisions torpedoTerrainCollisions = TorpedoTerrainCollisions.IgnoreWhenTargeted;
     [Slider("Boost Acceleration %", Step = 1f, DefaultValue = 150, Min = 0, Max = 300)]
     public float boostAccelerationPercent = 150;
-    [Slider("Nuclear Battery Energy Output %", Step = 1f, DefaultValue = 20, Min = 0, Max = 100)]
-    public float batteryChargeSpeed = 20f;
     [Slider("Self Healing %", Step = 1f, DefaultValue = 10, Min = 0, Max = 100)]
     public float selfHealingSpeed = 10f;
     [Choice("Target Text", nameof(TextDisplay.None), nameof(TextDisplay.Focused), nameof(TextDisplay.All))]
