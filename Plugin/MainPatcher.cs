@@ -140,12 +140,25 @@ namespace Subnautica_Echelon
                     skipExosuit = true
                 };
                 TorpedoModule.torpedoSprite = LoadSprite("images/torpedo.png");
-                TorpedoModule.Mk1Type = VehicleFramework.Admin.UpgradeRegistrar.RegisterUpgrade(new TorpedoModule(0), compat).forModVehicle;
-                TorpedoModule.Mk2Type = VehicleFramework.Admin.UpgradeRegistrar.RegisterUpgrade(new TorpedoModule(1), compat).forModVehicle;
-                TorpedoModule.Mk3Type = VehicleFramework.Admin.UpgradeRegistrar.RegisterUpgrade(new TorpedoModule(2), compat).forModVehicle;
+                var t0 = new TorpedoModule(0);
+                var t1 = new TorpedoModule(1);
+                var t2 = new TorpedoModule(2);
+                TorpedoModule.Mk1Type = VehicleFramework.Admin.UpgradeRegistrar.RegisterUpgrade(t0, compat).forModVehicle;
+                TorpedoModule.Mk2Type = VehicleFramework.Admin.UpgradeRegistrar.RegisterUpgrade(t1, compat).forModVehicle;
+                TorpedoModule.Mk3Type = VehicleFramework.Admin.UpgradeRegistrar.RegisterUpgrade(t2, compat).forModVehicle;
                 NuclearBatteryModule.batterySprite = LoadSprite("images/nuclearBattery.png");
                 NuclearBatteryModule.Mk1Type = VehicleFramework.Admin.UpgradeRegistrar.RegisterUpgrade(new NuclearBatteryModule(0), compat).forModVehicle;
                 NuclearBatteryModule.Mk2Type = VehicleFramework.Admin.UpgradeRegistrar.RegisterUpgrade(new NuclearBatteryModule(1), compat).forModVehicle;
+
+                t0.AutoDisplace.Add(TorpedoModule.Mk1Type);
+                t0.AutoDisplace.Add(TorpedoModule.Mk2Type);
+                t0.AutoDisplace.Add(TorpedoModule.Mk3Type);
+                t1.AutoDisplace.Add(TorpedoModule.Mk1Type);
+                t1.AutoDisplace.Add(TorpedoModule.Mk2Type);
+                t1.AutoDisplace.Add(TorpedoModule.Mk3Type);
+                t2.AutoDisplace.Add(TorpedoModule.Mk1Type);
+                t2.AutoDisplace.Add(TorpedoModule.Mk2Type);
+                t2.AutoDisplace.Add(TorpedoModule.Mk3Type);
 
 
                 AudioPatcher.Patcher = (source) => FreezeTimePatcher.Register(source);
