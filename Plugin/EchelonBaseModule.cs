@@ -52,7 +52,7 @@ public abstract class EchelonBaseModule : ModVehicleUpgrade
         if (echelon == null)
         {
             Debug.LogError($"Added to incompatible vehicle {param.vehicle}");
-            ErrorMessage.AddWarning("This upgrade only compatible with the Echelon!");
+            ErrorMessage.AddWarning("This is an Echelon upgrade and will not work on other subs!");
             return;
         }
         echelon.SetModuleCount(Module, GetNumberInstalled(echelon));
