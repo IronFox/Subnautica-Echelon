@@ -11,6 +11,7 @@ public class EchelonControl : MonoBehaviour
 
     public GameObject targetMarkerPrefab;
     public GameObject targetDirectionMarkerPrefab;
+    public GameObject explosionPrefab;
     public float forwardAxis;
     public float rightAxis;
     public float upAxis;
@@ -357,6 +358,15 @@ public class EchelonControl : MonoBehaviour
             }
         }
 
+    }
+
+    public void SelfDestruct()
+    {
+        Offboard();
+        var explosion = Instantiate(explosionPrefab,transform.position, Quaternion.identity);
+        var control = explosion.GetComponentInChildren<ExplosionController>();
+        control.explosionDamage = 100;
+        Destroy(gameObject);
     }
 
     public bool IsFiring => (triggerActive || maintainTriggerUntilFired)

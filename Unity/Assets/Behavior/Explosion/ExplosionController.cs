@@ -13,12 +13,11 @@ public class ExplosionController : MonoBehaviour
 
     //public static float explosionDamage = 1500;
 
-    public float ExplosionDamage => 2000f / 25 * Mathf.Pow(5, techLevel);
 
-    public static float ExplosionRadiusAt(int techLevel) => 15f / 4 * Mathf.Pow(2, techLevel);
-    public float ExplosionRadius => ExplosionRadiusAt(techLevel);
+    public float explosionRadius = 15f;
+    public float explosionDamage = 1500f;
 
-    public int techLevel;
+    
 
     // Start is called before the first frame update
     void Start()
@@ -28,7 +27,7 @@ public class ExplosionController : MonoBehaviour
 
 
         var exp = transform.GetChild(0);
-        exp.localScale = M.V3(ExplosionRadius * 2f / 15f);
+        exp.localScale = M.V3(explosionRadius * 2f / 15f);
 
 
         foreach (var env in GetCurrentEnvironment())
@@ -37,7 +36,7 @@ public class ExplosionController : MonoBehaviour
             if (t != null && t.IsAlive)
             {
                 float distance = M.Distance(transform.position,t.GameObject.transform.position); 
-                float dmg = ExplosionDamage / (1f + distance * 0.1f);
+                float dmg = explosionDamage / (1f + distance * 0.1f);
                 //ConsoleControl.Write($"Dealing {dmg} damage to {t} at health {t.CurrentHealth} and distance {distance}");
                 t.DealDamage(transform.position, dmg, gameObject);
                 //ConsoleControl.Write($"Health now at {t.CurrentHealth}");
@@ -62,7 +61,7 @@ public class ExplosionController : MonoBehaviour
 
     private IEnumerable<Rigidbody> GetCurrentEnvironment()
     {
-        var others = Physics.OverlapSphere(transform.position, ExplosionRadius);
+        var others = Physics.OverlapSphere(transform.position, explosionRadius);
         Dictionary<int, Rigidbody> bodies = new Dictionary<int, Rigidbody>();
         foreach (var other in others)
         {

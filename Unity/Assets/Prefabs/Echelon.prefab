@@ -15712,6 +15712,8 @@ MonoBehaviour:
     type: 3}
   targetDirectionMarkerPrefab: {fileID: 8691401899087712267, guid: 250712c21cb88f54c8839fc4d71b333c,
     type: 3}
+  explosionPrefab: {fileID: 1559697159186320429, guid: 75390e578275a3b4d831189dc16d5b06,
+    type: 3}
   forwardAxis: 0
   rightAxis: 0
   upAxis: 0

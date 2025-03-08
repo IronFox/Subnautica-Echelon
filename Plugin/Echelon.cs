@@ -21,7 +21,10 @@ namespace Subnautica_Echelon
     {
         public static GameObject model;
         private EchelonControl control;
-        //private RotateCamera rotateCamera;
+
+        //tracks true if vehicle death was ever determined. Can't enter in this state
+        private bool wasDead;
+        private float deathAge;
         private MyLogger EchLog { get; }
         private VoidDrive engine;
         private AutoPilot autopilot;
@@ -218,6 +221,12 @@ namespace Subnautica_Echelon
         {
             try
             {
+                if (!liveMixin.IsAlive() || wasDead)
+                {
+                    ErrorMessage.AddError($"{vehicleName} is destroyed and cannot be boarded");
+                    return;
+                }
+
                 EchLog.Write("Echelon.PlayerEntry()");
                 LocalInit();
 
@@ -458,6 +467,14 @@ namespace Subnautica_Echelon
             try
             {
                 LocalInit();
+
+                if (!liveMixin.IsAlive())
+                {
+                    wasDead = true;
+                    deathAge += Time.deltaTime;
+                    if (deathAge > 1.5f)
+                        control.SelfDestruct();
+                }
 
                 TrailSpaceTargetText.textDisplay = MainPatcher.PluginConfig.textDisplay;
                 EchelonControl.targetArrows = MainPatcher.PluginConfig.targetArrows;
