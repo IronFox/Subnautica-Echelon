@@ -1026,6 +1026,7 @@ Material:
     - _GlossMapScale: 1
     - _Glossiness: 0.5
     - _GlossyReflections: 1
+    - _IsLocked: 1
     - _IsPrimary: 1
     - _Metallic: 0
     - _Mode: 0

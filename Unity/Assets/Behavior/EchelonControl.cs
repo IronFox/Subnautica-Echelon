@@ -53,6 +53,7 @@ public class EchelonControl : MonoBehaviour
 
     private bool firingLeft = true;
     private CoverAnimation upgradeCoverAnimation;
+    private FirstPersonMarkers firstPersonMarkers;
 
     public float regularForwardAcc = 400;
     public float overdriveForwardAcc = 800;
@@ -225,6 +226,7 @@ public class EchelonControl : MonoBehaviour
         positionCamera = trailSpace.GetComponent<PositionCamera>();
         fallOrientation = GetComponent<FallOrientation>();
         energyLevel = GetComponentInChildren<EnergyLevel>();
+        firstPersonMarkers = GetComponentInChildren<FirstPersonMarkers>();
         if (look != null)
             look.targetOrientation = inWaterDirectionSource = new TransformDirectionSource(trailSpace);
     }
@@ -362,7 +364,10 @@ public class EchelonControl : MonoBehaviour
                             && !isDocked
                             && !cameraCenterIsCockpit
                             && torpedoMark > 0
-                            && !outOfWater && !OnboardingCooldown;
+                            && !outOfWater
+                            && !OnboardingCooldown
+                            && !batteryDead
+                            && !powerOff;
 
     private void ProcessTargeting()
     {
@@ -398,7 +403,7 @@ public class EchelonControl : MonoBehaviour
                     tm.TargetHealthFeed.isPrimary = primary;
                     tm.TargetHealthFeed.isLocked = primary && torpedoMark > 0;
                 });
-            if (targetArrows != TargetArrows.None)
+            if (targetArrows != TargetArrows.None && !positionCamera.isFirstPerson)
                 targetDirectionMarkers.UpdateAll(targetEnvironment.Targets,
                     (tm, t) => { });
             else
@@ -443,6 +448,9 @@ public class EchelonControl : MonoBehaviour
 
             var doFire = IsFiring;
 
+            firstPersonMarkers.firingLeft = doFire && firingLeft;
+            firstPersonMarkers.firingRight = doFire && !firingLeft;
+
             // Debug.Log($"doFire={doFire} (triggerActive={triggerActive}, outOfWater={outOfWater})");
 
             firing.fireWithTarget = doFire ? target : null;
@@ -477,6 +485,8 @@ public class EchelonControl : MonoBehaviour
     {
         try
         {
+            firstPersonMarkers.overdriveActive = false;
+
             ProcessTargeting();
             ProcessUpgradeCover();
 
@@ -508,6 +518,14 @@ public class EchelonControl : MonoBehaviour
             statusConsole.Set(StatusProperty.OnboardingCooldown, OnboardingCooldown);
             statusConsole.Set(StatusProperty.OpenUpgradeCover, openUpgradeCover);
             statusConsole.Set(StatusProperty.TorpedoMark, torpedoMark);
+            statusConsole.Set(StatusProperty.IsFirstPerson, positionCamera.isFirstPerson);
+
+            firstPersonMarkers.show = 
+                positionCamera.isFirstPerson
+                && isBoarded
+                && !isDocked
+                && !batteryDead
+                && !powerOff;
 
             healingLight.isHealing = isHealing;
 
@@ -653,6 +671,7 @@ public class EchelonControl : MonoBehaviour
                         float overdriveThreshold = regularForwardAcc / (overdriveForwardAcc + regularForwardAcc);
                         if (forwardAxis > overdriveThreshold)
                         {
+                            firstPersonMarkers.overdriveActive = true;
                             backFacingRight.overdrive =
                             backFacingLeft.overdrive =
                                 (forwardAxis - overdriveThreshold) / (1f - overdriveThreshold);

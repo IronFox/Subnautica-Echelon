@@ -17,6 +17,12 @@ public class PositionCamera : MonoBehaviour
     public bool positionBelowTarget;
     public Collider shipCollider;
 
+    private float firstPersonRadius = 3.15f;
+    public bool isFirstPerson = true;
+    private bool wasFirstPerson;
+
+    public float defaultThirdPersonDistance = 10.12f;
+
     private float verticalOffset;
 
     private float h = 0;
@@ -44,67 +50,92 @@ public class PositionCamera : MonoBehaviour
 
     void LateUpdate()
     {
-        distanceToTarget *= Mathf.Pow(1.5f, zoomAxis);
-        distanceToTarget = Mathf.Clamp(distanceToTarget, minDistanceToTarget, maxDistanceToTarget);
-
-        scanner.minDistance = distanceToTarget;
-
-
-        var wantH = positionBelowTarget ? -verticalOffset : verticalOffset;
-
-        h += (wantH - h) * 2f * Mathf.Min(Time.deltaTime, 1f);
-
-        var lookAtTarget = target.position + referenceBoundingBox.transform.up * h;
-
-        var wantPosition = lookAtTarget - transform.forward * distanceToTarget;
-        Vector3 targetPosition;
-
-
-        var dir = -transform.forward;
-        var hits = Physics.RaycastAll(lookAtTarget, dir, distanceToTarget);
-
-        var dir2 = wantPosition - target.position;
-        var dist2 = dir2.magnitude;
-        dir2 /= dist2;
-
-
-        var hits2 = Physics.RaycastAll(target.position, dir2, dist2);
-
-
-        float closestHit2 = Mathf.Infinity;
-        Transform closest2 = null;
-        foreach (RaycastHit hit in hits2)
+        if (isFirstPerson)
         {
-            if (hit.transform.IsChildOf(target)
-                || hit.transform.IsChildOf(transform)
-                || Physics.GetIgnoreCollision(hit.collider, shipCollider)
-                || !hit.collider.enabled
-                || hit.collider.isTrigger)
-                continue;
-            if (hit.distance < closestHit2)
+            wasFirstPerson = true;
+            transform.position = target.position + transform.forward * firstPersonRadius;
+            if (zoomAxis > 0)
             {
-                closest2 = hit.transform;
-                closestHit2 = hit.distance;
-                if (loggedCollider != hit.transform.name)
-                {
-                    loggedCollider = hit.transform.name;
-                    //ConsoleControl.Write("Camera collision with " + hit.transform.name);
-                    //HierarchyAnalyzer analyzer = new HierarchyAnalyzer();
-                    //analyzer.LogToJson(hit.transform, $@"C:\temp\logs\hit{DateTime.Now:yyyy-MM-dd HH_mm_ss}.json");
-                }
-
-
-
+                isFirstPerson = false;
             }
         }
-
-
-        if (closest2 != null)
-            targetPosition = target.position + dir2 * Mathf.Max(3f, closestHit2 - 0.5f);
         else
-            targetPosition = wantPosition;
+        {
+            if (wasFirstPerson)
+            {
+                transform.position = target.position - transform.forward * minDistanceToTarget;
+                wasFirstPerson = false;
+                distanceToTarget = minDistanceToTarget;
+            }
 
-        transform.position = targetPosition;
+            distanceToTarget *= Mathf.Pow(1.5f, zoomAxis);
+            if (distanceToTarget < minDistanceToTarget)
+            {
+                distanceToTarget = minDistanceToTarget;
+                isFirstPerson = true;
+                return;
+            }
+            distanceToTarget = Mathf.Clamp(distanceToTarget, minDistanceToTarget, maxDistanceToTarget);
+
+            scanner.minDistance = distanceToTarget;
+
+
+            var wantH = positionBelowTarget ? -verticalOffset : verticalOffset;
+
+            h += (wantH - h) * 2f * Mathf.Min(Time.deltaTime, 1f);
+
+            var lookAtTarget = target.position + referenceBoundingBox.transform.up * h;
+
+            var wantPosition = lookAtTarget - transform.forward * distanceToTarget;
+            Vector3 targetPosition;
+
+
+            var dir = -transform.forward;
+            //var hits = Physics.RaycastAll(lookAtTarget, dir, distanceToTarget);
+
+            var dir2 = wantPosition - target.position;
+            var dist2 = dir2.magnitude;
+            dir2 /= dist2;
+
+
+            var hits2 = Physics.RaycastAll(target.position, dir2, dist2);
+
+
+            float closestHit2 = Mathf.Infinity;
+            Transform closest2 = null;
+            foreach (RaycastHit hit in hits2)
+            {
+                if (hit.transform.IsChildOf(target)
+                    || hit.transform.IsChildOf(transform)
+                    || Physics.GetIgnoreCollision(hit.collider, shipCollider)
+                    || !hit.collider.enabled
+                    || hit.collider.isTrigger)
+                    continue;
+                if (hit.distance < closestHit2)
+                {
+                    closest2 = hit.transform;
+                    closestHit2 = hit.distance;
+                    if (loggedCollider != hit.transform.name)
+                    {
+                        loggedCollider = hit.transform.name;
+                        //ConsoleControl.Write("Camera collision with " + hit.transform.name);
+                        //HierarchyAnalyzer analyzer = new HierarchyAnalyzer();
+                        //analyzer.LogToJson(hit.transform, $@"C:\temp\logs\hit{DateTime.Now:yyyy-MM-dd HH_mm_ss}.json");
+                    }
+
+
+
+                }
+            }
+
+
+            if (closest2 != null)
+                targetPosition = target.position + dir2 * Mathf.Max(3f, closestHit2 - 0.5f);
+            else
+                targetPosition = wantPosition;
+
+            transform.position = targetPosition;
+        }
     }
 
     // Update is called once per frame

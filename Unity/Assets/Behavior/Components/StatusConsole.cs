@@ -128,5 +128,6 @@ public enum StatusProperty
     OnboardingCooldown,
     OpenUpgradeCover,
     TorpedoMark,
+    IsFirstPerson,
 }
 
