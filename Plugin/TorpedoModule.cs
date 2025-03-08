@@ -14,7 +14,7 @@ using VehicleFramework;
 using VehicleFramework.Assets;
 using VehicleFramework.UpgradeTypes;
 
-public class TorpedoModule : EchelonBaseModule
+public class TorpedoModule : EchelonModuleFamily<TorpedoModule>
 {
     public int Mk { get; }
 
@@ -97,7 +97,7 @@ public class TorpedoModule : EchelonBaseModule
                 case 1:
                     return new List<Ingredient>
                     {
-                        new Ingredient(Mk1Type, 1),
+                        new Ingredient(FindRegisteredFamilyMemberTechType(x => x.Mk == 0), 1),
                         new Ingredient(TechType.Aerogel, 2),
                         new Ingredient(TechType.Sulphur, 2),
                         new Ingredient(TechType.Magnetite, 2),
@@ -105,7 +105,7 @@ public class TorpedoModule : EchelonBaseModule
                 case 2:
                     return new List<Ingredient>
                     {
-                        new Ingredient(Mk2Type, 1),
+                        new Ingredient(FindRegisteredFamilyMemberTechType(x => x.Mk == 1), 1),
                         new Ingredient(TechType.Kyanite, 2),
                         new Ingredient(TechType.Lithium, 1),
                         new Ingredient(TechType.Polyaniline, 2),
@@ -117,7 +117,4 @@ public class TorpedoModule : EchelonBaseModule
     }
 
 
-    public static TechType Mk1Type { get; internal set; }
-    public static TechType Mk2Type { get; internal set; }
-    public static TechType Mk3Type { get; internal set; }
 }

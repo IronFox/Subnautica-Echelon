@@ -10,11 +10,9 @@ using VehicleFramework.UpgradeTypes;
 
 namespace Subnautica_Echelon
 {
-    public class NuclearBatteryModule : EchelonBaseModule
+    public class NuclearBatteryModule : EchelonModuleFamily<NuclearBatteryModule>
     {
         public static Atlas.Sprite batterySprite;
-        public static TechType Mk1Type { get; internal set; }
-        public static TechType Mk2Type { get; internal set; }
 
         public int Mk { get; }
 
@@ -89,7 +87,7 @@ namespace Subnautica_Echelon
                     case 1:
                         return new List<Ingredient>
                         {
-                        new Ingredient(Mk1Type, 1),
+                        new Ingredient(FindRegisteredFamilyMemberTechType(x => x.Mk == 0), 1),
                         new Ingredient(TechType.UraniniteCrystal, 9),
                         new Ingredient(TechType.AdvancedWiringKit, 2),
                         new Ingredient(TechType.Magnetite, 2),

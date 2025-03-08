@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using UnityEngine;
 using VehicleFramework.UpgradeTypes;
+using System.Linq;
 
 public abstract class EchelonBaseModule : ModVehicleUpgrade
 {
@@ -13,7 +14,7 @@ public abstract class EchelonBaseModule : ModVehicleUpgrade
 
     public List<CraftingNode> craftingPath;
 
-    public List<TechType> AutoDisplace { get; } = new List<TechType>();
+    public virtual IReadOnlyCollection<TechType> AutoDisplace { get; }
 
     public static CraftingNode RootCraftingNode { get; } = new CraftingNode
     {
@@ -37,6 +38,23 @@ public abstract class EchelonBaseModule : ModVehicleUpgrade
 
 
 
+    public virtual TechType Register()
+    {
+        VehicleFramework.Admin.UpgradeCompat compat = new VehicleFramework.Admin.UpgradeCompat
+        {
+            skipCyclops = true,
+            skipModVehicle = false,
+            skipSeamoth = true,
+            skipExosuit = true
+        };
+
+        var type = VehicleFramework.Admin.UpgradeRegistrar.RegisterUpgrade(this, compat).forModVehicle;
+        All[type] = this;
+        return type;
+    }
+
+    private static Dictionary<TechType, EchelonBaseModule> All { get; } = new Dictionary<TechType, EchelonBaseModule>();
+    public static IReadOnlyDictionary<TechType, EchelonBaseModule> Registered => All;
 
     public override List<CraftingNode> CraftingPath
     {
