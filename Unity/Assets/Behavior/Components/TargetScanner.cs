@@ -126,43 +126,41 @@ internal readonly struct RigidbodyReference
 }
 
 
-public class ReadOnlyTargetEnvironment
-{
-    protected Collider[] buffer = new Collider[1024];
-    protected int numTargets = 0;
-    protected readonly List<AdapterTargetable> targets = new List<AdapterTargetable>();
-    protected readonly HashSet<int> objectInstanceIds = new HashSet<int>();
-    public Vector3 SensorCenter {get; protected set; }
-    public IReadOnlyList<AdapterTargetable> Targets => targets;
 
-    public bool IsTarget(int objectInstanceId)
-        => objectInstanceIds.Contains(objectInstanceId);
-    protected ReadOnlyTargetEnvironment()
-    { }
-}
-
-public class TargetEnvironment : ReadOnlyTargetEnvironment
+public class UpdateProcess
 {
-    public void Update(Vector3 position, float radius, params Transform[] exclude)
+    public UpdateProcess(
+        TargetEnvironment targetEnvironment,
+        Collider[] buffer,
+        int numTargets,
+        Transform[] exclude)
     {
-        SensorCenter = position;
-        numTargets = Physics.OverlapSphereNonAlloc(position, radius, buffer);
-        while (numTargets >= buffer.Length)
-        {
-            buffer = new Collider[buffer.Length * 2];
-            ConsoleControl.Write($"Increased target environment buffer size to {buffer.Length}");
-            numTargets = Physics.OverlapSphereNonAlloc(position, radius, buffer);
-        }
+        TargetEnvironment = targetEnvironment;
+        Buffer = buffer;
+        NumTargets = numTargets;
+        Exclude = exclude;
+        TargetEnvironment.Reset();
+    }
 
-        objectInstanceIds.Clear();
-        targets.Clear();
-        for (int i = 0; i < numTargets; i++)
-        {
-            var item = buffer[i];
+    public TargetEnvironment TargetEnvironment { get; }
+    public Collider[] Buffer { get; }
+    public int NumTargets { get; }
+    public Transform[] Exclude { get; }
 
+    private int at;
+
+
+    public bool Next(TimeSpan budget)
+    {
+        DateTime started = DateTime.Now;
+        for (; at < NumTargets && DateTime.Now - started < budget; at++)
+        {
+            var item = Buffer[at];
+            if (item == null)
+                continue;
             if (item.attachedRigidbody == null || item.isTrigger || !item.enabled)
                 continue;
-            if (exclude.Length > 0 && exclude.Any(ex => item.transform.IsChildOf(ex)))
+            if (Exclude.Length > 0 && Exclude.Any(ex => item.transform.IsChildOf(ex)))
                 continue;
             if (item.attachedRigidbody.transform.GetComponent<TorpedoControl>() != null)
                 continue;
@@ -173,12 +171,60 @@ public class TargetEnvironment : ReadOnlyTargetEnvironment
                 continue;
             if (TargetScanner.IsExcludedByName(item.attachedRigidbody.gameObject.name))
                 continue;
-            targets.Add(new AdapterTargetable(t));
-            objectInstanceIds.Add(t.GameObjectInstanceId);
+            TargetEnvironment.Add(new AdapterTargetable(t));
         }
+        if (at >= NumTargets)
+        {
+            TargetEnvironment.Release(this);
+            return false;
+        }
+        return true;
     }
 
+    
 
+}
+
+public class TargetEnvironment
+{
+    private UpdateProcess currentProcess;
+    protected Collider[] buffer = new Collider[1024];
+    protected int numTargets = 0;
+    protected readonly List<AdapterTargetable> targets = new List<AdapterTargetable>();
+    public Vector3 SensorCenter { get; protected set; }
+    public IReadOnlyList<AdapterTargetable> Targets => targets;
+
+
+    public UpdateProcess Update(Vector3 position, float radius, params Transform[] exclude)
+    {
+        if (currentProcess != null)
+            return currentProcess;
+        SensorCenter = position;
+        numTargets = Physics.OverlapSphereNonAlloc(position, radius, buffer);
+        while (numTargets >= buffer.Length)
+        {
+            buffer = new Collider[buffer.Length * 2];
+            ConsoleControl.Write($"Increased target environment buffer size to {buffer.Length}");
+            numTargets = Physics.OverlapSphereNonAlloc(position, radius, buffer);
+        }
+        return currentProcess = new UpdateProcess(this, buffer, numTargets, exclude);
+
+    }
+
+    internal void Add(AdapterTargetable adapterTargetable)
+    {
+        targets.Add(adapterTargetable);
+    }
+
+    internal void Release(UpdateProcess updateProcess)
+    {
+        currentProcess = null;
+    }
+
+    internal void Reset()
+    {
+        targets.Clear();
+    }
 }
 
 /// <summary>

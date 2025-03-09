@@ -82,14 +82,25 @@ public class TrailSpaceTargetText : CommonTargetListener
     protected override void P_Update()
     {
         var camera = CameraUtil.GetCamera(nameof(TrailSpaceTargetText));
-        if (camera == null)
+        if (camera == null || Echelon == null)
             return;
 
         pool.FilterAndUpdate<(Vector2 Screen, Vector2 Screen2) >(Targets(), t =>
         {
 
             var screen = Project(camera, t.Position);
-            var screen2 = Project(camera, t.Position + camera.transform.right * Echelon.SizeOf(t));
+            var p2 = t.Position;
+            var d2 = camera.transform.right;
+            var gs = t.GlobalSize;
+
+            var vec = gs * 1.5f;
+            var s = Mathf.Max(vec.x, vec.y, vec.z);
+
+            s = M.Max(s, 0.1f * M.Distance(t.Position, camera.transform.position));
+
+            d2 *= s;
+            p2 += d2;
+            var screen2 = Project(camera, p2);
             if (screen is null || screen2 is null)
                 return null;
 
