@@ -388,6 +388,14 @@ public class EchelonControl : MonoBehaviour
             = leftLaunch.torpedoTechLevel
             = Math.Max(0,torpedoMark-1);
 
+        targetProcessor.Work = 
+                           isBoarded 
+                        && !isDocked
+                        && !cameraCenterIsCockpit
+                        && !powerOff
+                        && !batteryDead
+                        ;
+
         if (isBoarded && !isDocked && !cameraCenterIsCockpit)
         {
             liveTarget = GetTarget();
