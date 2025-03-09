@@ -24,6 +24,7 @@ namespace Subnautica_Echelon
 
         //tracks true if vehicle death was ever determined. Can't enter in this state
         private bool wasDead;
+        private bool destroyed;
         private float deathAge;
         private MyLogger EchLog { get; }
         private VoidDrive engine;
@@ -104,6 +105,12 @@ namespace Subnautica_Echelon
             {
                 Log.Write("Echelon.GetAssets()", ex);
             }
+        }
+
+        void OnDestroy()
+        {
+            Log.Write($"{vehicleName} Echelon.OnDestroy()");
+            destroyed = true;
         }
 
 
@@ -489,9 +496,13 @@ namespace Subnautica_Echelon
                     deathAge += Time.deltaTime;
                     if (deathAge > 1.5f)
                     {
+                        Debug.Log($"Emitting pseudo self destruct");
                         control.SelfDestruct(true);
+                        Debug.Log($"Calling OnSalvage");
                         OnSalvage();
                         enabled = false;
+                        Debug.Log($"Done?");
+                        return;
                     }
                 }
 
@@ -593,14 +604,17 @@ namespace Subnautica_Echelon
             var bm2 = GetBatteryMark();
             var dm2 = GetDriveMark();
             var rm2 = GetSelfRepairMark();
-            if (tm != tm2)
-                ErrorMessage.AddMessage($"{vehicleName} torpedo capability changed to {(tm2 > 0 ? $"Mk{tm2}":"None")}");
-            if (bm != bm2)
-                ErrorMessage.AddMessage($"{vehicleName} nuclear battery level changed to {(bm2 > 0 ? $"Mk{bm2}" : "Basic")}");
-            if (dm != dm2)
-                ErrorMessage.AddMessage($"{vehicleName} boost performance changed to {(bm2 > 0 ? $"Mk{bm2}" : "Basic")}");
-            if (rm != rm2)
-                ErrorMessage.AddMessage($"{vehicleName} self repair capability changed to {(rm2 > EchelonModule.None ? EchelonBaseModule.GetMarkFromType(rm2) : "None")}");
+            if (!destroyed)
+            {
+                if (tm != tm2)
+                    ErrorMessage.AddMessage($"{vehicleName} torpedo capability changed to {(tm2 > 0 ? $"Mk{tm2}" : "None")}");
+                if (bm != bm2)
+                    ErrorMessage.AddMessage($"{vehicleName} nuclear battery level changed to {(bm2 > 0 ? $"Mk{bm2}" : "Basic")}");
+                if (dm != dm2)
+                    ErrorMessage.AddMessage($"{vehicleName} boost performance changed to {(bm2 > 0 ? $"Mk{bm2}" : "Basic")}");
+                if (rm != rm2)
+                    ErrorMessage.AddMessage($"{vehicleName} self repair capability changed to {(rm2 > EchelonModule.None ? EchelonBaseModule.GetMarkFromType(rm2) : "None")}");
+            }
             Debug.Log($"Changed counts of {moduleType} to {moduleCounts[(int)moduleType]}");
         }
 
