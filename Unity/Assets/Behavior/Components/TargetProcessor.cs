@@ -73,7 +73,7 @@ public class ReadOnlyTargetEnvironment
     private readonly List<AdapterTargetable> targets = new List<AdapterTargetable>();
     private readonly HashSet<int> objectInstanceIds = new HashSet<int>();
 
-    public IReadOnlyList<AdapterTargetable> Targets => targets;
+    public IEnumerable<AdapterTargetable> Targets => targets.Where(x => x.Exists);
     public Vector3 SensorCenter => sensorCenter;
 
     public bool IsTarget(int objectInstanceId)
@@ -87,7 +87,7 @@ public class ReadOnlyTargetEnvironment
     internal void Update(TargetEnvironment source)
     {
         targets.Clear();
-        targets.AddRange(source.Targets);
+        targets.AddRange(source.Targets.Where(x => x.Exists));
         objectInstanceIds.Clear();
         sensorCenter = source.SensorCenter;
     }
