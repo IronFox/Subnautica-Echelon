@@ -468,7 +468,7 @@ namespace Subnautica_Echelon
             {
                 LocalInit();
 
-                if (!liveMixin.IsAlive())
+                if (!liveMixin.IsAlive() || wasDead)
                 {
                     wasDead = true;
                     deathAge += Time.deltaTime;
