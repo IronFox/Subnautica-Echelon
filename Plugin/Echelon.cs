@@ -488,7 +488,10 @@ namespace Subnautica_Echelon
                     wasDead = true;
                     deathAge += Time.deltaTime;
                     if (deathAge > 1.5f)
+                    {
+                        OnSalvage();
                         control.SelfDestruct();
+                    }
                 }
 
                 TrailSpaceTargetText.textDisplay = MainPatcher.PluginConfig.textDisplay;
