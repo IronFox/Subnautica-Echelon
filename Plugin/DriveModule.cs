@@ -41,17 +41,17 @@ namespace Subnautica_Echelon
             switch (module)
             {
                 case EchelonModule.DriveMk1:
-                    return 0.8f;
+                    return 0.9f;
                 case EchelonModule.DriveMk2:
-                    return 1.65f;
+                    return 1.7f;
                 case EchelonModule.DriveMk3:
                     return 2.5f;
             }
-            return 0;
+            return 0.3f;
 
         }
         public override string Description 
-            => $"Enables boosting. Accelerates +{Mathf.RoundToInt(GetSpeedBoost(Module) * 100)}% compared to non-boosted. Does not stack";
+            => $"Improves boosting performance. Accelerates +{Mathf.RoundToInt(GetSpeedBoost(Module) * 100)}% compared to non-boosted. Does not stack";
 
 
 

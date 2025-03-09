@@ -424,7 +424,7 @@ namespace Subnautica_Echelon
                 //!engine.insufficientPower
                 //&&
                 !lowPower
-                && engine.driveUpgrade != EchelonModule.None
+                //&& engine.driveUpgrade != EchelonModule.None
                 ;
 
             if (boostToggle)
@@ -588,7 +588,7 @@ namespace Subnautica_Echelon
             if (bm != bm2)
                 ErrorMessage.AddMessage($"{vehicleName} nuclear battery level changed to {(bm2 > 0 ? $"Mk{bm2}" : "Basic")}");
             if (dm != dm2)
-                ErrorMessage.AddMessage($"{vehicleName} overdrive performance changed to {(bm2 > 0 ? $"Mk{bm2}" : "None")}");
+                ErrorMessage.AddMessage($"{vehicleName} boost performance changed to {(bm2 > 0 ? $"Mk{bm2}" : "Basic")}");
             Debug.Log($"Changed counts of {moduleType} to {moduleCounts[(int)moduleType]}");
         }
 
