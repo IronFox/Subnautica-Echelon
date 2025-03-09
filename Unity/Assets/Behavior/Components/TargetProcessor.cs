@@ -3,9 +3,8 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
-using static UnityEngine.GraphicsBuffer;
 
-public class TargetProcessor : MonoBehaviour
+public class TargetProcessor : PerformanceCaptured_U
 {
     private readonly TargetEnvironment targetEnvironment = new TargetEnvironment();
     private readonly ReadOnlyTargetEnvironment latest = new ReadOnlyTargetEnvironment();
@@ -23,9 +22,9 @@ public class TargetProcessor : MonoBehaviour
     }
 
     public ReadOnlyTargetEnvironment Latest => latest;
-    
+
     // Update is called once per frame
-    void Update()
+    protected override void P_Update()
     {
         if (process != null)
         {
