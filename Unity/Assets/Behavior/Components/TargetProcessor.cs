@@ -37,7 +37,7 @@ public class TargetProcessor : MonoBehaviour
             }
         }
         else
-            process = targetEnvironment.Update(transform.position, 1000, transform, cameraSpace);
+            process = targetEnvironment.Update(transform.position, 500, transform, cameraSpace);
 
     }
 }
