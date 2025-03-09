@@ -80,7 +80,7 @@ public class EchelonControl : MonoBehaviour
     public DriveControl forwardFacingRight;
     public DriveControl backFacingRight;
 
-    public HealingLight healingLight;
+    public HealingLight[] healingLights;
 
     public Transform trailSpace;
     public Transform trailSpaceCameraContainer;
@@ -537,7 +537,8 @@ public class EchelonControl : MonoBehaviour
                 && !batteryDead
                 && !powerOff;
 
-            healingLight.isHealing = isHealing;
+            foreach (var h in healingLights)
+                h.isHealing = isHealing;
 
             energyHistory.Add(currentEnergy);
             var edge = energyHistory.GetEdge();

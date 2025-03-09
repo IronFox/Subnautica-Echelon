@@ -10,7 +10,7 @@ public class HealingLight : MonoBehaviour
     private MeshRenderer myRenderer;
     public bool isHealing;
     private double t = 0;
-    
+    public bool isEnabled = true;
     private float intensity;
     // Start is called before the first frame update
     void Start()
@@ -23,6 +23,11 @@ public class HealingLight : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        if (!isEnabled)
+        {
+            myRenderer.enabled = false;
+            return;
+        }
         if (isHealing)
             intensity += Time.deltaTime;
         else

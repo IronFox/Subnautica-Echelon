@@ -16,10 +16,12 @@ public class FirstPersonMarkers : MonoBehaviour
 
     private bool wasShown = true;
     private Renderer[] childRenderers;
+    private HealingLight[] hls;
     // Start is called before the first frame update
     void Start()
     {
         childRenderers = GetComponentsInChildren<Renderer>();
+        hls = GetComponentsInChildren<HealingLight>();
     }
 
     // Update is called once per frame
@@ -30,6 +32,9 @@ public class FirstPersonMarkers : MonoBehaviour
             wasShown = show;
             foreach (var renderer in childRenderers)
                 renderer.enabled = show;
+
+            foreach (var hl in hls)
+                hl.isEnabled = show;
         }
 
 

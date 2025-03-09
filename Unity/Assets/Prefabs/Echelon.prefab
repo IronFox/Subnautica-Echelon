@@ -7838,6 +7838,7 @@ Transform:
   - {fileID: 8396495225337182028}
   - {fileID: 1821703644813145478}
   - {fileID: 2337692672294292762}
+  - {fileID: 5359800834582020155}
   m_Father: {fileID: 7858723241877434807}
   m_RootOrder: 16
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -15401,6 +15402,114 @@ MeshRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
+--- !u!1 &7486687423972498074
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 5359800834582020155}
+  - component: {fileID: 8889896092155823006}
+  - component: {fileID: 7170420467027754111}
+  - component: {fileID: 1888154068593752820}
+  - component: {fileID: 9221592747717033948}
+  m_Layer: 0
+  m_Name: Healing Sphere Light
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &5359800834582020155
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7486687423972498074}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 10, y: 10, z: 10}
+  m_Children: []
+  m_Father: {fileID: 2414071172285472889}
+  m_RootOrder: 11
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!33 &8889896092155823006
+MeshFilter:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7486687423972498074}
+  m_Mesh: {fileID: 10207, guid: 0000000000000000e000000000000000, type: 0}
+--- !u!23 &7170420467027754111
+MeshRenderer:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7486687423972498074}
+  m_Enabled: 1
+  m_CastShadows: 1
+  m_ReceiveShadows: 1
+  m_DynamicOccludee: 1
+  m_MotionVectors: 1
+  m_LightProbeUsage: 1
+  m_ReflectionProbeUsage: 1
+  m_RayTracingMode: 2
+  m_RenderingLayerMask: 1
+  m_RendererPriority: 0
+  m_Materials:
+  - {fileID: 2100000, guid: e2d5208cb1331d84792352dad3e2c1e7, type: 2}
+  m_StaticBatchInfo:
+    firstSubMesh: 0
+    subMeshCount: 0
+  m_StaticBatchRoot: {fileID: 0}
+  m_ProbeAnchor: {fileID: 0}
+  m_LightProbeVolumeOverride: {fileID: 0}
+  m_ScaleInLightmap: 1
+  m_ReceiveGI: 1
+  m_PreserveUVs: 0
+  m_IgnoreNormalsForChartDetection: 0
+  m_ImportantGI: 0
+  m_StitchLightmapSeams: 1
+  m_SelectedEditorRenderState: 3
+  m_MinimumChartSize: 4
+  m_AutoUVMaxDistance: 0.5
+  m_AutoUVMaxAngle: 89
+  m_LightmapParameters: {fileID: 0}
+  m_SortingLayerID: 0
+  m_SortingLayer: 0
+  m_SortingOrder: 0
+--- !u!135 &1888154068593752820
+SphereCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7486687423972498074}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 0
+  m_Enabled: 1
+  serializedVersion: 2
+  m_Radius: 0.5
+  m_Center: {x: 0, y: 0, z: 0}
+--- !u!114 &9221592747717033948
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7486687423972498074}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a4b6ca4d2b7c7194eb34dc437e6db856, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  isHealing: 0
+  isEnabled: 1
 --- !u!1 &7517511368136818131
 GameObject:
   m_ObjectHideFlags: 0
@@ -15495,6 +15604,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   isHealing: 0
+  isEnabled: 1
 --- !u!1 &7638371876570342793
 GameObject:
   m_ObjectHideFlags: 0
@@ -15754,7 +15864,9 @@ MonoBehaviour:
   backFacingLeft: {fileID: 7858723241938675400}
   forwardFacingRight: {fileID: 7858723242230373191}
   backFacingRight: {fileID: 7858723241757330820}
-  healingLight: {fileID: 3935917429335582625}
+  healingLights:
+  - {fileID: 9221592747717033948}
+  - {fileID: 3935917429335582625}
   trailSpace: {fileID: 6661174160902177833}
   trailSpaceCameraContainer: {fileID: 6815663451841611170}
   seat: {fileID: 745221224139561894}
@@ -17080,15 +17192,15 @@ PrefabInstance:
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 79ee4f3f52d67374683a236723570b8a, type: 3}
---- !u!4 &358423859201862970 stripped
-Transform:
-  m_CorrespondingSourceObject: {fileID: 367112996754252716, guid: 79ee4f3f52d67374683a236723570b8a,
-    type: 3}
-  m_PrefabInstance: {fileID: 135494787220835990}
-  m_PrefabAsset: {fileID: 0}
 --- !u!198 &2815871491246593094 stripped
 ParticleSystem:
   m_CorrespondingSourceObject: {fileID: 2806485808818690768, guid: 79ee4f3f52d67374683a236723570b8a,
+    type: 3}
+  m_PrefabInstance: {fileID: 135494787220835990}
+  m_PrefabAsset: {fileID: 0}
+--- !u!4 &358423859201862970 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 367112996754252716, guid: 79ee4f3f52d67374683a236723570b8a,
     type: 3}
   m_PrefabInstance: {fileID: 135494787220835990}
   m_PrefabAsset: {fileID: 0}
@@ -17916,12 +18028,6 @@ PrefabInstance:
       objectReference: {fileID: 2213038655503902190}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: d9a4961627282754f8adeb48e4099d85, type: 3}
---- !u!4 &2056418250519449612 stripped
-Transform:
-  m_CorrespondingSourceObject: {fileID: 5794600956658866444, guid: d9a4961627282754f8adeb48e4099d85,
-    type: 3}
-  m_PrefabInstance: {fileID: 5540363632323184896}
-  m_PrefabAsset: {fileID: 0}
 --- !u!114 &4259656812905478872 stripped
 MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: 8646352818163184600, guid: d9a4961627282754f8adeb48e4099d85,
@@ -17934,6 +18040,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8d908e1910b85d446adb9520a4d03604, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!4 &2056418250519449612 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 5794600956658866444, guid: d9a4961627282754f8adeb48e4099d85,
+    type: 3}
+  m_PrefabInstance: {fileID: 5540363632323184896}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1001 &6704883192194004467
 PrefabInstance:
   m_ObjectHideFlags: 0
