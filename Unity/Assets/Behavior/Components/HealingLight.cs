@@ -40,7 +40,10 @@ public class HealingLight : MonoBehaviour
 
         material.SetFloat("_HealingVisibility", actualIntensity * 0.5f);
         myRenderer.enabled = actualIntensity > 0;
-        myLight.intensity = actualIntensity;
-        myLight.enabled = actualIntensity > 0;
+        if (myLight != null)
+        {
+            myLight.intensity = actualIntensity;
+            myLight.enabled = actualIntensity > 0;
+        }
     }
 }

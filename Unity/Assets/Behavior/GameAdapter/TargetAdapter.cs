@@ -3,7 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public abstract class TargetAdapter
+public abstract class TargetAdapter : IEquatable<TargetAdapter>
 {
     public abstract Rigidbody Rigidbody { get; }
     public abstract GameObject GameObject { get; }
@@ -17,6 +17,8 @@ public abstract class TargetAdapter
     public abstract void DealDamage(Vector3 origin, float damage, GameObject dealer);
 
     public override abstract string ToString();
+
+    public bool Equals(TargetAdapter other) => GameObjectInstanceId == other.GameObjectInstanceId;
 
     public static Func<GameObject, Rigidbody, TargetAdapter> ResolveTarget { get; set; }
         = (go,rb) => new CommonTargetAdapter(go,rb);

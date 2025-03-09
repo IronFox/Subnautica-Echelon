@@ -52,6 +52,7 @@ public class EchelonControl : MonoBehaviour
     public TorpedoLaunchControl leftLaunch;
     public TorpedoLaunchControl rightLaunch;
 
+    private TargetProcessor targetProcessor;
     private bool firingLeft = true;
     private CoverAnimation upgradeCoverAnimation;
     private FirstPersonMarkers firstPersonMarkers;
@@ -218,6 +219,7 @@ public class EchelonControl : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
+        targetProcessor = GetComponent<TargetProcessor>();
         upgradeCoverAnimation = GetComponentInChildren<CoverAnimation>();
         scanner = trailSpace.GetComponentInChildren<TargetScanner>();
         nonCameraOrientation = GetComponent<NonCameraOrientation>();
@@ -254,12 +256,11 @@ public class EchelonControl : MonoBehaviour
 
     }
 
-    private readonly TargetEnvironment targetEnvironment = new TargetEnvironment();
 
     private ITargetable GetTarget()
     {
 
-        var t = scanner.GetBestTarget(targetEnvironment);
+        var t = scanner.GetBestTarget(targetProcessor.Latest);
         if (t != null)
         {
             var target = new AdapterTargetable(t);
@@ -329,6 +330,8 @@ public class EchelonControl : MonoBehaviour
     }
 
     private bool coverWasOpen = true;   //call SignalCoverClosed() at start
+    public ITargetable liveTarget;
+
     private void ProcessUpgradeCover()
     {
         if (openUpgradeCover)
@@ -385,23 +388,18 @@ public class EchelonControl : MonoBehaviour
             = leftLaunch.torpedoTechLevel
             = Math.Max(0,torpedoMark-1);
 
-        
-
-
-
         if (isBoarded && !isDocked && !cameraCenterIsCockpit)
         {
-            targetEnvironment.Update(transform.position, 1000, transform, trailSpace);
-            var target = GetTarget();
-            statusConsole.Set(StatusProperty.Target, target);
+            liveTarget = GetTarget();
+            statusConsole.Set(StatusProperty.Target, liveTarget);
             //ConsoleControl.Write($"target: "+target.ToString());
 
 
-            IEnumerable<ITargetable> set = targetEnvironment.Targets;
-            if (target != null
+            IEnumerable<ITargetable> set = targetProcessor.Latest.Targets;
+            if (liveTarget != null
                 && torpedoMark > 0
-                && !(target is AdapterTargetable))
-                set = set.Append(target);
+                && !(liveTarget is AdapterTargetable))
+                set = set.Append(liveTarget);
 
             targetMarkers.UpdateAll(set, 
                 (tm, t) =>
@@ -409,26 +407,27 @@ public class EchelonControl : MonoBehaviour
                     tm.MoveTo(t.Position);
                     var targetSize = SizeOf(t);
                     tm.Scale(targetSize);
-                    var primary = t.Equals(target);
+                    var primary = t.Equals(liveTarget);
                     tm.TargetHealthFeed.isPrimary = primary;
                     tm.TargetHealthFeed.isLocked = primary && torpedoMark > 0;
                 });
             if (targetArrows != TargetArrows.None && !positionCamera.isFirstPerson)
-                targetDirectionMarkers.UpdateAll(targetEnvironment.Targets,
+                targetDirectionMarkers.UpdateAll(targetProcessor.Latest.Targets,
                     (tm, t) => { });
             else
                 targetDirectionMarkers.Purge();
 
-            TargetListeners.Of(this, trailSpace).SignalNewTarget(this, targetEnvironment, target);
+            TargetListeners.Of(this, trailSpace).SignalNewTarget(this);
 
-            if (target != null)
+
+            if (liveTarget != null)
             {
-                var targetSize = SizeOf(target);
+                var targetSize = SizeOf(liveTarget);
 
                 //if (!(target is PositionTargetable) && !target.Equals(lastValidTarget))
                 //    ConsoleControl.Write($"New target acquired: {target}");
 
-                lastValidTarget = target;
+                lastValidTarget = liveTarget;
 
                 
             }
@@ -445,15 +444,15 @@ public class EchelonControl : MonoBehaviour
             if (triggerWasActivated)
             {
                 maintainTriggerUntilFired = true;
-                maintainTarget = target;
+                maintainTarget = liveTarget;
             }
             else if (triggerActive)
             {
-                maintainTarget = target;
+                maintainTarget = liveTarget;
             }
 
             if (maintainTriggerUntilFired && !triggerActive && maintainTarget.Exists)
-                target = maintainTarget;
+                liveTarget = maintainTarget;
 
 
             var doFire = IsFiring;
@@ -463,7 +462,7 @@ public class EchelonControl : MonoBehaviour
 
             // Debug.Log($"doFire={doFire} (triggerActive={triggerActive}, outOfWater={outOfWater})");
 
-            firing.fireWithTarget = doFire ? target : null;
+            firing.fireWithTarget = doFire ? liveTarget : null;
             if (firing.CycleProgress > firing.CycleTime * 0.5f)
             {
                 ConsoleControl.Write($"Switching tube");

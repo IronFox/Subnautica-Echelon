@@ -7,10 +7,13 @@ using UnityEngine;
 /// </summary>
 public interface ITargetListener
 {
+    void SignalNewEnvironment(
+        
+        ReadOnlyTargetEnvironment environment);
+
     void SignalNewTarget(
-        EchelonControl echelon,
-        ReadOnlyTargetEnvironment environment,
-        ITargetable mainTarget);
+        EchelonControl echelon
+        );
 }
 
 
@@ -21,11 +24,14 @@ public class CommonTargetListener : MonoBehaviour, ITargetListener
     protected ReadOnlyTargetEnvironment Environment { get; private set; }
     protected EchelonControl Echelon { get; private set; }
 
-    public void SignalNewTarget(EchelonControl echelon, ReadOnlyTargetEnvironment environment, ITargetable mainTarget)
+    public void SignalNewEnvironment(ReadOnlyTargetEnvironment environment)
     {
-        MainTarget = mainTarget;
-        MainAdapterTarget = (mainTarget as AdapterTargetable);
         Environment = environment;
+    }
+    public void SignalNewTarget(EchelonControl echelon)
+    {
+        MainTarget = echelon.liveTarget;
+        MainAdapterTarget = (echelon.liveTarget as AdapterTargetable);
         Echelon = echelon;
     }
 }
@@ -43,8 +49,12 @@ public class TargetListeners : ListenerSet<ITargetListener>
         return Make<TargetListeners>(origins);
     }
 
-    public void SignalNewTarget(EchelonControl echelon, ReadOnlyTargetEnvironment environment, ITargetable mainTarget)
-        => Do(nameof(SignalNewTarget), listener => listener.SignalNewTarget(echelon, environment, mainTarget));
+    public void SignalNewEnvironment(ReadOnlyTargetEnvironment environment)
+        => Do(nameof(SignalNewEnvironment), listener => listener.SignalNewEnvironment(environment));
+    public void SignalNewTarget(
+        EchelonControl echelon
+        )
+        => Do(nameof(SignalNewEnvironment), listener => listener.SignalNewTarget(echelon));
 }
 
 
