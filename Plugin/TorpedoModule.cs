@@ -110,7 +110,7 @@ public class TorpedoModule : EchelonModuleFamily<TorpedoModule>
                     {
                         new Ingredient(GetTechTypeOf(EchelonModule.TorpedoMk2), 1),
                         new Ingredient(TechType.Kyanite, 2),
-                        new Ingredient(TechType.Lithium, 1),
+                        new Ingredient(TechType.PrecursorIonCrystal, 1),
                         new Ingredient(TechType.Polyaniline, 2),
                     };
                 default:
