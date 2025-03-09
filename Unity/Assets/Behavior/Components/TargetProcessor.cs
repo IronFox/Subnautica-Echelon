@@ -38,7 +38,8 @@ public class TargetProcessor : MonoBehaviour
     }
 
     public ReadOnlyTargetEnvironment Latest => latest;
-    
+
+    private int sleepFrames;
     // Update is called once per frame
     void Update()
     {
@@ -48,11 +49,15 @@ public class TargetProcessor : MonoBehaviour
             {
                 latest.Update(targetEnvironment);
                 process = null;
+                sleepFrames = 2;
                 TargetListeners.Of(echelon, cameraSpace).SignalNewEnvironment(Latest);
             }
         }
         else
-            process = targetEnvironment.Update(transform.position, 500, transform, cameraSpace);
+        {
+            if (--sleepFrames <= 0)
+                process = targetEnvironment.Update(transform.position, 500, transform, cameraSpace);
+        }
 
     }
 }
