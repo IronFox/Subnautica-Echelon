@@ -61,37 +61,45 @@ public class TargetScanner : MonoBehaviour
 
     public TargetAdapter GetBestTarget(ReadOnlyTargetEnvironment env)
     {
-        var started = DateTime.Now;
-
-        Ray ray = new Ray(transform.position, transform.forward);
-
-        float closestDist = float.MaxValue;
-        TargetAdapter closest = null;
-        var reference = M.Distance(ray, env.SensorCenter);
-
-        foreach (var t in env.Targets)
+        try
         {
-            //var distance = M.SqrDistance(transform.position, item.Rigidbody.transform.position);
-            var rayDistance = M.Distance(ray, t.TargetAdapter.GameObject.transform.position);
-            if (rayDistance.DistanceAlongRay < reference.DistanceAlongRay)
-                continue;
-            if (rayDistance.DistanceAlongRay * 0.3f < rayDistance.DistanceToClosesPointOnRay)
-                continue;
-            var distance = rayDistance.DistanceAlongRay + rayDistance.DistanceToClosesPointOnRay * 10;
+            var started = DateTime.Now;
 
-            if (distance < minDistance)
-                continue;
-            if (closest == null || distance < closestDist)
+            Ray ray = new Ray(transform.position, transform.forward);
+
+            float closestDist = float.MaxValue;
+            TargetAdapter closest = null;
+            var reference = M.Distance(ray, env.SensorCenter);
+
+            foreach (var t in env.Targets)
             {
-                closest = t.TargetAdapter;
-                closestDist = distance;
+                //var distance = M.SqrDistance(transform.position, item.Rigidbody.transform.position);
+                var rayDistance = M.Distance(ray, t.TargetAdapter.GameObject.transform.position);
+                if (rayDistance.DistanceAlongRay < reference.DistanceAlongRay)
+                    continue;
+                if (rayDistance.DistanceAlongRay * 0.3f < rayDistance.DistanceToClosesPointOnRay)
+                    continue;
+                var distance = rayDistance.DistanceAlongRay + rayDistance.DistanceToClosesPointOnRay * 10;
+
+                if (distance < minDistance)
+                    continue;
+                if (closest == null || distance < closestDist)
+                {
+                    closest = t.TargetAdapter;
+                    closestDist = distance;
+                }
             }
+
+            var elapsed = DateTime.Now - started;
+            lastScanTime = (float)elapsed.TotalSeconds;
+
+            return closest;
         }
-
-        var elapsed = DateTime.Now - started;
-        lastScanTime = (float)elapsed.TotalSeconds;
-
-        return closest;
+        catch (Exception ex)
+        {
+            Debug.LogException(ex);
+            return null;
+        }
     }
 
 
