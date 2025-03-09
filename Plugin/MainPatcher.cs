@@ -132,13 +132,9 @@ namespace Subnautica_Echelon
                 Echelon.moduleBackground = LoadSpriteRaw("images/moduleBackground.png");
                 started = UWE.CoroutineHost.StartCoroutine(VehicleRegistrar.RegisterVehicle(sub,true));
 
-                TorpedoModule.torpedoSprite = LoadSprite("images/torpedo.png");
-                new TorpedoModule(0).Register();
-                new TorpedoModule(1).Register();
-                new TorpedoModule(2).Register();
-                NuclearBatteryModule.batterySprite = LoadSprite("images/nuclearBattery.png");
-                new NuclearBatteryModule(0).Register();
-                new NuclearBatteryModule(1).Register();
+                TorpedoModule.RegisterAll();
+                DriveModule.RegisterAll();
+                NuclearBatteryModule.RegisterAll();
 
 
                 AudioPatcher.Patcher = (source) => FreezeTimePatcher.Register(source);

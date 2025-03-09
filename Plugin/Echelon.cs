@@ -48,9 +48,9 @@ namespace Subnautica_Echelon
             "The Echelon is designed with the most demanding environments in mind with extensive hunter seeker capabilities. " +
             "It features automatic integrity and power recovery, and onboard smart torpedo manufacturing. " +
             "Its advanced user interfacing enables holographic sensor reconstruction for increased environmental awareness. " +
-            "Automatic targeting and target integrity analysis supports threat classification and prioritization. "+
+            "Automatic targeting and target integrity analysis supports threat classification and prioritization. " +
             "Finally, fired torpedoes intercept locked targets with high efficiency while built-in safety " +
-            "mechanics avoid harming the origin craft.\n"+
+            "mechanics avoid harming the origin craft.\n" +
             "You can craft it at any Mobile Vehicle Bay."
             ;
 
@@ -130,7 +130,7 @@ namespace Subnautica_Echelon
             if (cameraController != null)
             {
                 EchLog.Write($"Destroying camera controller {cameraController}");
-                Destroy(cameraController );
+                Destroy(cameraController);
             }
 
 
@@ -191,7 +191,7 @@ namespace Subnautica_Echelon
                 }
                 catch (Exception e)
                 {
-                    Log.Write("LocalInit()",e);
+                    Log.Write("LocalInit()", e);
                 }
 
             }
@@ -232,9 +232,9 @@ namespace Subnautica_Echelon
 
                 base.PlayerEntry();
                 control.Onboard(Player.main.camRoot.transform);
-                
+
                 reenableOnExit.Clear();
-                
+
 
                 //playerPosition = Player.main.transform.parent.gameObject;
             }
@@ -289,7 +289,8 @@ namespace Subnautica_Echelon
         }
 
         private int GetTorpedoMark() => HighestModule(EchelonModule.TorpedoMk1, EchelonModule.TorpedoMk2, EchelonModule.TorpedoMk3);
-        private int GetBatteryMark() => HighestModule(EchelonModule.NuclearBatteryMk1, EchelonModule.NuclearBatteryMk2);
+        private int GetBatteryMark() => HighestModule(EchelonModule.NuclearBatteryMk1, EchelonModule.NuclearBatteryMk2, EchelonModule.NuclearBatteryMk3);
+        private int GetDriveMark() => HighestModule(EchelonModule.DriveMk1, EchelonModule.DriveMk2, EchelonModule.DriveMk3);
 
         private void ProcessEnergyRecharge(out bool lowPower, out bool criticalPower)
         {
@@ -299,7 +300,7 @@ namespace Subnautica_Echelon
             {
                 int batteryMk = GetBatteryMark();
 
-                float level = Mathf.Pow(2,batteryMk);
+                float level = Mathf.Pow(2, batteryMk);
 
                 float recharge =
                       0.4f  //max 1.6 per second
@@ -411,6 +412,7 @@ namespace Subnautica_Echelon
 
             var boostToggle = !MainPatcher.PluginConfig.holdToBoost;
 
+            engine.driveUpgrade = HighestModuleType(EchelonModule.DriveMk1, EchelonModule.DriveMk2, EchelonModule.DriveMk3);
 
             if (GameInput.GetButtonDown(GameInput.Button.Sprint) && boostToggle)
             {
@@ -422,6 +424,7 @@ namespace Subnautica_Echelon
                 //!engine.insufficientPower
                 //&&
                 !lowPower
+                && engine.driveUpgrade != EchelonModule.None
                 ;
 
             if (boostToggle)
@@ -456,10 +459,18 @@ namespace Subnautica_Echelon
 
         private int HighestModule(params EchelonModule[] m)
         {
-            for (int i = m.Length-1; i >= 0; i--)
+            for (int i = m.Length - 1; i >= 0; i--)
                 if (HasModule(m[i]))
                     return i + 1;
             return 0;
+        }
+
+        private EchelonModule HighestModuleType(params EchelonModule[] m)
+        {
+            for (int i = m.Length - 1; i >= 0; i--)
+                if (HasModule(m[i]))
+                    return m[i];
+            return EchelonModule.None;
         }
 
         public override void Update()
@@ -567,13 +578,17 @@ namespace Subnautica_Echelon
         {
             var tm = GetTorpedoMark();
             var bm = GetBatteryMark();
+            var dm = GetDriveMark();
             moduleCounts[(int)moduleType] = count;
             var tm2 = GetTorpedoMark();
             var bm2 = GetBatteryMark();
+            var dm2 = GetDriveMark();
             if (tm != tm2)
                 ErrorMessage.AddMessage($"{vehicleName} torpedo capability changed to {(tm2 > 0 ? $"Mk{tm2}":"None")}");
             if (bm != bm2)
                 ErrorMessage.AddMessage($"{vehicleName} nuclear battery level changed to {(bm2 > 0 ? $"Mk{bm2}" : "Basic")}");
+            if (dm != dm2)
+                ErrorMessage.AddMessage($"{vehicleName} overdrive performance changed to {(bm2 > 0 ? $"Mk{bm2}" : "None")}");
             Debug.Log($"Changed counts of {moduleType} to {moduleCounts[(int)moduleType]}");
         }
 

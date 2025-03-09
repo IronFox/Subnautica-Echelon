@@ -11,10 +11,12 @@ public abstract class EchelonBaseModule : ModVehicleUpgrade
     public EchelonModule Module { get; }
     private Atlas.Sprite icon;
 
+    public TechType TechType { get; private set; }
 
     public List<CraftingNode> craftingPath;
 
     public virtual IReadOnlyCollection<TechType> AutoDisplace { get; }
+    public override string ClassId => $"Echelon{Module}";
 
     public static CraftingNode RootCraftingNode { get; } = new CraftingNode
     {
@@ -49,12 +51,24 @@ public abstract class EchelonBaseModule : ModVehicleUpgrade
         };
 
         var type = VehicleFramework.Admin.UpgradeRegistrar.RegisterUpgrade(this, compat).forModVehicle;
+        TechType = type;
         All[type] = this;
+        AllReverse[Module] = type;
         return type;
     }
 
     private static Dictionary<TechType, EchelonBaseModule> All { get; } = new Dictionary<TechType, EchelonBaseModule>();
+    private static Dictionary<EchelonModule, TechType> AllReverse { get; } = new Dictionary<EchelonModule, TechType>();
     public static IReadOnlyDictionary<TechType, EchelonBaseModule> Registered => All;
+    public static IReadOnlyDictionary<EchelonModule, TechType> TechTypeMap => AllReverse;
+
+    public static TechType GetTechTypeOf(EchelonModule module)
+    {
+        if (TechTypeMap.TryGetValue(module, out var type))
+            return type;
+        Debug.LogError($"Unable to retrieve tech type of echelon module {module}: not registered");
+        return TechType.None;
+    }
 
     public override List<CraftingNode> CraftingPath
     {

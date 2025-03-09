@@ -16,8 +16,6 @@ using VehicleFramework.UpgradeTypes;
 
 public class TorpedoModule : EchelonModuleFamily<TorpedoModule>
 {
-    public int Mk { get; }
-
     public static CraftingNode TorpedoGroupNode => new CraftingNode
     {
         displayName = $"Torpedoes",
@@ -28,54 +26,59 @@ public class TorpedoModule : EchelonModuleFamily<TorpedoModule>
 
 
     internal static Atlas.Sprite torpedoSprite;
-
-    public override string ClassId => $"EchelonTorpedoModule{Mk}";
-
-    public override string DisplayName => $"Echelon Torpedo System Mk {Mk+1}";
+    private int Mk
+    {
+        get
+        {
+            switch (Module)
+            {
+                case EchelonModule.TorpedoMk1:
+                    return 0;
+                case EchelonModule.TorpedoMk2:
+                    return 1;
+                case EchelonModule.TorpedoMk3:
+                    return 2;
+            }
+            return -1;
+        }
+    }
+    public override string ClassId => $"EchelonTorpedoModule{Mk}";  //must stay for backwards compatibility
+    public override string DisplayName => $"Echelon Torpedo System {Module.ToString().Substring(7)}";
 
     public override string Description
     {
         get
         {
-            switch (Mk)
+            switch (Module)
             {
-                case 0:
-                    return $"Adds basic torpedo deployment capabilities to the Echelon (Mk {Mk + 1}). Does not stack";
-                case 1:
-                    return $"Adds advanced torpedo deployment capabilities to the Echelon (Mk {Mk + 1}). Does not stack";
-                case 2:
-                    return $"Adds superior torpedo deployment capabilities to the Echelon (Mk {Mk + 1}). Does not stack";
+                case EchelonModule.TorpedoMk1:
+                    return $"Adds basic torpedo deployment capabilities to the Echelon (Mk1). Does not stack";
+                case EchelonModule.TorpedoMk2:
+                    return $"Adds advanced torpedo deployment capabilities to the Echelon (Mk2). Does not stack";
+                case EchelonModule.TorpedoMk3:
+                    return $"Adds superior torpedo deployment capabilities to the Echelon (Mk3). Does not stack";
 
             }
-            return "Unsupported mark "+Mk;
+            return "Unsupported module: "+Module;
         }
 
 
     }
 
-    public static EchelonModule MarkToModule(int mk)
+    internal static void RegisterAll()
     {
-        switch (mk)
-        {
-            case 0:
-                return EchelonModule.TorpedoMk1;
-            case 1:
-                return EchelonModule.TorpedoMk2;
-            case 2:
-                return EchelonModule.TorpedoMk3;
-            default:
-                throw new ArgumentException($"Mk is out of range [0,2]", nameof(mk));
-        }
+        torpedoSprite = Subnautica_Echelon.MainPatcher.LoadSprite("images/torpedo.png");
+        new TorpedoModule(EchelonModule.TorpedoMk1).Register();
+        new TorpedoModule(EchelonModule.TorpedoMk2).Register();
+        new TorpedoModule(EchelonModule.TorpedoMk3).Register();
     }
 
     /// <summary>
     /// 3 mks (0-2)
     /// </summary>
     /// <param name="mk"></param>
-    public TorpedoModule(int mk): base(MarkToModule(mk), TorpedoGroupNode)
-    {
-        Mk = mk;
-    }
+    public TorpedoModule(EchelonModule module): base(module, TorpedoGroupNode)
+    {}
 
 
     //public override CraftTree.Type FabricatorType => Mk == 0 ? CraftTree.Type.Fabricator : CraftTree.Type.Workbench;
@@ -85,27 +88,27 @@ public class TorpedoModule : EchelonModuleFamily<TorpedoModule>
     {
         get
         {
-            switch (Mk)
+            switch (Module)
             {
-                case 0:
+                case EchelonModule.TorpedoMk1:
                     return new List<Ingredient>
                     {
                         new Ingredient(TechType.Titanium, 3),
                         new Ingredient(TechType.CrashPowder, 1),
                         new Ingredient(TechType.ComputerChip, 1),
                     };
-                case 1:
+                case EchelonModule.TorpedoMk2:
                     return new List<Ingredient>
                     {
-                        new Ingredient(FindRegisteredFamilyMemberTechType(x => x.Mk == 0), 1),
+                        new Ingredient(GetTechTypeOf(EchelonModule.TorpedoMk1), 1),
                         new Ingredient(TechType.Aerogel, 2),
                         new Ingredient(TechType.Sulphur, 2),
                         new Ingredient(TechType.Magnetite, 2),
                     };
-                case 2:
+                case EchelonModule.TorpedoMk3:
                     return new List<Ingredient>
                     {
-                        new Ingredient(FindRegisteredFamilyMemberTechType(x => x.Mk == 1), 1),
+                        new Ingredient(GetTechTypeOf(EchelonModule.TorpedoMk2), 1),
                         new Ingredient(TechType.Kyanite, 2),
                         new Ingredient(TechType.Lithium, 1),
                         new Ingredient(TechType.Polyaniline, 2),

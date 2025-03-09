@@ -14,7 +14,6 @@ namespace Subnautica_Echelon
     {
         public static Atlas.Sprite batterySprite;
 
-        public int Mk { get; }
 
         public static CraftingNode BatteryGroupNode => new CraftingNode
         {
@@ -23,49 +22,53 @@ namespace Subnautica_Echelon
             name = $"echelonnuclearbatteryupgrades"
         };
 
+        private int Mk
+        {
+            get
+            {
+                switch (Module)
+                {
+                    case EchelonModule.NuclearBatteryMk1:
+                        return 0;
+                    case EchelonModule.NuclearBatteryMk2:
+                        return 1;
+                    case EchelonModule.NuclearBatteryMk3:
+                        return 2;
+                }
+                return -1;
+            }
+        }
 
-        public override string ClassId => $"EchelonNuclearBatteryModule{Mk}";
-        public override string DisplayName => $"Echelon Nuclear Battery Upgrade Mk {Mk + 1}";
+        public override string ClassId => $"EchelonNuclearBatteryModule{Mk}";  //must stay for backwards compatibility
+        public override string DisplayName => $"Echelon Nuclear Battery Upgrade {Module.ToString().Substring(14)}";
 
         public override string Description
         {
             get
             {
-                switch (Mk)
+                switch (Module)
                 {
-                    case 0:
-                        return $"Doubles the energy output of the Echelon's nuclear battery (Mk {Mk + 1}). Does not stack";
-                    case 1:
-                        return $"Quadruples the energy output of the Echelon's nuclear battery (Mk {Mk + 1}). Does not stack";
+                    case EchelonModule.NuclearBatteryMk1:
+                        return $"Doubles the energy output of the Echelon's nuclear battery (Mk1). Does not stack";
+                    case EchelonModule.NuclearBatteryMk2:
+                        return $"Quadruples the energy output of the Echelon's nuclear battery (Mk2). Does not stack";
 
                 }
-                return "Unsupported mark " + Mk;
+                return "Unsupported battery type: " + Module;
             }
         }
 
 
-        public static EchelonModule MarkToModule(int mk)
+        internal static void RegisterAll()
         {
-            switch (mk)
-            {
-                case 0:
-                    return EchelonModule.NuclearBatteryMk1;
-                case 1:
-                    return EchelonModule.NuclearBatteryMk2;
-                default:
-                    throw new ArgumentException($"Mk is out of range [0,1]", nameof(mk));
-            }
+            batterySprite = MainPatcher.LoadSprite("images/nuclearBattery.png");
+            new NuclearBatteryModule(EchelonModule.NuclearBatteryMk1).Register();
+            new NuclearBatteryModule(EchelonModule.NuclearBatteryMk2).Register();
+            //new NuclearBatteryModule(EchelonModule.NuclearBatteryMk3).Register();
         }
 
-
-        /// <summary>
-        /// 2 mks (0-1)
-        /// </summary>
-        /// <param name="mk"></param>
-        public NuclearBatteryModule(int mk) : base(MarkToModule(mk), BatteryGroupNode)
-        {
-            Mk = mk;
-        }
+        public NuclearBatteryModule(EchelonModule module) : base(module, BatteryGroupNode)
+        {}
 
 
 
@@ -74,9 +77,9 @@ namespace Subnautica_Echelon
         {
             get
             {
-                switch (Mk)
+                switch (Module)
                 {
-                    case 0:
+                    case EchelonModule.NuclearBatteryMk1:
                         return new List<Ingredient>
                     {
                         new Ingredient(TechType.Lead, 4),
@@ -84,14 +87,14 @@ namespace Subnautica_Echelon
                         new Ingredient(TechType.Copper, 2),
                         new Ingredient(TechType.ComputerChip, 1),
                     };
-                    case 1:
+                    case EchelonModule.NuclearBatteryMk2:
                         return new List<Ingredient>
                         {
-                        new Ingredient(FindRegisteredFamilyMemberTechType(x => x.Mk == 0), 1),
+                        new Ingredient(GetTechTypeOf(EchelonModule.NuclearBatteryMk1), 1),
                         new Ingredient(TechType.UraniniteCrystal, 9),
                         new Ingredient(TechType.AdvancedWiringKit, 2),
                         new Ingredient(TechType.Magnetite, 2),
-                        new Ingredient(TechType.Kyanite, 2),
+                        new Ingredient(TechType.Nickel, 2),
                     };
                     default:
                         return new List<Ingredient>();

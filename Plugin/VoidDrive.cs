@@ -18,6 +18,7 @@ namespace Subnautica_Echelon
         public bool freeCamera;
         public bool triggerActive;
         public float lastDrainPerSecond;
+        public EchelonModule driveUpgrade;
         //public bool insufficientPower;
 
         public override void Awake()
@@ -33,9 +34,6 @@ namespace Subnautica_Echelon
         {
         }
 
-        private static float BoostRelative
-            => MainPatcher.PluginConfig.boostAccelerationPercent / 200;  // we interpret the following values as 200%
-
         //public override void KillMomentum()
         //{
         //    Log.WriteLowFrequency(MyLogger.Channel.Three, ($"KillMomentum()"));
@@ -44,13 +42,20 @@ namespace Subnautica_Echelon
 
         protected override void MoveWithInput(Vector3 moveInput)
         {
-            float boostRelative = BoostRelative;
+            //default = 3/4 * 5 / 2.25 = 166%
+            //lateral = 3/4 * 2 / 1.5 = 100%
+            var baseSpeed = 2.25f;
+            var baseLateral = 1.5f;
+            var speedBoost = DriveModule.GetSpeedBoost(driveUpgrade);
+
+            var boost = baseSpeed * speedBoost;
+            var lateralBoost = baseLateral * speedBoost;
             //Log.WriteLowFrequency(MyLogger.Channel.Two, $"MoveWithInput({moveInput})");
             currentInput = moveInput;
             moveInput = new Vector3(
-                moveInput.x * (1.5f + 2 * overdriveActive * boostRelative),
-                moveInput.y * (1.5f + 2 * overdriveActive * boostRelative),
-                moveInput.z * (2.25f + 5 * overdriveActive * boostRelative));
+                moveInput.x * (baseLateral + lateralBoost * overdriveActive),
+                moveInput.y * (baseLateral + lateralBoost * overdriveActive),
+                moveInput.z * (baseSpeed + boost * overdriveActive));
             moveInput = GetEffectiveMoveInput(moveInput);
             RB.AddRelativeForce(moveInput, ForceMode.VelocityChange);
         }

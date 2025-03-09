@@ -20,8 +20,6 @@ public class EchelonConfig : ConfigFile
         nameof(TorpedoTerrainCollisions.AlwaysIgnore)
         )]
     public TorpedoTerrainCollisions torpedoTerrainCollisions = TorpedoTerrainCollisions.IgnoreWhenTargeted;
-    [Slider("Boost Acceleration %", Step = 1f, DefaultValue = 150, Min = 0, Max = 300)]
-    public float boostAccelerationPercent = 150;
     [Slider("Self Healing %", Step = 1f, DefaultValue = 10, Min = 0, Max = 100)]
     public float selfHealingSpeed = 10f;
     [Choice("Target Text", nameof(TextDisplay.None), nameof(TextDisplay.Focused), nameof(TextDisplay.All))]
