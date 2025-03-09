@@ -197,6 +197,19 @@ internal struct Aggregator
     }
 }
 
+
+public readonly struct WorstSlotSampleWithTotal
+{
+    public AggregatedSlotSample Worst { get; }
+    public TimeSpan Total { get; }
+
+    public WorstSlotSampleWithTotal(AggregatedSlotSample worst, TimeSpan total)
+    {
+        Worst = worst;
+        Total = total;
+    }
+}
+
 public readonly struct AggregatedSlotSample
 {
     public Type Type { get; }
@@ -287,9 +300,10 @@ public class PerformanceAggregate
         => newest;
     public IEnumerable<AggregatedFrame> Frames => frames;
 
-    public AggregatedFrame GetWorst()
+    public WorstSlotSampleWithTotal[] GetWorst()
     {
         var samples = new AggregatedSlotSample[numSamples];
+        var total = new TimeSpan[numSamples];
         PerformanceCapture.InitEmpty(samples);
         foreach (var frame in frames)
         {
@@ -298,9 +312,13 @@ public class PerformanceAggregate
                 samples[i] = AggregatedSlotSample.WorseOf(
                     frame.Samples[i],
                     samples[i]);
+                total[i] += samples[i].Total.TimeSum;
             }
         }
-        return new AggregatedFrame(DateTime.Now, samples);
+        var rs = new WorstSlotSampleWithTotal[numSamples];
+        for (int i = 0; i < numSamples; i++)
+            rs[i] = new WorstSlotSampleWithTotal(samples[i], total[i]);
+        return rs;
     }
 
     internal void AddFrame(AggregatedFrame frame)
@@ -311,6 +329,19 @@ public class PerformanceAggregate
         while (frames.Count > 0 && 
             DateTime.Now - frames.Peek().Captured > TimeSpan.FromSeconds(10))
             newestDropped = frames.Dequeue();
+    }
+
+    internal TimeSpan[] GetTotalTimes()
+    {
+        TimeSpan[] rs = new TimeSpan[numSamples];
+        foreach (var frame in frames)
+        {
+            for (int i = 0; i < frame.Samples.Length; i++)
+            {
+                rs[i] += frame.Samples[i].Total.TimeSum;
+            }
+        }
+        return rs;
     }
 }
 

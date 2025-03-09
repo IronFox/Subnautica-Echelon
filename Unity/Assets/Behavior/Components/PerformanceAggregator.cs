@@ -51,9 +51,9 @@ public class PerformanceAggregator : CommonBoardingListener
 
         var worst = myAggregate.GetWorst();
 
-        foreach (var s in worst.Samples.OrderByDescending(x => x.Total.TimeSum.TotalSeconds))
+        foreach (var s in worst.OrderByDescending(x => x.Total.TotalSeconds))
         {
-            b.Append(s.Type.Name).Append(" := ").Append(s.Total.TimeSum.TotalMilliseconds).Append("ms \n");
+            b.Append(s.Worst.Type.Name).Append(" := ").Append(s.Worst.Total.TimeSum.TotalMilliseconds).Append("ms /total ").Append(s.Total.TotalMilliseconds).Append("ms \n");
         }
 
         outText.text = b.ToString();

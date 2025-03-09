@@ -18,7 +18,8 @@ public class TargetProcessor : PerformanceCaptured_U
     {
         get { return work; } set
         {
-            if (work == value) return;
+            if (work == value)
+                return;
             work = value;
             enabled = work;
             if (!work)
