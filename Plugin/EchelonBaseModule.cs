@@ -25,11 +25,23 @@ public abstract class EchelonBaseModule : ModVehicleUpgrade
         name = $"echelonupgradetab"
     };
 
+    public static string GetMarkFromType(EchelonModule m)
+    {
+        var s = m.ToString();
+        return s.Substring(s.Length - 3);
+
+    }
+
+    public string MarkFromType => GetMarkFromType(Module);
+
     public EchelonBaseModule(EchelonModule module, CraftingNode groupNode)
     {
         GroupNode = groupNode;
         Module = module;
-        icon = Subnautica_Echelon.MainPatcher.LoadSprite($"images/{module}.png");
+        var path = $"images/{module}.png";
+        icon = Subnautica_Echelon.MainPatcher.LoadSprite(path);
+        if (icon == null)
+            Debug.LogError($"Error while constructing {module} {this}: File {path} not found");
 
         craftingPath = new List<CraftingNode>()
         {
@@ -54,6 +66,9 @@ public abstract class EchelonBaseModule : ModVehicleUpgrade
         TechType = type;
         All[type] = this;
         AllReverse[Module] = type;
+
+        Debug.Log($"Registered module {Module} {this} as tech type {type}");
+
         return type;
     }
 

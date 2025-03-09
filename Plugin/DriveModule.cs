@@ -34,7 +34,7 @@ namespace Subnautica_Echelon
         }
 
 
-        public override string DisplayName => $"Echelon Drive Upgrade {Module.ToString().Substring(5)}";
+        public override string DisplayName => $"Echelon Drive Upgrade {MarkFromType}";
 
         public static float GetSpeedBoost(EchelonModule module)
         {
@@ -67,6 +67,7 @@ namespace Subnautica_Echelon
                         new Ingredient(TechType.WiringKit, 2),
                         new Ingredient(TechType.Copper, 2),
                         new Ingredient(TechType.ComputerChip, 1),
+                        new Ingredient(TechType.Silicone, 1),
                     };
                     case EchelonModule.DriveMk2:
                         return new List<Ingredient>

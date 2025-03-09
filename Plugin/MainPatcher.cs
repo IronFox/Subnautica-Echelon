@@ -135,7 +135,7 @@ namespace Subnautica_Echelon
                 TorpedoModule.RegisterAll();
                 DriveModule.RegisterAll();
                 NuclearBatteryModule.RegisterAll();
-
+                RepairModule.RegisterAll();
 
                 AudioPatcher.Patcher = (source) => FreezeTimePatcher.Register(source);
                 ActorAdapter.IsOutOfWater = (go, pos) =>

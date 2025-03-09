@@ -10,4 +10,7 @@
     DriveMk1,
     DriveMk2,
     DriveMk3,
+    RepairModuleMk1,
+    RepairModuleMk2,
+    RepairModuleMk3,
 }

@@ -57,7 +57,6 @@ namespace Subnautica_Echelon
         public override Dictionary<TechType, int> Recipe =>
             new Dictionary<TechType, int> {
                 { TechType.PowerCell, 1 },
-                { TechType.Welder, 1 },
                 { TechType.AdvancedWiringKit, 2 },
                 { TechType.UraniniteCrystal, 3 },
                 { TechType.Lead, 3 },
@@ -291,6 +290,7 @@ namespace Subnautica_Echelon
         private int GetTorpedoMark() => HighestModule(EchelonModule.TorpedoMk1, EchelonModule.TorpedoMk2, EchelonModule.TorpedoMk3);
         private int GetBatteryMark() => HighestModule(EchelonModule.NuclearBatteryMk1, EchelonModule.NuclearBatteryMk2, EchelonModule.NuclearBatteryMk3);
         private int GetDriveMark() => HighestModule(EchelonModule.DriveMk1, EchelonModule.DriveMk2, EchelonModule.DriveMk3);
+        private EchelonModule GetSelfRepairMark() => RepairModule.GetFrom(this);
 
         private void ProcessEnergyRecharge(out bool lowPower, out bool criticalPower)
         {
@@ -352,17 +352,21 @@ namespace Subnautica_Echelon
 
             if (liveMixin != null)
             {
+                var level = RepairModule.GetRelativeSelfRepair(RepairModule.GetFrom(this));
+                    
                 if (liveMixin.health < liveMixin.maxHealth
                     && liveMixin.IsAlive()
                     && !criticalPower
                     && !IngameMenu.main.gameObject.activeSelf
-                    && MainPatcher.PluginConfig.selfHealingSpeed > 0
-                    && delta > 0)
+                    //&& MainPatcher.PluginConfig.selfHealingSpeed > 0
+                    && delta > 0
+                    && level > 0)
                 {
                     var healing = liveMixin.maxHealth
                         * delta
-                        * 0.02f //max = 2% of max health per second
-                        * MainPatcher.PluginConfig.selfHealingSpeed / 100   //default will be 5 seconds per 1%
+                        * level
+                        //* 0.02f //max = 2% of max health per second
+                        //* MainPatcher.PluginConfig.selfHealingSpeed / 100   //default will be 5 seconds per 1%
                         ;
 
                     var clamped = Mathf.Min(healing, liveMixin.maxHealth - liveMixin.health);
@@ -465,7 +469,7 @@ namespace Subnautica_Echelon
             return 0;
         }
 
-        private EchelonModule HighestModuleType(params EchelonModule[] m)
+        public EchelonModule HighestModuleType(params EchelonModule[] m)
         {
             for (int i = m.Length - 1; i >= 0; i--)
                 if (HasModule(m[i]))
@@ -579,16 +583,20 @@ namespace Subnautica_Echelon
             var tm = GetTorpedoMark();
             var bm = GetBatteryMark();
             var dm = GetDriveMark();
+            var rm = GetSelfRepairMark();
             moduleCounts[(int)moduleType] = count;
             var tm2 = GetTorpedoMark();
             var bm2 = GetBatteryMark();
             var dm2 = GetDriveMark();
+            var rm2 = GetSelfRepairMark();
             if (tm != tm2)
                 ErrorMessage.AddMessage($"{vehicleName} torpedo capability changed to {(tm2 > 0 ? $"Mk{tm2}":"None")}");
             if (bm != bm2)
                 ErrorMessage.AddMessage($"{vehicleName} nuclear battery level changed to {(bm2 > 0 ? $"Mk{bm2}" : "Basic")}");
             if (dm != dm2)
                 ErrorMessage.AddMessage($"{vehicleName} boost performance changed to {(bm2 > 0 ? $"Mk{bm2}" : "Basic")}");
+            if (rm != rm2)
+                ErrorMessage.AddMessage($"{vehicleName} self repair capability changed to {(rm2 > EchelonModule.None ? EchelonBaseModule.GetMarkFromType(rm2) : "None")}");
             Debug.Log($"Changed counts of {moduleType} to {moduleCounts[(int)moduleType]}");
         }
 

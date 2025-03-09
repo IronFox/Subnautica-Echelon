@@ -43,7 +43,7 @@ public class TorpedoModule : EchelonModuleFamily<TorpedoModule>
         }
     }
     public override string ClassId => $"EchelonTorpedoModule{Mk}";  //must stay for backwards compatibility
-    public override string DisplayName => $"Echelon Torpedo System {Module.ToString().Substring(7)}";
+    public override string DisplayName => $"Echelon Torpedo System {MarkFromType}";
 
     public override string Description
     {

@@ -20,8 +20,6 @@ public class EchelonConfig : ConfigFile
         nameof(TorpedoTerrainCollisions.AlwaysIgnore)
         )]
     public TorpedoTerrainCollisions torpedoTerrainCollisions = TorpedoTerrainCollisions.IgnoreWhenTargeted;
-    [Slider("Self Healing %", Step = 1f, DefaultValue = 10, Min = 0, Max = 100)]
-    public float selfHealingSpeed = 10f;
     [Choice("Target Text", nameof(TextDisplay.None), nameof(TextDisplay.Focused), nameof(TextDisplay.All))]
     public TextDisplay textDisplay = TextDisplay.All;
     [Choice("Target Arrows", nameof(TargetArrows.DangerousAndCriticialTargets), nameof(TargetArrows.CriticalOnly), nameof(TargetArrows.None))]

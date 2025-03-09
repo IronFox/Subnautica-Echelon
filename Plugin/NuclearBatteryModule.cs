@@ -40,7 +40,7 @@ namespace Subnautica_Echelon
         }
 
         public override string ClassId => $"EchelonNuclearBatteryModule{Mk}";  //must stay for backwards compatibility
-        public override string DisplayName => $"Echelon Nuclear Battery Upgrade {Module.ToString().Substring(14)}";
+        public override string DisplayName => $"Echelon Nuclear Battery Upgrade {MarkFromType}";
 
         public override string Description
         {
