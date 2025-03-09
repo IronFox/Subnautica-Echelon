@@ -489,8 +489,9 @@ namespace Subnautica_Echelon
                     deathAge += Time.deltaTime;
                     if (deathAge > 1.5f)
                     {
+                        control.SelfDestruct(true);
                         OnSalvage();
-                        control.SelfDestruct();
+                        enabled = false;
                     }
                 }
 

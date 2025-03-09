@@ -363,13 +363,22 @@ public class EchelonControl : MonoBehaviour
 
     }
 
-    public void SelfDestruct()
+    public void SelfDestruct(bool pseudo)
     {
         Offboard();
         var explosion = Instantiate(explosionPrefab,transform.position, Quaternion.identity);
         var control = explosion.GetComponentInChildren<ExplosionController>();
         control.explosionDamage = 100;
-        Destroy(gameObject);
+        if (pseudo)
+        {
+            Update();   //do single update to forward alls states
+            enabled = false;
+            Renderer[] r = GetComponentsInChildren<Renderer>();
+            foreach (var c in r)
+                c.enabled = false;
+        }
+        else
+            Destroy(gameObject);
     }
 
     public bool IsFiring => (triggerActive || maintainTriggerUntilFired)
