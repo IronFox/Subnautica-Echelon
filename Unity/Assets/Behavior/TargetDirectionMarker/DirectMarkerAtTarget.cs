@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class DirectMarkerAtTarget : MonoBehaviour
+public class DirectMarkerAtTarget : PerformanceCaptured_U
 {
     public ITargetable target;
     public AdapterTargetable adapterTarget;
@@ -28,7 +28,7 @@ public class DirectMarkerAtTarget : MonoBehaviour
 
 
     // Update is called once per frame
-    void Update()
+    protected override void P_Update()
     {
         age += Time.deltaTime;
         var ep = (echelon != null ? echelon.transform.position : M.V3(-10, 0, 0));

@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class FirstPersonMarkers : MonoBehaviour
+public class FirstPersonMarkers : PerformanceCaptured_UL
 {
     public bool show;
     public bool firingLeft;
@@ -25,7 +25,7 @@ public class FirstPersonMarkers : MonoBehaviour
     }
 
     // Update is called once per frame
-    void Update()
+    protected override void P_Update()
     {
         if (show != wasShown)
         {
@@ -44,7 +44,7 @@ public class FirstPersonMarkers : MonoBehaviour
         overdriveRight.enabled = show && overdriveActive;
     }
 
-    void LateUpdate()
+    protected override void P_LateUpdate()
     {
         if (show)
         {

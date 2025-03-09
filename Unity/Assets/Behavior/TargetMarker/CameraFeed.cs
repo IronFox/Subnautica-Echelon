@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 
 
-public class CameraFeed : MonoBehaviour
+public class CameraFeed : PerformanceCaptured_U
 {
     private Material material;
     private MeshRenderer _renderer;
@@ -17,8 +17,8 @@ public class CameraFeed : MonoBehaviour
 
         material = _renderer.materials[0];
     }
-    // Update is called once per frame
-    void Update()
+
+    protected override void P_Update()
     {
         float scale = M.Max(transform.localScale.x, transform.localScale.y, transform.localScale.z);
         filter.sharedMesh.bounds = new Bounds(Vector3.zero, Vector3.one*scale);

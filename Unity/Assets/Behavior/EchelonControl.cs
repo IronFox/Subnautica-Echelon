@@ -5,7 +5,7 @@ using System.Linq;
 using UnityEngine;
 using static UnityEngine.GraphicsBuffer;
 
-public class EchelonControl : MonoBehaviour
+public class EchelonControl : PerformanceCaptured_U
 {
     public KeyCode openConsoleKey = KeyCode.F7;
 
@@ -106,6 +106,7 @@ public class EchelonControl : MonoBehaviour
     private bool cameraIsInTrailspace;
 
     private bool wasEverBoarded;
+    private Performance performance;
     private enum CameraState
     {
         IsFree,
@@ -304,6 +305,7 @@ public class EchelonControl : MonoBehaviour
     public static TargetArrows targetArrows = TargetArrows.DangerousAndCriticialTargets;
     public EchelonControl()
     {
+        performance = new Performance(this);
         targetMarkers = new TargetPool<TargetMarker>(
             (tm, immediately) => tm.Destroy(immediately),
             ta => TargetMarker.Make(targetMarkerPrefab, ta, this)
@@ -491,9 +493,9 @@ public class EchelonControl : MonoBehaviour
     }
 
     // Update is called once per frame
-    void Update()
+    protected override void P_Update()
     {
-        try
+        performance.Update(() =>
         {
             firstPersonMarkers.overdriveActive = false;
 
@@ -530,7 +532,7 @@ public class EchelonControl : MonoBehaviour
             statusConsole.Set(StatusProperty.TorpedoMark, torpedoMark);
             statusConsole.Set(StatusProperty.IsFirstPerson, positionCamera.isFirstPerson);
 
-            firstPersonMarkers.show = 
+            firstPersonMarkers.show =
                 positionCamera.isFirstPerson
                 && isBoarded
                 && !isDocked
@@ -732,11 +734,7 @@ public class EchelonControl : MonoBehaviour
             //rb.drag = outOfWater ? airDrag : waterDrag;
 
             //rb.useGravity = outOfWater && !isDocked;
-        }
-        catch (Exception ex)
-        {
-            ConsoleControl.WriteException($"EchelongControl.Update()", ex);
-        }
+        });
     }
 
     public void Localize(Transform player)

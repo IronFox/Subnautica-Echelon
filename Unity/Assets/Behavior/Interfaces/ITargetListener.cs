@@ -14,7 +14,7 @@ public interface ITargetListener
 }
 
 
-public class CommonTargetListener : MonoBehaviour, ITargetListener
+public abstract class CommonTargetListener : PerformanceCaptured_U, ITargetListener
 {
     protected ITargetable MainTarget { get; private set; }
     protected AdapterTargetable MainAdapterTarget { get; private set; }

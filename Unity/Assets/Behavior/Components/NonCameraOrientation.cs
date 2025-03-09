@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class NonCameraOrientation : MonoBehaviour, IDirectionSource
+public class NonCameraOrientation : PerformanceCaptured_U, IDirectionSource
 {
     public float rightRotationSpeed;
     public float upRotationSpeed;
@@ -27,7 +27,7 @@ public class NonCameraOrientation : MonoBehaviour, IDirectionSource
 
 
     // Update is called once per frame
-    void Update()
+    protected override void P_Update()
     {
         if (!isActive || outOfWater)
         {

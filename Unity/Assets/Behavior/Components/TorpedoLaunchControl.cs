@@ -3,7 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class TorpedoLaunchControl : MonoBehaviour
+public class TorpedoLaunchControl : PerformanceCaptured_U
 {
     public GameObject torpedoPrefab;
     public float relativeExitVelocity=200;
@@ -58,120 +58,111 @@ public class TorpedoLaunchControl : MonoBehaviour
         position.ApplyTo(cover);
     }
     // Update is called once per frame
-    void Update()
+    protected override void P_Update()
     {
-        try
+        if (fired)
         {
-
-            if (fired)
+            //openSound.play = false;
+            fireRecoverProgress += Time.deltaTime;
+            fireSound.play = true;
+            fireSound.volume = M.Saturate(1f - fireRecoverProgress / Mathf.Min(1,secondsToFire));
+            //Debug.Log("Waiting for fire recovery @" + fireRecoverProgress);
+            if (fireRecoverProgress > secondsToFire)
             {
-                //openSound.play = false;
-                fireRecoverProgress += Time.deltaTime;
-                fireSound.play = true;
-                fireSound.volume = M.Saturate(1f - fireRecoverProgress / Mathf.Min(1,secondsToFire));
-                //Debug.Log("Waiting for fire recovery @" + fireRecoverProgress);
-                if (fireRecoverProgress > secondsToFire)
-                {
-                    fireRecoverProgress = secondsToFire;
-                    //ConsoleControl.Write("Recovered from firing. Closing again");
-                    fired = false;
-                    coverRecoveryProgress = 0;
-                    SetCover(1);
-                    closing = true;
-                }
-
+                fireRecoverProgress = secondsToFire;
+                //ConsoleControl.Write("Recovered from firing. Closing again");
+                fired = false;
+                coverRecoveryProgress = 0;
+                SetCover(1);
+                closing = true;
             }
-            else if (closing)
+
+        }
+        else if (closing)
+        {
+            //openSound.play = true;
+            fireSound.play = false;
+            coverRecoveryProgress += Time.deltaTime;
+            //Debug.Log("Closing again @" + coverRecoveryProgress);
+            if (coverRecoveryProgress > secondsToOpenCover)
             {
-                //openSound.play = true;
-                fireSound.play = false;
-                coverRecoveryProgress += Time.deltaTime;
-                //Debug.Log("Closing again @" + coverRecoveryProgress);
-                if (coverRecoveryProgress > secondsToOpenCover)
-                {
-                    //ConsoleControl.Write("Closed");
-                    closing = false;
+                //ConsoleControl.Write("Closed");
+                closing = false;
 
-                    SetCover(0);
-                    fireRecoverProgress = 0;
-                    coverRecoveryProgress = 0;
-                    coverRedactionProgress = 0;
-                }
-                else
-                    SetCover(1f - coverRecoveryProgress / secondsToOpenCover);
-            }
-            else if (fireWithTarget != null)
-            {
-                //openSound.play = true;
-                fireSound.play = false;
-                if (torpedoInTube == null)
-                    torpedoInTube = InstantiateTorpedo();
-
-                coverRedactionProgress += Time.deltaTime;
-                //ConsoleControl.Write("Opening @" + coverRedactionProgress);
-                everOpened = true;
-                if (coverRedactionProgress > secondsToOpenCover)
-                {
-                    //openSound.play = false;
-                    fireSound.play = true;
-                    coverRedactionProgress = secondsToOpenCover;
-                    SetCover(1);
-                    //ConsoleControl.Write("Firing");
-                    fired = true;
-
-                    torpedoInTube.Launch(
-                        myBody.GetPointVelocity(transform.position) + transform.forward * relativeExitVelocity,
-                        fireWithTarget,
-                        noExplosions,
-                        overrideMaxLifetimeSeconds);
-                    lastTorpedo = torpedoInTube;
-                    //ConsoleControl.Write("Releasing fired torpedo");
-                    torpedoInTube = null;
-
-                }
-                else
-                    SetCover(coverRedactionProgress / secondsToOpenCover);
+                SetCover(0);
+                fireRecoverProgress = 0;
+                coverRecoveryProgress = 0;
+                coverRedactionProgress = 0;
             }
             else
+                SetCover(1f - coverRecoveryProgress / secondsToOpenCover);
+        }
+        else if (fireWithTarget != null)
+        {
+            //openSound.play = true;
+            fireSound.play = false;
+            if (torpedoInTube == null)
+                torpedoInTube = InstantiateTorpedo();
+
+            coverRedactionProgress += Time.deltaTime;
+            //ConsoleControl.Write("Opening @" + coverRedactionProgress);
+            everOpened = true;
+            if (coverRedactionProgress > secondsToOpenCover)
             {
-                //if (everOpened)
-                //    ConsoleControl.Write("fireWithTarget is null");
-                everOpened = false;
                 //openSound.play = false;
-                fireSound.play = false;
-                if (coverRedactionProgress > 0)
-                {
-                    //openSound.play = true;
+                fireSound.play = true;
+                coverRedactionProgress = secondsToOpenCover;
+                SetCover(1);
+                //ConsoleControl.Write("Firing");
+                fired = true;
 
-                    coverRedactionProgress -= Time.deltaTime;
-                    if (coverRedactionProgress < 0)
-                    {
-                        coverRedactionProgress = 0;
-                        SetCover(0);
-                        if (torpedoInTube != null)
-                        {
-                            ConsoleControl.Write("Releasing unneeded torpedo in tube");
-
-                            torpedoInTube.Destroy();
-                            torpedoInTube = null;
-                        }
-                    }
-                    else
-                    {
-                        coverRedactionProgress = M.Max(coverRedactionProgress, 0);
-                        //Debug.Log("Closing @" + coverRedactionProgress);
-                        SetCover(coverRedactionProgress / secondsToOpenCover);
-                    }
-                }
+                torpedoInTube.Launch(
+                    myBody.GetPointVelocity(transform.position) + transform.forward * relativeExitVelocity,
+                    fireWithTarget,
+                    noExplosions,
+                    overrideMaxLifetimeSeconds);
+                lastTorpedo = torpedoInTube;
+                //ConsoleControl.Write("Releasing fired torpedo");
+                torpedoInTube = null;
 
             }
+            else
+                SetCover(coverRedactionProgress / secondsToOpenCover);
         }
-        catch (Exception e)
+        else
         {
-            ConsoleControl.WriteException($"TorpedoLaunchControl.Update()",e);
-        }
+            //if (everOpened)
+            //    ConsoleControl.Write("fireWithTarget is null");
+            everOpened = false;
+            //openSound.play = false;
+            fireSound.play = false;
+            if (coverRedactionProgress > 0)
+            {
+                //openSound.play = true;
 
-   }
+                coverRedactionProgress -= Time.deltaTime;
+                if (coverRedactionProgress < 0)
+                {
+                    coverRedactionProgress = 0;
+                    SetCover(0);
+                    if (torpedoInTube != null)
+                    {
+                        ConsoleControl.Write("Releasing unneeded torpedo in tube");
+
+                        torpedoInTube.Destroy();
+                        torpedoInTube = null;
+                    }
+                }
+                else
+                {
+                    coverRedactionProgress = M.Max(coverRedactionProgress, 0);
+                    //Debug.Log("Closing @" + coverRedactionProgress);
+                    SetCover(coverRedactionProgress / secondsToOpenCover);
+                }
+            }
+
+        }
+    }
 
     private Torpedo InstantiateTorpedo()
     {

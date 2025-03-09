@@ -23,4 +23,6 @@ public class LightEnabledWhileBoarded : CommonBoardingListener
             myLight.enabled = false;
     }
 
+    protected override void P_Update()
+    {}
 }

@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class FaceCamera : MonoBehaviour
+public class FaceCamera : PerformanceCaptured_U
 {
     // Start is called before the first frame update
     void Start()
@@ -11,7 +11,7 @@ public class FaceCamera : MonoBehaviour
     }
 
     // Update is called once per frame
-    void Update()
+    protected override void P_Update()
     {
         //Debug.Log(Camera.main.transform.right);
         var camera = CameraUtil.GetTransform(nameof(FaceCamera));

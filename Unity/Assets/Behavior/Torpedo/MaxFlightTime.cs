@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class MaxFlightTime : MonoBehaviour
+public class MaxFlightTime : PerformanceCaptured_U
 {
     public float maxLifetimeSeconds = 30;
     private float age;
@@ -15,7 +15,7 @@ public class MaxFlightTime : MonoBehaviour
     }
 
     // Update is called once per frame
-    void Update()
+    protected override void P_Update()
     {
         age += Time.deltaTime;
         currentFlightTime = age;

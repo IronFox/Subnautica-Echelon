@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using static UnityEngine.GraphicsBuffer;
 
-public class TorpedoControl : MonoBehaviour
+public class TorpedoControl : PerformanceCaptured_UF
 {
     public TargetPredictor TargetPredictor { get; private set; }
     public MaxFlightTime MaxFlightTime { get; private set; }
@@ -102,7 +102,7 @@ public class TorpedoControl : MonoBehaviour
     }
 
     // Update is called once per frame
-    void Update()
+    protected override void P_Update()
     {
         ProximityDetector.doNotCollideWith = origin;
         CollisionTrigger.doNotCollideWith = origin;
@@ -121,7 +121,7 @@ public class TorpedoControl : MonoBehaviour
         }
     }
 
-    void FixedUpdate()
+    protected override void P_FixedUpdate()
     {
         if (ActorAdapter.IsOutOfWater(gameObject, Rigidbody.position))
         {

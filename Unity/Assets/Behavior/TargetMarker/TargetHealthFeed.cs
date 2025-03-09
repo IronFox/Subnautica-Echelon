@@ -4,7 +4,7 @@ using System.Text;
 using TMPro;
 using UnityEngine;
 
-public class TargetHealthFeed : MonoBehaviour
+public class TargetHealthFeed : PerformanceCaptured_U
 {
     // Start is called before the first frame update
     public TargetAdapter target;
@@ -26,7 +26,7 @@ public class TargetHealthFeed : MonoBehaviour
     }
 
     // Update is called once per frame
-    void Update()
+    protected override void P_Update()
     {
         fadeIn = M.Saturate(fadeIn + Time.deltaTime*0.5f);
         if (target != null)

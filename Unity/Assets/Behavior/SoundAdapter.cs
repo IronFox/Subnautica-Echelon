@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Networking.Types;
 
-public class SoundAdapter : MonoBehaviour
+public class SoundAdapter : PerformanceCaptured_U
 {
     public IInstantiatedSound Sound { get; private set; }
     public AudioClip clip;
@@ -30,7 +30,7 @@ public class SoundAdapter : MonoBehaviour
     }
 
     // Update is called once per frame
-    void Update()
+    protected override void P_Update()
     {
         if (clip != null && play)
         {

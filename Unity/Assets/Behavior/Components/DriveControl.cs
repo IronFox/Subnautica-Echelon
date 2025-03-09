@@ -2,10 +2,8 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class DriveControl : MonoBehaviour
+public class DriveControl : PerformanceCaptured_U
 {
-    // Start is called before the first frame update
-    
     public Transform propeller;
     public float maxRPS = 100;
     public ParticleSystem regularParticleSystem;
@@ -29,9 +27,9 @@ public class DriveControl : MonoBehaviour
     }
 
     // Update is called once per frame
-    void Update()
+    protected override void P_Update()
     {
-        thrust = Mathf.Clamp(thrust, -1,1);
+        thrust = Mathf.Clamp(thrust, -1, 1);
 
         //if (regularAudioSource != null)
         //{
@@ -86,7 +84,7 @@ public class DriveControl : MonoBehaviour
             var velocity = regularParticleSystem.transform.position - lastPosition;
 
             em.enabled = thrust > 0 && Vector3.Dot(velocity, regularParticleSystem.transform.forward) < 0;
-            em.rateOverTimeMultiplier = emissionRate * 5* (M.Abs(thrust) + overdrive);
+            em.rateOverTimeMultiplier = emissionRate * 5 * (M.Abs(thrust) + overdrive);
             propeller.Rotate(0, 0, thrust * maxRPS * Time.deltaTime);
 
             lastPosition = regularParticleSystem.transform.position;

@@ -11,9 +11,4 @@ public class HealthProperty : MonoBehaviour
     }
     public float health = 8000;
 
-    // Update is called once per frame
-    void Update()
-    {
-        
-    }
 }

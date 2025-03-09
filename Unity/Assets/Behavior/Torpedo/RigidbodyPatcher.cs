@@ -20,11 +20,6 @@ public class RigidbodyPatcher : MonoBehaviour
         Patch(gameObject, rb);
     }
 
-    // Update is called once per frame
-    void Update()
-    {
-        
-    }
 }
 
 

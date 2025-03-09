@@ -79,10 +79,7 @@ public class TrailSpaceTargetText : CommonTargetListener
 
     private readonly TargetPool<TextMeshProUGUI> pool;
 
-//    private readonly Dictionary<int, TextMeshProUGUI> map = new Dictionary<int, TextMeshProUGUI>();
-
-    // Update is called once per frame
-    void Update()
+    protected override void P_Update()
     {
         var camera = CameraUtil.GetCamera(nameof(TrailSpaceTargetText));
         if (camera == null)

@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class RotateCamera : MonoBehaviour
+public class RotateCamera : PerformanceCaptured_U
 {
     public float rotationAxisX;
     public float rotationAxisY;
@@ -21,7 +21,7 @@ public class RotateCamera : MonoBehaviour
     }
 
     // Update is called once per frame
-    void Update()
+    protected override void P_Update()
     {
         current = current.RotateBy(-rotationAxisY, rotationAxisX, maxDegreesPerSecond * Time.deltaTime);
         if (!transitioning)

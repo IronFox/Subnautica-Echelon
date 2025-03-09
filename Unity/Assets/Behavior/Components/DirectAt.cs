@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class DirectAt : MonoBehaviour
+public class DirectAt : PerformanceCaptured_F
 {
     public IDirectionSource targetOrientation;
 
@@ -36,17 +36,15 @@ public class DirectAt : MonoBehaviour
         //=> Vector3.ang
         //return Mathf.Atan2(vector.y, Vector2.Dot(Flat(vector),forward)) * 180f / Mathf.PI;
     }
-    
+
     // Update is called once per frame
-    void FixedUpdate()
+    protected override void P_FixedUpdate()
     {
         rotX = RotateHorizontal();
         //RotateDirect();
-        RotateZ(rb, -rotX/5, targetOrientation.ZImpact);
+        RotateZ(rb, -rotX / 5, targetOrientation.ZImpact);
         if (rotateUpDown)
             RotateUpDown();
-
-        //rb.AddRelativeForce(0, 0, 10, ForceMode.Acceleration);
     }
 
     //void LateUpdate()

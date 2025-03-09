@@ -13,11 +13,4 @@ public class EnableCutout : MonoBehaviour
         access.SetFloat($"_EnableDitherAlpha", 1f);
     }
 
-    // Update is called once per frame
-    void Update()
-    {
-        //if (access.IsActive)
-        //    access.SetFloat($"_EnableCutOff", 1f);
-
-    }
 }

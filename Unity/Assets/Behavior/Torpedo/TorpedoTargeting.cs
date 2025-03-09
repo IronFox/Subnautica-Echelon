@@ -1,7 +1,7 @@
 ﻿using UnityEngine;
 
 
-public class TorpedoTargeting : MonoBehaviour
+public class TorpedoTargeting : PerformanceCaptured_F
 {
     private TargetPredictor predictor;
     private Rigidbody rb;
@@ -23,15 +23,6 @@ public class TorpedoTargeting : MonoBehaviour
         predictor = GetComponent<TargetPredictor>();
         rb = GetComponent<Rigidbody>();
         drive = GetComponent<TorpedoDrive>();
-
-    }
-
-
-
-    // Update is called once per frame
-    void Update()
-    {
-     //   Debug.Log("Update");
 
     }
 
@@ -100,7 +91,7 @@ public class TorpedoTargeting : MonoBehaviour
     }
 
 
-    void FixedUpdate()
+    protected override void P_FixedUpdate()
     {
         targetError = 0;
 

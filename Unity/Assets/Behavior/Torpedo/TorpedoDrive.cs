@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class TorpedoDrive : MonoBehaviour
+public class TorpedoDrive : PerformanceCaptured_F
 {
     private float acceleration = 1000;
     //private float travelVelocity = 35;
@@ -27,13 +27,9 @@ public class TorpedoDrive : MonoBehaviour
         targetDirection = transform.forward;
     }
 
-    // Update is called once per frame
-    void Update()
-    {
-    }
 
 
-    void FixedUpdate()
+    protected override void P_FixedUpdate()
     {
         if (!ActorAdapter.IsOutOfWater(gameObject, rb.position))
         {

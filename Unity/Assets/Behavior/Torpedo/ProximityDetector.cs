@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class ProximityDetector : MonoBehaviour
+public class ProximityDetector : PerformanceCaptured_U
 {
     public Collider regularCollider;
     public Detonator detonator;
@@ -46,7 +46,7 @@ public class ProximityDetector : MonoBehaviour
     }
 
     // Update is called once per frame
-    void Update()
+    protected override void P_Update()
     {
         if (targetPredictor != null)
         {

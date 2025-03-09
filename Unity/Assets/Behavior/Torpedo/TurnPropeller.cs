@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class TurnPropeller : MonoBehaviour
+public class TurnPropeller : PerformanceCaptured_U
 {
     public Transform propeller;
     public float rps = -720;
@@ -21,7 +21,7 @@ public class TurnPropeller : MonoBehaviour
     }
 
     // Update is called once per frame
-    void Update()
+    protected override void P_Update()
     {
         if (float.IsNaN(rps))
             return;

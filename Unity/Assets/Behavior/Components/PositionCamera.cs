@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using static UnityEngine.GraphicsBuffer;
 
-public class PositionCamera : MonoBehaviour
+public class PositionCamera : PerformanceCaptured_L
 {
     // Start is called before the first frame update
 
@@ -48,7 +48,7 @@ public class PositionCamera : MonoBehaviour
 
     private string loggedCollider;
 
-    void LateUpdate()
+    protected override void P_LateUpdate()
     {
         if (isFirstPerson)
         {
@@ -138,8 +138,4 @@ public class PositionCamera : MonoBehaviour
         }
     }
 
-    // Update is called once per frame
-    void Update()
-    {
-    }
 }

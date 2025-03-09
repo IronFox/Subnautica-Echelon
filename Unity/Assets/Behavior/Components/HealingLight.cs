@@ -3,7 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class HealingLight : MonoBehaviour
+public class HealingLight : PerformanceCaptured_U
 {
     private Material material;
     private Light myLight;
@@ -12,6 +12,11 @@ public class HealingLight : MonoBehaviour
     private double t = 0;
     public bool isEnabled = true;
     private float intensity;
+    private Performance capture;
+    public HealingLight()
+    {
+        capture = new Performance(this);
+    }
     // Start is called before the first frame update
     void Start()
     {
@@ -21,7 +26,7 @@ public class HealingLight : MonoBehaviour
     }
 
     // Update is called once per frame
-    void Update()
+    protected override void P_Update()
     {
         if (!isEnabled)
         {
@@ -36,11 +41,14 @@ public class HealingLight : MonoBehaviour
 
         t += Time.deltaTime;
 
-        float actualIntensity = (float)(Math.Sin(t*2)*0.2 + 0.6) * intensity;
+        float actualIntensity = (float)(Math.Sin(t * 2) * 0.2 + 0.6) * intensity;
 
         material.SetFloat("_HealingVisibility", actualIntensity * 0.5f);
         myRenderer.enabled = actualIntensity > 0;
-        myLight.intensity = actualIntensity;
-        myLight.enabled = actualIntensity > 0;
+        if (myLight != null)
+        {
+            myLight.intensity = actualIntensity;
+            myLight.enabled = actualIntensity > 0;
+        }
     }
 }

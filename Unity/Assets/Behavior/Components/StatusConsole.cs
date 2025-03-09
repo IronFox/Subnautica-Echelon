@@ -58,6 +58,11 @@ public class StatusConsole : CommonBoardingListener
     {
         enabled = !enabled;
         statusText.enabled = enabled;
+
+        PerformanceAggregator sibling = GetComponent<PerformanceAggregator>();
+        if (sibling != null)
+            sibling.SetVisible(enabled);
+
         ConsoleControl.Write($"Toggled canvas visibility to {enabled}");
     }
 
@@ -70,7 +75,7 @@ public class StatusConsole : CommonBoardingListener
     }
 
     // Update is called once per frame
-    void Update()
+    protected override void P_Update()
     {
         float w = parentCanvas.rect.width / 2 * 0.9f;
         float h = parentCanvas.rect.height * 0.9f;

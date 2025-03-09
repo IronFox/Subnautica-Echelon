@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class FallOrientation : MonoBehaviour, IDirectionSource
+public class FallOrientation : PerformanceCaptured_U, IDirectionSource
 {
     private Rigidbody rb;
     private LockedEuler rot;
@@ -22,8 +22,7 @@ public class FallOrientation : MonoBehaviour, IDirectionSource
     public Vector3 Up => rot.Up;
 
 
-    // Update is called once per frame
-    void Update()
+    protected override void P_Update()
     {
         var dir = rb.velocity;
         var mag = lastVelocity = dir.magnitude;

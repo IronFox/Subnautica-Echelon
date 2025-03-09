@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class EnergyLevel : MonoBehaviour
+public class EnergyLevel : PerformanceCaptured_U
 {
     private MeshRenderer meshRenderer;
     private Material material;
@@ -18,8 +18,11 @@ public class EnergyLevel : MonoBehaviour
     }
 
     // Update is called once per frame
-    void Update()
+    protected override void P_Update()
     {
-        material.SetVector("_EnergyLevel",new Vector4(Mathf.Max(maxEnergy,0.01f), currentEnergy, currentChange));   
+        perf.Update(() =>
+        {
+            material.SetVector("_EnergyLevel", new Vector4(Mathf.Max(maxEnergy, 0.01f), currentEnergy, currentChange));
+        });
     }
 }

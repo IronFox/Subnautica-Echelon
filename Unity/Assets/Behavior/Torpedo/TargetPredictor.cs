@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class TargetPredictor : MonoBehaviour, ITargetPredictor
+public class TargetPredictor : PerformanceCaptured_UF, ITargetPredictor
 {
     public ITargetable target;
     private ITargetable lastTarget;
@@ -25,7 +25,7 @@ public class TargetPredictor : MonoBehaviour, ITargetPredictor
     }
 
 
-    void FixedUpdate()
+    protected override void P_FixedUpdate()
     {
         if (target?.Equals(lastTarget) == true && target.Exists)
         {
@@ -34,8 +34,8 @@ public class TargetPredictor : MonoBehaviour, ITargetPredictor
         }
     }
 
-        // Update is called once per frame
-    void Update()
+    // Update is called once per frame
+    protected override void P_Update()
     {
         if (target?.Equals(lastTarget) == true)
         {

@@ -16,7 +16,7 @@ public interface IBoardingListener
 }
 
 
-public class CommonBoardingListener : MonoBehaviour, IBoardingListener
+public abstract class CommonBoardingListener : PerformanceCaptured_U, IBoardingListener
 {
     public virtual void SignalOffBoardingBegin()
     {}

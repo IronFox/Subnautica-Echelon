@@ -7,7 +7,7 @@ using UnityEngine;
 /// I couldn't figure out how to do animations in Unity properly,
 /// so I settled for this quick solution
 /// </summary>
-public class CoverAnimation : MonoBehaviour
+public class CoverAnimation : PerformanceCaptured_U
 {
 
     public Transform[] keyPoints;
@@ -24,13 +24,13 @@ public class CoverAnimation : MonoBehaviour
     public bool IsAtBeginning => progress <= 0;
 
     // Update is called once per frame
-    void Update()
+    protected override void P_Update()
     {
         if (!animateForward)
         {
             if (progress <= 0)
                 return;
-            progress = Mathf.Max(0,progress - Time.deltaTime);
+            progress = Mathf.Max(0, progress - Time.deltaTime);
         }
         else
         {
@@ -40,12 +40,12 @@ public class CoverAnimation : MonoBehaviour
             progress = Mathf.Min(end, progress + Time.deltaTime);
         }
 
-        for (int i = 0; i+1 < keyTimes.Length; i++)
+        for (int i = 0; i + 1 < keyTimes.Length; i++)
         {
             var t0 = keyTimes[i];
-            var t1 = keyTimes[i+1];
+            var t1 = keyTimes[i + 1];
             var trans0 = keyPoints[i];
-            var trans1 = keyPoints[i+1];
+            var trans1 = keyPoints[i + 1];
             if (progress >= t0 && progress < t1)
             {
                 float relative = M.LinearStep(t0, t1, progress);
@@ -54,7 +54,6 @@ public class CoverAnimation : MonoBehaviour
                 break;
             }
         }
-
-
+        
     }
 }

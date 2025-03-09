@@ -13,7 +13,6 @@ public readonly struct Line {
     public string Message { get; }
     public DateTimeOffset Captured { get; }
 
-
     public Line(string input)
     {
         Input = input;
@@ -27,7 +26,7 @@ public readonly struct Line {
     public bool IsOutdated(int lineRetentionSeconds) => DateTimeOffset.Now - Captured > TimeSpan.FromSeconds(lineRetentionSeconds);
 }
 
-public class ConsoleControl : MonoBehaviour
+public class ConsoleControl : PerformanceCaptured_UF
 {
     private TextMeshProUGUI tmp;
     public int maxLines = 10;
@@ -207,21 +206,20 @@ public class ConsoleControl : MonoBehaviour
         tmp.text = textToShow;
     }
 
-    void FixedUpdate()
+    protected override void P_FixedUpdate()
     {
         accumulatedSeconds += Time.fixedDeltaTime;
         float secondsPerCharacter = 1.0f / charactersPerSecond;
         if (accumulatedSeconds > secondsPerCharacter)
         {
             int numCharacters = Mathf.FloorToInt(accumulatedSeconds / secondsPerCharacter);
-            accumulatedSeconds -= numCharacters *secondsPerCharacter;
+            accumulatedSeconds -= numCharacters * secondsPerCharacter;
             AnimateNextCharacters(numCharacters);
         }
-
     }
 
     // Update is called once per frame
-    void Update()
+    protected override void P_Update()
     {
         //tmp.text = textToShow;
         bool changed = false;

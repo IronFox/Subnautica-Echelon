@@ -3,7 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class SpatialSoundEmulator : MonoBehaviour
+public class SpatialSoundEmulator : PerformanceCaptured_UF
 {
     private AudioSource source;
     private float minDistance=1;
@@ -25,7 +25,7 @@ public class SpatialSoundEmulator : MonoBehaviour
             lastCameraPosition = lastCamera.position;
     }
 
-    void FixedUpdate()
+    protected override void P_FixedUpdate()
     {
         if (lastCameraPosition != null)
         {
@@ -35,7 +35,7 @@ public class SpatialSoundEmulator : MonoBehaviour
     }
 
     // Update is called once per frame
-    void Update()
+    protected override void P_Update()
     {
         lastCamera = CameraUtil.GetTransform(nameof(SpatialSoundEmulator));
         if (lastCamera != null)

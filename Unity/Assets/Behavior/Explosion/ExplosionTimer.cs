@@ -3,7 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class ExplosionTimer : MonoBehaviour
+public class ExplosionTimer : PerformanceCaptured_U
 {
     private DateTime started;
     private Material material;
@@ -15,7 +15,7 @@ public class ExplosionTimer : MonoBehaviour
     }
 
     // Update is called once per frame
-    void Update()
+    protected override void P_Update()
     {
         material.SetFloat("_Seconds", (float)(DateTime.Now - started).TotalSeconds);
     }

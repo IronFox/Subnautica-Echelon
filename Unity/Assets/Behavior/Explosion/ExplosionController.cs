@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UIElements;
 
-public class ExplosionController : MonoBehaviour
+public class ExplosionController : PerformanceCaptured_UF
 {
 
     private Light[] lights = Array.Empty<Light>();
@@ -45,7 +45,7 @@ public class ExplosionController : MonoBehaviour
     }
 
     // Update is called once per frame
-    void Update()
+    protected override void P_Update()
     {
         time += Time.deltaTime;
 
@@ -73,7 +73,7 @@ public class ExplosionController : MonoBehaviour
         return bodies.Values;
     }
 
-    void FixedUpdate()
+    protected override void P_FixedUpdate()
     {
         foreach (var rb in GetCurrentEnvironment())
         {
