@@ -12,6 +12,21 @@ public class TargetProcessor : PerformanceCaptured_U
     private EchelonControl echelon;
     private UpdateProcess process;
 
+    private bool work = true;
+
+    public bool Work
+    {
+        get { return work; } set
+        {
+            if (work == value) return;
+            work = value;
+            enabled = work;
+            if (!work)
+                latest.Purge();
+        }
+
+    }
+
 
 
     // Start is called before the first frame update
@@ -23,6 +38,7 @@ public class TargetProcessor : PerformanceCaptured_U
 
     public ReadOnlyTargetEnvironment Latest => latest;
 
+    private int sleepFrames;
     // Update is called once per frame
     protected override void P_Update()
     {
@@ -32,11 +48,15 @@ public class TargetProcessor : PerformanceCaptured_U
             {
                 latest.Update(targetEnvironment);
                 process = null;
+                sleepFrames = 2;
                 TargetListeners.Of(echelon, cameraSpace).SignalNewEnvironment(Latest);
             }
         }
         else
-            process = targetEnvironment.Update(transform.position, 1000, transform, cameraSpace);
+        {
+            if (--sleepFrames <= 0)
+                process = targetEnvironment.Update(transform.position, 500, transform, cameraSpace);
+        }
 
     }
 }
@@ -56,15 +76,24 @@ public class ReadOnlyTargetEnvironment
     public Vector3 SensorCenter => sensorCenter;
 
     public bool IsTarget(int objectInstanceId)
-        => objectInstanceIds.Contains(objectInstanceId);
+    {
+        if (objectInstanceIds.Count == 0 && targets.Count > 0)
+            foreach (var target in targets)
+                objectInstanceIds.Add(target.GameObjectInstanceId);
+        return objectInstanceIds.Contains(objectInstanceId);
+    }
 
     internal void Update(TargetEnvironment source)
     {
         targets.Clear();
         targets.AddRange(source.Targets);
         objectInstanceIds.Clear();
-        foreach (var target in targets)
-            objectInstanceIds.Add(target.GameObjectInstanceId);
         sensorCenter = source.SensorCenter;
+    }
+
+    internal void Purge()
+    {
+        targets.Clear();
+        objectInstanceIds.Clear();
     }
 }
