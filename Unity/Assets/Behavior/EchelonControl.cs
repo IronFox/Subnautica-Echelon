@@ -257,6 +257,20 @@ public class EchelonControl : MonoBehaviour
     }
 
 
+    void LateUpdate()
+    {
+        if (freeTargetMarker != null)
+        {
+            var camera = CameraUtil.GetTransform(nameof(EchelonControl));
+            if (camera != null)
+            {
+                var ray = new Ray(camera.position, camera.forward);
+                freeTargetMarker.MoveTo(ray.GetPoint(((PositionTargetable) freeTargetMarker.Target).AtDistance));
+
+            }
+        }
+    }
+
     private ITargetable GetTarget()
     {
 
@@ -291,14 +305,15 @@ public class EchelonControl : MonoBehaviour
                 }
             }
             if (targetLocation.HasValue)
-                return new PositionTargetable(targetLocation.Value);
-            return new PositionTargetable(ray.GetPoint(500f));
+                return new PositionTargetable(targetLocation.Value, closestAt);
+            return new PositionTargetable(ray.GetPoint(500f), 500);
         }
         return null;
     }
 
 
     private IDirectionSource inWaterDirectionSource;
+    private TargetMarker freeTargetMarker;
     private readonly TargetPool<TargetMarker> targetMarkers;
     private readonly TargetPool<TargetDirectionMarker> targetDirectionMarkers;
     private ITargetable lastValidTarget;
@@ -415,8 +430,24 @@ public class EchelonControl : MonoBehaviour
             IEnumerable<ITargetable> set = targetProcessor.Latest.Targets;
             if (liveTarget != null
                 && torpedoMark > 0
-                && !(liveTarget is AdapterTargetable))
-                set = set.Append(liveTarget);
+                && liveTarget is PositionTargetable pt
+                )
+            {
+                if (freeTargetMarker != null)
+                    freeTargetMarker.MoveTo(pt.Position);
+                else
+                {
+                    freeTargetMarker = TargetMarker.Make(targetMarkerPrefab, pt, this);
+                    freeTargetMarker.Scale(SizeOf(liveTarget));
+                    freeTargetMarker.TargetHealthFeed.isPrimary = true;
+                    freeTargetMarker.TargetHealthFeed.isLocked = true;
+                }
+            }
+            else
+            {
+                freeTargetMarker?.Destroy(false);
+                freeTargetMarker = null;
+            }
 
             targetMarkers.UpdateAll(set, 
                 (tm, t) =>
@@ -492,6 +523,9 @@ public class EchelonControl : MonoBehaviour
         }
         else
         {
+            freeTargetMarker?.Destroy(true);
+            freeTargetMarker = null;
+
             leftLaunch.fireWithTarget = null;
             rightLaunch.fireWithTarget = null;
             statusConsole.Set(StatusProperty.Target, null);
@@ -796,16 +830,18 @@ internal class TargetMarker
 {
     public GameObject GameObject { get; }
     public TargetHealthFeed TargetHealthFeed { get; }
-    public TargetMarker(GameObject go)
+    public ITargetable Target { get; }
+    public TargetMarker(GameObject go, ITargetable target)
     {
         GameObject = go;
+        Target = target;
         TargetHealthFeed = GameObject.GetComponent<TargetHealthFeed>();
     }
 
     internal static TargetMarker Make(GameObject targetMarkerPrefab, ITargetable target, EchelonControl echelon)
     {
         var rs = GameObject.Instantiate(targetMarkerPrefab, target.Position, Quaternion.identity);
-        var tm = new TargetMarker(rs);
+        var tm = new TargetMarker(rs, target);
         tm.TargetHealthFeed.owner = echelon;
         tm.TargetHealthFeed.target = (target as AdapterTargetable)?.TargetAdapter;
         return tm;

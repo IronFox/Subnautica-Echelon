@@ -27,7 +27,6 @@ public class DirectMarkerAtTarget : MonoBehaviour
     }
 
 
-    // Update is called once per frame
     void Update()
     {
         age += Time.deltaTime;

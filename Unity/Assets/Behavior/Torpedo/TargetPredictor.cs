@@ -236,12 +236,14 @@ public class RigidbodyTargetable : ITargetable
 
 public class PositionTargetable : ITargetable
 {
-    public PositionTargetable(Vector3 position)
+    public PositionTargetable(Vector3 position, float atDistance)
     {
         Position = position;
+        AtDistance = atDistance;
     }
 
     public Vector3 Position { get; }
+    public float AtDistance { get; }
 
     public Vector3 GlobalSize => Vector3.one;
 

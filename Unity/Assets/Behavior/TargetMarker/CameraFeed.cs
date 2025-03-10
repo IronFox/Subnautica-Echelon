@@ -18,7 +18,7 @@ public class CameraFeed : MonoBehaviour
         material = _renderer.materials[0];
     }
     // Update is called once per frame
-    void Update()
+    void LateUpdate()
     {
         float scale = M.Max(transform.localScale.x, transform.localScale.y, transform.localScale.z);
         filter.sharedMesh.bounds = new Bounds(Vector3.zero, Vector3.one*scale);
