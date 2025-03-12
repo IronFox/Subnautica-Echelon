@@ -4,7 +4,7 @@ using UnityEngine.Rendering;
 
 public static class ShaderUtil
 {
-    public static MaterialAccess Access(Transform t)
+    public static MaterialAccess Access(Transform t, int materialIndex=0)
     {
         var renderer = t.GetComponent<MeshRenderer>();
         if (renderer == null)
@@ -13,13 +13,13 @@ public static class ShaderUtil
             return default;
         }
 
-        if (renderer.materials.Length != 1)
+        if (renderer.materials.Length <= materialIndex)
         {
-            ConsoleControl.Write($"Warning: MeshRenderer ({t.name}[{t.GetInstanceID()}]) expected to have one material but has {renderer.materials.Length}");
+            ConsoleControl.Write($"Warning: MeshRenderer ({t.name}[{t.GetInstanceID()}]) expected to have at least {materialIndex} material(s) but has {renderer.materials.Length}");
             return default;
         }
 
-        return new MaterialAccess(t,renderer.materials[0]);
+        return new MaterialAccess(t,renderer.materials[materialIndex]);
 
     }
 

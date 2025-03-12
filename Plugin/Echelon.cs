@@ -22,10 +22,14 @@ namespace Subnautica_Echelon
         public static GameObject model;
         private EchelonControl control;
 
+        public static readonly Color defaultBaseColor = new Color(0xDE, 0xDE, 0xDE) / 255f;
+        public static readonly Color defaultStripeColor = new Color(0x3F, 0x4C, 0x7A) / 255f;
+
         //tracks true if vehicle death was ever determined. Can't enter in this state
         private bool wasDead;
         private bool destroyed;
         private float deathAge;
+        private bool materialsFixed;
         private MyLogger EchLog { get; }
         private VoidDrive engine;
         private AutoPilot autopilot;
@@ -35,6 +39,20 @@ namespace Subnautica_Echelon
         {
             EchLog = new MyLogger(this);
             EchLog.Write($"Constructed");
+        }
+
+        
+
+        public override void OnFinishedLoading()
+        {
+            base.OnFinishedLoading();
+            Debug.Log($"Comparing colors {baseColor} and {stripeColor}");
+            if (baseColor == Color.white && stripeColor == Color.white)
+            {
+                Debug.Log($"Resetting white {vehicleName}");
+                SetBaseColor(Vector3.zero, defaultBaseColor);
+                SetStripeColor(Vector3.zero, defaultStripeColor);
+            }
         }
 
         public static Sprite saveFileSprite, moduleBackground;
@@ -116,8 +134,17 @@ namespace Subnautica_Echelon
 
         private bool isInitialized = false;
 
+        public override void SubConstructionComplete()
+        {
+            base.SubConstructionComplete();
+            SetBaseColor(Vector3.zero, defaultBaseColor);
+            SetStripeColor(Vector3.zero, defaultStripeColor);
+        }
+
         public override void Awake()
         {
+
+
             var existing = GetComponent<VFEngine>();
             if (existing != null)
             {
@@ -143,6 +170,7 @@ namespace Subnautica_Echelon
         }
 
 
+        public override bool AutoApplyShaders => false;
 
         private void LocalInit()
         {
@@ -202,6 +230,29 @@ namespace Subnautica_Echelon
 
             }
         }
+
+
+        public override void SetBaseColor(Vector3 hsb, Color color)
+        {
+            Debug.Log($"Updating sub base color to {color}");
+            base.SetBaseColor(hsb, color);
+
+            var listeners = GetComponentsInChildren<IColorListener>();
+            foreach (var listener in listeners)
+                listener.SetColors(baseColor, stripeColor);
+
+        }
+
+        public override void SetStripeColor(Vector3 hsb, Color color)
+        {
+            Debug.Log($"Updating sub stripe color to {color}");
+            base.SetStripeColor(hsb, color);
+
+            var listeners = GetComponentsInChildren<IColorListener>();
+            foreach (var listener in listeners)
+                listener.SetColors(baseColor, stripeColor);
+        }
+
 
         public override void Start()
         {
@@ -489,6 +540,164 @@ namespace Subnautica_Echelon
             try
             {
                 LocalInit();
+
+
+                if (Input.GetKeyDown(KeyCode.F6))
+                {
+                    if (Player.main.currentMountedVehicle != null)
+                    {
+                        HierarchyAnalyzer a = new HierarchyAnalyzer();
+                        a.LogToJson(Player.main.currentMountedVehicle.transform, $@"C:\temp\vehicle.json");
+                    }
+                }
+
+                if (!materialsFixed)
+                {
+                    var sm = SeamothHelper.Seamoth;
+                    if (sm != null)
+                    {
+                        materialsFixed = true;
+
+                        Debug.Log($"Material correction: Found Seamoth");
+
+//                        Shader shader = Shader.Find("MarmosetUBER");
+
+                        Material seamothMaterial = null;
+                        var renderers = sm.GetComponentsInChildren<MeshRenderer>();
+                        foreach (var renderer in renderers)
+                        {
+                            foreach (var material in renderer.materials)
+                                if (material.shader.name == "MarmosetUBER"
+                                    && material.name.StartsWith("Submersible_SeaMoth"))
+                                {
+                                    Debug.Log($"Material correction: Found material to reproduce: {material.name}");
+                                    seamothMaterial = material;
+                                    break;
+                                }
+                                else
+                                    Debug.Log($"Material correction: Shader mismatch {material.name} uses shader {material.shader.name}");
+                            if (seamothMaterial != null)
+                                break;
+                        }
+                        if (seamothMaterial == null)
+                        {
+                            Debug.Log($"Material correction: No material found to reproduce");
+
+                        }
+                        else
+                        {
+                            Shader shader = Shader.Find("MarmosetUBER");
+
+                            renderers = GetComponentsInChildren<MeshRenderer>();
+                            foreach (var renderer in renderers)
+                            {
+                                for (int i = 0; i < renderer.materials.Length; i++)
+                                {
+                                    if (renderer.gameObject.name.ToLower().Contains("light"))
+                                        continue;
+                                    {
+                                        try
+                                        {
+                                            //var oldSettings = Extract renderer.materials[i];
+
+
+                                            Debug.Log($"Material correction: Adapting material #{i} in {renderer.name}");
+
+                                            var m = renderer.materials[i];
+
+                                            var data = SurfaceShaderData.From(m);
+
+                                            m.shader = shader;
+
+                                            Debug.Log($"Material correction: Deep copying all variables");
+                                            for (int v = 0; v < seamothMaterial.shader.GetPropertyCount(); v++)
+                                            {
+                                                var n = seamothMaterial.shader.GetPropertyName(v);
+                                                switch (seamothMaterial.shader.GetPropertyType(v))
+                                                {
+                                                    case UnityEngine.Rendering.ShaderPropertyType.Color:
+                                                        if (n != "_Color")
+                                                            m.SetColor(n, seamothMaterial.GetColor(n));
+                                                        break;
+                                                    case UnityEngine.Rendering.ShaderPropertyType.Float:
+                                                    case UnityEngine.Rendering.ShaderPropertyType.Range:
+                                                        m.SetFloat(n, seamothMaterial.GetFloat(n));
+                                                        break;
+                                                    case UnityEngine.Rendering.ShaderPropertyType.Vector:
+                                                        m.SetVector(n, seamothMaterial.GetVector(n));
+                                                        break;
+                                                    case UnityEngine.Rendering.ShaderPropertyType.Texture:
+                                                        if (n != "_MainTex" && n != "_BumpMap" && n != "_SpecTex" && n != "_Illum")
+                                                            m.SetTexture(n, seamothMaterial.GetTexture(n));
+                                                        break;
+                                                }
+                                            }
+
+                                            if (data.MetallicTexture != null)
+                                            {
+                                                Debug.Log($"Material correction: Translating metallic map {data.MetallicTexture.name} to spec");
+
+                                                m.SetTexture("_SpecTex", data.MetallicTexture);
+                                            }
+                                            else
+                                            {
+                                                Debug.Log($"Material correction: Source had no metallic texture. Setting to {data.Metallic}");
+
+                                                var met = data.Metallic;
+                                                var tex = new Texture2D(1, 1,TextureFormat.RGBA32,false);
+                                                tex.SetPixel(0,0,new Color(met, met, met, met));
+                                                tex.Apply();
+                                                //m.SetFloat($"_SpecInt", data.Metallic);
+                                                m.SetTexture("_SpecTex", tex);
+                                            }
+
+                                            if (data.EmissionTexture != null)
+                                            {
+                                                Debug.Log($"Material correction: Translating emission map {data.EmissionTexture.name} to illum");
+
+                                                m.SetTexture("_Illum", data.EmissionTexture);
+                                                //m.SetFloat("_EnableGlow", 1);
+
+                                            }
+                                            else
+                                            {
+                                                Debug.Log($"Material correction: Source had no illumination texture. Disabling _EnableGlow");
+                                                m.SetTexture("_Illum", Texture2D.blackTexture);
+                                                //m.SetFloat("_EnableGlow", 0);
+                                            }
+
+                                            Debug.Log($"Material correction: Applying global illumination flags");
+
+                                            m.globalIlluminationFlags = seamothMaterial.globalIlluminationFlags;
+
+                                            Debug.Log($"Material correction: Applying shader keywords");
+                                            foreach (var kw in seamothMaterial.shaderKeywords)
+                                                if (!m.IsKeywordEnabled(kw)) //"MARMO_SPECMAP"
+                                                {
+                                                    m.EnableKeyword(kw);
+                                                    //Debug.Log($"Material correction: Enabled keyword {kw}. Now enabled: "+string.Join(", ", renderer.materials[i].shaderKeywords));
+                                                }
+
+                                            //renderer.materials[i] = nw;
+
+                                        }
+                                        catch (Exception ex)
+                                        {
+                                            Debug.Log($"Material correction: Deep copy failed of material #{i} of {renderer.name}: {ex}");
+                                        }
+                                    }
+                                }
+                            }
+                            Debug.Log($"Material correction: All done");
+                            HierarchyAnalyzer me = new HierarchyAnalyzer();
+                            me.LogToJson(transform, $@"C:\temp\me.json");
+
+                        }
+                    }
+
+                }
+
+
 
                 if (!liveMixin.IsAlive() || wasDead)
                 {
