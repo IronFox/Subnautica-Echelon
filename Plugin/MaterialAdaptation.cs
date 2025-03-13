@@ -15,7 +15,7 @@ namespace Subnautica_Echelon
         /// <summary>
         /// The targeted renderer. Can become null if the source is destroyed
         /// </summary>
-        public MeshRenderer Renderer { get; }
+        public Renderer Renderer { get; }
         /// <summary>
         /// The recorded instance id of the renderer. Preserved for performance and also
         /// to prevent null reference exceptions if the renderer is destroyed
@@ -32,7 +32,7 @@ namespace Subnautica_Echelon
                 return $"Dead Renderer Target ({RendererInstanceId}) material #{MaterialIndex}";
             return $"Renderer Target {Renderer} material #{MaterialIndex}";
         }
-        public MaterialAdaptationTarget(MeshRenderer renderer, int materialIndex)
+        public MaterialAdaptationTarget(Renderer renderer, int materialIndex)
         {
             RendererInstanceId = renderer.GetInstanceID();
             Renderer = renderer;
@@ -84,7 +84,7 @@ namespace Subnautica_Echelon
         public Shader Shader { get; }
 
         public MaterialAdaptation(
-            MeshRenderer renderer,
+            Renderer renderer,
             int materialIndex,
             MaterialPrototype prototype,
             SurfaceShaderData surfaceShaderData,
