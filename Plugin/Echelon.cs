@@ -150,7 +150,6 @@ namespace Subnautica_Echelon
             {
                 EchLog.Write($"Removing existing vfEngine {existing}");
                 //HierarchyAnalyzer analyzer = new HierarchyAnalyzer();
-                //analyzer.LogToJson(existing, $@"C:\temp\logs\oldEngine.json");
                 Destroy(existing);
             }
             VFEngine = Engine = engine = gameObject.AddComponent<VoidDrive>();
@@ -537,12 +536,43 @@ namespace Subnautica_Echelon
 
         private readonly List<MaterialAdaptation> adaptations = new List<MaterialAdaptation>();
 
+        public override void OnVehicleUndocked()
+        {
+            base.OnVehicleUndocked();
+            repairMaterialsIn = DateTime.Now + TimeSpan.FromSeconds(0.5f);
+            repairMaterialsInFrames = 3;
+        }
+
+        private DateTime repairMaterialsIn = DateTime.MaxValue;
+        private int repairMaterialsInFrames = 3;
+        private Color nonBlackBaseColor;
+        private Color nonBlackStripeColor;
+
+        public override void OnVehicleDocked(Vehicle vehicle, Vector3 exitLocation)
+        {
+            base.OnVehicleDocked(vehicle, exitLocation);
+            SetBaseColor(Vector3.zero, nonBlackBaseColor);
+            SetStripeColor(Vector3.zero, nonBlackStripeColor);
+        }
+
         public override void Update()
         {
             try
             {
                 LocalInit();
 
+                if (baseColor != Color.black)
+                    nonBlackBaseColor = baseColor;
+                if (stripeColor != Color.black)
+                    nonBlackStripeColor = stripeColor;
+
+                if (DateTime.Now > repairMaterialsIn && --repairMaterialsInFrames == 0)
+                {
+                    repairMaterialsIn = DateTime.MaxValue;
+                    Debug.Log($"Undocked. Resetting materials");
+                    foreach (MaterialAdaptation adaptation in adaptations)
+                        adaptation.PostDockFixOnTarget(true);
+                }
 
                 if (Input.GetKeyDown(KeyCode.F6))
                 {
@@ -589,11 +619,13 @@ namespace Subnautica_Echelon
                                             //var oldSettings = Extract renderer.materials[i];
 
 
-                                            Debug.Log($"Material correction: Adapting material #{i} in {renderer.name}");
+                                            //Debug.Log($"Material correction: Adapting material #{i} in {renderer.name}");
 
                                             var m = renderer.materials[i];
 
                                             var data = SurfaceShaderData.From(m);
+                                            if (data == null)
+                                                continue;
 
                                             var materialAdaptation = new MaterialAdaptation(renderer,i, prototype, data, shader);
                                             materialAdaptation.ApplyToTarget(true);
@@ -609,7 +641,6 @@ namespace Subnautica_Echelon
                             }
                             Debug.Log($"Material correction: All done. Applied {adaptations.Count} adaptations");
                             //HierarchyAnalyzer me = new HierarchyAnalyzer();
-                            //me.LogToJson(transform, $@"C:\temp\me.json");
 
                         }
                     }

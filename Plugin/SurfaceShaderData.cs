@@ -13,6 +13,7 @@ namespace Subnautica_Echelon
         public Texture BumpMap { get; }
         public Texture EmissionTexture { get; }
 
+
         public SurfaceShaderData(
             Color color,
             Texture mainTex,
@@ -86,8 +87,13 @@ namespace Subnautica_Echelon
             }
         }
 
-        public static SurfaceShaderData From(Material m)
+        public static SurfaceShaderData From(Material m, bool ignoreShaderName=false)
         {
+            if (m.shader.name != "Standard" && !ignoreShaderName)
+            {
+                Debug.Log($"Material correction: Ignoring {m} which uses shader {m.shader}");
+                return null;
+            }
             Debug.Log($"Material correction: Reading material {m.name} which uses shader {m.shader.name}");
             return new SurfaceShaderData(
                 color: GetColor(m,"_Color"),
@@ -99,48 +105,62 @@ namespace Subnautica_Echelon
                 );
         }
 
+        private const string SpecTexName = "_SpecTex";
+        private const string IllumTexName = "_Illum";
+        private const string DummyTexName = "SurfaceShaderData.DummyTexture";
         public void ApplyTo(Material m, bool verbose)
         {
+            ColorVariable.Set(m, "_Color2", Color, verbose);
+            ColorVariable.Set(m, "_Color3", Color, verbose);
+            
+            var existingSpecTex = m.GetTexture(SpecTexName);
 
-            m.SetColor("_Color2", Color);
-            m.SetColor("_Color3", Color);
             if (MetallicTexture != null)
             {
-                if (verbose)
-                    Debug.Log($"Material correction: Translating metallic map {MetallicTexture} to spec");
+                if (existingSpecTex != MetallicTexture)
+                {
+                    if (verbose)
+                        Debug.Log($"Material correction: Translating metallic map {MetallicTexture} to spec");
 
-                m.SetTexture("_SpecTex", MetallicTexture);
+                    m.SetTexture(SpecTexName, MetallicTexture);
+                }
             }
             else
             {
-                if (verbose)
-                    Debug.Log($"Material correction: Source had no metallic texture. Setting to {Metallic}");
-
-                var existing = m.GetTexture("_SpecTex");
-                if (existing != null && existing.name == $"SurfaceShaderData.DummyTexture")
-                    GameObject.Destroy(existing);
-
-                var met = Metallic;
-                var tex = new Texture2D(1, 1, TextureFormat.RGBA32, false);
-                tex.name = $"SurfaceShaderData.DummyTexture";
-                tex.SetPixel(0, 0, new Color(met, met, met, met));
-                tex.Apply();
-                m.SetTexture("_SpecTex", tex);
+                if (existingSpecTex == null || existingSpecTex.name != DummyTexName)
+                {
+                    if (verbose)
+                        Debug.Log($"Material correction: Source had no metallic texture. Setting to {Metallic}");
+                    var met = Metallic;
+                    var tex = new Texture2D(1, 1, TextureFormat.RGBA32, false);
+                    tex.name = DummyTexName;
+                    tex.SetPixel(0, 0, new Color(met, met, met, met));
+                    tex.Apply();
+                    m.SetTexture(SpecTexName, tex);
+                }
             }
+
+            var existingIllumTex = m.GetTexture(IllumTexName);
 
             if (EmissionTexture != null)
             {
-                if (verbose)
-                    Debug.Log($"Material correction: Translating emission map {EmissionTexture} to _Illum");
+                if (EmissionTexture != existingIllumTex)
+                {
+                    if (verbose)
+                        Debug.Log($"Material correction: Translating emission map {EmissionTexture} to _Illum");
 
-                m.SetTexture("_Illum", EmissionTexture);
+                    m.SetTexture(IllumTexName, EmissionTexture);
+                }
 
             }
             else
             {
-                if (verbose)
-                    Debug.Log($"Material correction: Source had no illumination texture. Loading black into _Illum");
-                m.SetTexture("_Illum", Texture2D.blackTexture);
+                if (existingIllumTex != Texture2D.blackTexture)
+                {
+                    if (verbose)
+                        Debug.Log($"Material correction: Source had no illumination texture. Loading black into _Illum");
+                    m.SetTexture("_Illum", Texture2D.blackTexture);
+                }
             }
         }
     }

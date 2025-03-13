@@ -46,8 +46,6 @@ namespace Subnautica_Echelon
         public static void Write(string message)
         {
             Debug.Log(message);
-            //File.AppendAllText(@"C:\Temp\Logs\log.txt", $"{DateTimeOffset.Now:HH:mm:ss.fff} {message}\r\n");
-
         }
 
         public static void Write(Exception ex)

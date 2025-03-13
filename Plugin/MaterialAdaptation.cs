@@ -11,6 +11,12 @@ namespace Subnautica_Echelon
         public int RendererInstanceId { get; }
         public int MaterialIndex { get; }
 
+        public override string ToString()
+        {
+            if (Renderer == null)
+                return $"Dead Renderer Target ({RendererInstanceId}) material #{MaterialIndex}";
+            return $"Renderer Target {Renderer} material #{MaterialIndex}";
+        }
         public MaterialAdaptationTarget(MeshRenderer renderer, int materialIndex)
         {
             RendererInstanceId = renderer.GetInstanceID();
@@ -68,6 +74,51 @@ namespace Subnautica_Echelon
             Shader = shader;
         }
 
+        /// <summary>
+        /// Resets only known issues with some material properties
+        /// </summary>
+        /// <param name="verbose"></param>
+        public void PostDockFixOnTarget(bool verbose = true)
+        {
+            try
+            {
+                var r = Target.Renderer;
+                if (r == null)
+                {
+                    Debug.LogWarning($"Material correction: Target renderer is gone ({Target.RendererInstanceId}). Cannot apply");
+                    return;
+                }
+                if (Target.MaterialIndex >= r.materials.Length)
+                {
+                    Debug.LogWarning($"Material correction: Target renderer has only {r.materials.Length} materials, but needs {Target.MaterialIndex + 1}. Cannot apply");
+                    return;
+                }
+                var m = r.materials[Target.MaterialIndex];
+                if (m.shader != Shader)
+                {
+                    if (verbose)
+                        Debug.Log($"Material correction: Applying shader {Shader.name} to target");
+
+                    m.shader = Shader;
+                }
+
+                Prototype.ApplyTo(m, verbose, x =>
+                    x == "_SpecInt"
+                    || x == "_GlowStrength"
+                    || x == "_GlowStrengthNight");
+
+            }
+            catch (Exception ex)
+            {
+                Debug.LogException(ex);
+                Debug.LogError($"Material correction: Failed to apply MaterialAdaptation to material {Target}");
+            }
+        }
+
+        /// <summary>
+        /// Reapplies all material properties to the target
+        /// </summary>
+        /// <param name="verbose">If true, every modification is logged</param>
         public void ApplyToTarget(bool verbose = false)
         {
             try
@@ -84,27 +135,30 @@ namespace Subnautica_Echelon
                     return;
                 }
                 var m = r.materials[Target.MaterialIndex];
-                if (verbose)
-                    Debug.Log($"Material correction: Applying shader {Shader.name} to target");
+                if (m.shader != Shader)
+                {
+                    if (verbose)
+                        Debug.Log($"Material correction: Applying shader {Shader.name} to target");
 
-                m.shader = Shader;
+                    m.shader = Shader;
+                }
 
-                if (verbose)
-                    Debug.Log($"Material correction: Applying prototype to target");
+                //if (verbose)
+                //    Debug.Log($"Material correction: Applying prototype to target");
 
                 Prototype.ApplyTo(m, verbose);
 
-                if (verbose)
-                    Debug.Log($"Material correction: Applying migration to target");
+                //if (verbose)
+                //    Debug.Log($"Material correction: Applying migration to target");
 
                 Migrated.ApplyTo(m, verbose);
-                if (verbose)
-                    Debug.Log($"Material correction: Adaptation complete");
+                //if (verbose)
+                //    Debug.Log($"Material correction: Adaptation complete");
             }
             catch (Exception ex)
             {
                 Debug.LogException(ex);
-                Debug.LogError($"Material correction: Failed to apply MaterialAdaptation to material {m}");
+                Debug.LogError($"Material correction: Failed to apply MaterialAdaptation to material {Target}");
             }
         }
     }

@@ -24,6 +24,7 @@ public class TextureBakery : MonoBehaviour, IColorListener
         renderer = GetComponent<MeshRenderer>();
         texture = new RenderTexture(new RenderTextureDescriptor(sourceTexture.width, sourceTexture.height, RenderTextureFormat.ARGB32));
         texture.useMipMap = true;
+        texture.autoGenerateMips = true;
         screenQuad = new Mesh();
         screenQuad.vertices = new Vector3[4] {
             new Vector3(-1, -1, 0),
@@ -79,7 +80,7 @@ public class TextureBakery : MonoBehaviour, IColorListener
             }
             Debug.Log($"Releasing bake material");
             Destroy(bakeMaterial);
-            texture.GenerateMips();
+//            texture.GenerateMips();
             //RenderTexture.active = texture;
             //Debug.Log($"Copying");
             //tex.ReadPixels(new Rect(0, 0, texture.width, texture.height), 0, 0,true);

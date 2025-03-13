@@ -25,21 +25,27 @@ namespace Subnautica_Echelon
             Name = n;
         }
 
-        public void SetTo(Material m, bool verbose)
+        public static void Set(Material m, string name, Color value, bool verbose)
         {
             try
             {
-                if (m.GetColor(Name) == Value)
+                var old = m.GetColor(name);
+                if (old == value)
                     return;
                 if (verbose)
-                    Debug.Log($"Material correction: Applying {Type} {Name} ({Value}) to material {m}");
-                m.SetColor(Name, Value);
+                    Debug.Log($"Material correction: Applying Color {name} ({old} -> {value}) to material {m}");
+                m.SetColor(name, value);
             }
             catch (Exception ex)
             {
                 Debug.LogException(ex);
-                Debug.LogError($"Material correction: Failed to apply {Type} {Name} ({Value}) to material {m}");
+                Debug.LogError($"Material correction: Failed to apply color {name} ({value}) to material {m}");
             }
+        }
+
+        public void SetTo(Material m, bool verbose)
+        {
+            Set(m, Name, Value, verbose);
         }
     }
     
@@ -60,10 +66,11 @@ namespace Subnautica_Echelon
         {
             try
             {
-                if (m.GetVector(Name) == Value)
+                var old = m.GetVector(Name);
+                if (old == Value)
                     return;
                 if (verbose)
-                    Debug.Log($"Material correction: Applying {Type} {Name} ({Value}) to material {m}");
+                    Debug.Log($"Material correction: Applying {Type} {Name} ({old} -> {Value}) to material {m}");
                 m.SetVector(Name, Value);
             }
             catch (Exception ex)
@@ -91,10 +98,11 @@ namespace Subnautica_Echelon
         {
             try
             {
-                if (m.GetFloat(Name) == Value)
+                var old = m.GetFloat(Name);
+                if (old == Value)
                     return;
                 if (verbose)
-                    Debug.Log($"Material correction: Applying {Type} {Name} ({Value}) to material {m}");
+                    Debug.Log($"Material correction: Applying {Type} {Name} ({old} -> {Value}) to material {m}");
                 m.SetFloat(Name, Value);
             }
             catch (Exception ex)
@@ -121,41 +129,60 @@ namespace Subnautica_Echelon
         private List<FloatVariable> FloatVariables { get; }
             = new List<FloatVariable>();
 
-        public void ApplyTo(Material m, bool verbose = false)
+        public void ApplyTo(Material m, bool verbose = false, Func<string,bool> variableNamePredicate = null)
         {
+            variableNamePredicate = variableNamePredicate ?? (_ => true);
 
             foreach (var v in ColorVariables)
-                v.SetTo(m, verbose);
+                if (variableNamePredicate(v.Name))
+                    v.SetTo(m, verbose);
             foreach (var v in VectorVariables)
-                v.SetTo(m, verbose);
+                if (variableNamePredicate(v.Name))
+                    v.SetTo(m, verbose);
             foreach (var v in FloatVariables)
-                v.SetTo(m, verbose);
+                if (variableNamePredicate(v.Name))
+                    v.SetTo(m, verbose);
 
-            if (verbose)
-                Debug.Log($"Material correction: Applying global illumination flags ({MaterialGlobalIlluminationFlags})");
+            if (m.globalIlluminationFlags != MaterialGlobalIlluminationFlags)
+            {
+                if (verbose)
+                    Debug.Log($"Material correction: Applying global illumination flags ({m.globalIlluminationFlags} -> {MaterialGlobalIlluminationFlags})");
 
-            m.globalIlluminationFlags = MaterialGlobalIlluminationFlags;
+                m.globalIlluminationFlags = MaterialGlobalIlluminationFlags;
+            }
 
-            if (verbose)
-                Debug.Log($"Material correction: Applying shader keywords");
-            foreach (var existing in m.shaderKeywords.ToList())
-                if (!ShaderKeywords.Contains(existing))
-                {
-                    if (verbose)
-                        Debug.Log($"Material correction: Removing shader keyword {existing}");
-                    m.DisableKeyword(existing);
-                }
-            foreach (var kw in ShaderKeywords)
-                if (!m.IsKeywordEnabled(kw))
-                {
-                    if (verbose)
-                        Debug.Log($"Material correction: Enabling shader keyword {kw}");
-                    m.EnableKeyword(kw);
-                }
-            if (verbose)
-                Debug.Log($"Material correction: Prototype applied");
+            if (ShaderKeywordsDifferent(m.shaderKeywords))
+            {
+                if (verbose)
+                    Debug.Log($"Material correction: Applying shader keywords");
+                foreach (var existing in m.shaderKeywords.ToList())
+                    if (!ShaderKeywords.Contains(existing))
+                    {
+                        if (verbose)
+                            Debug.Log($"Material correction: Removing shader keyword {existing}");
+                        m.DisableKeyword(existing);
+                    }
+                foreach (var kw in ShaderKeywords)
+                    if (!m.IsKeywordEnabled(kw))
+                    {
+                        if (verbose)
+                            Debug.Log($"Material correction: Enabling shader keyword {kw}");
+                        m.EnableKeyword(kw);
+                    }
+            }
+            //if (verbose)
+            //    Debug.Log($"Material correction: Prototype applied");
 
         }
+
+        private bool ShaderKeywordsDifferent(string[] shaderKeywords)
+        {
+            foreach (string s in shaderKeywords)
+                if (!ShaderKeywords.Contains(s))
+                    return true;
+            return shaderKeywords.Length != ShaderKeywords.Count;
+        }
+
         public MaterialPrototype(Material source)
         {
             if (source == null)
