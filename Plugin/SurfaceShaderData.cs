@@ -4,13 +4,39 @@ using static PDAScanner;
 
 namespace Subnautica_Echelon
 {
+    /// <summary>
+    /// Surface shader data extracted from a material imported from Unity.
+    /// Only values relevant to the translation process are read.
+    /// Read-only
+    /// </summary>
+    /// <author>https://github.com/IronFox</author>
     public class SurfaceShaderData
     {
+        /// <summary>
+        /// Main color of the material. Black if known
+        /// </summary>
         public Color Color { get; }
+        /// <summary>
+        /// Main texture of the material. Null if none
+        /// </summary>
         public Texture MainTex { get; }
+        /// <summary>
+        /// Metallic value (typically 0-1)
+        /// </summary>
         public float Metallic { get; }
+        /// <summary>
+        /// Metallic texture. In order to be applicable as
+        /// specular reflectivity map, its alpha value must be filled such.
+        /// As far as known, the RGB channels are not used for this purpose.
+        /// </summary>
         public Texture MetallicTexture { get; }
+        /// <summary>
+        /// Normal map. Null if none
+        /// </summary>
         public Texture BumpMap { get; }
+        /// <summary>
+        /// Emission texture. Null if none
+        /// </summary>
         public Texture EmissionTexture { get; }
 
 
@@ -87,6 +113,18 @@ namespace Subnautica_Echelon
             }
         }
 
+        /// <summary>
+        /// Reads all local values from the given material (if available).
+        /// Unless <paramref name="ignoreShaderName"/> is set,
+        /// the method returns null if the material's shader's name does not
+        /// currently match "Standard"
+        /// </summary>
+        /// <param name="m">Material to read from</param>
+        /// <param name="ignoreShaderName">
+        /// If true, will always read the material, regardless of shader name.
+        /// If false, will only read the material if its shader name equals "Standard",
+        /// return null otherwise</param>
+        /// <returns>Read surface shader data or null if the shader name did not match</returns>
         public static SurfaceShaderData From(Material m, bool ignoreShaderName=false)
         {
             if (m.shader.name != "Standard" && !ignoreShaderName)
@@ -108,6 +146,11 @@ namespace Subnautica_Echelon
         private const string SpecTexName = "_SpecTex";
         private const string IllumTexName = "_Illum";
         private const string DummyTexName = "SurfaceShaderData.DummyTexture";
+        /// <summary>
+        /// Applies the loaded configuration to the given material
+        /// </summary>
+        /// <param name="m">Target material</param>
+        /// <param name="verbose">If true, every modification is logged</param>
         public void ApplyTo(Material m, bool verbose)
         {
             ColorVariable.Set(m, "_Color2", Color, verbose);

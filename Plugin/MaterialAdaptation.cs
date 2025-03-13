@@ -9,6 +9,7 @@ namespace Subnautica_Echelon
     /// A renderer material target description, identifying a material by its slot index,
     /// not reference.
     /// </summary>
+    /// <author>https://github.com/IronFox</author>
     public readonly struct MaterialAdaptationTarget : IEquatable<MaterialAdaptationTarget>
     {
         /// <summary>
@@ -62,6 +63,7 @@ namespace Subnautica_Echelon
     /// <summary>
     /// A full material translation migrated+prototype -> final
     /// </summary>
+    /// <author>https://github.com/IronFox</author>
     public class MaterialAdaptation
     {
         /// <summary>

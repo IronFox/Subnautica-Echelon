@@ -8,13 +8,13 @@ using VehicleFramework;
 namespace Subnautica_Echelon
 {
 
-    public interface IShaderVariable
+    internal interface IShaderVariable
     {
         ShaderPropertyType Type { get; }
         void SetTo(Material m, bool verbose = false);
     }
 
-    public readonly struct ColorVariable : IShaderVariable
+    internal readonly struct ColorVariable : IShaderVariable
     {
         public ShaderPropertyType Type => ShaderPropertyType.Color;
         public Color Value { get; }
@@ -48,8 +48,8 @@ namespace Subnautica_Echelon
             Set(m, Name, Value, verbose);
         }
     }
-    
-    public readonly struct VectorVariable : IShaderVariable
+
+    internal readonly struct VectorVariable : IShaderVariable
     {
         public ShaderPropertyType Type => ShaderPropertyType.Vector;
 
@@ -81,7 +81,7 @@ namespace Subnautica_Echelon
         }
     }
     
-    public readonly struct FloatVariable : IShaderVariable
+    internal readonly struct FloatVariable : IShaderVariable
     {
         public ShaderPropertyType Type => ShaderPropertyType.Float;
 
@@ -116,6 +116,7 @@ namespace Subnautica_Echelon
     /// <summary>
     /// Read-only material definition as retrieved from some existing material
     /// </summary>
+    /// <author>https://github.com/IronFox</author>
     public class MaterialPrototype
     {
         /// <summary>
