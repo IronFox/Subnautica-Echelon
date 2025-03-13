@@ -5,10 +5,24 @@ using static UnityEngine.GraphicsBuffer;
 
 namespace Subnautica_Echelon
 {
+    /// <summary>
+    /// A renderer material target description, identifying a material by its slot index,
+    /// not reference.
+    /// </summary>
     public readonly struct MaterialAdaptationTarget : IEquatable<MaterialAdaptationTarget>
     {
+        /// <summary>
+        /// The targeted renderer. Can become null if the source is destroyed
+        /// </summary>
         public MeshRenderer Renderer { get; }
+        /// <summary>
+        /// The recorded instance id of the renderer. Preserved for performance and also
+        /// to prevent null reference exceptions if the renderer is destroyed
+        /// </summary>
         public int RendererInstanceId { get; }
+        /// <summary>
+        /// The 0-based index of this material on the targeted renderer
+        /// </summary>
         public int MaterialIndex { get; }
 
         public override string ToString()
@@ -45,11 +59,26 @@ namespace Subnautica_Echelon
         }
     }
 
+    /// <summary>
+    /// A full material translation migrated+prototype -> final
+    /// </summary>
     public class MaterialAdaptation
     {
+        /// <summary>
+        /// The targeted material
+        /// </summary>
         public MaterialAdaptationTarget Target { get; }
+        /// <summary>
+        /// The (shared) prototype used to modify the final material
+        /// </summary>
         public MaterialPrototype Prototype { get; }
+        /// <summary>
+        /// The data migrated from the original material as present in the mesh
+        /// </summary>
         public SurfaceShaderData Migrated { get; }
+        /// <summary>
+        /// The shader that is to be applied to the material
+        /// </summary>
         public Shader Shader { get; }
 
         public MaterialAdaptation(
@@ -75,9 +104,9 @@ namespace Subnautica_Echelon
         }
 
         /// <summary>
-        /// Resets only known issues with some material properties
+        /// Resets only variables known to be corrupted during moonpool undock
         /// </summary>
-        /// <param name="verbose"></param>
+        /// <param name="verbose">If true, every modification is logged</param>
         public void PostDockFixOnTarget(bool verbose = true)
         {
             try
@@ -103,7 +132,7 @@ namespace Subnautica_Echelon
                 }
 
                 Prototype.ApplyTo(m, verbose, x =>
-                    x == "_SpecInt"
+                       x == "_SpecInt"
                     || x == "_GlowStrength"
                     || x == "_GlowStrengthNight");
 
@@ -143,17 +172,9 @@ namespace Subnautica_Echelon
                     m.shader = Shader;
                 }
 
-                //if (verbose)
-                //    Debug.Log($"Material correction: Applying prototype to target");
-
                 Prototype.ApplyTo(m, verbose);
 
-                //if (verbose)
-                //    Debug.Log($"Material correction: Applying migration to target");
-
                 Migrated.ApplyTo(m, verbose);
-                //if (verbose)
-                //    Debug.Log($"Material correction: Adaptation complete");
             }
             catch (Exception ex)
             {

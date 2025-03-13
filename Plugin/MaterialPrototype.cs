@@ -114,10 +114,13 @@ namespace Subnautica_Echelon
     }
 
     /// <summary>
-    /// Readonly material definition as retrieved from some existing material
+    /// Read-only material definition as retrieved from some existing material
     /// </summary>
     public class MaterialPrototype
     {
+        /// <summary>
+        /// True if this instance was created without a source material
+        /// </summary>
         public bool IsEmpty {get; private set; }
         
         private HashSet<string> ShaderKeywords { get; } = new HashSet<string>();
@@ -129,6 +132,14 @@ namespace Subnautica_Echelon
         private List<FloatVariable> FloatVariables { get; }
             = new List<FloatVariable>();
 
+        /// <summary>
+        /// Updates all recorded shader variables in the specified material
+        /// </summary>
+        /// <param name="m">Target material</param>
+        /// <param name="verbose">If true, every modification is logged</param>
+        /// <param name="variableNamePredicate">
+        /// Optional predicate to only check/update certain shader variables by name.
+        /// If non-null updates only variables for which this function returns true</param>
         public void ApplyTo(Material m, bool verbose = false, Func<string,bool> variableNamePredicate = null)
         {
             variableNamePredicate = variableNamePredicate ?? (_ => true);
@@ -151,38 +162,26 @@ namespace Subnautica_Echelon
                 m.globalIlluminationFlags = MaterialGlobalIlluminationFlags;
             }
 
-            if (ShaderKeywordsDifferent(m.shaderKeywords))
-            {
-                if (verbose)
-                    Debug.Log($"Material correction: Applying shader keywords");
-                foreach (var existing in m.shaderKeywords.ToList())
-                    if (!ShaderKeywords.Contains(existing))
-                    {
-                        if (verbose)
-                            Debug.Log($"Material correction: Removing shader keyword {existing}");
-                        m.DisableKeyword(existing);
-                    }
-                foreach (var kw in ShaderKeywords)
-                    if (!m.IsKeywordEnabled(kw))
-                    {
-                        if (verbose)
-                            Debug.Log($"Material correction: Enabling shader keyword {kw}");
-                        m.EnableKeyword(kw);
-                    }
-            }
-            //if (verbose)
-            //    Debug.Log($"Material correction: Prototype applied");
-
+            foreach (var existing in m.shaderKeywords.ToList())
+                if (!ShaderKeywords.Contains(existing))
+                {
+                    if (verbose)
+                        Debug.Log($"Material correction: Removing shader keyword {existing}");
+                    m.DisableKeyword(existing);
+                }
+            foreach (var kw in ShaderKeywords)
+                if (!m.IsKeywordEnabled(kw))
+                {
+                    if (verbose)
+                        Debug.Log($"Material correction: Enabling shader keyword {kw}");
+                    m.EnableKeyword(kw);
+                }
         }
 
-        private bool ShaderKeywordsDifferent(string[] shaderKeywords)
-        {
-            foreach (string s in shaderKeywords)
-                if (!ShaderKeywords.Contains(s))
-                    return true;
-            return shaderKeywords.Length != ShaderKeywords.Count;
-        }
-
+        /// <summary>
+        /// Constructs the prototype from a given material
+        /// </summary>
+        /// <param name="source"></param>
         public MaterialPrototype(Material source)
         {
             if (source == null)
@@ -199,7 +198,7 @@ namespace Subnautica_Echelon
                 switch (source.shader.GetPropertyType(v))
                 {
                     case UnityEngine.Rendering.ShaderPropertyType.Color:
-                        if (!n.StartsWith("_Color"))
+                        if (!n.StartsWith("_Color"))    //don't  copy colors
                             ColorVariables.Add(new ColorVariable(source, n));
                         break;
                     case UnityEngine.Rendering.ShaderPropertyType.Float:
@@ -209,6 +208,7 @@ namespace Subnautica_Echelon
                     case UnityEngine.Rendering.ShaderPropertyType.Vector:
                         VectorVariables.Add(new VectorVariable(source, n));
                         break;
+                    //don't copy textures (does not make sense)
                     //case UnityEngine.Rendering.ShaderPropertyType.Texture:
                     //    if (n != "_MainTex" && n != "_BumpMap" && n != "_SpecTex" && n != "_Illum")
                     //        m.SetTexture(n, seamothMaterial.GetTexture(n));
@@ -217,6 +217,16 @@ namespace Subnautica_Echelon
             }
         }
 
+        /// <summary>
+        /// Creates a material prototype for the main material of the Seamoth body.
+        /// While the Seamoth is not yet available, the method returns null.
+        /// If the Seamoth is loaded but the material could not be found, the return
+        /// value is an empty material prototype (IsEmpty=true)
+        /// </summary>
+        /// <param name="verbose">True to log details</param>
+        /// <returns>Null if the seamoth is not (yet) available. Keep trying if null.
+        /// Non-null if the seamoth is loaded, but can then be empty (IsEmpty is true)
+        /// if the respective material is not found</returns>
         public static MaterialPrototype FromSeamoth(bool verbose=false)
         {
             var sm = SeamothHelper.Seamoth;
