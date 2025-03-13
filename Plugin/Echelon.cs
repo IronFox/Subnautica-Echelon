@@ -535,6 +535,8 @@ namespace Subnautica_Echelon
             return EchelonModule.None;
         }
 
+        private readonly List<MaterialAdaptation> adaptations = new List<MaterialAdaptation>();
+
         public override void Update()
         {
             try
@@ -544,42 +546,27 @@ namespace Subnautica_Echelon
 
                 if (Input.GetKeyDown(KeyCode.F6))
                 {
-                    if (Player.main.currentMountedVehicle != null)
-                    {
-                        HierarchyAnalyzer a = new HierarchyAnalyzer();
-                        a.LogToJson(Player.main.currentMountedVehicle.transform, $@"C:\temp\vehicle.json");
-                    }
+                    //if (Player.main.currentMountedVehicle != null)
+                    //{
+                    //    HierarchyAnalyzer a = new HierarchyAnalyzer();
+                    //    a.LogToJson(Player.main.currentMountedVehicle.transform, $@"C:\temp\vehicle.json");
+                    //}
+
+                    Debug.Log($"Reapplying materials");
+                    foreach (MaterialAdaptation adaptation in adaptations)
+                        adaptation.ApplyToTarget(true);
                 }
 
                 if (!materialsFixed)
                 {
-                    var sm = SeamothHelper.Seamoth;
-                    if (sm != null)
+                    var prototype = MaterialPrototype.FromSeamoth();
+
+
+                    if (prototype != null)
                     {
                         materialsFixed = true;
 
-                        Debug.Log($"Material correction: Found Seamoth");
-
-//                        Shader shader = Shader.Find("MarmosetUBER");
-
-                        Material seamothMaterial = null;
-                        var renderers = sm.GetComponentsInChildren<MeshRenderer>();
-                        foreach (var renderer in renderers)
-                        {
-                            foreach (var material in renderer.materials)
-                                if (material.shader.name == "MarmosetUBER"
-                                    && material.name.StartsWith("Submersible_SeaMoth"))
-                                {
-                                    Debug.Log($"Material correction: Found material to reproduce: {material.name}");
-                                    seamothMaterial = material;
-                                    break;
-                                }
-                                else
-                                    Debug.Log($"Material correction: Shader mismatch {material.name} uses shader {material.shader.name}");
-                            if (seamothMaterial != null)
-                                break;
-                        }
-                        if (seamothMaterial == null)
+                        if (prototype.IsEmpty)
                         {
                             Debug.Log($"Material correction: No material found to reproduce");
 
@@ -588,13 +575,14 @@ namespace Subnautica_Echelon
                         {
                             Shader shader = Shader.Find("MarmosetUBER");
 
-                            renderers = GetComponentsInChildren<MeshRenderer>();
+
+                            var renderers = GetComponentsInChildren<MeshRenderer>();
                             foreach (var renderer in renderers)
                             {
+                                if (renderer.gameObject.name.ToLower().Contains("light"))
+                                    continue;
                                 for (int i = 0; i < renderer.materials.Length; i++)
                                 {
-                                    if (renderer.gameObject.name.ToLower().Contains("light"))
-                                        continue;
                                     {
                                         try
                                         {
@@ -607,79 +595,10 @@ namespace Subnautica_Echelon
 
                                             var data = SurfaceShaderData.From(m);
 
-                                            m.shader = shader;
+                                            var materialAdaptation = new MaterialAdaptation(renderer,i, prototype, data, shader);
+                                            materialAdaptation.ApplyToTarget(true);
 
-                                            Debug.Log($"Material correction: Deep copying all variables");
-                                            for (int v = 0; v < seamothMaterial.shader.GetPropertyCount(); v++)
-                                            {
-                                                var n = seamothMaterial.shader.GetPropertyName(v);
-                                                switch (seamothMaterial.shader.GetPropertyType(v))
-                                                {
-                                                    case UnityEngine.Rendering.ShaderPropertyType.Color:
-                                                        if (n != "_Color")
-                                                            m.SetColor(n, seamothMaterial.GetColor(n));
-                                                        break;
-                                                    case UnityEngine.Rendering.ShaderPropertyType.Float:
-                                                    case UnityEngine.Rendering.ShaderPropertyType.Range:
-                                                        m.SetFloat(n, seamothMaterial.GetFloat(n));
-                                                        break;
-                                                    case UnityEngine.Rendering.ShaderPropertyType.Vector:
-                                                        m.SetVector(n, seamothMaterial.GetVector(n));
-                                                        break;
-                                                    case UnityEngine.Rendering.ShaderPropertyType.Texture:
-                                                        if (n != "_MainTex" && n != "_BumpMap" && n != "_SpecTex" && n != "_Illum")
-                                                            m.SetTexture(n, seamothMaterial.GetTexture(n));
-                                                        break;
-                                                }
-                                            }
-
-                                            if (data.MetallicTexture != null)
-                                            {
-                                                Debug.Log($"Material correction: Translating metallic map {data.MetallicTexture.name} to spec");
-
-                                                m.SetTexture("_SpecTex", data.MetallicTexture);
-                                            }
-                                            else
-                                            {
-                                                Debug.Log($"Material correction: Source had no metallic texture. Setting to {data.Metallic}");
-
-                                                var met = data.Metallic;
-                                                var tex = new Texture2D(1, 1,TextureFormat.RGBA32,false);
-                                                tex.SetPixel(0,0,new Color(met, met, met, met));
-                                                tex.Apply();
-                                                //m.SetFloat($"_SpecInt", data.Metallic);
-                                                m.SetTexture("_SpecTex", tex);
-                                            }
-
-                                            if (data.EmissionTexture != null)
-                                            {
-                                                Debug.Log($"Material correction: Translating emission map {data.EmissionTexture.name} to illum");
-
-                                                m.SetTexture("_Illum", data.EmissionTexture);
-                                                //m.SetFloat("_EnableGlow", 1);
-
-                                            }
-                                            else
-                                            {
-                                                Debug.Log($"Material correction: Source had no illumination texture. Disabling _EnableGlow");
-                                                m.SetTexture("_Illum", Texture2D.blackTexture);
-                                                //m.SetFloat("_EnableGlow", 0);
-                                            }
-
-                                            Debug.Log($"Material correction: Applying global illumination flags");
-
-                                            m.globalIlluminationFlags = seamothMaterial.globalIlluminationFlags;
-
-                                            Debug.Log($"Material correction: Applying shader keywords");
-                                            foreach (var kw in seamothMaterial.shaderKeywords)
-                                                if (!m.IsKeywordEnabled(kw)) //"MARMO_SPECMAP"
-                                                {
-                                                    m.EnableKeyword(kw);
-                                                    //Debug.Log($"Material correction: Enabled keyword {kw}. Now enabled: "+string.Join(", ", renderer.materials[i].shaderKeywords));
-                                                }
-
-                                            //renderer.materials[i] = nw;
-
+                                            adaptations.Add(materialAdaptation);
                                         }
                                         catch (Exception ex)
                                         {
@@ -688,9 +607,9 @@ namespace Subnautica_Echelon
                                     }
                                 }
                             }
-                            Debug.Log($"Material correction: All done");
-                            HierarchyAnalyzer me = new HierarchyAnalyzer();
-                            me.LogToJson(transform, $@"C:\temp\me.json");
+                            Debug.Log($"Material correction: All done. Applied {adaptations.Count} adaptations");
+                            //HierarchyAnalyzer me = new HierarchyAnalyzer();
+                            //me.LogToJson(transform, $@"C:\temp\me.json");
 
                         }
                     }

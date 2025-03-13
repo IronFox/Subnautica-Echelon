@@ -10,7 +10,7 @@ public class LoadStripeColor : MonoBehaviour, IColorListener
     public void SetColors(Color mainColor, Color stripeColor)
     {
         if (materialIndex < renderer.materials.Length)
-            renderer.materials[materialIndex].color = stripeColor*1.3f;
+            renderer.materials[materialIndex].color = stripeColor;
     }
 
     // Start is called before the first frame update
