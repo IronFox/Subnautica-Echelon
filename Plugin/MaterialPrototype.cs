@@ -203,7 +203,7 @@ namespace Subnautica_Echelon
                     case UnityEngine.Rendering.ShaderPropertyType.Color:
                         if (!n.StartsWith("_Color")    //don't  copy colors (_Color, _Color2, _Color3)
                             &&
-                            !n.StartsWith("_SpecColor")    //these cause weird color mutations
+                            !n.StartsWith("_SpecColor")    //not sure if these have an impact but can be left out
                             )
                             colorVariables.Add(new ColorVariable(source, n));
                         break;
