@@ -39,6 +39,10 @@ namespace Subnautica_Echelon
         /// </summary>
         public Texture EmissionTexture { get; }
 
+        /// <summary>
+        /// The source material
+        /// </summary>
+        public MaterialTarget Source { get; }
 
         public SurfaceShaderData(
             Color color,
@@ -46,8 +50,10 @@ namespace Subnautica_Echelon
             float metallic,
             Texture metallicTexture,
             Texture bumpMap,
-            Texture emissionTexture)
+            Texture emissionTexture,
+            MaterialTarget source)
         {
+            Source = source;
             Color = color;
             MainTex = mainTex;
             Metallic = metallic;
@@ -113,20 +119,15 @@ namespace Subnautica_Echelon
             }
         }
 
-        /// <summary>
-        /// Reads all local values from the given material (if available).
-        /// Unless <paramref name="ignoreShaderName"/> is set,
-        /// the method returns null if the material's shader's name does not
-        /// currently match "Standard"
-        /// </summary>
-        /// <param name="m">Material to read from</param>
-        /// <param name="ignoreShaderName">
-        /// If true, will always read the material, regardless of shader name.
-        /// If false, will only read the material if its shader name equals "Standard",
-        /// return null otherwise</param>
-        /// <returns>Read surface shader data or null if the shader name did not match</returns>
-        public static SurfaceShaderData From(Material m, bool ignoreShaderName=false)
+        [Obsolete("Please use SurfaceShaderData.From(renderer,materialIndex) instead")]
+        public static SurfaceShaderData From(Material m, bool ignoreShaderName = false)
         {
+            return From(target:default, m, ignoreShaderName);
+        }
+
+        private static SurfaceShaderData From(MaterialTarget target, Material m, bool ignoreShaderName = false)
+        {
+
             if (m.shader.name != "Standard" && !ignoreShaderName)
             {
                 Debug.Log($"Material correction: Ignoring {m} which uses shader {m.shader}");
@@ -134,14 +135,47 @@ namespace Subnautica_Echelon
             }
             Debug.Log($"Material correction: Reading material {m.name} which uses shader {m.shader.name}");
             return new SurfaceShaderData(
-                color: GetColor(m,"_Color"),
-                mainTex: GetTexture(m,"_MainTex"),
+                color: GetColor(m, "_Color"),
+                mainTex: GetTexture(m, "_MainTex"),
                 metallic: GetFloat(m, "_Metallic"),
                 metallicTexture: GetTexture(m, "_MetallicGlossMap"),
                 bumpMap: GetTexture(m, "_BumpMap"),
-                emissionTexture: GetTexture(m, "_EmissionMap")
+                emissionTexture: GetTexture(m, "_EmissionMap"),
+                source: target
                 );
         }
+
+        /// <summary>
+        /// Reads all local values from the given renderer material (if available).
+        /// Unless <paramref name="ignoreShaderName"/> is set,
+        /// the method returns null if the material's shader's name does not
+        /// currently match "Standard"
+        /// </summary>
+        /// <param name="renderer">The source renderer</param>
+        /// <param name="materialIndex">The source material index on that renderer</param>
+        /// <param name="ignoreShaderName">
+        /// If true, will always read the material, regardless of shader name.
+        /// If false, will only read the material if its shader name equals "Standard",
+        /// return null otherwise</param>
+        /// <returns>Read surface shader data or null if the shader name did not match</returns>
+        public static SurfaceShaderData From(Renderer renderer, int materialIndex, bool ignoreShaderName=false)
+        {
+            if (renderer == null)
+            {
+                Debug.LogError($"Trying to feed null renderer into SurfaceShaderData.From()");
+                return null;
+            }
+
+            if (materialIndex >= renderer.materials.Length)
+            {
+                Debug.LogError($"Renderer {renderer} does not have material #{materialIndex}");
+                return null;
+            }
+
+            var m = renderer.materials[materialIndex];
+            return From(new MaterialTarget(renderer, materialIndex), m, ignoreShaderName);
+        }
+
 
         private const string SpecTexName = "_SpecTex";
         private const string IllumTexName = "_Illum";
@@ -206,5 +240,9 @@ namespace Subnautica_Echelon
                 }
             }
         }
+
+        internal SurfaceShaderData RedefineSource(MaterialTarget source)
+            => new SurfaceShaderData(Color, MainTex, Metallic, MetallicTexture, BumpMap, EmissionTexture, source);
+        
     }
 }

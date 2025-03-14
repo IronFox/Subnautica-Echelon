@@ -10,7 +10,7 @@ namespace Subnautica_Echelon
     /// not reference.
     /// </summary>
     /// <author>https://github.com/IronFox</author>
-    public readonly struct MaterialAdaptationTarget : IEquatable<MaterialAdaptationTarget>
+    public readonly struct MaterialTarget : IEquatable<MaterialTarget>
     {
         /// <summary>
         /// The targeted renderer. Can become null if the source is destroyed
@@ -32,7 +32,7 @@ namespace Subnautica_Echelon
                 return $"Dead Renderer Target ({RendererInstanceId}) material #{MaterialIndex}";
             return $"Renderer Target {Renderer} material #{MaterialIndex}";
         }
-        public MaterialAdaptationTarget(Renderer renderer, int materialIndex)
+        public MaterialTarget(Renderer renderer, int materialIndex)
         {
             RendererInstanceId = renderer.GetInstanceID();
             Renderer = renderer;
@@ -41,7 +41,7 @@ namespace Subnautica_Echelon
 
         public override bool Equals(object obj)
         {
-            return obj is MaterialAdaptationTarget target &&
+            return obj is MaterialTarget target &&
                     Equals(target);
         }
 
@@ -53,7 +53,7 @@ namespace Subnautica_Echelon
             return hashCode;
         }
 
-        public bool Equals(MaterialAdaptationTarget target)
+        public bool Equals(MaterialTarget target)
         {
             return RendererInstanceId == target.RendererInstanceId &&
                    MaterialIndex == target.MaterialIndex;
@@ -69,7 +69,7 @@ namespace Subnautica_Echelon
         /// <summary>
         /// The targeted material
         /// </summary>
-        public MaterialAdaptationTarget Target { get; }
+        public MaterialTarget Target => Migrated.Source;
         /// <summary>
         /// The (shared) prototype used to modify the final material
         /// </summary>
@@ -83,27 +83,36 @@ namespace Subnautica_Echelon
         /// </summary>
         public Shader Shader { get; }
 
+        [Obsolete("Please use MaterialAdaptation(prototype,surfaceShaderData,shader)")]
         public MaterialAdaptation(
             Renderer renderer,
             int materialIndex,
             MaterialPrototype prototype,
             SurfaceShaderData surfaceShaderData,
             Shader shader
-            ) : this(new MaterialAdaptationTarget(renderer,materialIndex), prototype, surfaceShaderData, shader)
+            ) : this(new MaterialTarget(renderer,materialIndex), prototype, surfaceShaderData, shader)
         {}
 
         public MaterialAdaptation(
-            MaterialAdaptationTarget materialAdaptationTarget,
             MaterialPrototype prototype,
             SurfaceShaderData migrated,
             Shader shader
             )
         {
-            Target = materialAdaptationTarget;
             Prototype = prototype;
             Migrated = migrated;
             Shader = shader;
         }
+
+
+        [Obsolete("Please use MaterialAdaptation(prototype,surfaceShaderData,shader)")]
+        private MaterialAdaptation(
+            MaterialTarget target,
+            MaterialPrototype prototype,
+            SurfaceShaderData migrated,
+            Shader shader
+            ) : this(prototype, migrated.RedefineSource(target), shader)
+        {}
 
         /// <summary>
         /// Resets only variables known to be corrupted during moonpool undock

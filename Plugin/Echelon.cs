@@ -606,7 +606,7 @@ namespace Subnautica_Echelon
                             Shader shader = Shader.Find("MarmosetUBER");
 
 
-                            var renderers = GetComponentsInChildren<MeshRenderer>();
+                            var renderers = GetComponentsInChildren<Renderer>();
                             foreach (var renderer in renderers)
                             {
                                 if (renderer.gameObject.name.ToLower().Contains("light"))
@@ -621,13 +621,11 @@ namespace Subnautica_Echelon
 
                                             //Debug.Log($"Material correction: Adapting material #{i} in {renderer.name}");
 
-                                            var m = renderer.materials[i];
-
-                                            var data = SurfaceShaderData.From(m);
+                                            var data = SurfaceShaderData.From(renderer,i);
                                             if (data == null)
                                                 continue;
 
-                                            var materialAdaptation = new MaterialAdaptation(renderer,i, prototype, data, shader);
+                                            var materialAdaptation = new MaterialAdaptation(prototype, data, shader);
                                             materialAdaptation.ApplyToTarget(true);
 
                                             adaptations.Add(materialAdaptation);
