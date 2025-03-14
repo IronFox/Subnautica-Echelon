@@ -22,7 +22,15 @@ public class Detonator : MonoBehaviour
 
     public void Detonate()
     {
-        if (!noExplosion && (origin == null || M.Distance(origin.position, transform.position) > ExplosionRadiusAt(techLevel)))
+        if (
+            !noExplosion 
+            //&& 
+            //(
+            //    safetyOff
+            //    || origin == null
+            //    || M.Distance(origin.position, transform.position) > ExplosionRadiusAt(techLevel)*1.1f//low fps mitigation
+            //    )
+            )
         {
             var instance = Instantiate(explosionPrefab, transform.position, Quaternion.identity);
             var ctrl = instance.GetComponent<ExplosionController>();
