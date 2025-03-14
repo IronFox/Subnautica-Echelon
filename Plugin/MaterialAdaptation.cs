@@ -10,7 +10,7 @@ namespace Subnautica_Echelon
     /// not reference.
     /// </summary>
     /// <author>https://github.com/IronFox</author>
-    public readonly struct MaterialTarget : IEquatable<MaterialTarget>
+    public readonly struct MaterialAddress : IEquatable<MaterialAddress>
     {
         /// <summary>
         /// The targeted renderer. Can become null if the source is destroyed
@@ -29,10 +29,10 @@ namespace Subnautica_Echelon
         public override string ToString()
         {
             if (Renderer == null)
-                return $"Dead Renderer Target ({RendererInstanceId}) material #{MaterialIndex}";
-            return $"Renderer Target {Renderer} material #{MaterialIndex}";
+                return $"Dead renderer target ({RendererInstanceId}) material #{MaterialIndex+1}";
+            return $"Renderer rarget {Renderer} material #{MaterialIndex+1}/{Renderer.materials.Length}";
         }
-        public MaterialTarget(Renderer renderer, int materialIndex)
+        public MaterialAddress(Renderer renderer, int materialIndex)
         {
             RendererInstanceId = renderer.GetInstanceID();
             Renderer = renderer;
@@ -41,7 +41,7 @@ namespace Subnautica_Echelon
 
         public override bool Equals(object obj)
         {
-            return obj is MaterialTarget target &&
+            return obj is MaterialAddress target &&
                     Equals(target);
         }
 
@@ -53,10 +53,23 @@ namespace Subnautica_Echelon
             return hashCode;
         }
 
-        public bool Equals(MaterialTarget target)
+        public bool Equals(MaterialAddress target)
         {
             return RendererInstanceId == target.RendererInstanceId &&
                    MaterialIndex == target.MaterialIndex;
+        }
+
+        /// <summary>
+        /// Gets the addressed material
+        /// </summary>
+        /// <returns>Addressed material or null if the address is/has become invalid</returns>
+        public Material GetMaterial()
+        {
+            if (Renderer == null)
+                return null;
+            if (MaterialIndex < 0 || MaterialIndex >= Renderer.materials.Length)
+                return null;
+            return Renderer.materials[MaterialIndex];
         }
     }
 
@@ -69,7 +82,7 @@ namespace Subnautica_Echelon
         /// <summary>
         /// The targeted material
         /// </summary>
-        public MaterialTarget Target => Migrated.Source;
+        public MaterialAddress Target => Migrated.Source;
         /// <summary>
         /// The (shared) prototype used to modify the final material
         /// </summary>
@@ -90,7 +103,7 @@ namespace Subnautica_Echelon
             MaterialPrototype prototype,
             SurfaceShaderData surfaceShaderData,
             Shader shader
-            ) : this(new MaterialTarget(renderer,materialIndex), prototype, surfaceShaderData, shader)
+            ) : this(new MaterialAddress(renderer,materialIndex), prototype, surfaceShaderData, shader)
         {}
 
         public MaterialAdaptation(
@@ -107,7 +120,7 @@ namespace Subnautica_Echelon
 
         [Obsolete("Please use MaterialAdaptation(prototype,surfaceShaderData,shader)")]
         private MaterialAdaptation(
-            MaterialTarget target,
+            MaterialAddress target,
             MaterialPrototype prototype,
             SurfaceShaderData migrated,
             Shader shader

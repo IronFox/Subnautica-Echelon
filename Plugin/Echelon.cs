@@ -29,7 +29,6 @@ namespace Subnautica_Echelon
         private bool wasDead;
         private bool destroyed;
         private float deathAge;
-        private bool materialsFixed;
         private MyLogger EchLog { get; }
         private VoidDrive engine;
         private AutoPilot autopilot;
@@ -534,17 +533,16 @@ namespace Subnautica_Echelon
             return EchelonModule.None;
         }
 
-        private readonly List<MaterialAdaptation> adaptations = new List<MaterialAdaptation>();
 
         public override void OnVehicleUndocked()
         {
             base.OnVehicleUndocked();
-            repairMaterialsIn = DateTime.Now + TimeSpan.FromSeconds(0.5f);
-            repairMaterialsInFrames = 3;
+            MaterialFixer.OnVehicleUndocked();
         }
 
-        private DateTime repairMaterialsIn = DateTime.MaxValue;
-        private int repairMaterialsInFrames = 3;
+
+        private MaterialFixer MaterialFixer = new MaterialFixer(verbose: true);
+
         private Color nonBlackBaseColor;
         private Color nonBlackStripeColor;
 
@@ -566,13 +564,7 @@ namespace Subnautica_Echelon
                 if (stripeColor != Color.black)
                     nonBlackStripeColor = stripeColor;
 
-                if (DateTime.Now > repairMaterialsIn && --repairMaterialsInFrames == 0)
-                {
-                    repairMaterialsIn = DateTime.MaxValue;
-                    Debug.Log($"Undocked. Resetting materials");
-                    foreach (MaterialAdaptation adaptation in adaptations)
-                        adaptation.PostDockFixOnTarget(true);
-                }
+                MaterialFixer.OnUpdate(transform);
 
                 if (Input.GetKeyDown(KeyCode.F6))
                 {
@@ -583,53 +575,9 @@ namespace Subnautica_Echelon
                     //}
 
                     Debug.Log($"Reapplying materials");
-                    foreach (MaterialAdaptation adaptation in adaptations)
-                        adaptation.ApplyToTarget(true);
+                    MaterialFixer.ReApply();
                 }
 
-                if (!materialsFixed)
-                {
-                    var prototype = MaterialPrototype.FromSeamoth();
-
-                    if (prototype != null)
-                    {
-                        materialsFixed = true;
-
-                        if (prototype.IsEmpty)
-                        {
-                            Debug.Log($"Material correction: No material found to reproduce");
-                        }
-                        else
-                        {
-                            Shader shader = Shader.Find("MarmosetUBER");
-                            var renderers = GetComponentsInChildren<Renderer>();
-                            foreach (var renderer in renderers)
-                            {
-                                if (renderer.gameObject.name.ToLower().Contains("light"))
-                                    continue;
-                                for (int i = 0; i < renderer.materials.Length; i++)
-                                {
-                                    try
-                                    {
-                                        var data = SurfaceShaderData.From(renderer,i);
-                                        if (data == null)
-                                            continue;
-
-                                        var materialAdaptation = new MaterialAdaptation(prototype, data, shader);
-                                        materialAdaptation.ApplyToTarget(true);
-
-                                        adaptations.Add(materialAdaptation);
-                                    }
-                                    catch (Exception ex)
-                                    {
-                                        Debug.Log($"Material correction: Deep copy failed of material #{i} of {renderer.name}: {ex}");
-                                    }
-                                }
-                            }
-                            Debug.Log($"Material correction: All done. Applied {adaptations.Count} adaptations");
-                        }
-                    }
-                }
 
 
 

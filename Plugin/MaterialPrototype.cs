@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using UnityEngine;
 using UnityEngine.Rendering;
@@ -33,13 +34,13 @@ namespace Subnautica_Echelon
                 if (old == value)
                     return;
                 if (verbose)
-                    Debug.Log($"Material correction: Applying Color {name} ({old} -> {value}) to material {m}");
+                    Debug.Log($"Material correction: Setting color {name} ({old} -> {value}) to material {m}");
                 m.SetColor(name, value);
             }
             catch (Exception ex)
             {
                 Debug.LogException(ex);
-                Debug.LogError($"Material correction: Failed to apply color {name} ({value}) to material {m}");
+                Debug.LogError($"Material correction: Failed to set color {name} ({value}) to material {m}");
             }
         }
 
@@ -70,13 +71,13 @@ namespace Subnautica_Echelon
                 if (old == Value)
                     return;
                 if (verbose)
-                    Debug.Log($"Material correction: Applying {Type} {Name} ({old} -> {Value}) to material {m}");
+                    Debug.Log($"Material correction: Setting {Type} {Name} ({old} -> {Value}) to material {m}");
                 m.SetVector(Name, Value);
             }
             catch (Exception ex)
             {
                 Debug.LogException(ex);
-                Debug.LogError($"Material correction: Failed to apply {Type} {Name} ({Value}) to material {m}");
+                Debug.LogError($"Material correction: Failed to set {Type} {Name} ({Value}) to material {m}");
             }
         }
     }
@@ -102,13 +103,13 @@ namespace Subnautica_Echelon
                 if (old == Value)
                     return;
                 if (verbose)
-                    Debug.Log($"Material correction: Applying {Type} {Name} ({old} -> {Value}) to material {m}");
+                    Debug.Log($"Material correction: Setting {Type} {Name} ({old.ToString(CultureInfo.InvariantCulture)} -> {Value.ToString(CultureInfo.InvariantCulture)}) to material {m}");
                 m.SetFloat(Name, Value);
             }
             catch (Exception ex)
             {
                 Debug.LogException(ex);
-                Debug.LogError($"Material correction: Failed to apply {Type} {Name} ({Value}) to material {m}");
+                Debug.LogError($"Material correction: Failed to set {Type} {Name} ({Value.ToString(CultureInfo.InvariantCulture)}) to material {m}");
             }
         }
     }

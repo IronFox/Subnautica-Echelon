@@ -42,7 +42,7 @@ namespace Subnautica_Echelon
         /// <summary>
         /// The source material
         /// </summary>
-        public MaterialTarget Source { get; }
+        public MaterialAddress Source { get; }
 
         public SurfaceShaderData(
             Color color,
@@ -51,7 +51,7 @@ namespace Subnautica_Echelon
             Texture metallicTexture,
             Texture bumpMap,
             Texture emissionTexture,
-            MaterialTarget source)
+            MaterialAddress source)
         {
             Source = source;
             Color = color;
@@ -125,7 +125,7 @@ namespace Subnautica_Echelon
             return From(target:default, m, ignoreShaderName);
         }
 
-        private static SurfaceShaderData From(MaterialTarget target, Material m, bool ignoreShaderName = false)
+        private static SurfaceShaderData From(MaterialAddress target, Material m, bool ignoreShaderName = false)
         {
 
             if (m.shader.name != "Standard" && !ignoreShaderName)
@@ -146,6 +146,32 @@ namespace Subnautica_Echelon
         }
 
         /// <summary>
+        /// Reads all local values from the given material address (if available).
+        /// Unless <paramref name="ignoreShaderName"/> is set,
+        /// the method returns null if the material's shader's name does not
+        /// currently match "Standard"
+        /// </summary>
+        /// <param name="source">The source material</param>
+        /// <param name="ignoreShaderName">
+        /// If true, will always read the material, regardless of shader name.
+        /// If false, will only read the material if its shader name equals "Standard",
+        /// return null otherwise</param>
+        /// <returns>Read surface shader data or null if the shader name did not match
+        /// or the target is (no longer) valid</returns>
+        public static SurfaceShaderData From(MaterialAddress source, bool ignoreShaderName = false)
+        {
+            var material = source.GetMaterial();
+            if (material == null)
+            {
+                Debug.LogError($"Material {source} could not be resolved to an instance");
+                return null;
+            }
+            return From(source, material, ignoreShaderName);
+        }
+
+
+
+        /// <summary>
         /// Reads all local values from the given renderer material (if available).
         /// Unless <paramref name="ignoreShaderName"/> is set,
         /// the method returns null if the material's shader's name does not
@@ -157,23 +183,11 @@ namespace Subnautica_Echelon
         /// If true, will always read the material, regardless of shader name.
         /// If false, will only read the material if its shader name equals "Standard",
         /// return null otherwise</param>
-        /// <returns>Read surface shader data or null if the shader name did not match</returns>
+        /// <returns>Read surface shader data or null if the shader name did not match
+        /// or the target is (no longer) valid</returns>
         public static SurfaceShaderData From(Renderer renderer, int materialIndex, bool ignoreShaderName=false)
         {
-            if (renderer == null)
-            {
-                Debug.LogError($"Trying to feed null renderer into SurfaceShaderData.From()");
-                return null;
-            }
-
-            if (materialIndex >= renderer.materials.Length)
-            {
-                Debug.LogError($"Renderer {renderer} does not have material #{materialIndex}");
-                return null;
-            }
-
-            var m = renderer.materials[materialIndex];
-            return From(new MaterialTarget(renderer, materialIndex), m, ignoreShaderName);
+            return From(new MaterialAddress(renderer, materialIndex));
         }
 
 
@@ -241,8 +255,16 @@ namespace Subnautica_Echelon
             }
         }
 
-        internal SurfaceShaderData RedefineSource(MaterialTarget source)
+        /// <summary>
+        /// Creates a clone with a new source material address
+        /// </summary>
+        /// <param name="source">New source address</param>
+        /// <returns>Clone with updated source</returns>
+        public SurfaceShaderData RedefineSource(MaterialAddress source)
             => new SurfaceShaderData(Color, MainTex, Metallic, MetallicTexture, BumpMap, EmissionTexture, source);
-        
+
+        public override string ToString()
+            => "" + Source;
+
     }
 }
