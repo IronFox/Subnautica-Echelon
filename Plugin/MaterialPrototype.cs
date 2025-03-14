@@ -201,7 +201,10 @@ namespace Subnautica_Echelon
                 switch (source.shader.GetPropertyType(v))
                 {
                     case UnityEngine.Rendering.ShaderPropertyType.Color:
-                        if (!n.StartsWith("_Color"))    //don't  copy colors (_Color, _Color2, _Color3)
+                        if (!n.StartsWith("_Color")    //don't  copy colors (_Color, _Color2, _Color3)
+                            &&
+                            !n.StartsWith("_SpecColor")    //these cause weird color mutations
+                            )
                             colorVariables.Add(new ColorVariable(source, n));
                         break;
                     case UnityEngine.Rendering.ShaderPropertyType.Float:
