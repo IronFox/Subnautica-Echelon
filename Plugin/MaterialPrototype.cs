@@ -126,12 +126,9 @@ namespace Subnautica_Echelon
         
         private HashSet<string> ShaderKeywords { get; } = new HashSet<string>();
         public MaterialGlobalIlluminationFlags MaterialGlobalIlluminationFlags { get; }
-        private List<ColorVariable> ColorVariables { get; }
-            = new List<ColorVariable>();
-        private List<VectorVariable> VectorVariables { get; }
-            = new List<VectorVariable>();
-        private List<FloatVariable> FloatVariables { get; }
-            = new List<FloatVariable>();
+        private ColorVariable[] ColorVariables { get; }
+        private VectorVariable[] VectorVariables { get; }
+        private FloatVariable[] FloatVariables { get; }
 
         /// <summary>
         /// Updates all recorded shader variables in the specified material
@@ -193,21 +190,25 @@ namespace Subnautica_Echelon
             MaterialGlobalIlluminationFlags = source.globalIlluminationFlags;
             ShaderKeywords.AddRange(source.shaderKeywords);
 
+            var colorVariables = new List<ColorVariable>();
+            var floatVariables = new List<FloatVariable>();
+            var vectorVariables = new List<VectorVariable>();
+
             for (int v = 0; v < source.shader.GetPropertyCount(); v++)
             {
                 var n = source.shader.GetPropertyName(v);
                 switch (source.shader.GetPropertyType(v))
                 {
                     case UnityEngine.Rendering.ShaderPropertyType.Color:
-                        if (!n.StartsWith("_Color"))    //don't  copy colors
-                            ColorVariables.Add(new ColorVariable(source, n));
+                        if (!n.StartsWith("_Color"))    //don't  copy colors (_Color, _Color2, _Color3)
+                            colorVariables.Add(new ColorVariable(source, n));
                         break;
                     case UnityEngine.Rendering.ShaderPropertyType.Float:
                     case UnityEngine.Rendering.ShaderPropertyType.Range:
-                        FloatVariables.Add(new FloatVariable(source, n));
+                        floatVariables.Add(new FloatVariable(source, n));
                         break;
                     case UnityEngine.Rendering.ShaderPropertyType.Vector:
-                        VectorVariables.Add(new VectorVariable(source, n));
+                        vectorVariables.Add(new VectorVariable(source, n));
                         break;
                     //don't copy textures (does not make sense)
                     //case UnityEngine.Rendering.ShaderPropertyType.Texture:
@@ -216,6 +217,10 @@ namespace Subnautica_Echelon
                     //    break;
                 }
             }
+
+            ColorVariables = colorVariables.ToArray();
+            FloatVariables = floatVariables.ToArray();
+            VectorVariables = vectorVariables.ToArray();
         }
 
         /// <summary>
