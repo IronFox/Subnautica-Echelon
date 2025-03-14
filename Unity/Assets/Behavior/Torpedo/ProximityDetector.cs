@@ -30,6 +30,11 @@ public class ProximityDetector : MonoBehaviour
             //ConsoleControl.Write($"Cannot react to proximity of {collider.name} (excluded={excluded},nobody={collider.attachedRigidbody == null}, other={!PhysicsHelper.CanCollide(collider, regularCollider, true)}). Ignoring");
             return;
         }
+        var otherControl = collider.attachedRigidbody.gameObject.GetComponent<TorpedoControl>();
+        if (otherControl != null)
+        {
+            return; //prevent torpedoes from blowing each other up
+        }
         var rb = collider.attachedRigidbody;
         var rbName = rb != null ? rb.name : "<null>";
         ConsoleControl.Write($"Detected proximity of {collider.name} attached to {rbName}. Exclusion is set to {doNotCollideWith}. Detonating");
