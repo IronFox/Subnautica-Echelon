@@ -84,8 +84,9 @@ namespace Subnautica_Echelon
         }
 
         /// <summary>
-        /// Notifies that the vehicle has just undocked from a docking bay (moonpool, etc)
+        /// Notifies that the vehicle has just undocked from a docking bay (moonpool, etc).
         /// </summary>
+        /// <remarks>Should be called from your vehicle OnVehicleUndocked() method</remarks>
         public void OnVehicleUndocked()
         {
             repairMaterialsIn = DateTime.Now + TimeSpan.FromSeconds(0.5f);
@@ -103,10 +104,10 @@ namespace Subnautica_Echelon
         }
 
         /// <summary>
-        /// Fixed materials if necessary/possible.
+        /// Fixes materials if necessary/possible.
         /// Also fixes undock material changes if <see cref="OnVehicleUndocked"/> was called before
         /// </summary>
-        /// <remarks>Should be called once during your vehicle Update()</remarks>
+        /// <remarks>Should be called from your vehicle Update() method</remarks>
         /// <param name="subTransform">Root transform of your sub</param>
         public void OnUpdate()
         {
