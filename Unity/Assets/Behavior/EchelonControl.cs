@@ -47,8 +47,6 @@ public class EchelonControl : MonoBehaviour
     public float currentHealth = 0.5f;
     public bool isHealing;
 
-    public MeshRenderer[] lightsRenderers = Array.Empty<MeshRenderer>();
-
     public TorpedoLaunchControl leftLaunch;
     public TorpedoLaunchControl rightLaunch;
 
@@ -602,10 +600,6 @@ public class EchelonControl : MonoBehaviour
 
             energyLevel.maxEnergy = maxEnergy;
             energyLevel.currentEnergy = currentEnergy;
-
-            foreach (var r in lightsRenderers)
-                r.enabled = !batteryDead && !powerOff;
-
 
             if (currentlyBoarded != isBoarded)
             {

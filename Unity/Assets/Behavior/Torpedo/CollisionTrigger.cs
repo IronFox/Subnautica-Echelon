@@ -57,7 +57,7 @@ public class CollisionTrigger : MonoBehaviour
 
         if (PhysicsHelper.CanCollide(collision.collider, regularCollider, doNotCollideWith))
         {
-            var t = TargetAdapter.ResolveTarget(collision.gameObject, collision.rigidbody);
+            var t = TargetAdapter.ResolveTarget(collision.rigidbody.gameObject, collision.rigidbody);
 
             bool ignoreNonTargets = false;
             switch (TorpedoControl.terrainCollisions)
@@ -71,11 +71,14 @@ public class CollisionTrigger : MonoBehaviour
                 case TorpedoTerrainCollisions.NeverIgnore:
                     break;
             }
-            if (t == null && ignoreNonTargets)
+            if (t == null)
             {
-                //ConsoleControl.Write($"Flagging collisions with {collision.collider} to be ignored");
-                Physics.IgnoreCollision(collision.collider, regularCollider);
-                return;
+                if (ignoreNonTargets || collision.rigidbody.gameObject.GetComponent<TorpedoControl>() != null)
+                {
+                    //ConsoleControl.Write($"Flagging collisions with {collision.collider} to be ignored");
+                    Physics.IgnoreCollision(collision.collider, regularCollider);
+                    return;
+                }
             }
 
             if (t != null && t.MaxHealth < 200 && !IsTarget(collision.collider.attachedRigidbody.gameObject))
