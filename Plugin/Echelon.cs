@@ -38,6 +38,7 @@ namespace Subnautica_Echelon
         {
             EchLog = new MyLogger(this);
             EchLog.Write($"Constructed");
+            MaterialFixer = new MaterialFixer(this, verbose: true);
         }
 
         
@@ -541,7 +542,7 @@ namespace Subnautica_Echelon
         }
 
 
-        private MaterialFixer MaterialFixer = new MaterialFixer(verbose: true);
+        private MaterialFixer MaterialFixer;
 
         private Color nonBlackBaseColor;
         private Color nonBlackStripeColor;
@@ -564,7 +565,7 @@ namespace Subnautica_Echelon
                 if (stripeColor != Color.black)
                     nonBlackStripeColor = stripeColor;
 
-                MaterialFixer.OnUpdate(transform);
+                MaterialFixer.OnUpdate();
 
                 if (Input.GetKeyDown(KeyCode.F6))
                 {

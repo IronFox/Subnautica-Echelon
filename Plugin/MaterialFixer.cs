@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using UnityEngine;
+using VehicleFramework;
 
 namespace Subnautica_Echelon
 {
@@ -19,33 +20,43 @@ namespace Subnautica_Echelon
 
         public bool MaterialsAreFixed => materialsFixed;
 
+        public ModVehicle Vehicle { get; }
         public bool VerboseLogging { get; set; }
 
-        public Func<Transform, IEnumerable<SurfaceShaderData>> MaterialResolver { get; }
+        public Func<IEnumerable<SurfaceShaderData>> MaterialResolver { get; }
 
         /// <summary>
         /// Constructs the instance
         /// </summary>
-        /// <param name="materialResolver">The solver function to fetch all materials to translate
-        /// of a root transform. If null, a default implementation is used</param>
+        /// <param name="materialResolver">The solver function to fetch all materials to translate.
+        /// If null, a default implementation is used which 
+        /// mimics VF's default material selection in addition to filtering out non-standard </param>
         /// <param name="verbose">Log verbosely. Can be changed any time</param>
         public MaterialFixer(
-            Func<Transform, IEnumerable<SurfaceShaderData>> materialResolver = null,
+            ModVehicle owner,
+            Func<IEnumerable<SurfaceShaderData>> materialResolver = null,
             bool verbose=false
             )
         { 
+            Vehicle = owner;
             VerboseLogging = verbose;
-            MaterialResolver = materialResolver ?? DefaultMaterialResolver;
+            MaterialResolver = materialResolver ?? (() => DefaultMaterialResolver(owner));
         }
 
-        private static IEnumerable<SurfaceShaderData> DefaultMaterialResolver(Transform transform)
+        /// <summary>
+        /// Default material address resolver function. Can be modified to also return materials with divergent shader names
+        /// </summary>
+        /// <param name="vehicle">Owning vehicle</param>
+        /// <param name="ignoreShaderNames">True to return all materials, false to only return Standard materials</param>
+        /// <returns>Enumerable of all suitable material addresses</returns>
+        public static IEnumerable<SurfaceShaderData> DefaultMaterialResolver(ModVehicle vehicle, bool ignoreShaderNames=false)
         {
-            var renderers = transform.GetComponentsInChildren<Renderer>();
+            var renderers = vehicle.GetComponentsInChildren<Renderer>();
             foreach (var renderer in renderers)
             {
-                if (renderer.gameObject.name.ToLower().Contains("light"))
-                    continue;
                 // copied from VF default behavior:
+
+                // skip some materials
                 if (renderer.gameObject.GetComponent<Skybox>())
                 {
                     // I feel okay using Skybox as the designated "don't apply marmoset to me" component.
@@ -54,10 +65,18 @@ namespace Subnautica_Echelon
                     Component.DestroyImmediate(renderer.gameObject.GetComponent<Skybox>());
                     continue;
                 }
+                if (renderer.gameObject.name.ToLower().Contains("light"))
+                {
+                    continue;
+                }
+                if (vehicle.CanopyWindows != null && vehicle.CanopyWindows.Contains(renderer.gameObject))
+                {
+                    continue;
+                }
 
                 for (int i = 0; i < renderer.materials.Length; i++)
                 {
-                    var material = SurfaceShaderData.From(renderer, i);
+                    var material = SurfaceShaderData.From(renderer, i, ignoreShaderNames);
                     if (material != null)
                         yield return material;
                 }
@@ -89,7 +108,7 @@ namespace Subnautica_Echelon
         /// </summary>
         /// <remarks>Should be called once during your vehicle Update()</remarks>
         /// <param name="subTransform">Root transform of your sub</param>
-        public void OnUpdate(Transform subTransform)
+        public void OnUpdate()
         {
 
             if (!materialsFixed)
@@ -108,7 +127,7 @@ namespace Subnautica_Echelon
                     {
                         Shader shader = Shader.Find("MarmosetUBER");
 
-                        foreach (var data in MaterialResolver(subTransform))
+                        foreach (var data in MaterialResolver())
                         {
                             try
                             {
