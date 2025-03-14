@@ -591,7 +591,6 @@ namespace Subnautica_Echelon
                 {
                     var prototype = MaterialPrototype.FromSeamoth();
 
-
                     if (prototype != null)
                     {
                         materialsFixed = true;
@@ -599,13 +598,10 @@ namespace Subnautica_Echelon
                         if (prototype.IsEmpty)
                         {
                             Debug.Log($"Material correction: No material found to reproduce");
-
                         }
                         else
                         {
                             Shader shader = Shader.Find("MarmosetUBER");
-
-
                             var renderers = GetComponentsInChildren<Renderer>();
                             foreach (var renderer in renderers)
                             {
@@ -616,11 +612,6 @@ namespace Subnautica_Echelon
                                     {
                                         try
                                         {
-                                            //var oldSettings = Extract renderer.materials[i];
-
-
-                                            //Debug.Log($"Material correction: Adapting material #{i} in {renderer.name}");
-
                                             var data = SurfaceShaderData.From(renderer,i);
                                             if (data == null)
                                                 continue;
