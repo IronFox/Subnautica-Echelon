@@ -609,31 +609,26 @@ namespace Subnautica_Echelon
                                     continue;
                                 for (int i = 0; i < renderer.materials.Length; i++)
                                 {
+                                    try
                                     {
-                                        try
-                                        {
-                                            var data = SurfaceShaderData.From(renderer,i);
-                                            if (data == null)
-                                                continue;
+                                        var data = SurfaceShaderData.From(renderer,i);
+                                        if (data == null)
+                                            continue;
 
-                                            var materialAdaptation = new MaterialAdaptation(prototype, data, shader);
-                                            materialAdaptation.ApplyToTarget(true);
+                                        var materialAdaptation = new MaterialAdaptation(prototype, data, shader);
+                                        materialAdaptation.ApplyToTarget(true);
 
-                                            adaptations.Add(materialAdaptation);
-                                        }
-                                        catch (Exception ex)
-                                        {
-                                            Debug.Log($"Material correction: Deep copy failed of material #{i} of {renderer.name}: {ex}");
-                                        }
+                                        adaptations.Add(materialAdaptation);
+                                    }
+                                    catch (Exception ex)
+                                    {
+                                        Debug.Log($"Material correction: Deep copy failed of material #{i} of {renderer.name}: {ex}");
                                     }
                                 }
                             }
                             Debug.Log($"Material correction: All done. Applied {adaptations.Count} adaptations");
-                            //HierarchyAnalyzer me = new HierarchyAnalyzer();
-
                         }
                     }
-
                 }
 
 
