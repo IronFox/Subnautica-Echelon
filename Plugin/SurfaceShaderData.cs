@@ -17,17 +17,19 @@ namespace Subnautica_Echelon
         /// </summary>
         public Color Color { get; }
         /// <summary>
-        /// Main texture of the material. Null if none
+        /// Main texture of the material. Null if none.
+        /// In order to be applicable as
+        /// specular reflectivity map, its alpha value must be filled such.
         /// </summary>
         public Texture MainTex { get; }
+        
         /// <summary>
-        /// Metallic value (typically 0-1)
+        /// Smoothness value (typically 0-1)
         /// </summary>
-        public float Metallic { get; }
+        public float Smoothness { get; }
         /// <summary>
         /// Metallic texture. In order to be applicable as
         /// specular reflectivity map, its alpha value must be filled such.
-        /// As far as known, the RGB channels are not used for this purpose.
         /// </summary>
         public Texture MetallicTexture { get; }
         /// <summary>
@@ -38,6 +40,28 @@ namespace Subnautica_Echelon
         /// Emission texture. Null if none
         /// </summary>
         public Texture EmissionTexture { get; }
+        /// <summary>
+        /// Texture channel to derive the smoothness (specular) appearance from
+        /// 0 = Metallic
+        /// 1 = MainTex
+        /// </summary>
+        public int SmoothnessTextureChannel { get; }
+
+        public Texture SpecularTexture
+        {
+            get
+            {
+                switch (SmoothnessTextureChannel)
+                {
+                    case 0:
+                        return MetallicTexture;
+                    case 1:
+                        return MainTex;
+                    default:
+                        return null;
+                }
+            }
+        }
 
         /// <summary>
         /// The source material
@@ -47,7 +71,8 @@ namespace Subnautica_Echelon
         public SurfaceShaderData(
             Color color,
             Texture mainTex,
-            float metallic,
+            float smoothness,
+            int smoothnessTextureChannel,
             Texture metallicTexture,
             Texture bumpMap,
             Texture emissionTexture,
@@ -56,8 +81,9 @@ namespace Subnautica_Echelon
             Source = source;
             Color = color;
             MainTex = mainTex;
-            Metallic = metallic;
+            Smoothness = smoothness;
             MetallicTexture = metallicTexture;
+            SmoothnessTextureChannel = smoothnessTextureChannel;
             BumpMap = bumpMap;
             EmissionTexture = emissionTexture;
         }
@@ -118,6 +144,25 @@ namespace Subnautica_Echelon
                 return 0;
             }
         }
+         
+        private static int GetInt(Material m, string name)
+        {
+            if (!m.HasProperty(name))
+            {
+                Debug.LogWarning($"Material correction: Material {m.name} does not have expected property {name}");
+                return 0;
+            }
+            try
+            {
+                return m.GetInt(name);
+            }
+            catch (Exception e)
+            {
+                Debug.LogError($"Material correction: Material {m.name} does not have expected int property {name}");
+                Debug.LogException(e);
+                return 0;
+            }
+        }
 
         [Obsolete("Please use SurfaceShaderData.From(renderer,materialIndex) instead")]
         public static SurfaceShaderData From(Material m, bool ignoreShaderName = false)
@@ -137,10 +182,11 @@ namespace Subnautica_Echelon
             return new SurfaceShaderData(
                 color: GetColor(m, "_Color"),
                 mainTex: GetTexture(m, "_MainTex"),
-                metallic: GetFloat(m, "_Metallic"),
+                smoothness: GetFloat(m, "_Glossiness"),
                 metallicTexture: GetTexture(m, "_MetallicGlossMap"),
                 bumpMap: GetTexture(m, "_BumpMap"),
                 emissionTexture: GetTexture(m, "_EmissionMap"),
+                smoothnessTextureChannel: GetInt(m, "_SmoothnessTextureChannel"),
                 source: target
                 );
         }
@@ -206,12 +252,14 @@ namespace Subnautica_Echelon
             
             var existingSpecTex = m.GetTexture(SpecTexName);
 
-            if (MetallicTexture != null)
+            var spec = SpecularTexture;
+
+            if (spec != null)
             {
                 if (existingSpecTex != MetallicTexture)
                 {
                     if (verbose)
-                        Debug.Log($"Material correction: Translating metallic map {MetallicTexture} to spec");
+                        Debug.Log($"Material correction: Translating smoothness alpha map {spec} to spec");
 
                     m.SetTexture(SpecTexName, MetallicTexture);
                 }
@@ -221,8 +269,8 @@ namespace Subnautica_Echelon
                 if (existingSpecTex == null || existingSpecTex.name != DummyTexName)
                 {
                     if (verbose)
-                        Debug.Log($"Material correction: Source had no metallic texture. Setting to {Metallic}");
-                    var met = Metallic;
+                        Debug.Log($"Material correction: Source has no smoothness alpha texture. Setting to {Smoothness}");
+                    var met = Smoothness;
                     var tex = new Texture2D(1, 1, TextureFormat.RGBA32, false);
                     tex.name = DummyTexName;
                     tex.SetPixel(0, 0, new Color(met, met, met, met));
@@ -250,7 +298,7 @@ namespace Subnautica_Echelon
                 {
                     if (verbose)
                         Debug.Log($"Material correction: Source had no illumination texture. Loading black into _Illum");
-                    m.SetTexture("_Illum", Texture2D.blackTexture);
+                    m.SetTexture(IllumTexName, Texture2D.blackTexture);
                 }
             }
         }
@@ -261,7 +309,15 @@ namespace Subnautica_Echelon
         /// <param name="source">New source address</param>
         /// <returns>Clone with updated source</returns>
         public SurfaceShaderData RedefineSource(MaterialAddress source)
-            => new SurfaceShaderData(Color, MainTex, Metallic, MetallicTexture, BumpMap, EmissionTexture, source);
+            => new SurfaceShaderData(
+                color: Color,
+                mainTex: MainTex,
+                smoothness: Smoothness,
+                metallicTexture: MetallicTexture,
+                bumpMap: BumpMap,
+                emissionTexture: EmissionTexture,
+                smoothnessTextureChannel: SmoothnessTextureChannel,
+                source: source);
 
         public override string ToString()
             => "" + Source;
