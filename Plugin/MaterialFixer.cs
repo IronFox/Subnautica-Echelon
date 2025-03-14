@@ -30,7 +30,7 @@ namespace Subnautica_Echelon
         /// </summary>
         /// <param name="materialResolver">The solver function to fetch all materials to translate.
         /// If null, a default implementation is used which 
-        /// mimics VF's default material selection in addition to filtering out non-standard </param>
+        /// mimics VF's default material selection in addition to filtering out non-standard materials</param>
         /// <param name="verbose">Log verbosely. Can be changed any time</param>
         public MaterialFixer(
             ModVehicle owner,
