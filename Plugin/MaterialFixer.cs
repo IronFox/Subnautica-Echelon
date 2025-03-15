@@ -28,6 +28,7 @@ namespace Subnautica_Echelon
         /// <summary>
         /// Constructs the instance
         /// </summary>
+        /// <param name="owner">Owning vehicle</param>
         /// <param name="materialResolver">The solver function to fetch all materials to translate.
         /// If null, a default implementation is used which 
         /// mimics VF's default material selection in addition to filtering out non-standard materials</param>
@@ -38,6 +39,8 @@ namespace Subnautica_Echelon
             bool verbose=false
             )
         { 
+            if (owner == null)
+                throw new ArgumentNullException(nameof(owner));
             Vehicle = owner;
             VerboseLogging = verbose;
             MaterialResolver = materialResolver ?? (() => DefaultMaterialResolver(owner));
