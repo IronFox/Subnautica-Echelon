@@ -125,7 +125,7 @@ namespace Subnautica_Echelon
 
                     if (prototype.IsEmpty)
                     {
-                        Debug.Log($"Material correction: No material found to reproduce");
+                        Debug.LogError($"Material correction: No material found to reproduce");
                     }
                     else
                     {
