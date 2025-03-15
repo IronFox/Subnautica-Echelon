@@ -13,7 +13,7 @@ namespace Subnautica_Echelon
     public class SurfaceShaderData
     {
         /// <summary>
-        /// Main color of the material. Black if known
+        /// Main color of the material. Black if none
         /// </summary>
         public Color Color { get; }
         /// <summary>
