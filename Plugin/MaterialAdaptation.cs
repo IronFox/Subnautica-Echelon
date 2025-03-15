@@ -135,18 +135,12 @@ namespace Subnautica_Echelon
         {
             try
             {
-                var r = Target.Renderer;
-                if (r == null)
+                var m = Target.GetMaterial();
+                if (m == null)
                 {
-                    Debug.LogWarning($"Material correction: Target renderer is gone ({Target.RendererInstanceId}). Cannot apply");
+                    Debug.LogWarning($"Material correction: Target material is gone ({Target}). Cannot apply");
                     return;
                 }
-                if (Target.MaterialIndex >= r.materials.Length)
-                {
-                    Debug.LogWarning($"Material correction: Target renderer has only {r.materials.Length} materials, but needs {Target.MaterialIndex + 1}. Cannot apply");
-                    return;
-                }
-                var m = r.materials[Target.MaterialIndex];
                 if (m.shader != Shader)
                 {
                     if (verbose)
