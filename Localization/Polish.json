@@ -41,7 +41,7 @@
 	"desc_RepairModuleMk1": "Włącza możliwości samonaprawy Echelon. Naprawia {0}% na sekundę. Nie kumuluje się.",
 	"desc_RepairModuleMk2": "Włącza możliwości samonaprawy Echelon. Naprawia {0}% na sekundę. Nie kumuluje się.",
 	"desc_RepairModuleMk3": "Włącza możliwości samonaprawy Echelon. Naprawia {0}% na sekundę. Nie kumuluje się.",
-	"group_Drive":  "Drive",
+	"group_Drive":  "Napęd",
 	"display_DriveMk1":  "Ulepszenie napędu Echelona Mk1",
 	"display_DriveMk2":  "Ulepszenie napędu Echelona Mk2",
 	"display_DriveMk3":  "Ulepszenie napędu Echelona Mk3",
