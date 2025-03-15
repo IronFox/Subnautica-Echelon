@@ -61,11 +61,13 @@ namespace Subnautica_Echelon
             try
             {
                 Log.Write("MainPatcher.Start()");
+                LanguageHandler.RegisterLocalizationFolder();
                 PluginConfig = OptionsPanelHandler.RegisterModOptions<EchelonConfig>();
                 var harmony = new Harmony(PluginInfo.PLUGIN_GUID);
                 harmony.PatchAll();
                 UWE.CoroutineHost.StartCoroutine(Register());
 
+                //PDAHandler.AddEncyclopediaEntry("BelugaEncy", "Tech/Vehicles", Language.main.Get("Echelon"), Language.main.Get("Ency"));
 
                 Log.Write("MainPatcher.Start() done");
             }

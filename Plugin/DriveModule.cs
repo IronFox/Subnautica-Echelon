@@ -15,7 +15,7 @@ namespace Subnautica_Echelon
 
         public static CraftingNode BatteryGroupNode => new CraftingNode
         {
-            displayName = $"Drive",
+            displayName = Language.main.Get("group_Drive"),
             icon = driveSprite,
             name = $"echelondriveupgrades"
         };
@@ -34,7 +34,6 @@ namespace Subnautica_Echelon
         }
 
 
-        public override string DisplayName => $"Echelon Drive Upgrade {MarkFromType}";
 
         public static float GetSpeedBoost(EchelonModule module)
         {
@@ -50,8 +49,19 @@ namespace Subnautica_Echelon
             return 0.3f;
 
         }
-        public override string Description 
-            => $"Improves boosting performance. Accelerates +{Mathf.RoundToInt(GetSpeedBoost(Module) * 100)}% compared to non-boosted. Does not stack";
+
+        public static EchelonModule GetFrom(Echelon echelon)
+        {
+            return echelon
+                .HighestModuleType(
+                    EchelonModule.DriveMk1,
+                    EchelonModule.DriveMk2,
+                    EchelonModule.DriveMk3);
+        }
+
+
+    public override string Description 
+            => string.Format(base.Description, Mathf.RoundToInt(GetSpeedBoost(Module) * 100));
 
 
 

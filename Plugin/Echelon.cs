@@ -62,16 +62,8 @@ namespace Subnautica_Echelon
         public override Atlas.Sprite PingSprite => pingSprite ?? base.PingSprite;
         public override Sprite SaveFileSprite => saveFileSprite ?? base.SaveFileSprite;
         public override Sprite ModuleBackgroundImage => moduleBackground ?? base.ModuleBackgroundImage;
-        public override string Description => "The Echelon is a high-speed sub-aquatic superiority fighter";
-        public override string EncyclopediaEntry =>
-            "The Echelon is designed with the most demanding environments in mind with extensive hunter seeker capabilities. " +
-            "It features automatic integrity and power recovery, and onboard smart torpedo manufacturing. " +
-            "Its advanced user interfacing enables holographic sensor reconstruction for increased environmental awareness. " +
-            "Automatic targeting and target integrity analysis supports threat classification and prioritization. " +
-            "Finally, fired torpedoes intercept locked targets with high efficiency while built-in safety " +
-            "mechanics avoid harming the origin craft.\n" +
-            "You can craft it at any Mobile Vehicle Bay."
-            ;
+        public override string Description => Language.main.Get("description");
+        public override string EncyclopediaEntry => Language.main.Get("encyclopedia");
 
         public override Dictionary<TechType, int> Recipe =>
             new Dictionary<TechType, int> {
@@ -279,7 +271,7 @@ namespace Subnautica_Echelon
             {
                 if (!liveMixin.IsAlive() || wasDead)
                 {
-                    ErrorMessage.AddError($"{VehicleName} is destroyed and cannot be boarded");
+                    ErrorMessage.AddError(string.Format(Language.main.Get("destroyedAndCannotBeBoarded"), VehicleName));
                     return;
                 }
 
@@ -344,9 +336,9 @@ namespace Subnautica_Echelon
             }
         }
 
-        private int GetTorpedoMark() => HighestModule(EchelonModule.TorpedoMk1, EchelonModule.TorpedoMk2, EchelonModule.TorpedoMk3);
-        private int GetBatteryMark() => HighestModule(EchelonModule.NuclearBatteryMk1, EchelonModule.NuclearBatteryMk2, EchelonModule.NuclearBatteryMk3);
-        private int GetDriveMark() => HighestModule(EchelonModule.DriveMk1, EchelonModule.DriveMk2, EchelonModule.DriveMk3);
+        private EchelonModule GetTorpedoMark() => TorpedoModule.GetFrom(this);
+        private EchelonModule GetBatteryMark() => NuclearBatteryModule.GetFrom(this);
+        private EchelonModule GetDriveMark() => DriveModule.GetFrom(this);
         private EchelonModule GetSelfRepairMark() => RepairModule.GetFrom(this);
 
         private void ProcessEnergyRecharge(out bool lowPower, out bool criticalPower)
@@ -355,9 +347,9 @@ namespace Subnautica_Echelon
             if (energyInterface != null
                 && !IngameMenu.main.gameObject.activeSelf)
             {
-                int batteryMk = GetBatteryMark();
+                var batteryMk = GetBatteryMark();
 
-                float level = Mathf.Pow(2, batteryMk);
+                float level = Mathf.Pow(2, NuclearBatteryModule.LevelOf(batteryMk)+1);
 
                 float recharge =
                       0.4f  //max 1.6 per second
@@ -601,7 +593,7 @@ namespace Subnautica_Echelon
                 TrailSpaceTargetText.textDisplay = MainPatcher.PluginConfig.textDisplay;
                 EchelonControl.targetArrows = MainPatcher.PluginConfig.targetArrows;
 
-                control.torpedoMark = GetTorpedoMark();
+                control.torpedoMark = TorpedoModule.LevelOf(GetTorpedoMark())+1;
 
                 Vector2 lookDelta = GameInput.GetLookDelta();
                 control.lookRightAxis = lookDelta.x * 0.1f;
@@ -699,13 +691,13 @@ namespace Subnautica_Echelon
             if (!destroyed)
             {
                 if (tm != tm2)
-                    ErrorMessage.AddMessage($"{VehicleName} torpedo capability changed to {(tm2 > 0 ? $"Mk{tm2}" : "None")}");
+                    ErrorMessage.AddMessage(string.Format(Language.main.Get($"torpedoCapChanged"),VehicleName, Language.main.Get("t_"+tm2)));
                 if (bm != bm2)
-                    ErrorMessage.AddMessage($"{VehicleName} nuclear battery level changed to {(bm2 > 0 ? $"Mk{bm2}" : "Basic")}");
+                    ErrorMessage.AddMessage(string.Format(Language.main.Get($"batteryCapChanged"), VehicleName, Language.main.Get("b_" + bm2)));
                 if (dm != dm2)
-                    ErrorMessage.AddMessage($"{VehicleName} boost performance changed to {(bm2 > 0 ? $"Mk{bm2}" : "Basic")}");
+                    ErrorMessage.AddMessage(string.Format(Language.main.Get($"boostCapChanged"), VehicleName, Language.main.Get("d_" + dm2)));
                 if (rm != rm2)
-                    ErrorMessage.AddMessage($"{VehicleName} self repair capability changed to {(rm2 > EchelonModule.None ? EchelonBaseModule.GetMarkFromType(rm2) : "None")}");
+                    ErrorMessage.AddMessage(string.Format(Language.main.Get($"repairCapChanged"), VehicleName, Language.main.Get("r_" + rm2)));
             }
             Debug.Log($"Changed counts of {moduleType} to {moduleCounts[(int)moduleType]}");
         }

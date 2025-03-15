@@ -17,46 +17,26 @@ namespace Subnautica_Echelon
 
         public static CraftingNode BatteryGroupNode => new CraftingNode
         {
-            displayName = $"Nuclear Battery",
+            displayName =  Language.main.Get($"group_NuclearBattery"),
             icon = batterySprite,
             name = $"echelonnuclearbatteryupgrades"
         };
 
-        private int Mk
+        public static int LevelOf(EchelonModule module)
         {
-            get
+            switch (module)
             {
-                switch (Module)
-                {
-                    case EchelonModule.NuclearBatteryMk1:
-                        return 0;
-                    case EchelonModule.NuclearBatteryMk2:
-                        return 1;
-                    case EchelonModule.NuclearBatteryMk3:
-                        return 2;
-                }
-                return -1;
+                case EchelonModule.NuclearBatteryMk1:
+                    return 0;
+                case EchelonModule.NuclearBatteryMk2:
+                    return 1;
+                case EchelonModule.NuclearBatteryMk3:
+                    return 2;
             }
+            return -1;
         }
 
-        public override string ClassId => $"EchelonNuclearBatteryModule{Mk}";  //must stay for backwards compatibility
-        public override string DisplayName => $"Echelon Nuclear Battery Upgrade {MarkFromType}";
-
-        public override string Description
-        {
-            get
-            {
-                switch (Module)
-                {
-                    case EchelonModule.NuclearBatteryMk1:
-                        return $"Doubles the energy output of the Echelon's nuclear battery (Mk1). Does not stack";
-                    case EchelonModule.NuclearBatteryMk2:
-                        return $"Quadruples the energy output of the Echelon's nuclear battery (Mk2). Does not stack";
-
-                }
-                return "Unsupported battery type: " + Module;
-            }
-        }
+        public override string ClassId => $"EchelonNuclearBatteryModule{LevelOf(Module)}";  //must stay for backwards compatibility
 
 
         internal static void RegisterAll()
@@ -65,6 +45,16 @@ namespace Subnautica_Echelon
             new NuclearBatteryModule(EchelonModule.NuclearBatteryMk1).Register();
             new NuclearBatteryModule(EchelonModule.NuclearBatteryMk2).Register();
             //new NuclearBatteryModule(EchelonModule.NuclearBatteryMk3).Register();
+        }
+
+
+        public static EchelonModule GetFrom(Echelon echelon)
+        {
+            return echelon
+                .HighestModuleType(
+                    EchelonModule.NuclearBatteryMk1,
+                    EchelonModule.NuclearBatteryMk2,
+                    EchelonModule.NuclearBatteryMk3);
         }
 
         public NuclearBatteryModule(EchelonModule module) : base(module, BatteryGroupNode)

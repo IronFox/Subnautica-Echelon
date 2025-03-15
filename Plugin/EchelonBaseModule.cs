@@ -18,6 +18,9 @@ public abstract class EchelonBaseModule : ModVehicleUpgrade
     public virtual IReadOnlyCollection<TechType> AutoDisplace { get; }
     public override string ClassId => $"Echelon{Module}";
 
+    public override string Description => Language.main.Get("desc_"+Module);
+    public override string DisplayName => Language.main.Get("display_" + Module);
+
     public static CraftingNode RootCraftingNode { get; } = new CraftingNode
     {
         displayName = $"Echelon",

@@ -18,7 +18,7 @@ public class TorpedoModule : EchelonModuleFamily<TorpedoModule>
 {
     public static CraftingNode TorpedoGroupNode => new CraftingNode
     {
-        displayName = $"Torpedoes",
+        displayName = Language.main.Get("group_Torpedoes"),
         icon = torpedoSprite,
         name = $"echelontorpedoupgrades"
     };
@@ -26,44 +26,20 @@ public class TorpedoModule : EchelonModuleFamily<TorpedoModule>
 
 
     internal static Atlas.Sprite torpedoSprite;
-    private int Mk
+    public static int LevelOf(EchelonModule module)
     {
-        get
+        switch (module)
         {
-            switch (Module)
-            {
-                case EchelonModule.TorpedoMk1:
-                    return 0;
-                case EchelonModule.TorpedoMk2:
-                    return 1;
-                case EchelonModule.TorpedoMk3:
-                    return 2;
-            }
-            return -1;
+            case EchelonModule.TorpedoMk1:
+                return 0;
+            case EchelonModule.TorpedoMk2:
+                return 1;
+            case EchelonModule.TorpedoMk3:
+                return 2;
         }
+        return -1;
     }
-    public override string ClassId => $"EchelonTorpedoModule{Mk}";  //must stay for backwards compatibility
-    public override string DisplayName => $"Echelon Torpedo System {MarkFromType}";
-
-    public override string Description
-    {
-        get
-        {
-            switch (Module)
-            {
-                case EchelonModule.TorpedoMk1:
-                    return $"Adds basic torpedo deployment capabilities to the Echelon (Mk1). Does not stack";
-                case EchelonModule.TorpedoMk2:
-                    return $"Adds advanced torpedo deployment capabilities to the Echelon (Mk2). Does not stack";
-                case EchelonModule.TorpedoMk3:
-                    return $"Adds superior torpedo deployment capabilities to the Echelon (Mk3). Does not stack";
-
-            }
-            return "Unsupported module: "+Module;
-        }
-
-
-    }
+    public override string ClassId => $"EchelonTorpedoModule{LevelOf(Module)}";  //must stay for backwards compatibility
 
     internal static void RegisterAll()
     {
@@ -71,6 +47,16 @@ public class TorpedoModule : EchelonModuleFamily<TorpedoModule>
         new TorpedoModule(EchelonModule.TorpedoMk1).Register();
         new TorpedoModule(EchelonModule.TorpedoMk2).Register();
         new TorpedoModule(EchelonModule.TorpedoMk3).Register();
+    }
+
+
+    public static EchelonModule GetFrom(Echelon echelon)
+    {
+        return echelon
+            .HighestModuleType(
+                EchelonModule.TorpedoMk1,
+                EchelonModule.TorpedoMk2,
+                EchelonModule.TorpedoMk3);
     }
 
     /// <summary>

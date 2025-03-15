@@ -16,7 +16,7 @@ namespace Subnautica_Echelon
 
         public static CraftingNode SelfRepairGroupNode => new CraftingNode
         {
-            displayName = $"Repair Modules",
+            displayName = Language.main.Get("group_RepairModule"),
             icon = groupSprite,
             name = $"echelonrepairmoduleupgrades"
         };
@@ -34,9 +34,9 @@ namespace Subnautica_Echelon
             new RepairModule(EchelonModule.RepairModuleMk3).Register();
         }
 
-        public override string DisplayName => $"Echelon Self Repair Module {MarkFromType}";
 
-        public override string Description => $"Enables Echelon self repair capabilities. Repairs {Math.Round(GetRelativeSelfRepair(Module)*100,1)}% per second. Does not stack";
+        public override string Description => string.Format(base.Description, Math.Round(GetRelativeSelfRepair(Module) * 100, 1));
+            
 
 
         public static float GetRelativeSelfRepair(EchelonModule module)
