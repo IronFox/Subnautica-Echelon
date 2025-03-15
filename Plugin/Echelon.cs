@@ -691,13 +691,13 @@ namespace Subnautica_Echelon
             if (!destroyed)
             {
                 if (tm != tm2)
-                    ErrorMessage.AddMessage(string.Format(Language.main.Get($"torpedoCapChanged"),VehicleName, Language.main.Get("t_"+tm2)));
+                    ErrorMessage.AddMessage(string.Format(Language.main.Get($"torpedoCapChanged"),VehicleName, Language.main.Get("cap_t_"+tm2)));
                 if (bm != bm2)
-                    ErrorMessage.AddMessage(string.Format(Language.main.Get($"batteryCapChanged"), VehicleName, Language.main.Get("b_" + bm2)));
+                    ErrorMessage.AddMessage(string.Format(Language.main.Get($"batteryCapChanged"), VehicleName, Language.main.Get("cap_b_" + bm2)));
                 if (dm != dm2)
-                    ErrorMessage.AddMessage(string.Format(Language.main.Get($"boostCapChanged"), VehicleName, Language.main.Get("d_" + dm2)));
+                    ErrorMessage.AddMessage(string.Format(Language.main.Get($"boostCapChanged"), VehicleName, Language.main.Get("cap_d_" + dm2)));
                 if (rm != rm2)
-                    ErrorMessage.AddMessage(string.Format(Language.main.Get($"repairCapChanged"), VehicleName, Language.main.Get("r_" + rm2)));
+                    ErrorMessage.AddMessage(string.Format(Language.main.Get($"repairCapChanged"), VehicleName, Language.main.Get("cap_r_" + rm2)));
             }
             Debug.Log($"Changed counts of {moduleType} to {moduleCounts[(int)moduleType]}");
         }
