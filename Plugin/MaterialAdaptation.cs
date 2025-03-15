@@ -130,26 +130,25 @@ namespace Subnautica_Echelon
         /// <summary>
         /// Resets only variables known to be corrupted during moonpool undock
         /// </summary>
-        /// <param name="verbose">If true, every modification is logged</param>
-        public void PostDockFixOnTarget(bool verbose = true)
+        /// <param name="logConfig">Log Configuration</param>
+        public void PostDockFixOnTarget(LogConfig logConfig)
         {
             try
             {
                 var m = Target.GetMaterial();
                 if (m == null)
                 {
-                    Debug.LogWarning($"Material correction: Target material is gone ({Target}). Cannot apply");
+                    logConfig.LogWarning($"Target material is gone ({Target}). Cannot apply");
                     return;
                 }
                 if (m.shader != Shader)
                 {
-                    if (verbose)
-                        Debug.Log($"Material correction: Applying shader {Shader.name} to target");
+                    logConfig.LogExtraStep($"Applying shader {Shader.name} to target");
 
                     m.shader = Shader;
                 }
 
-                Prototype.ApplyTo(m, verbose, x =>
+                Prototype.ApplyTo(m, logConfig, x =>
                        x == "_SpecInt"
                     || x == "_GlowStrength"
                     || x == "_GlowStrengthNight");
@@ -158,40 +157,39 @@ namespace Subnautica_Echelon
             catch (Exception ex)
             {
                 Debug.LogException(ex);
-                Debug.LogError($"Material correction: Failed to apply MaterialAdaptation to material {Target}");
+                logConfig.LogError($"Failed to apply MaterialAdaptation to material {Target}");
             }
         }
 
         /// <summary>
         /// Reapplies all material properties to the target
         /// </summary>
-        /// <param name="verbose">If true, every modification is logged</param>
-        public void ApplyToTarget(bool verbose = false)
+        /// <param name="logConfig">Log Configuration</param>
+        public void ApplyToTarget(LogConfig logConfig)
         {
             try
             {
                 var m = Target.GetMaterial();
                 if (m == null)
                 {
-                    Debug.LogWarning($"Material correction: Target material is gone ({Target}). Cannot apply");
+                    logConfig.LogWarning($"Target material is gone ({Target}). Cannot apply");
                     return;
                 }
                 if (m.shader != Shader)
                 {
-                    if (verbose)
-                        Debug.Log($"Material correction: Applying shader {Shader.name} to target");
+                    logConfig.LogExtraStep($"Applying shader {Shader.name} to target");
 
                     m.shader = Shader;
                 }
 
-                Prototype.ApplyTo(m, verbose);
+                Prototype.ApplyTo(m, logConfig);
 
-                Migrated.ApplyTo(m, verbose);
+                Migrated.ApplyTo(m, logConfig);
             }
             catch (Exception ex)
             {
+                logConfig.LogError($"Failed to apply MaterialAdaptation to material {Target}");
                 Debug.LogException(ex);
-                Debug.LogError($"Material correction: Failed to apply MaterialAdaptation to material {Target}");
             }
         }
     }

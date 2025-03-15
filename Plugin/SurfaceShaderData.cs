@@ -88,11 +88,11 @@ namespace Subnautica_Echelon
             EmissionTexture = emissionTexture;
         }
 
-        private static Color GetColor(Material m, string name)
+        private static Color GetColor(Material m, string name, LogConfig logConfig)
         {
             if (!m.HasProperty(name))
             {
-                Debug.LogWarning($"Material correction: Material {m.name} does not have expected property {name}");
+                logConfig.LogWarning($"Material {m} does not have expected property {name}");
                 return Color.black;
             }
             try
@@ -101,17 +101,17 @@ namespace Subnautica_Echelon
             }
             catch (Exception e)
             {
-                Debug.LogError($"Material correction: Material {m.name} does not have expected color property {name}");
+                logConfig.LogError($"Material {m} does not have expected color property {name}");
                 Debug.LogException(e);
                 return Color.black;
             }
         }
         
-        private static Texture GetTexture(Material m, string name)
+        private static Texture GetTexture(Material m, string name, LogConfig logConfig)
         {
             if (!m.HasProperty(name))
             {
-                Debug.LogWarning($"Material correction: Material {m.name} does not have expected property {name}");
+                logConfig.LogWarning($"Material {m} does not have expected property {name}");
                 return null;
             }
             try
@@ -120,17 +120,17 @@ namespace Subnautica_Echelon
             }
             catch (Exception e)
             {
-                Debug.LogError($"Material correction: Material {m.name} does not have expected texture property {name}");
+                logConfig.LogError($"Material {m} does not have expected texture property {name}");
                 Debug.LogException(e);
                 return null;
             }
         }
         
-        private static float GetFloat(Material m, string name)
+        private static float GetFloat(Material m, string name, LogConfig logConfig)
         {
             if (!m.HasProperty(name))
             {
-                Debug.LogWarning($"Material correction: Material {m.name} does not have expected property {name}");
+                logConfig.LogWarning($"Material {m} does not have expected property {name}");
                 return 0;
             }
             try
@@ -139,17 +139,17 @@ namespace Subnautica_Echelon
             }
             catch (Exception e)
             {
-                Debug.LogError($"Material correction: Material {m.name} does not have expected float property {name}");
+                logConfig.LogError($"Material {m} does not have expected float property {name}");
                 Debug.LogException(e);
                 return 0;
             }
         }
          
-        private static int GetInt(Material m, string name)
+        private static int GetInt(Material m, string name, LogConfig logConfig)
         {
             if (!m.HasProperty(name))
             {
-                Debug.LogWarning($"Material correction: Material {m.name} does not have expected property {name}");
+                logConfig.LogWarning($"Material {m} does not have expected property {name}");
                 return 0;
             }
             try
@@ -158,35 +158,35 @@ namespace Subnautica_Echelon
             }
             catch (Exception e)
             {
-                Debug.LogError($"Material correction: Material {m.name} does not have expected int property {name}");
+                logConfig.LogError($"Material {m} does not have expected int property {name}");
                 Debug.LogException(e);
                 return 0;
             }
         }
 
-        [Obsolete("Please use SurfaceShaderData.From(renderer,materialIndex) instead")]
+        [Obsolete("Please use SurfaceShaderData.From(renderer,materialIndex, logConfig) instead")]
         public static SurfaceShaderData From(Material m, bool ignoreShaderName = false)
         {
-            return From(target:default, m, ignoreShaderName);
+            return From(target:default, m, LogConfig.Default, ignoreShaderName);
         }
 
-        private static SurfaceShaderData From(MaterialAddress target, Material m, bool ignoreShaderName = false)
+        private static SurfaceShaderData From(MaterialAddress target, Material m, LogConfig logConfig, bool ignoreShaderName = false)
         {
 
             if (m.shader.name != "Standard" && !ignoreShaderName)
             {
-                Debug.Log($"Material correction: Ignoring {m} which uses shader {m.shader}");
+                logConfig.LogExtraStep($"Ignoring {m} which uses shader {m.shader}");
                 return null;
             }
-            Debug.Log($"Material correction: Reading material {m.name} which uses shader {m.shader.name}");
+            logConfig.LogExtraStep($"Reading material {m} which uses shader {m.shader}");
             return new SurfaceShaderData(
-                color: GetColor(m, "_Color"),
-                mainTex: GetTexture(m, "_MainTex"),
-                smoothness: GetFloat(m, "_Glossiness"),
-                metallicTexture: GetTexture(m, "_MetallicGlossMap"),
-                bumpMap: GetTexture(m, "_BumpMap"),
-                emissionTexture: GetTexture(m, "_EmissionMap"),
-                smoothnessTextureChannel: GetInt(m, "_SmoothnessTextureChannel"),
+                color: GetColor(m, "_Color", logConfig),
+                mainTex: GetTexture(m, "_MainTex", logConfig),
+                smoothness: GetFloat(m, "_Glossiness", logConfig),
+                metallicTexture: GetTexture(m, "_MetallicGlossMap", logConfig),
+                bumpMap: GetTexture(m, "_BumpMap", logConfig),
+                emissionTexture: GetTexture(m, "_EmissionMap", logConfig),
+                smoothnessTextureChannel: GetInt(m, "_SmoothnessTextureChannel", logConfig),
                 source: target
                 );
         }
@@ -204,7 +204,7 @@ namespace Subnautica_Echelon
         /// return null otherwise</param>
         /// <returns>Read surface shader data or null if the shader name did not match
         /// or the target is (no longer) valid</returns>
-        public static SurfaceShaderData From(MaterialAddress source, bool ignoreShaderName = false)
+        public static SurfaceShaderData From(MaterialAddress source, LogConfig logConfig, bool ignoreShaderName = false)
         {
             var material = source.GetMaterial();
             if (material == null)
@@ -212,7 +212,7 @@ namespace Subnautica_Echelon
                 Debug.LogError($"Material {source} could not be resolved to an instance");
                 return null;
             }
-            return From(source, material, ignoreShaderName);
+            return From(source, material, logConfig, ignoreShaderName);
         }
 
 
@@ -231,9 +231,9 @@ namespace Subnautica_Echelon
         /// return null otherwise</param>
         /// <returns>Read surface shader data or null if the shader name did not match
         /// or the target is (no longer) valid</returns>
-        public static SurfaceShaderData From(Renderer renderer, int materialIndex, bool ignoreShaderName=false)
+        public static SurfaceShaderData From(Renderer renderer, int materialIndex, LogConfig logConfig, bool ignoreShaderName=false)
         {
-            return From(new MaterialAddress(renderer, materialIndex));
+            return From(new MaterialAddress(renderer, materialIndex), logConfig);
         }
 
 
@@ -244,11 +244,11 @@ namespace Subnautica_Echelon
         /// Applies the loaded configuration to the given material
         /// </summary>
         /// <param name="m">Target material</param>
-        /// <param name="verbose">If true, every modification is logged</param>
-        public void ApplyTo(Material m, bool verbose)
+        /// <param name="logConfig">Log Configuration</param>
+        public void ApplyTo(Material m, LogConfig logConfig)
         {
-            ColorVariable.Set(m, "_Color2", Color, verbose);
-            ColorVariable.Set(m, "_Color3", Color, verbose);
+            ColorVariable.Set(m, "_Color2", Color, logConfig);
+            ColorVariable.Set(m, "_Color3", Color, logConfig);
             
             var existingSpecTex = m.GetTexture(SpecTexName);
 
@@ -258,8 +258,7 @@ namespace Subnautica_Echelon
             {
                 if (existingSpecTex != MetallicTexture)
                 {
-                    if (verbose)
-                        Debug.Log($"Material correction: Translating smoothness alpha map {spec} to spec");
+                    logConfig.LogExtraStep($"Translating smoothness alpha map {spec} to spec");
 
                     m.SetTexture(SpecTexName, MetallicTexture);
                 }
@@ -268,8 +267,7 @@ namespace Subnautica_Echelon
             {
                 if (existingSpecTex == null || existingSpecTex.name != DummyTexName)
                 {
-                    if (verbose)
-                        Debug.Log($"Material correction: Source has no smoothness alpha texture. Setting to {Smoothness}");
+                    logConfig.LogExtraStep($"Source has no smoothness alpha texture. Setting to {Smoothness}");
                     var met = Smoothness;
                     var tex = new Texture2D(1, 1, TextureFormat.RGBA32, false);
                     tex.name = DummyTexName;
@@ -285,8 +283,7 @@ namespace Subnautica_Echelon
             {
                 if (EmissionTexture != existingIllumTex)
                 {
-                    if (verbose)
-                        Debug.Log($"Material correction: Translating emission map {EmissionTexture} to _Illum");
+                    logConfig.LogExtraStep($"Translating emission map {EmissionTexture} to _Illum");
 
                     m.SetTexture(IllumTexName, EmissionTexture);
                 }
@@ -296,8 +293,7 @@ namespace Subnautica_Echelon
             {
                 if (existingIllumTex != Texture2D.blackTexture)
                 {
-                    if (verbose)
-                        Debug.Log($"Material correction: Source had no illumination texture. Loading black into _Illum");
+                    logConfig.LogExtraStep($"Source has no illumination texture. Loading black into _Illum");
                     m.SetTexture(IllumTexName, Texture2D.blackTexture);
                 }
             }

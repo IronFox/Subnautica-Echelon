@@ -12,7 +12,13 @@ namespace Subnautica_Echelon
     internal interface IShaderVariable
     {
         ShaderPropertyType Type { get; }
-        void SetTo(Material m, bool verbose = false);
+
+        /// <summary>
+        /// Updates a material according to the preserved values present in the local variable
+        /// </summary>
+        /// <param name="m">Material to update</param>
+        /// <param name="logConfig">Log Configuration</param>
+        void SetTo(Material m, LogConfig logConfig);
     }
 
     internal readonly struct ColorVariable : IShaderVariable
@@ -26,27 +32,33 @@ namespace Subnautica_Echelon
             Name = n;
         }
 
-        public static void Set(Material m, string name, Color value, bool verbose)
+        /// <summary>
+        /// Updates a single color variable on the given material
+        /// </summary>
+        /// <param name="m">Material to change</param>
+        /// <param name="name">Variable name to change</param>
+        /// <param name="value">Color value to set</param>
+        /// <param name="logConfig">Log Configuration</param>
+        public static void Set(Material m, string name, Color value, LogConfig logConfig)
         {
             try
             {
                 var old = m.GetColor(name);
                 if (old == value)
                     return;
-                if (verbose)
-                    Debug.Log($"Material correction: Setting color {name} ({old} -> {value}) to material {m}");
+                logConfig.LogMaterialVariableSet(ShaderPropertyType.Color, name, old, value, m);
                 m.SetColor(name, value);
             }
             catch (Exception ex)
             {
                 Debug.LogException(ex);
-                Debug.LogError($"Material correction: Failed to set color {name} ({value}) to material {m}");
+                logConfig.LogError($"Failed to set color {name} ({value}) on material {m}");
             }
         }
 
-        public void SetTo(Material m, bool verbose)
+        public void SetTo(Material m, LogConfig logConfig)
         {
-            Set(m, Name, Value, verbose);
+            Set(m, Name, Value, logConfig);
         }
     }
 
@@ -63,21 +75,20 @@ namespace Subnautica_Echelon
             Name = n;
         }
 
-        public void SetTo(Material m, bool verbose)
+        public void SetTo(Material m, LogConfig logConfig)
         {
             try
             {
                 var old = m.GetVector(Name);
                 if (old == Value)
                     return;
-                if (verbose)
-                    Debug.Log($"Material correction: Setting {Type} {Name} ({old} -> {Value}) to material {m}");
+                logConfig.LogMaterialVariableSet(Type,Name,old,Value,m);
                 m.SetVector(Name, Value);
             }
             catch (Exception ex)
             {
                 Debug.LogException(ex);
-                Debug.LogError($"Material correction: Failed to set {Type} {Name} ({Value}) to material {m}");
+                logConfig.LogError($"Failed to set {Type} {Name} ({Value}) on material {m}");
             }
         }
     }
@@ -95,21 +106,20 @@ namespace Subnautica_Echelon
             Name = n;
         }
 
-        public void SetTo(Material m, bool verbose)
+        public void SetTo(Material m, LogConfig logConfig)
         {
             try
             {
                 var old = m.GetFloat(Name);
                 if (old == Value)
                     return;
-                if (verbose)
-                    Debug.Log($"Material correction: Setting {Type} {Name} ({old.ToString(CultureInfo.InvariantCulture)} -> {Value.ToString(CultureInfo.InvariantCulture)}) to material {m}");
+                logConfig.LogMaterialVariableSet(Type,Name, old, Value, m);
                 m.SetFloat(Name, Value);
             }
             catch (Exception ex)
             {
                 Debug.LogException(ex);
-                Debug.LogError($"Material correction: Failed to set {Type} {Name} ({Value.ToString(CultureInfo.InvariantCulture)}) to material {m}");
+                logConfig.LogError($"Failed to set {Type} {Name} ({Value.ToString(CultureInfo.InvariantCulture)}) on material {m}");
             }
         }
     }
@@ -136,28 +146,27 @@ namespace Subnautica_Echelon
         /// Updates all recorded shader variables in the specified material
         /// </summary>
         /// <param name="m">Target material</param>
-        /// <param name="verbose">If true, every modification is logged</param>
+        /// <param name="logConfig">Log Configuration</param>
         /// <param name="variableNamePredicate">
         /// Optional predicate to only check/update certain shader variables by name.
         /// If non-null updates only variables for which this function returns true</param>
-        public void ApplyTo(Material m, bool verbose = false, Func<string,bool> variableNamePredicate = null)
+        public void ApplyTo(Material m, LogConfig logConfig, Func<string,bool> variableNamePredicate = null)
         {
             variableNamePredicate = variableNamePredicate ?? (_ => true);
 
             foreach (var v in ColorVariables)
                 if (variableNamePredicate(v.Name))
-                    v.SetTo(m, verbose);
+                    v.SetTo(m, logConfig);
             foreach (var v in VectorVariables)
                 if (variableNamePredicate(v.Name))
-                    v.SetTo(m, verbose);
+                    v.SetTo(m, logConfig);
             foreach (var v in FloatVariables)
                 if (variableNamePredicate(v.Name))
-                    v.SetTo(m, verbose);
+                    v.SetTo(m, logConfig);
 
             if (m.globalIlluminationFlags != MaterialGlobalIlluminationFlags)
             {
-                if (verbose)
-                    Debug.Log($"Material correction: Applying global illumination flags ({m.globalIlluminationFlags} -> {MaterialGlobalIlluminationFlags})");
+                logConfig.LogMaterialChange($"Applying global illumination flags ({m.globalIlluminationFlags} -> {MaterialGlobalIlluminationFlags})");
 
                 m.globalIlluminationFlags = MaterialGlobalIlluminationFlags;
             }
@@ -165,15 +174,13 @@ namespace Subnautica_Echelon
             foreach (var existing in m.shaderKeywords.ToList())
                 if (!ShaderKeywords.Contains(existing))
                 {
-                    if (verbose)
-                        Debug.Log($"Material correction: Removing shader keyword {existing}");
+                    logConfig.LogMaterialChange($"Removing shader keyword {existing}");
                     m.DisableKeyword(existing);
                 }
             foreach (var kw in ShaderKeywords)
                 if (!m.IsKeywordEnabled(kw))
                 {
-                    if (verbose)
-                        Debug.Log($"Material correction: Enabling shader keyword {kw}");
+                    logConfig.LogMaterialChange($"Enabling shader keyword {kw}");
                     m.EnableKeyword(kw);
                 }
         }
@@ -238,14 +245,13 @@ namespace Subnautica_Echelon
         /// <returns>Null if the seamoth is not (yet) available. Keep trying if null.
         /// Non-null if the seamoth is loaded, but can then be empty (IsEmpty is true)
         /// if the respective material is not found</returns>
-        public static MaterialPrototype FromSeamoth(bool verbose=false)
+        public static MaterialPrototype FromSeamoth(LogConfig logConfig)
         {
             var sm = SeamothHelper.Seamoth;
             if (sm == null)
                 return null;
 
-            if (verbose)
-                Debug.Log($"Material correction: Found Seamoth");
+            logConfig.LogExtraStep($"Found Seamoth");
 
             Material seamothMaterial = null;
             var renderers = sm.GetComponentsInChildren<MeshRenderer>();
@@ -255,15 +261,13 @@ namespace Subnautica_Echelon
                     if (material.shader.name == "MarmosetUBER"
                         && material.name.StartsWith("Submersible_SeaMoth"))
                     {
-                        if (verbose)
-                            Debug.Log($"Material correction: Found material to reproduce: {material.name}");
+                        logConfig.LogExtraStep($"Found material prototype: {material}");
                         seamothMaterial = material;
                         break;
                     }
                     else
                     {
-                        if (verbose)
-                            Debug.Log($"Material correction: Shader mismatch {material.name} uses shader {material.shader.name}");
+                        logConfig.LogExtraStep($"(Expected) shader mismatch on material {material} which uses shader {material.shader}");
                     }
                 if (seamothMaterial != null)
                     break;

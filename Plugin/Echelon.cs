@@ -38,7 +38,7 @@ namespace Subnautica_Echelon
         {
             EchLog = new MyLogger(this);
             EchLog.Write($"Constructed");
-            MaterialFixer = new MaterialFixer(this, verbose: true);
+            MaterialFixer = new MaterialFixer(this, LogConfig.Verbose);
         }
 
         
@@ -49,7 +49,7 @@ namespace Subnautica_Echelon
             Debug.Log($"Comparing colors {baseColor} and {stripeColor}");
             if (baseColor == Color.white && stripeColor == Color.white)
             {
-                Debug.Log($"Resetting white {vehicleName}");
+                Debug.Log($"Resetting white {VehicleName}");
                 SetBaseColor(Vector3.zero, defaultBaseColor);
                 SetStripeColor(Vector3.zero, defaultStripeColor);
             }
@@ -127,7 +127,7 @@ namespace Subnautica_Echelon
 
         void OnDestroy()
         {
-            Log.Write($"{vehicleName} Echelon.OnDestroy()");
+            Log.Write($"{VehicleName} Echelon.OnDestroy()");
             destroyed = true;
         }
 
@@ -279,7 +279,7 @@ namespace Subnautica_Echelon
             {
                 if (!liveMixin.IsAlive() || wasDead)
                 {
-                    ErrorMessage.AddError($"{vehicleName} is destroyed and cannot be boarded");
+                    ErrorMessage.AddError($"{VehicleName} is destroyed and cannot be boarded");
                     return;
                 }
 
@@ -699,16 +699,18 @@ namespace Subnautica_Echelon
             if (!destroyed)
             {
                 if (tm != tm2)
-                    ErrorMessage.AddMessage($"{vehicleName} torpedo capability changed to {(tm2 > 0 ? $"Mk{tm2}" : "None")}");
+                    ErrorMessage.AddMessage($"{VehicleName} torpedo capability changed to {(tm2 > 0 ? $"Mk{tm2}" : "None")}");
                 if (bm != bm2)
-                    ErrorMessage.AddMessage($"{vehicleName} nuclear battery level changed to {(bm2 > 0 ? $"Mk{bm2}" : "Basic")}");
+                    ErrorMessage.AddMessage($"{VehicleName} nuclear battery level changed to {(bm2 > 0 ? $"Mk{bm2}" : "Basic")}");
                 if (dm != dm2)
-                    ErrorMessage.AddMessage($"{vehicleName} boost performance changed to {(bm2 > 0 ? $"Mk{bm2}" : "Basic")}");
+                    ErrorMessage.AddMessage($"{VehicleName} boost performance changed to {(bm2 > 0 ? $"Mk{bm2}" : "Basic")}");
                 if (rm != rm2)
-                    ErrorMessage.AddMessage($"{vehicleName} self repair capability changed to {(rm2 > EchelonModule.None ? EchelonBaseModule.GetMarkFromType(rm2) : "None")}");
+                    ErrorMessage.AddMessage($"{VehicleName} self repair capability changed to {(rm2 > EchelonModule.None ? EchelonBaseModule.GetMarkFromType(rm2) : "None")}");
             }
             Debug.Log($"Changed counts of {moduleType} to {moduleCounts[(int)moduleType]}");
         }
+
+        public string VehicleName => subName != null ? subName.GetName() : vehicleName;
 
         public override int MaxHealth => 2000;
         public override int NumModules => 8;

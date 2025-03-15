@@ -1,10 +1,122 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Globalization;
+using System.Security.Cryptography;
 using UnityEngine;
+using UnityEngine.Rendering;
 using VehicleFramework;
 
 namespace Subnautica_Echelon
 {
+    /// <summary>
+    /// Logging configuration
+    /// </summary>
+    public readonly struct LogConfig
+    {
+        public bool LogMaterialChanges { get; }
+        public string Prefix { get; }
+        public bool IncludeTimestamp { get; }
+        public bool LogExtraSteps { get; }
+
+        public LogConfig(bool logMaterialChanges, string prefix, bool includeTimestamp, bool logExtraSteps)
+        {
+            LogMaterialChanges = logMaterialChanges;
+            Prefix = prefix;
+            IncludeTimestamp = includeTimestamp;
+            LogExtraSteps = logExtraSteps;
+        }
+
+        public const string DefaultPrefix = "Material Fix";
+
+        public static LogConfig Default { get; } = new LogConfig(
+            logMaterialChanges: false,
+            prefix: DefaultPrefix,
+            includeTimestamp: true,
+            logExtraSteps: true
+            );
+
+        public static LogConfig Silent { get; } = new LogConfig(
+            logMaterialChanges: false,
+            prefix: DefaultPrefix,
+            includeTimestamp: true,
+            logExtraSteps: false
+            );
+
+        public static LogConfig Verbose { get; } = new LogConfig(
+            logMaterialChanges: true,
+            prefix: DefaultPrefix,
+            includeTimestamp: true,
+            logExtraSteps: true
+            );
+
+        public void LogExtraStep(string msg)
+        {
+            if (!LogExtraSteps)
+                return;
+
+            Debug.Log(MakeMessage(msg));
+        }
+
+        private string MakeMessage(string msg)
+        {
+            if (!string.IsNullOrEmpty(Prefix))
+            {
+                if (IncludeTimestamp)
+                    return $"{DateTime.Now:HH:mm:ss.fff} {Prefix}: {msg}";
+                return $"{Prefix}: {msg}";
+            }
+            else
+            {
+                if (IncludeTimestamp)
+                    return $"{DateTime.Now:HH:mm:ss.fff} {msg}";
+                return msg;
+            }
+        }
+
+
+        public void LogWarning(string msg)
+        {
+            Debug.LogWarning(MakeMessage(msg));
+        }
+
+        public void LogError(string msg)
+        {
+            Debug.LogError(MakeMessage(msg));
+        }
+
+        public void LogMaterialChange(string msg)
+        {
+            if (!LogMaterialChanges)
+                return;
+            Debug.Log(MakeMessage(msg));
+        }
+        public void LogMaterialChange(Func<string> msg)
+        {
+            if (!LogMaterialChanges)
+                return;
+            Debug.Log(MakeMessage(msg()));
+        }
+
+        private string ValueToString<T>(T value)
+        {
+            if (value is float f0)
+                return f0.ToString(CultureInfo.InvariantCulture);
+            return value?.ToString();
+        }
+
+        public void LogMaterialVariableSet<T>(
+            ShaderPropertyType type,
+            string name,
+            T old,
+            T value,
+            Material m)
+        {
+            if (LogMaterialChanges)
+                Debug.Log(MakeMessage($"Setting {type} {name} ({ValueToString(old)} -> {ValueToString(value)}) on material {m}"));
+        }
+    }
+
+
     /// <summary>
     /// Helper class to fix materials automatically. Should be instantiated on the vehicle
     /// you wish to fix materials of
@@ -21,7 +133,11 @@ namespace Subnautica_Echelon
         public bool MaterialsAreFixed => materialsFixed;
 
         public ModVehicle Vehicle { get; }
-        public bool VerboseLogging { get; set; }
+
+        /// <summary>
+        /// Controls how debug logging should be performed
+        /// </summary>
+        public LogConfig LogConfig { get; set; }
 
         public Func<IEnumerable<SurfaceShaderData>> MaterialResolver { get; }
 
@@ -32,18 +148,18 @@ namespace Subnautica_Echelon
         /// <param name="materialResolver">The solver function to fetch all materials to translate.
         /// If null, a default implementation is used which 
         /// mimics VF's default material selection in addition to filtering out non-standard materials</param>
-        /// <param name="verbose">Log verbosely. Can be changed any time</param>
+        /// <param name="logConfig">Log Configuration. If null, defaults to <see cref="LogConfig.Default" /></param>
         public MaterialFixer(
             ModVehicle owner,
-            Func<IEnumerable<SurfaceShaderData>> materialResolver = null,
-            bool verbose=false
+            LogConfig? logConfig = null,
+            Func<IEnumerable<SurfaceShaderData>> materialResolver = null
             )
         { 
             if (owner == null)
                 throw new ArgumentNullException(nameof(owner));
             Vehicle = owner;
-            VerboseLogging = verbose;
-            MaterialResolver = materialResolver ?? (() => DefaultMaterialResolver(owner));
+            LogConfig = logConfig??LogConfig.Default;
+            MaterialResolver = materialResolver ?? (() => DefaultMaterialResolver(owner, LogConfig));
         }
 
         /// <summary>
@@ -51,8 +167,9 @@ namespace Subnautica_Echelon
         /// </summary>
         /// <param name="vehicle">Owning vehicle</param>
         /// <param name="ignoreShaderNames">True to return all materials, false to only return Standard materials</param>
+        /// <param name="logConfig">Log Configuration</param>
         /// <returns>Enumerable of all suitable material addresses</returns>
-        public static IEnumerable<SurfaceShaderData> DefaultMaterialResolver(ModVehicle vehicle, bool ignoreShaderNames=false)
+        public static IEnumerable<SurfaceShaderData> DefaultMaterialResolver(ModVehicle vehicle, LogConfig logConfig, bool ignoreShaderNames=false)
         {
             var renderers = vehicle.GetComponentsInChildren<Renderer>();
             foreach (var renderer in renderers)
@@ -79,7 +196,7 @@ namespace Subnautica_Echelon
 
                 for (int i = 0; i < renderer.materials.Length; i++)
                 {
-                    var material = SurfaceShaderData.From(renderer, i, ignoreShaderNames);
+                    var material = SurfaceShaderData.From(renderer, i, logConfig, ignoreShaderNames);
                     if (material != null)
                         yield return material;
                 }
@@ -103,7 +220,7 @@ namespace Subnautica_Echelon
         public void ReApply()
         {
             foreach (MaterialAdaptation adaptation in adaptations)
-                adaptation.ApplyToTarget(VerboseLogging);
+                adaptation.ApplyToTarget(LogConfig);
         }
 
         /// <summary>
@@ -117,7 +234,7 @@ namespace Subnautica_Echelon
 
             if (!materialsFixed)
             {
-                var prototype = MaterialPrototype.FromSeamoth();
+                var prototype = MaterialPrototype.FromSeamoth(LogConfig);
 
                 if (prototype != null)
                 {
@@ -125,7 +242,7 @@ namespace Subnautica_Echelon
 
                     if (prototype.IsEmpty)
                     {
-                        Debug.LogError($"Material correction: No material found to reproduce");
+                        LogConfig.LogError($"No material prototype found on Seamoth");
                     }
                     else
                     {
@@ -136,17 +253,17 @@ namespace Subnautica_Echelon
                             try
                             {
                                 var materialAdaptation = new MaterialAdaptation(prototype, data, shader);
-                                materialAdaptation.ApplyToTarget(VerboseLogging);
+                                materialAdaptation.ApplyToTarget(LogConfig);
 
                                 adaptations.Add(materialAdaptation);
                             }
                             catch (Exception ex)
                             {
-                                Debug.LogError($"Material correction: Adaptation failed for material {data}: {ex}");
+                                LogConfig.LogError($"Adaptation failed for material {data}: {ex}");
                                 Debug.LogException(ex);
                             }
                         }
-                        Debug.Log($"Material correction: All done. Applied {adaptations.Count} adaptations");
+                        LogConfig.LogExtraStep($"All done. Applied {adaptations.Count} adaptations");
                     }
                 }
             }
@@ -154,9 +271,9 @@ namespace Subnautica_Echelon
             if (DateTime.Now > repairMaterialsIn && --repairMaterialsInFrames == 0)
             {
                 repairMaterialsIn = DateTime.MaxValue;
-                Debug.Log($"Undocked. Resetting materials");
+                LogConfig.LogExtraStep($"Undocked. Resetting materials");
                 foreach (MaterialAdaptation adaptation in adaptations)
-                    adaptation.PostDockFixOnTarget(VerboseLogging);
+                    adaptation.PostDockFixOnTarget(LogConfig);
             }
         }
     }
