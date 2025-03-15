@@ -231,7 +231,7 @@ namespace Subnautica_Echelon
         /// return null otherwise</param>
         /// <returns>Read surface shader data or null if the shader name did not match
         /// or the target is (no longer) valid</returns>
-        public static SurfaceShaderData From(Renderer renderer, int materialIndex, LogConfig logConfig, bool ignoreShaderName=false)
+        public static SurfaceShaderData From(Renderer renderer, int materialIndex, LogConfig logConfig = default, bool ignoreShaderName=false)
         {
             return From(new MaterialAddress(renderer, materialIndex), logConfig);
         }

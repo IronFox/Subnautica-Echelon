@@ -245,7 +245,7 @@ namespace Subnautica_Echelon
         /// <returns>Null if the seamoth is not (yet) available. Keep trying if null.
         /// Non-null if the seamoth is loaded, but can then be empty (IsEmpty is true)
         /// if the respective material is not found</returns>
-        public static MaterialPrototype FromSeamoth(LogConfig logConfig)
+        public static MaterialPrototype FromSeamoth(LogConfig logConfig=default)
         {
             var sm = SeamothHelper.Seamoth;
             if (sm == null)

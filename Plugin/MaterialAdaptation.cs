@@ -165,7 +165,7 @@ namespace Subnautica_Echelon
         /// Reapplies all material properties to the target
         /// </summary>
         /// <param name="logConfig">Log Configuration</param>
-        public void ApplyToTarget(LogConfig logConfig)
+        public void ApplyToTarget(LogConfig logConfig=default)
         {
             try
             {
