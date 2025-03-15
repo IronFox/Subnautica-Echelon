@@ -121,7 +121,8 @@ namespace Subnautica_Echelon
     public class MaterialPrototype
     {
         /// <summary>
-        /// True if this instance was created without a source material
+        /// True if this instance was created without a source material.
+        /// All local values are empty/default if true
         /// </summary>
         public bool IsEmpty {get; private set; }
         
@@ -180,7 +181,7 @@ namespace Subnautica_Echelon
         /// <summary>
         /// Constructs the prototype from a given material
         /// </summary>
-        /// <param name="source"></param>
+        /// <param name="source">Material to read. Can be null, causing <see cref="IsEmpty"/> to be set true</param>
         public MaterialPrototype(Material source)
         {
             if (source == null)
@@ -201,7 +202,7 @@ namespace Subnautica_Echelon
                 switch (source.shader.GetPropertyType(v))
                 {
                     case UnityEngine.Rendering.ShaderPropertyType.Color:
-                        if (!n.StartsWith("_Color")    //don't  copy colors (_Color, _Color2, _Color3)
+                        if (!n.StartsWith("_Color")    //don't copy colors (_Color, _Color2, _Color3)
                             &&
                             !n.StartsWith("_SpecColor")    //not sure if these have an impact but can be left out
                             )
