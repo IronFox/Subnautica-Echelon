@@ -1,6 +1,6 @@
 
 # Subnautica-Echelon
-A mod that add the Echelon ship to the Subnautica game
+A mod that adds the Echelon submersible to the Subnautica game
 
 ## Requirements
 - Tobey's BepInEx Pack for Subnautica (https://www.nexusmods.com/subnautica/mods/1108)
@@ -18,8 +18,8 @@ While the Unity project should build (and run) once you fixed the explosion issu
 See dependencies below. Since the plugin references the DLL produced by Unity, you will need to build those at least once before fixing the dependency issues.
 
 ## Building via Unity
-1) Build assets via Unity -> Assets -> Build AssetBundles
-2) Build DLLs via Unity -> Build Settings ... -> Build 
+1) Build assets via Unity: Menu -> Assets -> Build AssetBundles
+2) Build DLLs via Unity: Menu -> File -> Build Settings ... -> Build 
 (Then pick a folder that is not in the clone directory.  This will be called [build] from here)
 
 ## Plugin/Subnautica Echelon Project Dependencies and Building
