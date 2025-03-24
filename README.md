@@ -58,7 +58,8 @@ If you intend to frequently change things, you should probably adapt the scripts
 
 ## Notes about the recipes
 The current version of vehicle framework (1.6.1) does not register changes in the build recipe of the craft.
-If you change values in the Recipe property of the Echelon class, you will have to delete [Subnautica]\BepInEx\plugins\VehicleFramework\recipes\Echelon_recipe.json before the next game start
+A workaround has been implemented by the plugin itself which deletes Echelon recipes on launch if it recognizes them.
+Otherwise, you may have to manually delete [Subnautica]\BepInEx\plugins\VehicleFramework\recipes\Echelon_recipe.json before the next game start
 
 ## Start
 Once copied, the game should pick up the mod automatically. To check if everything went fine, check 
