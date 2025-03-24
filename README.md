@@ -50,10 +50,11 @@ In order to run the mod, you need to copy the following files directly into that
 3) [clone]\Plugin\bin\Release\net4.7.2\Subnautica Echelon.dll
 4) [build]\Subnautica Echelon_Data\Managed\EchelonScripts.dll
 
-Also copy this entire directory:
+Also copy these entire directories:
 1) [clone]\images
+2) [clone]\Localization
 
-If you intend to frequently change things, you should probably create a .bat or some other script file that automates this deployment
+If you intend to frequently change things, you should probably adapt the scripts in [clone]\Scripts to your needs.
 
 ## Notes about the recipes
 The current version of vehicle framework (1.6.1) does not register changes in the build recipe of the craft.
