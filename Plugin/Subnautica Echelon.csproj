@@ -20,7 +20,7 @@
       <HintPath>G:\SteamLibrary\steamapps\common\Subnautica\BepInEx\core\BepInEx.dll</HintPath>
     </Reference>
     <Reference Include="EchelonScripts">
-      <HintPath>..\..\..\UnityCode\BuildTarget\Subnautica Echelon_Data\Managed\EchelonScripts.dll</HintPath>
+      <HintPath>..\..\BuildTarget\Subnautica Echelon_Data\Managed\EchelonScripts.dll</HintPath>
     </Reference>
     <Reference Include="FMODUnity">
       <HintPath>G:\SteamLibrary\steamapps\common\Subnautica\Subnautica_Data\Managed\FMODUnity.dll</HintPath>

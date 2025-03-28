@@ -13,7 +13,7 @@ If you do not want to license this, you will need to revamp the Explosion/Explos
 The project expects those to be located in the KriptoFX subdirectory.
 
 ## Project Composition
-The project is split in two: There is a unity project in the [clone]\Unity subdirectory. If should be opened with the correct Unity editor. The second directory, [clone]\Plugin, contains the actual plugin which is loaded by BepInEx.
+The project is split in two: There is a unity project in the [clone]\EchelonUnity subdirectory. If should be opened with the correct Unity editor. The second directory, [clone]\Plugin, contains the actual plugin which is loaded by BepInEx.
 While the Unity project should build (and run) once you fixed the explosion issue (see requirements), the Plugin likely will not.
 See dependencies below. Since the plugin references the DLL produced by Unity, you will need to build those at least once before fixing the dependency issues.
 
@@ -45,8 +45,8 @@ Compile Subnautica Echelon project for **release**. It cannot be run outside Sub
 ## Assembly
 The target mod directory should be in [Subnautica]\BepInEx\plugins\Echelon.
 In order to run the mod, you need to copy the following files directly into that directory (no subdirectories):
-1) [clone]\Unity\Assets\AssetBundles\OSX\echelon -> (rename to) echelon.osx
-2) [clone]\Unity\Assets\AssetBundles\Windows\echelon
+1) [clone]\EchelonUnity\Assets\AssetBundles\OSX\echelon -> (rename to) echelon.osx
+2) [clone]\EchelonUnity\Assets\AssetBundles\Windows\echelon
 3) [clone]\Plugin\bin\Release\net4.7.2\Subnautica Echelon.dll
 4) [build]\Subnautica Echelon_Data\Managed\EchelonScripts.dll
 
