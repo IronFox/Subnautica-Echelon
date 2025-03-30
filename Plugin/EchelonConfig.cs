@@ -24,5 +24,6 @@ public class EchelonConfig : ConfigFile
     public TextDisplay textDisplay = TextDisplay.All;
     [Choice("Target Arrows", nameof(TargetArrows.DangerousAndCriticialTargets), nameof(TargetArrows.CriticalOnly), nameof(TargetArrows.None))]
     public TargetArrows targetArrows = TargetArrows.DangerousAndCriticialTargets;
-
+    [Slider(DefaultValue=100, Format="{0:F0} %", Label = "Additional look sensitivity", LabelLanguageId = "optLookSensitivity", Min = 10, Max = 200, Step = 10)]
+    public float lookSensitivity = 100;
 }

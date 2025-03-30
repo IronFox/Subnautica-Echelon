@@ -596,8 +596,8 @@ namespace Subnautica_Echelon
                 control.torpedoMark = TorpedoModule.LevelOf(GetTorpedoMark())+1;
 
                 Vector2 lookDelta = GameInput.GetLookDelta();
-                control.lookRightAxis = lookDelta.x * 0.1f;
-                control.lookUpAxis = lookDelta.y * 0.1f;
+                control.lookRightAxis = lookDelta.x * 1e-3f * MainPatcher.PluginConfig.lookSensitivity;
+                control.lookUpAxis = lookDelta.y * 1e-3f * MainPatcher.PluginConfig.lookSensitivity;
 
                 ProcessEnergyRecharge( out var lowPower, out var criticalPower );
                 ProcessTrigger(lowPower);
