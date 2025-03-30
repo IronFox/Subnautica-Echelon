@@ -15498,7 +15498,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: 7a9bf2bcde539b54faf6a411fc31a8ad, type: 2}
+  - {fileID: 2100000, guid: b58da32a613de54419aed99391456f41, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -15775,7 +15775,6 @@ MonoBehaviour:
   maxHealth: 1
   currentHealth: 1
   isHealing: 0
-  lightsRenderers: []
   leftLaunch: {fileID: 3836783701516135665}
   rightLaunch: {fileID: 4259656812905478872}
   regularForwardAcc: 400
