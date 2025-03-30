@@ -68,12 +68,12 @@ namespace Subnautica_Echelon
         public override Dictionary<TechType, int> Recipe =>
             new Dictionary<TechType, int> {
                 { TechType.PowerCell, 1 },
-                { TechType.AdvancedWiringKit, 2 },
-                { TechType.UraniniteCrystal, 3 },
+                { TechType.AdvancedWiringKit, 1 },
+                { TechType.UraniniteCrystal, 2 },
                 { TechType.Lead, 3 },
-                { TechType.Diamond, 2 },
+                //{ TechType.Diamond, 1 },
                 //{ TechType.Kyanite, 2 },
-                { TechType.PlasteelIngot, 4 },
+                { TechType.TitaniumIngot, 2 },
             };
 
 
