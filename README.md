@@ -5,11 +5,11 @@ A mod that adds the Echelon submersible to the Subnautica game
 ## Requirements
 - Tobey's BepInEx Pack for Subnautica (https://www.nexusmods.com/subnautica/mods/1108)
 - Vehicle Framework (https://www.nexusmods.com/subnautica/mods/859)
-- Unity Editor version 2019.4.36f
+- Unity Editor version 2019.4.36f with Mac build support
 - Visual Studio 2019+ (2022 is current at the time of writing) Community+
 - .NET 4.7.2 developer pack (https://dotnet.microsoft.com/en-us/download/dotnet-framework/net472)
 - KriptoFX (https://assetstore.unity.com/packages/vfx/particles/fire-explosions/realistic-explosions-pack-54783)
-If you do not want to license this, you will need to revamp the Explosion/Explosion prefab to produce convincing visuals.
+If you do not want to license this, you will need to revamp the Explosion/Explosion prefab to produce convincing visuals. One of its shaders is also used to the drive exhaust so you will have to also fix that.
 The project expects those to be located in the KriptoFX subdirectory.
 
 ## Project Composition
@@ -20,7 +20,7 @@ See dependencies below. Since the plugin references the DLL produced by Unity, y
 ## Building via Unity
 1) Build assets via Unity: Menu -> Assets -> Build AssetBundles
 2) Build DLLs via Unity: Menu -> File -> Build Settings ... -> Build 
-(Then pick a folder that is not in the clone directory.  This will be called [build] from here)
+(Then pick a folder that is not in the clone directory, ideally 'BuildTarget' next to [clone].  This will be called [build] from here)
 
 ## Plugin/Subnautica Echelon Project Dependencies and Building
 The plugin needs the following DLLs to be referenced in the Plugin/Subnautica Echelon project:
