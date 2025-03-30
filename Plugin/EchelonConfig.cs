@@ -6,23 +6,33 @@ using System;
 [Menu("Echelon Options")]
 public class EchelonConfig : ConfigFile
 {
-    [Keybind("Input to Toggle Free Camera ")]
+    [Keybind("Toggle Free Camera",LabelLanguageId = "optInput_ToggleFreeCamera")]
     public KeyCode toggleFreeCamera = KeyCode.F;
-    [Keybind("Input to Reduce the 3rd Person Camera")]
+    [Keybind("Camera Zoom In", LabelLanguageId = "optInput_CameraZoomIn")]
     public KeyCode altZoomIn = KeyCode.None;
-    [Keybind("Input to Increase the 3rd Person Camera")]
+    [Keybind("Camera Zoom Out", LabelLanguageId = "optInput_CameraZoomOut")]
     public KeyCode altZoomOut = KeyCode.None;
-    [Toggle("Hold Sprint to Boost")]
+    [Toggle("Hold Sprint to Boost", LabelLanguageId = "optInput_HoldToBoost")]
     public bool holdToBoost = false;
     [Choice("Torpedo Terrain Collisions",
         nameof(TorpedoTerrainCollisions.NeverIgnore),
         nameof(TorpedoTerrainCollisions.IgnoreWhenTargeted),
-        nameof(TorpedoTerrainCollisions.AlwaysIgnore)
+        nameof(TorpedoTerrainCollisions.AlwaysIgnore),
+        LabelLanguageId = "optTorpedoTerrainCollisions"
         )]
     public TorpedoTerrainCollisions torpedoTerrainCollisions = TorpedoTerrainCollisions.IgnoreWhenTargeted;
-    [Choice("Target Text", nameof(TextDisplay.None), nameof(TextDisplay.Focused), nameof(TextDisplay.All))]
+    [Choice("Target Text",
+        nameof(TextDisplay.None),
+        nameof(TextDisplay.Focused),
+        nameof(TextDisplay.All),
+        LabelLanguageId = "optTargetText")]
     public TextDisplay textDisplay = TextDisplay.All;
-    [Choice("Target Arrows", nameof(TargetArrows.DangerousAndCriticialTargets), nameof(TargetArrows.CriticalOnly), nameof(TargetArrows.None))]
+    [Choice("Target Arrows",
+        nameof(TargetArrows.DangerousAndCriticialTargets),
+        nameof(TargetArrows.CriticalOnly),
+        nameof(TargetArrows.None),
+        LabelLanguageId = "optTargetArrows"
+        )]
     public TargetArrows targetArrows = TargetArrows.DangerousAndCriticialTargets;
     [Slider(DefaultValue=100, Format="{0:F0} %", Label = "Additional look sensitivity", LabelLanguageId = "optLookSensitivity", Min = 10, Max = 200, Step = 10)]
     public float lookSensitivity = 100;
