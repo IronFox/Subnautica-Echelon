@@ -36,4 +36,6 @@ public class EchelonConfig : ConfigFile
     public TargetArrows targetArrows = TargetArrows.DangerousAndCriticialTargets;
     [Slider(DefaultValue=100, Format="{0:F0} %", Label = "Additional look sensitivity", LabelLanguageId = "optLookSensitivity", Min = 10, Max = 200, Step = 10)]
     public float lookSensitivity = 100;
+    [Slider(DefaultValue = 100, Format = "{0:F0} %", Label = "Target Marker Size Scale", LabelLanguageId = "optTargetMarkerSizeScale", Min = 0, Max = 100, Step = 10)]
+    public float targetMarkerSizeScale = 100;
 }

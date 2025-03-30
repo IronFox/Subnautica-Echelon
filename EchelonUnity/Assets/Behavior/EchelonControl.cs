@@ -19,6 +19,8 @@ public class EchelonControl : MonoBehaviour
     public float lookRightAxis;
     public float lookUpAxis;
 
+    public float targetMarkerSizeScale = 1;
+
     public int torpedoMark; //0 = disabled, 1 = Mk1, 2 = Mk2, 3 = Mk3
 
     /*
@@ -337,7 +339,7 @@ public class EchelonControl : MonoBehaviour
 
         var camera = CameraUtil.GetTransform(nameof(EchelonControl) + '.' + nameof(SizeOf));
         if (camera != null)
-            s = M.Max(s, 0.1f * M.Distance(t.Position, camera.position));
+            s = M.Max(s* targetMarkerSizeScale, 0.1f * M.Distance(t.Position, camera.position));
 
         return s;
     }

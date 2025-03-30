@@ -593,6 +593,7 @@ namespace Subnautica_Echelon
                 TrailSpaceTargetText.textDisplay = MainPatcher.PluginConfig.textDisplay;
                 EchelonControl.targetArrows = MainPatcher.PluginConfig.targetArrows;
 
+                control.targetMarkerSizeScale = MainPatcher.PluginConfig.targetMarkerSizeScale / 100f;
                 control.torpedoMark = TorpedoModule.LevelOf(GetTorpedoMark())+1;
 
                 Vector2 lookDelta = GameInput.GetLookDelta();
