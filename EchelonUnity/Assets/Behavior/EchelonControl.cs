@@ -319,7 +319,7 @@ public class EchelonControl : MonoBehaviour
     private ITargetable lastValidTarget;
 
     public static TargetArrows targetArrows = TargetArrows.DangerousAndCriticialTargets;
-    public static TargetDisplay markerDisplay = TargetDisplay.None;
+    public static TargetDisplay markerDisplay = TargetDisplay.All;
 
     public EchelonControl()
     {
