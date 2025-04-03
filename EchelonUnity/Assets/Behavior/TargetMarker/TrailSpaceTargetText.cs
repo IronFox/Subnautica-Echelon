@@ -9,6 +9,7 @@ public class TrailSpaceTargetText : CommonTargetListener
     public RectTransform parentCanvas;
     //public TextMeshProUGUI textMesh;
     public GameObject targetTextPrefab;
+    public EchelonControl echelon;
     // Start is called before the first frame update
 
     public TrailSpaceTargetText()
@@ -34,7 +35,7 @@ public class TrailSpaceTargetText : CommonTargetListener
     [ColorUsage(true, true)]
     public Color secondaryTextColor = Color.white;
 
-    public static TextDisplay textDisplay = TextDisplay.All;
+    public static TargetDisplay textDisplay = TargetDisplay.All;
 
     private Vector2? Project(Camera camera, Vector3 point)
     {
@@ -50,11 +51,14 @@ public class TrailSpaceTargetText : CommonTargetListener
     {
         switch (textDisplay)
         {
-            case TextDisplay.All:
+            case TargetDisplay.All:
                 return Environment.IsTarget(gameObjectInstanceId);
-            case TextDisplay.Focused:
+            case TargetDisplay.Focused:
                 return MainAdapterTarget.TargetAdapter.GameObjectInstanceId == gameObjectInstanceId;
-            case TextDisplay.None:
+            case TargetDisplay.LockedOnly:
+                return MainAdapterTarget.TargetAdapter.GameObjectInstanceId == gameObjectInstanceId
+                    && echelon.torpedoMark > 0;
+            case TargetDisplay.None:
                 return false;
         }
         return false;
@@ -63,16 +67,20 @@ public class TrailSpaceTargetText : CommonTargetListener
     private IEnumerable<AdapterTargetable> Targets()
     {
         switch (textDisplay) {
-            case TextDisplay.All:
+            case TargetDisplay.All:
                 if (Environment != null)
                     foreach (var t in Environment.Targets)
                         yield return t;
                 yield break;
-            case TextDisplay.Focused:
+            case TargetDisplay.Focused:
                 if (MainAdapterTarget != null)
                     yield return MainAdapterTarget;
                 yield break;
-            case TextDisplay.None:
+            case TargetDisplay.LockedOnly:
+                if (MainAdapterTarget != null && echelon.torpedoMark > 0)
+                    yield return MainAdapterTarget;
+                yield break;
+            case TargetDisplay.None:
                 yield break;
             }
     }
@@ -161,9 +169,3 @@ public class TrailSpaceTargetText : CommonTargetListener
     }
 }
 
-public enum TextDisplay
-{
-    None,
-    Focused,
-    All
-}

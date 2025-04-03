@@ -11,6 +11,7 @@
 	"None": "Keine",
 	"Focused": "Nur Fokussiert",
 	"All": "Alle",
+	"LockedOnly": "Nur Torpedo-Ziele",
 	"optTargetArrows": "Umgebungspfeile",
 	"DangerousAndCriticialTargets": "Gefährliche und kritische Kontakte",
 	"CriticalOnly": "Nur kritische Kontakte",

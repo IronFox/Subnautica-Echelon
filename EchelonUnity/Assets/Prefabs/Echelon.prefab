@@ -1105,6 +1105,7 @@ MonoBehaviour:
   parentCanvas: {fileID: 6365840091171807435}
   targetTextPrefab: {fileID: 4755591471750534839, guid: 5f6b71e19af42fd4fb1a28266727172b,
     type: 3}
+  echelon: {fileID: 5519261214424765450}
   primaryTextColor: {r: 1.0039216, g: 1.0039216, b: 1.0039216, a: 1}
   secondaryTextColor: {r: 1.0039216, g: 1.0039216, b: 1.0039216, a: 0.3529412}
 --- !u!1 &1154626694199060045
@@ -15759,6 +15760,7 @@ MonoBehaviour:
   zoomAxis: 0
   lookRightAxis: 0
   lookUpAxis: 0
+  targetMarkerSizeScale: 1
   torpedoMark: 0
   overdriveActive: 0
   outOfWater: 0

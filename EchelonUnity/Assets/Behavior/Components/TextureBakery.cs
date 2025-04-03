@@ -17,7 +17,7 @@ public class TextureBakery : MonoBehaviour, IColorListener
     private Color lastStripeColor;
     private RenderTexture texture;
     private Mesh screenQuad;
-    private MeshRenderer renderer;
+    private new MeshRenderer renderer;
     // Start is called before the first frame update
     void Start()
     {

@@ -22,11 +22,19 @@ public class EchelonConfig : ConfigFile
         )]
     public TorpedoTerrainCollisions torpedoTerrainCollisions = TorpedoTerrainCollisions.IgnoreWhenTargeted;
     [Choice("Target Text",
-        nameof(TextDisplay.None),
-        nameof(TextDisplay.Focused),
-        nameof(TextDisplay.All),
+        nameof(TargetDisplay.None),
+        nameof(TargetDisplay.Focused),
+        nameof(TargetDisplay.All),
+        nameof(TargetDisplay.LockedOnly),
         LabelLanguageId = "optTargetText")]
-    public TextDisplay textDisplay = TextDisplay.All;
+    public TargetDisplay textDisplay = TargetDisplay.All;
+    [Choice("Target Health Marker Display",
+        nameof(TargetDisplay.None),
+        nameof(TargetDisplay.Focused),
+        nameof(TargetDisplay.All),
+        nameof(TargetDisplay.LockedOnly),
+        LabelLanguageId = "optTargetHealthMarker")]
+    public TargetDisplay targetHealthMarkers = TargetDisplay.All;
     [Choice("Target Arrows",
         nameof(TargetArrows.DangerousAndCriticialTargets),
         nameof(TargetArrows.CriticalOnly),

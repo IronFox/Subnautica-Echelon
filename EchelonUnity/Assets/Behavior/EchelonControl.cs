@@ -317,7 +317,10 @@ public class EchelonControl : MonoBehaviour
     private readonly TargetPool<TargetMarker> targetMarkers;
     private readonly TargetPool<TargetDirectionMarker> targetDirectionMarkers;
     private ITargetable lastValidTarget;
+
     public static TargetArrows targetArrows = TargetArrows.DangerousAndCriticialTargets;
+    public static TargetDisplay markerDisplay = TargetDisplay.None;
+
     public EchelonControl()
     {
         targetMarkers = new TargetPool<TargetMarker>(

@@ -11,6 +11,7 @@ public class TargetHealthFeed : MonoBehaviour
     public EchelonControl owner;
     private Material material;
     private TextMeshProUGUI meshPro;
+    private new Renderer renderer;
     public bool isPrimary;
     public bool isLocked;
     public float fadeIn = 0;
@@ -21,15 +22,33 @@ public class TargetHealthFeed : MonoBehaviour
 
     void Start()
     {
-        material = GetComponent<MeshRenderer>().materials[0];
+        renderer = GetComponent<MeshRenderer>();
+        material = renderer.materials[0];
         meshPro = GetComponentInChildren<TextMeshProUGUI>();
     }
 
     // Update is called once per frame
     void Update()
     {
+        switch (EchelonControl.markerDisplay)
+        {
+            case TargetDisplay.None:
+                renderer.enabled = isPrimary && target != null && owner.torpedoMark > 0;
+                break;
+            case TargetDisplay.Focused:
+                renderer.enabled = isPrimary;
+                break;
+            case TargetDisplay.All:
+                renderer.enabled = true;
+                break;
+            case TargetDisplay.LockedOnly:
+                renderer.enabled = isPrimary && owner.torpedoMark > 0;
+                break;
+        }
+
+
         fadeIn = M.Saturate(fadeIn + Time.deltaTime*0.5f);
-        if (target != null)
+        if (target != null && EchelonControl.markerDisplay != TargetDisplay.None)
             material.SetVector("_Health", M.V4(
                 target.CurrentHealth,
                 target.MaxHealth,

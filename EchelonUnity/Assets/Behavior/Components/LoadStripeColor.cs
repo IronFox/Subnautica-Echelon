@@ -5,7 +5,7 @@ using UnityEngine;
 public class LoadStripeColor : MonoBehaviour, IColorListener
 {
     public int materialIndex;
-    private MeshRenderer renderer;
+    private new MeshRenderer renderer;
 
     public void SetColors(Color mainColor, Color stripeColor)
     {

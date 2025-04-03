@@ -372,12 +372,17 @@ namespace Subnautica_Echelon
             }
 
         }
+
+        public bool CanControl
+            => control.isBoarded
+            && !control.isDocked
+            && Player.main.pda.state == PDA.State.Closed
+            && !IngameMenu.main.gameObject.activeSelf;
+
         private void ProcessTrigger(bool lowPower)
         {
-            if (control.isBoarded && !control.isDocked
+            if (CanControl
                 && !control.outOfWater && !lowPower
-                && Player.main.pda.state == PDA.State.Closed
-                && !IngameMenu.main.gameObject.activeSelf
                 )
             {
                 control.triggerActive = GameInput.GetAnalogValueForButton(GameInput.Button.LeftHand) > 0.1f;
@@ -592,6 +597,7 @@ namespace Subnautica_Echelon
 
                 TrailSpaceTargetText.textDisplay = MainPatcher.PluginConfig.textDisplay;
                 EchelonControl.targetArrows = MainPatcher.PluginConfig.targetArrows;
+                EchelonControl.markerDisplay = MainPatcher.PluginConfig.targetHealthMarkers;
 
                 control.targetMarkerSizeScale = MainPatcher.PluginConfig.targetMarkerSizeScale / 100f;
                 control.torpedoMark = TorpedoModule.LevelOf(GetTorpedoMark())+1;
@@ -619,8 +625,8 @@ namespace Subnautica_Echelon
                         ;
                 }
 
-                if (control.IsBeingControlled && GameInput.GetKeyDown(MainPatcher.PluginConfig.toggleFreeCamera))
-                    engine.freeCamera = control.freeCamera = !control.freeCamera;
+                if (CanControl && GameInput.GetKeyDown(MainPatcher.PluginConfig.toggleFreeCamera))
+                        engine.freeCamera = control.freeCamera = !control.freeCamera;
 
                 ProcessBoost(lowPower);
                 RepositionCamera();

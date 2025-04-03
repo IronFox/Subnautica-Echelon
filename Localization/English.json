@@ -11,6 +11,7 @@
 	"None": "None",
 	"Focused": "Only Focused Target",
 	"All": "All",
+	"LockedOnly": "Only Torpedo-Locked Target",
 	"optTargetArrows": "Target Arrows",
 	"DangerousAndCriticialTargets": "Dangerous and Criticial Targets",
 	"CriticalOnly": "Critical Only",

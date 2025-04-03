@@ -11,6 +11,7 @@
 	"None": "Ninguno",
 	"Focused": "Sólo objetivo enfocado",
 	"All": "Todo",
+	"LockedOnly": "Único objetivo bloqueado por torpedo",
 	"optTargetArrows": "Flechas de objetivos",
 	"DangerousAndCriticialTargets": "Objetivos peligrosos y críticos",
 	"CriticalOnly": "Solo crítico",
