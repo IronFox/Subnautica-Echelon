@@ -8,6 +8,7 @@
 	"IgnoreWhenTargeted": "Ignorieren wenn mit Ziel",
 	"AlwaysIgnore": "Immer Ignorieren",
 	"optTargetText": "Kontaktbeschriftung",
+	"optTargetHealthMarker": "Kontaktumrandung",
 	"None": "Keine",
 	"Focused": "Nur Fokussiert",
 	"All": "Alle",

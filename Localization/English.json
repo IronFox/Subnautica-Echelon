@@ -8,6 +8,7 @@
 	"IgnoreWhenTargeted": "Ignore when Targeted",
 	"AlwaysIgnore": "Always Ignore",
 	"optTargetText": "Target Text",
+	"optTargetHealthMarker": "Target Health Marker Display",
 	"None": "None",
 	"Focused": "Only Focused Target",
 	"All": "All",
