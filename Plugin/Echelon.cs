@@ -619,7 +619,7 @@ namespace Subnautica_Echelon
                         ;
                 }
 
-                if (GameInput.GetKeyDown(MainPatcher.PluginConfig.toggleFreeCamera))
+                if (control.IsBeingControlled && GameInput.GetKeyDown(MainPatcher.PluginConfig.toggleFreeCamera))
                     engine.freeCamera = control.freeCamera = !control.freeCamera;
 
                 ProcessBoost(lowPower);
