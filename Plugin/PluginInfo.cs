@@ -10,6 +10,6 @@ namespace Subnautica_Echelon
     {
         public const string PLUGIN_GUID = "com.ironfox.subnautica.echelon.mod";
         public const string PLUGIN_NAME = "Echelon";
-        public const string PLUGIN_VERSION = "1.2.7";
+        public const string PLUGIN_VERSION = "1.2.8";
     }
 }
