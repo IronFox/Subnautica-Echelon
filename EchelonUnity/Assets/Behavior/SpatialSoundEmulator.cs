@@ -25,14 +25,7 @@ public class SpatialSoundEmulator : MonoBehaviour
             lastCameraPosition = lastCamera.position;
     }
 
-    void FixedUpdate()
-    {
-        if (lastCameraPosition != null)
-        {
-            cameraMotionPerSecond = (lastCamera.position - lastCameraPosition) / Time.fixedDeltaTime;
-            lastCameraPosition = lastCamera.position;
-        }
-    }
+
 
     // Update is called once per frame
     void Update()
@@ -40,6 +33,12 @@ public class SpatialSoundEmulator : MonoBehaviour
         lastCamera = CameraUtil.GetTransform(nameof(SpatialSoundEmulator));
         if (lastCamera != null)
         {
+            if (lastCameraPosition != null && Time.deltaTime > 0)
+            {
+                cameraMotionPerSecond = (lastCamera.position - lastCameraPosition) / Time.deltaTime;
+                lastCameraPosition = lastCamera.position;
+            }
+
             var delta = transform.position - lastCamera.position;
             var distance = delta.magnitude;
             var soundDirection = delta / distance;

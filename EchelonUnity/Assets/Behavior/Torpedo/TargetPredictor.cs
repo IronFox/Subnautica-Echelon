@@ -25,21 +25,17 @@ public class TargetPredictor : MonoBehaviour, ITargetPredictor
     }
 
 
-    void FixedUpdate()
-    {
-        if (target?.Equals(lastTarget) == true && target.Exists)
-        {
-            observedVelocity = target.InherentVelocity ?? (target.Position - lastPosition) / Time.fixedDeltaTime;
-            lastPosition = target.Position;
-        }
-    }
 
         // Update is called once per frame
     void Update()
     {
-        if (target?.Equals(lastTarget) == true)
+        if (target?.Equals(lastTarget) == true && target.Exists)
         {
-            //observedVelocity = target.InherentVelocity ?? (target.Position - lastPosition) / Time.deltaTime;
+            if (Time.deltaTime > 0)
+            {
+                observedVelocity = target.InherentVelocity ?? (target.Position - lastPosition) / Time.deltaTime;
+                lastPosition = target.Position;
+            }
         }
         else
         {

@@ -38,13 +38,17 @@ public class DirectAt : MonoBehaviour
     }
     
     // Update is called once per frame
-    void FixedUpdate()
+    void Update()
     {
-        rotX = RotateHorizontal();
-        //RotateDirect();
-        RotateZ(rb, -rotX/5, targetOrientation.ZImpact);
-        if (rotateUpDown)
-            RotateUpDown();
+        if (Time.fixedDeltaTime > 0)
+        {
+            var timeImpact = Time.deltaTime / Time.fixedDeltaTime;
+            rotX = RotateHorizontal(timeImpact: timeImpact);
+            //RotateDirect();
+            RotateZ(rb, -rotX / 5, targetOrientation.ZImpact, timeImpact: timeImpact);
+            if (rotateUpDown)
+                RotateUpDown(timeImpact: timeImpact);
+        }
 
         //rb.AddRelativeForce(0, 0, 10, ForceMode.Acceleration);
     }
@@ -55,7 +59,7 @@ public class DirectAt : MonoBehaviour
 
     //}
 
-    public static void RotateZ(Rigidbody rb, float targetZ, float targetImpact)
+    public static void RotateZ(Rigidbody rb, float targetZ, float targetImpact, float timeImpact)
     {
         var axis = rb.transform.forward;
         //var correct = -Vector3.Dot(rb.angularVelocity, axis);
@@ -77,11 +81,11 @@ public class DirectAt : MonoBehaviour
         float accel = error * 10 * 0.02f;
 
         //SignedMin((wantTurn - haveTurn)*10, 10);
-        rb.AddTorque(axis * -accel, ForceMode.Acceleration);
+        rb.AddTorque(axis * -accel * timeImpact, ForceMode.Acceleration);
 
     }
 
-    private void RotateUpDown()
+    private void RotateUpDown(float timeImpact)
     {
         var axis = -M.UnFlat(M.FlatNormal(Flat(rb.transform.forward)));
 //            Unflat(Flat(rb.transform.right));
@@ -104,41 +108,13 @@ public class DirectAt : MonoBehaviour
           //  rb.AddTorque(axis * -haveTurn * Time.fixedDeltaTime, ForceMode.VelocityChange);
         //else
         //SignedMin((wantTurn - haveTurn)*10, 10);
-        rb.AddTorque(axis * accel, ForceMode.Acceleration);
-
-    }
-
-    private void RotateDirect()
-    {
-        var haveForward = rb.transform.forward;
-        var wantForward = targetOrientation.Forward;
-        var axis = Vector3.Cross( haveForward, wantForward);
-        var len = axis.magnitude;
-        if (len == 0)
-        {
-            return;
-        }
-        axis /= len;
-
-        var delta = Vector3.Angle(haveForward, wantForward);
-
-        float wantTurn = delta * 5;
-        if (Mathf.Abs(wantTurn) < 10)
-            wantTurn = 0;
-        float haveTurn = Vector3.Dot( rb.angularVelocity, axis) * 180 / Mathf.PI;
-
-        float error = wantTurn - haveTurn;
-        float accel = error * 10 * 0.02f;
-
-
-        rb.AddTorque(axis * accel, ForceMode.Acceleration);
-
+        rb.AddTorque(axis * accel * timeImpact, ForceMode.Acceleration);
 
     }
 
 
 
-    private float RotateHorizontal()
+    private float RotateHorizontal(float timeImpact)
     {
         var upDownAxis = rb.transform.right;
 
@@ -161,7 +137,7 @@ public class DirectAt : MonoBehaviour
         float accel = error * 10 * 0.02f;
 
         //SignedMin((wantTurn - haveTurn)*10, 10);
-        rb.AddTorque(0, accel, 0, ForceMode.Acceleration);
+        rb.AddTorque(0, accel * timeImpact, 0, ForceMode.Acceleration);
 
         return wantTurn;
 
