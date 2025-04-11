@@ -1,6 +1,4 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 
 /// <summary>
 /// if you see this and wander wtf I'm doing:
@@ -18,7 +16,7 @@ public class CoverAnimation : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        
+
     }
 
     public bool IsAtBeginning => progress <= 0;
@@ -26,26 +24,27 @@ public class CoverAnimation : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        float end = keyTimes[keyTimes.Length - 1];
+        progress = Mathf.Clamp(progress, 0, end);
         if (!animateForward)
         {
             if (progress <= 0)
                 return;
-            progress = Mathf.Max(0,progress - Time.deltaTime);
+            progress = Mathf.Max(0, progress - Time.deltaTime);
         }
         else
         {
-            float end = keyTimes[keyTimes.Length - 1];
             if (progress >= end)
                 return;
             progress = Mathf.Min(end, progress + Time.deltaTime);
         }
 
-        for (int i = 0; i+1 < keyTimes.Length; i++)
+        for (int i = 0; i + 1 < keyTimes.Length; i++)
         {
             var t0 = keyTimes[i];
-            var t1 = keyTimes[i+1];
+            var t1 = keyTimes[i + 1];
             var trans0 = keyPoints[i];
-            var trans1 = keyPoints[i+1];
+            var trans1 = keyPoints[i + 1];
             if (progress >= t0 && progress < t1)
             {
                 float relative = M.LinearStep(t0, t1, progress);

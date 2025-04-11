@@ -2,7 +2,34 @@ fileFormatVersion: 2
 guid: 67fbeeb89a851934aadd9ce7f1b87883
 ModelImporter:
   serializedVersion: 19301
-  internalIDToNameTable: []
+  internalIDToNameTable:
+  - first:
+      74: -3823567682888224605
+    second: Nose|ArmatureAction
+  - first:
+      74: 759107323287784468
+    second: Nose|NoseAction
+  - first:
+      74: 5374867882084132355
+    second: Open Railgun|ArmatureAction
+  - first:
+      74: 8714945038511315487
+    second: Open Railgun|NoseAction
+  - first:
+      74: 9063293323312627510
+    second: Nose Open|ArmatureAction
+  - first:
+      74: -2805594551372558717
+    second: Nose Open|NoseAction
+  - first:
+      74: 4781951162920444690
+    second: Armature|ArmatureAction
+  - first:
+      74: -1422011007694221501
+    second: Armature|ArmatureAction.001
+  - first:
+      74: 2001588609170262061
+    second: Armature|NoseAction
   externalObjects: {}
   materials:
     materialImportMode: 1
@@ -84,11 +111,11 @@ ModelImporter:
     globalScale: 1
     rootMotionBoneName: 
     hasTranslationDoF: 0
-    hasExtraRoot: 0
+    hasExtraRoot: 1
     skeletonHasParents: 1
   lastHumanDescriptionAvatarSource: {instanceID: 0}
   autoGenerateAvatarMappingIfUnspecified: 1
-  animationType: 2
+  animationType: 1
   humanoidOversampling: 1
   avatarSetup: 0
   additionalBone: 0
