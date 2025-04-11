@@ -82,7 +82,7 @@ namespace Subnautica_Echelon
                 var old = m.GetVector(Name);
                 if (old == Value)
                     return;
-                logConfig.LogMaterialVariableSet(Type,Name,old,Value,m);
+                logConfig.LogMaterialVariableSet(Type, Name, old, Value, m);
                 m.SetVector(Name, Value);
             }
             catch (Exception ex)
@@ -92,7 +92,7 @@ namespace Subnautica_Echelon
             }
         }
     }
-    
+
     internal readonly struct FloatVariable : IShaderVariable
     {
         public ShaderPropertyType Type => ShaderPropertyType.Float;
@@ -113,7 +113,7 @@ namespace Subnautica_Echelon
                 var old = m.GetFloat(Name);
                 if (old == Value)
                     return;
-                logConfig.LogMaterialVariableSet(Type,Name, old, Value, m);
+                logConfig.LogMaterialVariableSet(Type, Name, old, Value, m);
                 m.SetFloat(Name, Value);
             }
             catch (Exception ex)
@@ -134,8 +134,8 @@ namespace Subnautica_Echelon
         /// True if this instance was created without a source material.
         /// All local values are empty/default if true
         /// </summary>
-        public bool IsEmpty {get; private set; }
-        
+        public bool IsEmpty { get; private set; }
+
         private HashSet<string> ShaderKeywords { get; } = new HashSet<string>();
         public MaterialGlobalIlluminationFlags MaterialGlobalIlluminationFlags { get; }
         private ColorVariable[] ColorVariables { get; }
@@ -150,7 +150,7 @@ namespace Subnautica_Echelon
         /// <param name="variableNamePredicate">
         /// Optional predicate to only check/update certain shader variables by name.
         /// If non-null updates only variables for which this function returns true</param>
-        public void ApplyTo(Material m, LogConfig logConfig, Func<string,bool> variableNamePredicate = null)
+        public void ApplyTo(Material m, LogConfig logConfig, Func<string, bool> variableNamePredicate = null)
         {
             variableNamePredicate = variableNamePredicate ?? (_ => true);
 
@@ -222,11 +222,11 @@ namespace Subnautica_Echelon
                     case UnityEngine.Rendering.ShaderPropertyType.Vector:
                         vectorVariables.Add(new VectorVariable(source, n));
                         break;
-                    //don't copy textures (does not make sense)
-                    //case UnityEngine.Rendering.ShaderPropertyType.Texture:
-                    //    if (n != "_MainTex" && n != "_BumpMap" && n != "_SpecTex" && n != "_Illum")
-                    //        m.SetTexture(n, seamothMaterial.GetTexture(n));
-                    //    break;
+                        //don't copy textures (does not make sense)
+                        //case UnityEngine.Rendering.ShaderPropertyType.Texture:
+                        //    if (n != "_MainTex" && n != "_BumpMap" && n != "_SpecTex" && n != "_Illum")
+                        //        m.SetTexture(n, seamothMaterial.GetTexture(n));
+                        //    break;
                 }
             }
 
@@ -245,7 +245,7 @@ namespace Subnautica_Echelon
         /// <returns>Null if the seamoth is not (yet) available. Keep trying if null.
         /// Non-null if the seamoth is loaded, but can then be empty (IsEmpty is true)
         /// if the respective material is not found</returns>
-        public static MaterialPrototype FromSeamoth(LogConfig logConfig=default)
+        public static MaterialPrototype FromSeamoth(LogConfig logConfig = default)
         {
             var sm = SeamothHelper.Seamoth;
             if (sm == null)

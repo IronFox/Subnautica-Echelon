@@ -1,9 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using UnityEngine;
 using VehicleFramework.Assets;
 using VehicleFramework.UpgradeTypes;
 
@@ -36,7 +32,7 @@ namespace Subnautica_Echelon
 
 
         public override string Description => string.Format(base.Description, Math.Round(GetRelativeSelfRepair(Module) * 100, 1));
-            
+
 
 
         public static float GetRelativeSelfRepair(EchelonModule module)

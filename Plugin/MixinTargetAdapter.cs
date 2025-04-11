@@ -9,7 +9,7 @@ namespace Subnautica_Echelon
         private LiveMixin mixin;
 
         public MixinTargetAdapter(GameObject go, Rigidbody rb, LiveMixin mixin)
-            :base(go.GetInstanceID())
+            : base(go.GetInstanceID())
         {
             this.go = go;
             this.rb = rb;
@@ -23,7 +23,7 @@ namespace Subnautica_Echelon
 
         public override GameObject GameObject => go;
 
-        
+
 
         public override float CurrentHealth => mixin.health;
 
@@ -37,7 +37,7 @@ namespace Subnautica_Echelon
         public override void DealDamage(Vector3 origin, float damage, GameObject dealer)
         {
             Log.Write($"Dealing {damage} damage to {GameObject.name}");
-            mixin.TakeDamage(damage,origin,dealer: dealer);
+            mixin.TakeDamage(damage, origin, dealer: dealer);
             //Log.Write($"Health now at {mixin.health}");
         }
 

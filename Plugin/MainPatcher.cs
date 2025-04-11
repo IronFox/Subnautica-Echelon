@@ -1,25 +1,14 @@
 ﻿using BepInEx;
-using FMODUnity;
 using HarmonyLib;
 using Nautilus.Handlers;
-using Nautilus.Utility;
-using RootMotion.FinalIK;
 using System;
 using System.Collections;
-using System.Collections.Generic;
 using System.IO;
-using System.Linq;
 using System.Reflection;
-using System.Text;
-using System.Threading.Tasks;
 using UnityEngine;
-using UnityEngine.Assertions;
-using UWE;
 using VehicleFramework;
 using VehicleFramework.Assets;
 using VehicleFramework.Patches;
-using VehicleFramework.VehicleTypes;
-using static OVRHaptics;
 
 namespace Subnautica_Echelon
 {

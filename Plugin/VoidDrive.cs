@@ -81,7 +81,7 @@ namespace Subnautica_Echelon
                 +
                 1f * overdriveActive /** M.Sqr(BoostRelative)*/
                 );
-            
+
             var neededNow = energyNeeded * Time.fixedDeltaTime;
             var drained = Mathf.Abs(MV.powerMan.TrySpendEnergy(neededNow));
             //insufficientPower = drained < neededNow * 0.8f;

@@ -1,7 +1,6 @@
-﻿using System.Collections.Generic;
-using System;
+﻿using System;
+using System.Collections.Generic;
 using UnityEngine;
-using System.IO;
 
 namespace Subnautica_Echelon
 {

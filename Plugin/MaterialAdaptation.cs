@@ -1,7 +1,5 @@
 ﻿using System;
 using UnityEngine;
-using static PDAScanner;
-using static UnityEngine.GraphicsBuffer;
 
 namespace Subnautica_Echelon
 {
@@ -29,8 +27,8 @@ namespace Subnautica_Echelon
         public override string ToString()
         {
             if (Renderer == null)
-                return $"Dead renderer target ({RendererInstanceId}) material #{MaterialIndex+1}";
-            return $"Renderer rarget {Renderer} material #{MaterialIndex+1}/{Renderer.materials.Length}";
+                return $"Dead renderer target ({RendererInstanceId}) material #{MaterialIndex + 1}";
+            return $"Renderer rarget {Renderer} material #{MaterialIndex + 1}/{Renderer.materials.Length}";
         }
         public MaterialAddress(Renderer renderer, int materialIndex)
         {
@@ -103,8 +101,8 @@ namespace Subnautica_Echelon
             MaterialPrototype prototype,
             SurfaceShaderData surfaceShaderData,
             Shader shader
-            ) : this(new MaterialAddress(renderer,materialIndex), prototype, surfaceShaderData, shader)
-        {}
+            ) : this(new MaterialAddress(renderer, materialIndex), prototype, surfaceShaderData, shader)
+        { }
 
         public MaterialAdaptation(
             MaterialPrototype prototype,
@@ -125,7 +123,7 @@ namespace Subnautica_Echelon
             SurfaceShaderData migrated,
             Shader shader
             ) : this(prototype, migrated.RedefineSource(target), shader)
-        {}
+        { }
 
         /// <summary>
         /// Resets only variables known to be corrupted during moonpool undock
@@ -165,7 +163,7 @@ namespace Subnautica_Echelon
         /// Reapplies all material properties to the target
         /// </summary>
         /// <param name="logConfig">Log Configuration</param>
-        public void ApplyToTarget(LogConfig logConfig=default)
+        public void ApplyToTarget(LogConfig logConfig = default)
         {
             try
             {

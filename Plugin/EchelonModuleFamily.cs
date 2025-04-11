@@ -8,7 +8,7 @@ public abstract class EchelonModuleFamily<T> : EchelonBaseModule
     protected EchelonModuleFamily(EchelonModule module, CraftingNode groupNode) : base(module, groupNode)
     {
     }
-    private static Dictionary<TechType, T> Family{ get; } = new Dictionary<TechType, T>();
+    private static Dictionary<TechType, T> Family { get; } = new Dictionary<TechType, T>();
     public static IReadOnlyDictionary<TechType, T> RegisteredFamily => Family;
 
     public override IReadOnlyCollection<TechType> AutoDisplace => Family.Keys;

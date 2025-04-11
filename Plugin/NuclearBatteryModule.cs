@@ -1,10 +1,4 @@
-﻿using Discord;
-using System;
-using System.Collections.Generic;
-using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Collections.Generic;
 using VehicleFramework.Assets;
 using VehicleFramework.UpgradeTypes;
 
@@ -17,7 +11,7 @@ namespace Subnautica_Echelon
 
         public static CraftingNode BatteryGroupNode => new CraftingNode
         {
-            displayName =  Language.main.Get($"group_NuclearBattery"),
+            displayName = Language.main.Get($"group_NuclearBattery"),
             icon = batterySprite,
             name = $"echelonnuclearbatteryupgrades"
         };
@@ -58,7 +52,7 @@ namespace Subnautica_Echelon
         }
 
         public NuclearBatteryModule(EchelonModule module) : base(module, BatteryGroupNode)
-        {}
+        { }
 
 
 

@@ -5,11 +5,9 @@ using System.Reflection;
 using System.Runtime.InteropServices;
 using UnityEngine;
 using VehicleFramework;
-using VehicleFramework.Assets;
 using VehicleFramework.Engines;
 using VehicleFramework.VehicleParts;
 using VehicleFramework.VehicleTypes;
-using static PDAScanner;
 
 
 namespace Subnautica_Echelon
@@ -41,7 +39,7 @@ namespace Subnautica_Echelon
             MaterialFixer = new MaterialFixer(this, LogConfig.Verbose);
         }
 
-        
+
 
         public override void OnFinishedLoading()
         {
@@ -349,7 +347,7 @@ namespace Subnautica_Echelon
             {
                 var batteryMk = GetBatteryMark();
 
-                float level = Mathf.Pow(2, NuclearBatteryModule.LevelOf(batteryMk)+1);
+                float level = Mathf.Pow(2, NuclearBatteryModule.LevelOf(batteryMk) + 1);
 
                 float recharge =
                       0.4f  //max 1.6 per second
@@ -407,7 +405,7 @@ namespace Subnautica_Echelon
             if (liveMixin != null)
             {
                 var level = RepairModule.GetRelativeSelfRepair(RepairModule.GetFrom(this));
-                    
+
                 if (liveMixin.health < liveMixin.maxHealth
                     && liveMixin.IsAlive()
                     && !criticalPower
@@ -600,13 +598,13 @@ namespace Subnautica_Echelon
                 EchelonControl.markerDisplay = MainPatcher.PluginConfig.targetHealthMarkers;
 
                 control.targetMarkerSizeScale = MainPatcher.PluginConfig.targetMarkerSizeScale / 100f;
-                control.torpedoMark = TorpedoModule.LevelOf(GetTorpedoMark())+1;
+                control.torpedoMark = TorpedoModule.LevelOf(GetTorpedoMark()) + 1;
 
                 Vector2 lookDelta = GameInput.GetLookDelta();
                 control.lookRightAxis = lookDelta.x * 1e-3f * MainPatcher.PluginConfig.lookSensitivity;
                 control.lookUpAxis = lookDelta.y * 1e-3f * MainPatcher.PluginConfig.lookSensitivity;
 
-                ProcessEnergyRecharge( out var lowPower, out var criticalPower );
+                ProcessEnergyRecharge(out var lowPower, out var criticalPower);
                 ProcessTrigger(lowPower);
                 ProcessRegeneration(criticalPower);
                 ForwardControlAxes();
@@ -619,14 +617,14 @@ namespace Subnautica_Echelon
                 if (Player.main.pda.state == PDA.State.Closed && !IngameMenu.main.gameObject.activeSelf)
                 {
                     control.zoomAxis = -Input.GetAxis("Mouse ScrollWheel")
-                        + 
+                        +
                         ((Input.GetKey(MainPatcher.PluginConfig.altZoomOut) ? 1f : 0f)
                         - (Input.GetKey(MainPatcher.PluginConfig.altZoomIn) ? 1f : 0f)) * 0.02f
                         ;
                 }
 
                 if (CanControl && GameInput.GetKeyDown(MainPatcher.PluginConfig.toggleFreeCamera))
-                        engine.freeCamera = control.freeCamera = !control.freeCamera;
+                    engine.freeCamera = control.freeCamera = !control.freeCamera;
 
                 ProcessBoost(lowPower);
                 RepositionCamera();
@@ -698,7 +696,7 @@ namespace Subnautica_Echelon
             if (!destroyed)
             {
                 if (tm != tm2)
-                    ErrorMessage.AddMessage(string.Format(Language.main.Get($"torpedoCapChanged"),VehicleName, Language.main.Get("cap_t_"+tm2)));
+                    ErrorMessage.AddMessage(string.Format(Language.main.Get($"torpedoCapChanged"), VehicleName, Language.main.Get("cap_t_" + tm2)));
                 if (bm != bm2)
                     ErrorMessage.AddMessage(string.Format(Language.main.Get($"batteryCapChanged"), VehicleName, Language.main.Get("cap_b_" + bm2)));
                 if (dm != dm2)
@@ -829,7 +827,7 @@ namespace Subnautica_Echelon
                 var ui = transform.Find("UpgradesInterface");
                 var plugs = transform.Find("Module Plugs");
 
-                var plugProxies = new List<Transform >();
+                var plugProxies = new List<Transform>();
                 if (plugs != null)
                 {
                     for (int i = 0; i < plugs.childCount; i++)

@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Collections.Generic;
 using UnityEngine;
 using VehicleFramework.Assets;
 using VehicleFramework.UpgradeTypes;
@@ -60,8 +56,8 @@ namespace Subnautica_Echelon
         }
 
 
-    public override string Description 
-            => string.Format(base.Description, Mathf.RoundToInt(GetSpeedBoost(Module) * 100));
+        public override string Description
+                => string.Format(base.Description, Mathf.RoundToInt(GetSpeedBoost(Module) * 100));
 
 
 

@@ -1,12 +1,11 @@
-using Nautilus.Options.Attributes;
 using Nautilus.Json;
+using Nautilus.Options.Attributes;
 using UnityEngine;
-using System;
 
 [Menu("Echelon Options")]
 public class EchelonConfig : ConfigFile
 {
-    [Keybind("Toggle Free Camera",LabelLanguageId = "optInput_ToggleFreeCamera")]
+    [Keybind("Toggle Free Camera", LabelLanguageId = "optInput_ToggleFreeCamera")]
     public KeyCode toggleFreeCamera = KeyCode.F;
     [Keybind("Camera Zoom In", LabelLanguageId = "optInput_CameraZoomIn")]
     public KeyCode altZoomIn = KeyCode.None;
@@ -42,7 +41,7 @@ public class EchelonConfig : ConfigFile
         LabelLanguageId = "optTargetArrows"
         )]
     public TargetArrows targetArrows = TargetArrows.DangerousAndCriticialTargets;
-    [Slider(DefaultValue=100, Format="{0:F0} %", Label = "Additional look sensitivity", LabelLanguageId = "optLookSensitivity", Min = 10, Max = 200, Step = 10)]
+    [Slider(DefaultValue = 100, Format = "{0:F0} %", Label = "Additional look sensitivity", LabelLanguageId = "optLookSensitivity", Min = 10, Max = 200, Step = 10)]
     public float lookSensitivity = 100;
     [Slider(DefaultValue = 100, Format = "{0:F0} %", Label = "Target Marker Size Scale", LabelLanguageId = "optTargetMarkerSizeScale", Min = 0, Max = 100, Step = 10)]
     public float targetMarkerSizeScale = 100;

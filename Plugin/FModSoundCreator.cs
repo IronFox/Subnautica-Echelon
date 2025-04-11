@@ -24,10 +24,10 @@ namespace Subnautica_Echelon
                     mode |= MODE.LOOP_NORMAL;
                 else
                     mode |= MODE.LOOP_OFF;
-                var sound = AudioUtils.CreateSound(cfg.AudioClip,mode
+                var sound = AudioUtils.CreateSound(cfg.AudioClip, mode
                     );
 
-                
+
 
                 List<VECTOR> rolloff = new List<VECTOR>();
                 float range = (cfg.MaxDistance - cfg.MinDistance);
@@ -49,9 +49,9 @@ namespace Subnautica_Echelon
                 }
                 var rolloffArray = rolloff.ToArray();
 
-                
 
-                FModSoundCreator.Check($"sound.set3DCustomRolloff(ref rolloffArray[0], {rolloffArray.Length})",sound.set3DCustomRolloff(ref rolloffArray[0], rolloffArray.Length));
+
+                FModSoundCreator.Check($"sound.set3DCustomRolloff(ref rolloffArray[0], {rolloffArray.Length})", sound.set3DCustomRolloff(ref rolloffArray[0], rolloffArray.Length));
                 FModSoundCreator.Check($"sound.set3DMinMaxDistance({cfg.MinDistance}, {cfg.MaxDistance})", sound.set3DMinMaxDistance(cfg.MinDistance, cfg.MaxDistance));
 
 
@@ -59,7 +59,7 @@ namespace Subnautica_Echelon
 
                 if (!AudioUtils.TryPlaySound(sound, "bus:/master", out var channel))
                     throw new InvalidOperationException($"AudioUtils.TryPlaySound(sound, \"bus:/master\", out var channel) failed");
-                
+
                 FModSoundCreator.Check($"Channel.setVolume({cfg.Volume})", channel.setVolume(0));
                 FModSoundCreator.Check($"Channel.setPitch({cfg.Pitch})", channel.setPitch(0.01f));
                 FModSoundCreator.Check($"Channel.set3DMinMaxDistance({cfg.MinDistance}, {cfg.MaxDistance})", channel.set3DMinMaxDistance(cfg.MinDistance, cfg.MaxDistance));
@@ -86,7 +86,7 @@ namespace Subnautica_Echelon
                 Check($"channel.set3DAttributes(ref pos, ref vel)", channel.set3DAttributes(ref pos, ref vel));
 
                 var component = cfg.Owner.AddComponent<FModComponent>();
-                
+
                 channel.isPlaying(out var isPlaying);
                 //Log.Write($"Sound created (isPlaying={isPlaying})");
                 var rs = component.sound = new FModSound(cfg, channel, sound, component, rolloffArray);
@@ -147,7 +147,7 @@ namespace Subnautica_Echelon
                 velocity = (position - lastPosition) / timeDelta;
                 lastPosition = position;
                 vpos = position;
-                
+
                 var pos = new VECTOR
                 {
                     x = position.x,
@@ -191,11 +191,11 @@ namespace Subnautica_Echelon
                     FModSoundCreator.Check($"Channel.setVolume({cfg.Volume})", Channel.setVolume(cfg.Volume));
                     FModSoundCreator.Check($"Channel.setPitch({cfg.Pitch})", Channel.setPitch(cfg.Pitch));
                 }
-                FModSoundCreator.Check($"Channel.set3DMinMaxDistance({cfg.MinDistance}, {cfg.MaxDistance})",Channel.set3DMinMaxDistance(cfg.MinDistance, cfg.MaxDistance));
+                FModSoundCreator.Check($"Channel.set3DMinMaxDistance({cfg.MinDistance}, {cfg.MaxDistance})", Channel.set3DMinMaxDistance(cfg.MinDistance, cfg.MaxDistance));
             }
             catch (Exception ex)
             {
-                Log.Write($"FModSound.ApplyLiveChanges()",ex);
+                Log.Write($"FModSound.ApplyLiveChanges()", ex);
             }
 
 

@@ -1,16 +1,6 @@
 
-using Nautilus.Assets;
-using Nautilus.Assets.Gadgets;
-using Nautilus.Assets.PrefabTemplates;
-using Nautilus.Crafting;
-using Nautilus.Handlers;
-using Nautilus.Utility;
 using Subnautica_Echelon;
-using System;
 using System.Collections.Generic;
-using System.IO;
-using UnityEngine;
-using VehicleFramework;
 using VehicleFramework.Assets;
 using VehicleFramework.UpgradeTypes;
 
@@ -63,8 +53,8 @@ public class TorpedoModule : EchelonModuleFamily<TorpedoModule>
     /// 3 mks (0-2)
     /// </summary>
     /// <param name="mk"></param>
-    public TorpedoModule(EchelonModule module): base(module, TorpedoGroupNode)
-    {}
+    public TorpedoModule(EchelonModule module) : base(module, TorpedoGroupNode)
+    { }
 
 
     //public override CraftTree.Type FabricatorType => Mk == 0 ? CraftTree.Type.Fabricator : CraftTree.Type.Workbench;
