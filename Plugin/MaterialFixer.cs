@@ -125,7 +125,8 @@ namespace Subnautica_Echelon
     public class MaterialFixer
     {
 
-        private DateTime repairMaterialsIn = DateTime.MaxValue;
+        private float repairMaterialsInSeconds = float.MaxValue;
+        private bool doRepairMaterialsPostUndock;
         private int repairMaterialsInFrames = 3;
         private bool materialsFixed;
         private readonly List<MaterialAdaptation> adaptations = new List<MaterialAdaptation>();
@@ -168,7 +169,7 @@ namespace Subnautica_Echelon
         /// <param name="vehicle">Owning vehicle</param>
         /// <param name="ignoreShaderNames">True to return all materials, false to only return Standard materials</param>
         /// <param name="logConfig">Log Configuration</param>
-        /// <returns>Enumerable of all suitable material addresses</returns>
+        /// <returns>Enumerable of all loaded surface shader data sets</returns>
         public static IEnumerable<SurfaceShaderData> DefaultMaterialResolver(ModVehicle vehicle, LogConfig logConfig, bool ignoreShaderNames=false)
         {
             var renderers = vehicle.GetComponentsInChildren<Renderer>();
@@ -194,6 +195,8 @@ namespace Subnautica_Echelon
                     continue;
                 }
 
+                //enumerate all materials:
+
                 for (int i = 0; i < renderer.materials.Length; i++)
                 {
                     var material = SurfaceShaderData.From(renderer, i, logConfig, ignoreShaderNames);
@@ -209,8 +212,9 @@ namespace Subnautica_Echelon
         /// <remarks>Should be called from your vehicle OnVehicleUndocked() method</remarks>
         public void OnVehicleUndocked()
         {
-            repairMaterialsIn = DateTime.Now + TimeSpan.FromSeconds(0.5f);
+            repairMaterialsInSeconds = 0.5f;
             repairMaterialsInFrames = 3;
+            doRepairMaterialsPostUndock = true;
         }
 
         /// <summary>
@@ -267,13 +271,17 @@ namespace Subnautica_Echelon
                     }
                 }
             }
-
-            if (DateTime.Now > repairMaterialsIn && --repairMaterialsInFrames == 0)
+            if (doRepairMaterialsPostUndock)
             {
-                repairMaterialsIn = DateTime.MaxValue;
-                LogConfig.LogExtraStep($"Undocked. Resetting materials");
-                foreach (MaterialAdaptation adaptation in adaptations)
-                    adaptation.PostDockFixOnTarget(LogConfig);
+                repairMaterialsInSeconds -= Time.deltaTime;
+                if (repairMaterialsInSeconds < 0 && --repairMaterialsInFrames == 0)
+                {
+                    repairMaterialsInSeconds = float.MaxValue;
+                    doRepairMaterialsPostUndock = false;
+                    LogConfig.LogExtraStep($"Undocked. Resetting materials");
+                    foreach (MaterialAdaptation adaptation in adaptations)
+                        adaptation.PostDockFixOnTarget(LogConfig);
+                }
             }
         }
     }
