@@ -1,0 +1,103 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!1 &744711944515593298
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 744711944515593388}
+  - component: {fileID: 744711944515593389}
+  m_Layer: 0
+  m_Name: Railgun Shot
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &744711944515593388
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 744711944515593298}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: -26.99, y: -10.71, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children:
+  - {fileID: 6274527334760342165}
+  m_Father: {fileID: 0}
+  m_RootOrder: 0
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &744711944515593389
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 744711944515593298}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 167cdcbec2f44f842a02d60844f62f64, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  owner: {fileID: 0}
+  railgunLine: {fileID: 6003003015580870764, guid: cd18e5e00d69688498142df46c2b1b14,
+    type: 3}
+  railgunCharge: {fileID: 6274527334760342164}
+  doContinue: 1
+--- !u!1001 &744711943559829643
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    m_TransformParent: {fileID: 744711944515593388}
+    m_Modifications:
+    - target: {fileID: 6721102155236882973, guid: 0b1bde52f660381459527a0fcfb024a8,
+        type: 3}
+      propertyPath: m_Name
+      value: Railgun Charge
+      objectReference: {fileID: 0}
+    - target: {fileID: 6721102155236882974, guid: 0b1bde52f660381459527a0fcfb024a8,
+        type: 3}
+      propertyPath: m_RootOrder
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6721102155236882974, guid: 0b1bde52f660381459527a0fcfb024a8,
+        type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6721102155236882974, guid: 0b1bde52f660381459527a0fcfb024a8,
+        type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6721102155236882974, guid: 0b1bde52f660381459527a0fcfb024a8,
+        type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+  m_SourcePrefab: {fileID: 100100000, guid: 0b1bde52f660381459527a0fcfb024a8, type: 3}
+--- !u!4 &6274527334760342165 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 6721102155236882974, guid: 0b1bde52f660381459527a0fcfb024a8,
+    type: 3}
+  m_PrefabInstance: {fileID: 744711943559829643}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &6274527334760342164 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 6721102155236882975, guid: 0b1bde52f660381459527a0fcfb024a8,
+    type: 3}
+  m_PrefabInstance: {fileID: 744711943559829643}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9f6b140d009225740be288dde88dfb8b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 

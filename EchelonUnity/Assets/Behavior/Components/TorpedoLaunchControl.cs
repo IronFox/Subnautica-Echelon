@@ -1,15 +1,13 @@
 ﻿using System;
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
-public class TorpedoLaunchControl : MonoBehaviour
+public class TorpedoLaunchControl : MonoBehaviour, IFirable
 {
     public GameObject torpedoPrefab;
-    public float relativeExitVelocity=200;
+    public float relativeExitVelocity = 200;
     public Transform cover;
-    public float secondsToOpenCover => (60/TorpedoesPerMinute)*0.25f;
-    public float secondsToFire => (60/TorpedoesPerMinute) * 0.5f;
+    public float secondsToOpenCover => (60 / TorpedoesPerMinute) * 0.25f;
+    public float secondsToFire => (60 / TorpedoesPerMinute) * 0.5f;
     public Transform coverOpenPosition;
     public bool noExplosions;
     public float overrideMaxLifetimeSeconds;
@@ -32,7 +30,7 @@ public class TorpedoLaunchControl : MonoBehaviour
     public float CycleTime => secondsToOpenCover * 2 + secondsToFire;
     public float CycleProgress => coverRedactionProgress + fireRecoverProgress + coverRecoveryProgress;
 
-    public ITargetable fireWithTarget;
+    public ITargetable FireWithTarget { get; set; }
 
     private TransformDescriptor originalCoverPosition;
     private TransformDescriptor openCoverPosition;
@@ -68,7 +66,7 @@ public class TorpedoLaunchControl : MonoBehaviour
                 //openSound.play = false;
                 fireRecoverProgress += Time.deltaTime;
                 fireSound.play = true;
-                fireSound.volume = M.Saturate(1f - fireRecoverProgress / Mathf.Min(1,secondsToFire));
+                fireSound.volume = M.Saturate(1f - fireRecoverProgress / Mathf.Min(1, secondsToFire));
                 //Debug.Log("Waiting for fire recovery @" + fireRecoverProgress);
                 if (fireRecoverProgress > secondsToFire)
                 {
@@ -100,7 +98,7 @@ public class TorpedoLaunchControl : MonoBehaviour
                 else
                     SetCover(1f - coverRecoveryProgress / secondsToOpenCover);
             }
-            else if (fireWithTarget != null)
+            else if (FireWithTarget != null)
             {
                 //openSound.play = true;
                 fireSound.play = false;
@@ -121,7 +119,7 @@ public class TorpedoLaunchControl : MonoBehaviour
 
                     torpedoInTube.Launch(
                         myBody.GetPointVelocity(transform.position) + transform.forward * relativeExitVelocity,
-                        fireWithTarget,
+                        FireWithTarget,
                         noExplosions,
                         overrideMaxLifetimeSeconds);
                     lastTorpedo = torpedoInTube;
@@ -168,10 +166,10 @@ public class TorpedoLaunchControl : MonoBehaviour
         }
         catch (Exception e)
         {
-            ConsoleControl.WriteException($"TorpedoLaunchControl.Update()",e);
+            ConsoleControl.WriteException($"TorpedoLaunchControl.Update()", e);
         }
 
-   }
+    }
 
     private Torpedo InstantiateTorpedo()
     {
@@ -181,7 +179,7 @@ public class TorpedoLaunchControl : MonoBehaviour
 
     }
 
-    
+
 }
 
 
@@ -197,7 +195,7 @@ public class Torpedo
         Control.Detonator.noExplosion = noExplosions;
         Control.TargetPredictor.target = target;
 
-        
+
         if (overrideMaxFlightTime > 0)
             Control.MaxFlightTime.maxLifetimeSeconds = overrideMaxFlightTime;
         Control.IsLive = true;

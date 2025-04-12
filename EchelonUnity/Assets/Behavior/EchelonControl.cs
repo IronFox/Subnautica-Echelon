@@ -1,9 +1,6 @@
 ﻿using System;
-using System.Collections;
 using System.Collections.Generic;
-using System.Linq;
 using UnityEngine;
-using static UnityEngine.GraphicsBuffer;
 
 public class EchelonControl : MonoBehaviour
 {
@@ -43,8 +40,8 @@ public class EchelonControl : MonoBehaviour
     private DateTime lastOnboarded;
 
     private readonly FloatTimeFrame energyHistory = new FloatTimeFrame(TimeSpan.FromSeconds(2));
-    public float maxEnergy=1;
-    public float currentEnergy=0.5f;
+    public float maxEnergy = 1;
+    public float currentEnergy = 0.5f;
     public float maxHealth = 1;
     public float currentHealth = 0.5f;
     public bool isHealing;
@@ -56,6 +53,7 @@ public class EchelonControl : MonoBehaviour
     private bool firingLeft = true;
     private CoverAnimation upgradeCoverAnimation;
     private FirstPersonMarkers firstPersonMarkers;
+    private Railgun railgun;
 
     public float regularForwardAcc = 400;
     public float overdriveForwardAcc = 800;
@@ -65,6 +63,8 @@ public class EchelonControl : MonoBehaviour
     public float airDrag = 0.1f;
     public bool triggerActive;  //captures continuous holding
     public bool triggerWasActivated; //captures trigger key down
+    public int railgunMark = 1;
+    public Weapon activeWeapon = Weapon.Railgun;
 
     private bool maintainTriggerUntilFired;
     private ITargetable maintainTarget;
@@ -116,6 +116,22 @@ public class EchelonControl : MonoBehaviour
 
     private CameraState state = CameraState.IsBound;
 
+    private int ActiveWeaponMark
+    {
+        get
+        {
+            switch (activeWeapon)
+            {
+                case Weapon.Torpedoes:
+                    return torpedoMark;
+                case Weapon.Railgun:
+                    return railgunMark;
+                default:
+                    return 0;
+            }
+        }
+    }
+
     private void ChangeState(CameraState state)
     {
         //Debug.Log($"->{state}");
@@ -128,7 +144,7 @@ public class EchelonControl : MonoBehaviour
         {
             cameraIsInTrailspace = true;
             ConsoleControl.Write("Moving camera to trailspace. Setting secondary fallback camera transform");
-            
+
             CameraUtil.secondaryFallbackCameraTransform = trailSpaceCameraContainer;
 
             cameraMove = Parentage.FromLocal(cameraRoot);
@@ -145,7 +161,7 @@ public class EchelonControl : MonoBehaviour
             cameraIsInTrailspace = false;
 
             ConsoleControl.Write("Moving camera out of trailspace. Unsetting secondary fallback camera transform");
-            
+
             CameraUtil.secondaryFallbackCameraTransform = null;
 
             cameraMove.Restore();
@@ -230,6 +246,7 @@ public class EchelonControl : MonoBehaviour
         fallOrientation = GetComponent<FallOrientation>();
         energyLevel = GetComponentInChildren<EnergyLevel>();
         firstPersonMarkers = GetComponentInChildren<FirstPersonMarkers>();
+        railgun = GetComponentInChildren<Railgun>();
         if (look != null)
             look.targetOrientation = inWaterDirectionSource = new TransformDirectionSource(trailSpace);
     }
@@ -249,7 +266,7 @@ public class EchelonControl : MonoBehaviour
             rs += "<-" + AllMessages(ex.InnerException);
         return rs;
     }
-    
+
     private void LogComposition(Transform t, Indent indent = default)
     {
         new HierarchyAnalyzer().LogToJson(t, $@"C:\Temp\Logs\snapshot{DateTime.Now:yyyy-MM-dd HH_mm_ss}.json");
@@ -265,7 +282,7 @@ public class EchelonControl : MonoBehaviour
             if (camera != null)
             {
                 var ray = new Ray(camera.position, camera.forward);
-                freeTargetMarker.MoveTo(ray.GetPoint(((PositionTargetable) freeTargetMarker.Target).AtDistance));
+                freeTargetMarker.MoveTo(ray.GetPoint(((PositionTargetable)freeTargetMarker.Target).AtDistance));
 
             }
         }
@@ -338,11 +355,11 @@ public class EchelonControl : MonoBehaviour
     {
 
         var vec = t.GlobalSize * 1.5f;
-        var s = Mathf.Max(vec.x,vec.y, vec.z);
+        var s = Mathf.Max(vec.x, vec.y, vec.z);
 
         var camera = CameraUtil.GetTransform(nameof(EchelonControl) + '.' + nameof(SizeOf));
         if (camera != null)
-            s = M.Max(s* targetMarkerSizeScale, 0.1f * M.Distance(t.Position, camera.position));
+            s = M.Max(s * targetMarkerSizeScale, 0.1f * M.Distance(t.Position, camera.position));
 
         return s;
     }
@@ -384,7 +401,7 @@ public class EchelonControl : MonoBehaviour
     public void SelfDestruct(bool pseudo)
     {
         Offboard();
-        var explosion = Instantiate(explosionPrefab,transform.position, Quaternion.identity);
+        var explosion = Instantiate(explosionPrefab, transform.position, Quaternion.identity);
         var control = explosion.GetComponentInChildren<ExplosionController>();
         control.explosionDamage = 100;
         if (pseudo)
@@ -403,7 +420,7 @@ public class EchelonControl : MonoBehaviour
                             && isBoarded
                             && !isDocked
                             && !cameraCenterIsCockpit
-                            && torpedoMark > 0
+                            && ActiveWeaponMark > 0
                             && !outOfWater
                             && !OnboardingCooldown
                             && !batteryDead
@@ -413,10 +430,10 @@ public class EchelonControl : MonoBehaviour
     {
         rightLaunch.torpedoTechLevel
             = leftLaunch.torpedoTechLevel
-            = Math.Max(0,torpedoMark-1);
+            = Math.Max(0, torpedoMark - 1);
 
-        targetProcessor.Work = 
-                           isBoarded 
+        targetProcessor.Work =
+                           isBoarded
                         && !isDocked
                         && !cameraCenterIsCockpit
                         && !powerOff
@@ -452,7 +469,7 @@ public class EchelonControl : MonoBehaviour
                 freeTargetMarker = null;
             }
 
-            targetMarkers.UpdateAll(set, 
+            targetMarkers.UpdateAll(set,
                 (tm, t) =>
                 {
                     tm.MoveTo(t.Position);
@@ -480,7 +497,7 @@ public class EchelonControl : MonoBehaviour
 
                 lastValidTarget = liveTarget;
 
-                
+
             }
             else
             {
@@ -489,7 +506,17 @@ public class EchelonControl : MonoBehaviour
                 lastValidTarget = null;
             }
 
-            var firing = firingLeft ? leftLaunch : rightLaunch;
+            IFirable firing = null;
+            switch (activeWeapon)
+            {
+                case Weapon.Torpedoes:
+                    firing = firingLeft ? leftLaunch : rightLaunch;
+                    break;
+                case Weapon.Railgun:
+                    firing = railgun;
+                    break;
+            }
+
 
 
             if (triggerWasActivated)
@@ -508,31 +535,35 @@ public class EchelonControl : MonoBehaviour
 
             var doFire = IsFiring;
 
-            firstPersonMarkers.firingLeft = doFire && firingLeft;
-            firstPersonMarkers.firingRight = doFire && !firingLeft;
+            firstPersonMarkers.firingLeft = doFire && activeWeapon == Weapon.Torpedoes && firingLeft;
+            firstPersonMarkers.firingRight = doFire && activeWeapon == Weapon.Torpedoes && !firingLeft;
+            firstPersonMarkers.firingRailgun = doFire && activeWeapon == Weapon.Railgun;
 
             // Debug.Log($"doFire={doFire} (triggerActive={triggerActive}, outOfWater={outOfWater})");
-
-            firing.fireWithTarget = doFire ? liveTarget : null;
-            if (firing.CycleProgress > firing.CycleTime * 0.5f)
+            if (firing != null)
             {
-                ConsoleControl.Write($"Switching tube");
-                firing.fireWithTarget = null;
-                firingLeft = !firingLeft;
-                maintainTriggerUntilFired = false;
+                firing.FireWithTarget = doFire ? liveTarget : null;
+                if (firing is TorpedoLaunchControl control)
+                    if (control.CycleProgress > control.CycleTime * 0.5f)
+                    {
+                        ConsoleControl.Write($"Switching tube");
+                        control.FireWithTarget = null;
+                        firingLeft = !firingLeft;
+                        maintainTriggerUntilFired = false;
+                    }
             }
-            statusConsole.Set(StatusProperty.LeftLauncherTarget, leftLaunch.fireWithTarget);
-            statusConsole.Set(StatusProperty.RightLauncherTarget, rightLaunch.fireWithTarget);
+            statusConsole.Set(StatusProperty.LeftLauncherTarget, leftLaunch.FireWithTarget);
+            statusConsole.Set(StatusProperty.RightLauncherTarget, rightLaunch.FireWithTarget);
         }
         else
         {
             freeTargetMarker?.Destroy(true);
             freeTargetMarker = null;
 
-            leftLaunch.fireWithTarget = null;
-            rightLaunch.fireWithTarget = null;
+            leftLaunch.FireWithTarget = null;
+            rightLaunch.FireWithTarget = null;
             statusConsole.Set(StatusProperty.Target, null);
-            statusConsole.Set(StatusProperty.LeftLauncherTarget,null);
+            statusConsole.Set(StatusProperty.LeftLauncherTarget, null);
             statusConsole.Set(StatusProperty.RightLauncherTarget, null);
 
             targetMarkers.Purge();
@@ -583,7 +614,7 @@ public class EchelonControl : MonoBehaviour
             statusConsole.Set(StatusProperty.TorpedoMark, torpedoMark);
             statusConsole.Set(StatusProperty.IsFirstPerson, positionCamera.isFirstPerson);
 
-            firstPersonMarkers.show = 
+            firstPersonMarkers.show =
                 positionCamera.isFirstPerson
                 && isBoarded
                 && !isDocked
@@ -869,3 +900,8 @@ public enum TargetArrows
     None
 }
 
+public enum Weapon
+{
+    Torpedoes,
+    Railgun
+}

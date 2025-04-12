@@ -1,10 +1,9 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 
 public class FirstPersonMarkers : MonoBehaviour
 {
     public bool show;
+    public bool firingRailgun;
     public bool firingLeft;
     public bool firingRight;
     public bool overdriveActive;

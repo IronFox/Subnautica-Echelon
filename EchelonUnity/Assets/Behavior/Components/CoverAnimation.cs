@@ -18,13 +18,13 @@ public class CoverAnimation : MonoBehaviour
     {
 
     }
-
+    private float EndTime => keyTimes[keyTimes.Length - 1];
     public bool IsAtBeginning => progress <= 0;
-
+    public bool IsAtEnd => progress >= EndTime;
     // Update is called once per frame
     void Update()
     {
-        float end = keyTimes[keyTimes.Length - 1];
+        float end = EndTime;
         progress = Mathf.Clamp(progress, 0, end);
         if (!animateForward)
         {

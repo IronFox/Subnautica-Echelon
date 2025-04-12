@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 
 public static class M
 {
@@ -21,14 +18,14 @@ public static class M
     public static Vector4 V4(float x, float y, float z, float w) => new Vector4(x, y, z, w);
 
     public static float Saturate(float x) => Mathf.Clamp01(x);
-    public static float Interpolate(float a, float b, float x) => a * (1f -x) + b*x;
-    public static Vector3 Interpolate(Vector3 a, Vector3 b, float x) => a * (1f -x) + b*x;
+    public static float Interpolate(float a, float b, float x) => a * (1f - x) + b * x;
+    public static Vector3 Interpolate(Vector3 a, Vector3 b, float x) => a * (1f - x) + b * x;
     public static float Sqr(float x) => x * x;
     public static float Sqr(Vector3 x) => Vector3.Dot(x, x);
     public static float Abs(float x) => Mathf.Abs(x);
     public static float Max(float x, float y) => Mathf.Max(x, y);
     public static float Max(float x, float y, float z) => Mathf.Max(x, y, z);
-    public static Vector3 Max(Vector3 x, float y) => Max(x,V3(y));
+    public static Vector3 Max(Vector3 x, float y) => Max(x, V3(y));
     public static float Min(float x, float y) => Mathf.Min(x, y);
     public static Vector3 Max(Vector3 a, Vector3 b)
         => new Vector3(Max(a.x, b.x), Max(a.y, b.y), Max(a.z, b.z));
@@ -85,7 +82,7 @@ public static class M
         }
 
 
-        var root = b*b -4*a*c;
+        var root = b * b - 4 * a * c;
         if (root < 0)
             return default;
         var a2 = a * 2;
@@ -106,7 +103,11 @@ public static class M
 
     public static Vector2 V2(float v) => new Vector2(v, v);
 
+    public static Color C(Color color, float alpha)
+        => new Color(color.r, color.g, color.b, alpha);
 
+    internal static float Clamp(float value, float min, float max)
+        => Mathf.Clamp(value, min, max);
 }
 
 
@@ -117,7 +118,7 @@ public readonly struct QuadraticSolution
 
     public bool HasAnySolution => X0.HasValue;
 
-    private static bool IsNonNegative(float?x)
+    private static bool IsNonNegative(float? x)
         => x.HasValue && x.Value >= 0;
 
     public float? SmallestNonNegative =>
@@ -127,7 +128,7 @@ public readonly struct QuadraticSolution
                 : X0.Value
             : IsNonNegative(X1)
                 ? X1.Value
-                : (float?) null;
+                : (float?)null;
 
 
     private QuadraticSolution(float? x0, float? x1)
