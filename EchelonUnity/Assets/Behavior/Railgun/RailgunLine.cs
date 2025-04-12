@@ -12,6 +12,9 @@ public class RailgunLine : MonoBehaviour
     private float distance;
     public float speedMetersPerSecond = 200;
     public int atSegment;
+    public EchelonControl owner;
+    public float damage = 2000;
+    private readonly HashSet<TargetAdapter> hit = new HashSet<TargetAdapter>();
     //public float radius = 0.1f;
     // Start is called before the first frame update
     void Start()
@@ -50,6 +53,23 @@ public class RailgunLine : MonoBehaviour
             instance.transform.localScale = Vector3.one;
             var s = segments[atSegment++];
             instance.transform.localPosition = M.V3(0, 0, s.Offset);
+
+            var candidates = Physics.RaycastAll(instance.transform.position, instance.transform.forward, s.Length);
+            foreach (var candidate in candidates)
+            {
+                if (!candidate.rigidbody)
+                    continue;
+                var t = candidate.rigidbody.transform;
+                if (t.IsChildOf(owner.transform))
+                    continue;
+                var target = TargetAdapter.ResolveTarget(candidate.rigidbody.gameObject, candidate.rigidbody);
+                if (target is null || target.IsInvincible)
+                    continue;
+                if (hit.Add(target))
+                    target.DealDamage(instance.transform.position, damage, owner.gameObject);
+            }
+
+
             var segment = instance.GetComponent<RailgunSegment>();
             segment.length = s.Length;
         }

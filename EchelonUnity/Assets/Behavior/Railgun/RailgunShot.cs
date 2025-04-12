@@ -7,7 +7,10 @@ public class RailgunShot : MonoBehaviour
     public RailgunCharge railgunCharge;
 
     public bool doContinue = true;
+    public bool canFire = true;
+    public float damage = 2000;
     private bool terminal = false;
+
     private RailgunLine line;
     // Start is called before the first frame update
     void Start()
@@ -24,7 +27,7 @@ public class RailgunShot : MonoBehaviour
         railgunCharge.doCharge = doContinue && !terminal;
         if (terminal)
             SecondsAfterFired += Time.deltaTime;
-        if (!terminal && railgunCharge.EndReached)
+        if (!terminal && railgunCharge.EndReached && canFire)
         {
             if (!doContinue)
             {
@@ -39,7 +42,9 @@ public class RailgunShot : MonoBehaviour
             line.transform.localPosition = Vector3.zero;
             line.transform.localRotation = Quaternion.identity;
             this.line = line.GetComponent<RailgunLine>();
-            owner.GetComponent<Rigidbody>().AddForce(-transform.forward * 30000f / Time.fixedDeltaTime);
+            this.line.owner = owner;
+            this.line.damage = damage;
+            owner.GetComponent<Rigidbody>().AddForce(-transform.forward * 80000f / Time.fixedDeltaTime);
         }
         if (terminal && !line)
         {

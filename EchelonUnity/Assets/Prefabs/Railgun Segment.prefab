@@ -49,6 +49,7 @@ MonoBehaviour:
   length: 1
   radius: 0.1
   emissiveLight: {fileID: 261396210031030943}
+  maxLifetime: 5
 --- !u!1 &261396210031030936
 GameObject:
   m_ObjectHideFlags: 0
@@ -91,7 +92,7 @@ Light:
   serializedVersion: 10
   m_Type: 2
   m_Shape: 0
-  m_Color: {r: 0.39215687, g: 0.39215687, b: 1, a: 1}
+  m_Color: {r: 1, g: 0.5927337, b: 0.39215684, a: 1}
   m_Intensity: 1
   m_Range: 20
   m_SpotAngle: 30

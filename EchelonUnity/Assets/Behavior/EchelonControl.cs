@@ -248,7 +248,7 @@ public class EchelonControl : MonoBehaviour
         firstPersonMarkers = GetComponentInChildren<FirstPersonMarkers>();
         railgun = GetComponentInChildren<Railgun>();
         if (look != null)
-            look.targetOrientation = inWaterDirectionSource = new TransformDirectionSource(trailSpace);
+            look.targetOrientation = inWaterDirectionSource = nonRailgunInWaterDirectionSource = new TransformDirectionSource(trailSpace);
     }
 
     private static string TN(RenderTexture rt)
@@ -330,6 +330,7 @@ public class EchelonControl : MonoBehaviour
 
 
     private IDirectionSource inWaterDirectionSource;
+    private IDirectionSource nonRailgunInWaterDirectionSource;
     private TargetMarker freeTargetMarker;
     private readonly TargetPool<TargetMarker> targetMarkers;
     private readonly TargetPool<TargetDirectionMarker> targetDirectionMarkers;
@@ -518,15 +519,17 @@ public class EchelonControl : MonoBehaviour
             }
 
 
-
-            if (triggerWasActivated)
+            if (activeWeapon == Weapon.Torpedoes)
             {
-                maintainTriggerUntilFired = true;
-                maintainTarget = liveTarget;
-            }
-            else if (triggerActive)
-            {
-                maintainTarget = liveTarget;
+                if (triggerWasActivated)
+                {
+                    maintainTriggerUntilFired = true;
+                    maintainTarget = liveTarget;
+                }
+                else if (triggerActive)
+                {
+                    maintainTarget = liveTarget;
+                }
             }
 
             if (maintainTriggerUntilFired && !triggerActive && maintainTarget.Exists)
@@ -544,6 +547,7 @@ public class EchelonControl : MonoBehaviour
             {
                 firing.FireWithTarget = doFire ? liveTarget : null;
                 if (firing is TorpedoLaunchControl control)
+                {
                     if (control.CycleProgress > control.CycleTime * 0.5f)
                     {
                         ConsoleControl.Write($"Switching tube");
@@ -551,6 +555,14 @@ public class EchelonControl : MonoBehaviour
                         firingLeft = !firingLeft;
                         maintainTriggerUntilFired = false;
                     }
+                }
+                else if (firing is Railgun r)
+                {
+                    if (r.CurrentShotIsDone)
+                    {
+                        maintainTriggerUntilFired = false;
+                    }
+                }
             }
             statusConsole.Set(StatusProperty.LeftLauncherTarget, leftLaunch.FireWithTarget);
             statusConsole.Set(StatusProperty.RightLauncherTarget, rightLaunch.FireWithTarget);
@@ -562,6 +574,7 @@ public class EchelonControl : MonoBehaviour
 
             leftLaunch.FireWithTarget = null;
             rightLaunch.FireWithTarget = null;
+            railgun.FireWithTarget = null;
             statusConsole.Set(StatusProperty.Target, null);
             statusConsole.Set(StatusProperty.LeftLauncherTarget, null);
             statusConsole.Set(StatusProperty.RightLauncherTarget, null);
@@ -693,12 +706,11 @@ public class EchelonControl : MonoBehaviour
             if (currentlyBoarded && !isDocked && !cameraCenterIsCockpit)
             {
                 rotateCamera.enabled = true;
-
                 if (freeCamera)
                 {
                     rotateCamera.AbortTransition();
                     ChangeState(CameraState.IsFree);
-                    inWaterDirectionSource = nonCameraOrientation;
+                    nonRailgunInWaterDirectionSource = inWaterDirectionSource = nonCameraOrientation;
                     if (nonCameraOrientation != null)
                         nonCameraOrientation.isActive = true;
                 }
@@ -712,7 +724,7 @@ public class EchelonControl : MonoBehaviour
                             {
                                 ChangeState(CameraState.IsBound);
 
-                                inWaterDirectionSource = new TransformDirectionSource(trailSpace);
+                                nonRailgunInWaterDirectionSource = inWaterDirectionSource = new TransformDirectionSource(trailSpace);
 
                                 if (nonCameraOrientation != null)
                                     nonCameraOrientation.isActive = false;
@@ -726,6 +738,11 @@ public class EchelonControl : MonoBehaviour
 
                     }
                 }
+
+                if (railgun.WantsTargetOrientation)
+                    inWaterDirectionSource = railgun;
+                else
+                    inWaterDirectionSource = nonRailgunInWaterDirectionSource;
 
                 if (look != null)
                     look.targetOrientation = outOfWater
