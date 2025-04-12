@@ -194,7 +194,7 @@ GameObject:
   m_Component:
   - component: {fileID: 6721102155236882974}
   - component: {fileID: 6721102155236882975}
-  - component: {fileID: 6721102155236882976}
+  - component: {fileID: 9042167057518555381}
   m_Layer: 0
   m_Name: Railgun Charge
   m_TagString: Untagged
@@ -236,9 +236,9 @@ MonoBehaviour:
   doCharge: 0
   chargeSeconds: 2
   size: 0
-  chargeSound: {fileID: 6721102155236882976}
-  scale: 10
---- !u!114 &6721102155236882976
+  chargeSound: {fileID: 9042167057518555381}
+  scale: 4
+--- !u!114 &9042167057518555381
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -247,14 +247,14 @@ MonoBehaviour:
   m_GameObject: {fileID: 6721102155236882973}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 56534fd16a4420046924e3771b758cdd, type: 3}
+  m_Script: {fileID: 11500000, guid: 8c9da103176980046ab795a477fff5fe, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   clip: {fileID: 8300000, guid: 6ee189ba3375f314e949a0191948ea30, type: 3}
   volume: 1
   play: 1
-  minDistance: 2
-  maxDistance: 100
+  minDistance: 10
+  maxDistance: 500
   is3D: 1
   pitch: 1
   loop: 1

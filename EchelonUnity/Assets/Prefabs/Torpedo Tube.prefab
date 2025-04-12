@@ -48,12 +48,11 @@ MonoBehaviour:
     type: 3}
   relativeExitVelocity: 80
   cover: {fileID: 0}
-  secondsToOpenCover: 0.25
-  secondsToFire: 1
   coverOpenPosition: {fileID: 0}
   noExplosions: 0
   overrideMaxLifetimeSeconds: 0
-  fireSound: {fileID: 4244463131336336650}
+  fireSound: {fileID: 0}
+  torpedoTechLevel: 0
   myBody: {fileID: 0}
 --- !u!1 &1402143320969980528
 GameObject:
@@ -64,7 +63,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 831734797529450510}
-  - component: {fileID: 4244463131336336650}
+  - component: {fileID: 50934957791068652}
   m_Layer: 0
   m_Name: FireSound
   m_TagString: Untagged
@@ -86,7 +85,7 @@ Transform:
   m_Father: {fileID: 5794600956658866444}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &4244463131336336650
+--- !u!114 &50934957791068652
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -95,13 +94,13 @@ MonoBehaviour:
   m_GameObject: {fileID: 1402143320969980528}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 56534fd16a4420046924e3771b758cdd, type: 3}
+  m_Script: {fileID: 11500000, guid: 8c9da103176980046ab795a477fff5fe, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   clip: {fileID: 8300000, guid: ec8502a56f827164983874c1f4280071, type: 3}
-  volume: 10
+  volume: 1
   play: 0
-  minDistance: 10
+  minDistance: 2
   maxDistance: 500
   is3D: 1
   pitch: 1

@@ -5,6 +5,7 @@ public class RailgunLine : MonoBehaviour
 {
     private readonly List<Segment> segments = new List<Segment>();
     public GameObject segmentPrefab;
+    public GameObject hitPrefab;
     public Renderer cylinder;
     public float length = 500;
     public float radius = 0.1f;
@@ -66,7 +67,12 @@ public class RailgunLine : MonoBehaviour
                 if (target is null || target.IsInvincible)
                     continue;
                 if (hit.Add(target))
-                    target.DealDamage(instance.transform.position, damage, owner.gameObject);
+                {
+                    target.DealDamage(candidate.point, damage, owner.gameObject);
+                    var hitInstance = Instantiate(hitPrefab, transform);
+                    hitInstance.transform.position = candidate.point;
+                    hitInstance.transform.localEulerAngles = M.V3(90, 0, 0);
+                }
             }
 
 

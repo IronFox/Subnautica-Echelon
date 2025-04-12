@@ -47,8 +47,8 @@ public class RailgunCharge : MonoBehaviour
             size *= (1f + Mathf.Cos(unclampedTime) * 0.1f);
         Scale(isotropicSprite, Vector3.one * scale, size);
         Scale(wideSprite, M.V3(2, 0.1f, 2) * scale, size * 2);
-        chargeSound.pitch = 0.5f + relative * 1.5f;
-        chargeSound.volume = relative;
+        chargeSound.pitch = 0.9f + relative * 2f;
+        chargeSound.volume = M.Saturate(relative * 5) * 0.5f + 0.5f * relative;
     }
 
     private void Scale(Renderer sprite, Vector3 initialScale, float factor)

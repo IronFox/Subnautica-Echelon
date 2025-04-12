@@ -28,7 +28,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 82917819404241210}
   m_LocalRotation: {x: 0.6212547, y: 0.33770195, z: -0.6212547, w: -0.33770192}
-  m_LocalPosition: {x: 0, y: 0.019999998, z: -0.13000011}
+  m_LocalPosition: {x: 0, y: 0.035199996, z: 0.03399992}
   m_LocalScale: {x: 11.855885, y: 7.3096886, z: 21.163216}
   m_Children: []
   m_Father: {fileID: 8109845627687323539}
@@ -93,7 +93,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f0d0b1ed23c13724ca6085d380ecaa9f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  materialIndex: 0
+  materialIndex: -401
 --- !u!114 &4563424795450736802
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -254,7 +254,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 325592178738379285}
   m_LocalRotation: {x: 0.6664121, y: 0.236421, z: -0.6664121, w: -0.23642097}
-  m_LocalPosition: {x: 0, y: 0.047, z: -0.1559999}
+  m_LocalPosition: {x: 0, y: 0.0622, z: 0.008000135}
   m_LocalScale: {x: 11.855886, y: 7.3096895, z: 21.163216}
   m_Children: []
   m_Father: {fileID: 8109845627687323539}
@@ -319,7 +319,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f0d0b1ed23c13724ca6085d380ecaa9f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  materialIndex: 0
+  materialIndex: -401
 --- !u!114 &5203190474509283754
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1057,8 +1057,8 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 946012157476672844}
   m_LocalRotation: {x: 0.70296717, y: 0.07640138, z: -0.70296717, w: -0.07640138}
-  m_LocalPosition: {x: 0, y: 0.12921658, z: -0.28287864}
-  m_LocalScale: {x: 11.8558855, y: 7.3096895, z: 21.163216}
+  m_LocalPosition: {x: 0, y: 0.14441657, z: -0.1188786}
+  m_LocalScale: {x: 11.8558855, y: 7.3096914, z: 21.163216}
   m_Children: []
   m_Father: {fileID: 8109845627687323539}
   m_RootOrder: 4
@@ -1122,7 +1122,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f0d0b1ed23c13724ca6085d380ecaa9f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  materialIndex: 0
+  materialIndex: -401
 --- !u!114 &6073376595281940185
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2246,7 +2246,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2562123402018269139}
   m_LocalRotation: {x: 0.5, y: 0.5, z: -0.5, w: -0.49999997}
-  m_LocalPosition: {x: -0.0000962466, y: -0.019063538, z: -0.11623478}
+  m_LocalPosition: {x: -0.0000962466, y: -0.0038635386, z: 0.047765255}
   m_LocalScale: {x: 11.8558855, y: 7.3096886, z: 21.163216}
   m_Children: []
   m_Father: {fileID: 8109845627687323539}
@@ -2311,7 +2311,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f0d0b1ed23c13724ca6085d380ecaa9f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  materialIndex: 0
+  materialIndex: -401
 --- !u!114 &2226830978669314359
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -8330,7 +8330,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 4503685686552560719}
   m_LocalRotation: {x: 0.5, y: 0.5, z: -0.5, w: -0.49999997}
-  m_LocalPosition: {x: -0.0000962466, y: -0.019063538, z: -0.11623478}
+  m_LocalPosition: {x: -0.0000962466, y: -0.0038635386, z: 0.047765255}
   m_LocalScale: {x: 11.8558855, y: 7.3096886, z: 21.163216}
   m_Children: []
   m_Father: {fileID: 8109845627687323539}
@@ -8395,7 +8395,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f0d0b1ed23c13724ca6085d380ecaa9f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  materialIndex: 0
+  materialIndex: -401
 --- !u!114 &7459962002271655140
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -15196,7 +15196,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 6662904390942980064}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0.019, z: 3.236}
+  m_LocalPosition: {x: 0, y: 0.0038, z: 3.072}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 7388347268996888635}
@@ -15223,6 +15223,7 @@ MonoBehaviour:
   shotPrefab: {fileID: 744711944515593298, guid: 6c73910b4b484e8459f5364f7bd0c221,
     type: 3}
   openCoverAnimation: {fileID: 2226830978669314359}
+  damage: 2000
 --- !u!1 &6738211630831672943
 GameObject:
   m_ObjectHideFlags: 0

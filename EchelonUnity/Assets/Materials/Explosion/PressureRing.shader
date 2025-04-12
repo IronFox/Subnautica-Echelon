@@ -7,7 +7,7 @@
     }
     SubShader
     {
-        Tags { "Queue"="Transparent" "IgnoreProjector"="True" "RenderType"="Transparent" }
+        Tags { "Queue"="Transparent+1000" "IgnoreProjector"="True" "RenderType"="Transparent" }
         Blend SrcAlpha One
         Cull Off Lighting Off ZWrite Off Fog { Color (0,0,0,0) }
         LOD 100
@@ -64,7 +64,7 @@
                             + tex2D(_Noise1, i.uv + float2(-1,0.01)*_Seconds*0.1).r)/2);
                 float intensity = //(float3)(tex2D(_Noise1, i.uv).r * 
                     sqr(saturate(((1-abs(i.uv.y-0.5)*2)+noise * 0.5)/ (1.0 + 0.5 * _Seconds)));
-                color.a = intensity * saturate(_Seconds);
+                color.a = intensity * saturate(_Seconds) * 0.25;
 
                 clip(intensity-0.1);
 

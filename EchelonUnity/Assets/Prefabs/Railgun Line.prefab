@@ -89,7 +89,7 @@ GameObject:
   m_Component:
   - component: {fileID: 6003003015580870762}
   - component: {fileID: 6003003015580870763}
-  - component: {fileID: 6003003015580870761}
+  - component: {fileID: 4400755829541440457}
   m_Layer: 0
   m_Name: Railgun Line
   m_TagString: Untagged
@@ -126,12 +126,16 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   segmentPrefab: {fileID: 261396208803435695, guid: 4ec9078808ce56c4f8aff7213f1d1393,
     type: 3}
+  hitPrefab: {fileID: 4939258887155925870, guid: cc8023dbcf3d9f6478b29362ead6177e,
+    type: 3}
   cylinder: {fileID: 6003003014474726682}
   length: 500
   radius: 0.1
-  speedMetersPerSecond: 200
+  speedMetersPerSecond: 800
   atSegment: 0
---- !u!114 &6003003015580870761
+  owner: {fileID: 0}
+  damage: 2000
+--- !u!114 &4400755829541440457
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -140,14 +144,14 @@ MonoBehaviour:
   m_GameObject: {fileID: 6003003015580870764}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 56534fd16a4420046924e3771b758cdd, type: 3}
+  m_Script: {fileID: 11500000, guid: 8c9da103176980046ab795a477fff5fe, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   clip: {fileID: 8300000, guid: bbf6cc72d8044304c99141e6053a2b66, type: 3}
   volume: 1
   play: 1
   minDistance: 10
-  maxDistance: 100
+  maxDistance: 500
   is3D: 1
   pitch: 1
   loop: 0
