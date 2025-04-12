@@ -51,7 +51,7 @@ MonoBehaviour:
   coverOpenPosition: {fileID: 0}
   noExplosions: 0
   overrideMaxLifetimeSeconds: 0
-  fireSound: {fileID: 0}
+  fireSound: {fileID: 50934957791068652}
   torpedoTechLevel: 0
   myBody: {fileID: 0}
 --- !u!1 &1402143320969980528
