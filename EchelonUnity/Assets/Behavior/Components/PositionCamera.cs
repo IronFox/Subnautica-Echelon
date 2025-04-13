@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
-using static UnityEngine.GraphicsBuffer;
+﻿using UnityEngine;
 
 public class PositionCamera : MonoBehaviour
 {
@@ -34,15 +30,15 @@ public class PositionCamera : MonoBehaviour
 
     void Start()
     {
-        scanner= GetComponentInChildren<TargetScanner>();
+        scanner = GetComponentInChildren<TargetScanner>();
         target = subRoot.transform;
         distanceToTarget = Vector3.Distance(referenceBoundingBox.transform.position, transform.transform.position);
         minDistanceToTarget = referenceBoundingBox.size.magnitude;
         maxDistanceToTarget = minDistanceToTarget * 5;
-        ConsoleControl.Write($"Valid 3rd person camera distance range is [{minDistanceToTarget},{maxDistanceToTarget}]");
-        distanceToTarget = Mathf.Clamp( distanceToTarget, minDistanceToTarget, maxDistanceToTarget );
-        ConsoleControl.Write($"3rd camera distance set to {distanceToTarget}");
-        verticalOffset = 
+        ULog.Write($"Valid 3rd person camera distance range is [{minDistanceToTarget},{maxDistanceToTarget}]");
+        distanceToTarget = Mathf.Clamp(distanceToTarget, minDistanceToTarget, maxDistanceToTarget);
+        ULog.Write($"3rd camera distance set to {distanceToTarget}");
+        verticalOffset =
             referenceBoundingBox.size.y * referenceBoundingBox.transform.localScale.y * 1.5f;
     }
 
@@ -118,9 +114,6 @@ public class PositionCamera : MonoBehaviour
                     if (loggedCollider != hit.transform.name)
                     {
                         loggedCollider = hit.transform.name;
-                        //ConsoleControl.Write("Camera collision with " + hit.transform.name);
-                        //HierarchyAnalyzer analyzer = new HierarchyAnalyzer();
-                        //analyzer.LogToJson(hit.transform, $@"C:\temp\logs\hit{DateTime.Now:yyyy-MM-dd HH_mm_ss}.json");
                     }
 
 

@@ -1,6 +1,6 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.IO;
-using UnityEngine;
 
 namespace Subnautica_Echelon
 {
@@ -17,20 +17,27 @@ namespace Subnautica_Echelon
 
         public static void Purge()
         {
-            var path = Path.Combine(MainPatcher.RootFolder, RecipePath);
-            if (!File.Exists(path))
+            try
             {
-                Debug.Log($"No existing recipe found at {path}");
-                return;
+                var path = Path.Combine(MainPatcher.RootFolder, RecipePath);
+                if (!File.Exists(path))
+                {
+                    PLog.Write($"No existing recipe found at {path}");
+                    return;
+                }
+                var content = File.ReadAllText(path);
+                if (PurgeContents.Contains(content))
+                {
+                    PLog.Write($"Purging {path}");
+                    File.Delete(path);
+                }
+                else
+                    PLog.Warn($"Content mismatch. Not purging {path}");
             }
-            var content = File.ReadAllText(path);
-            if (PurgeContents.Contains(content))
+            catch (Exception ex)
             {
-                Debug.Log($"Purging {path}");
-                File.Delete(path);
+                PLog.Exception(ex, null);
             }
-            else
-                Debug.LogWarning($"Content mismatch. Not purging {path}");
         }
 
 

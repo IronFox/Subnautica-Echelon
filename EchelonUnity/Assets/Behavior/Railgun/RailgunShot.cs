@@ -47,7 +47,7 @@ public class RailgunShot : MonoBehaviour
             this.line.owner = owner;
             this.line.damage = damage;
             this.line.speedMetersPerSecond = speedMetersPerSecond;
-            owner.GetComponent<Rigidbody>().AddForce(-transform.forward * 10000f / Time.fixedDeltaTime);
+            owner.GetComponent<Rigidbody>().AddForce(-transform.forward * 20000f / Time.fixedDeltaTime);
         }
         if (terminal && !line)
         {

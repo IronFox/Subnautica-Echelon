@@ -45,6 +45,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4946d44bf02153e4fab7dad0967f697e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  explosionRadius: 15
+  explosionDamage: 1500
 --- !u!114 &543899955642937692
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -54,13 +56,13 @@ MonoBehaviour:
   m_GameObject: {fileID: 1559697159186320429}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 56534fd16a4420046924e3771b758cdd, type: 3}
+  m_Script: {fileID: 11500000, guid: 8c9da103176980046ab795a477fff5fe, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   clip: {fileID: 8300000, guid: 241abd19a61789944aef1d68c7ecffde, type: 3}
   volume: 1
   play: 1
-  minDistance: 1
+  minDistance: 10
   maxDistance: 500
   is3D: 1
   pitch: 1

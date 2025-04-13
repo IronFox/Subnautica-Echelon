@@ -1,6 +1,4 @@
 ﻿using System;
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 public class MotionSimulation : MonoBehaviour
@@ -25,7 +23,7 @@ public class MotionSimulation : MonoBehaviour
         control.zoomAxis = -Input.GetAxis("Mouse ScrollWheel");
         control.triggerActive = Input.GetKey(KeyCode.Mouse0);
         control.triggerWasActivated = Input.GetKeyDown(KeyCode.Mouse0);
-        
+
     }
 
     void FixedUpdate()
@@ -44,7 +42,7 @@ public class MotionSimulation : MonoBehaviour
             }
             catch (Exception ex)
             {
-                ConsoleControl.WriteException("FixedUpdate()", ex);
+                ULog.Exception("FixedUpdate()", ex, gameObject);
             }
 
 

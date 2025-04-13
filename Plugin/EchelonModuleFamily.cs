@@ -13,6 +13,7 @@ public abstract class EchelonModuleFamily<T> : EchelonBaseModule
 
     public override IReadOnlyCollection<TechType> AutoDisplace => Family.Keys;
 
+    public static bool IsAny(TechType tt) => Family.ContainsKey(tt);
     public override TechType Register()
     {
         var type = base.Register();

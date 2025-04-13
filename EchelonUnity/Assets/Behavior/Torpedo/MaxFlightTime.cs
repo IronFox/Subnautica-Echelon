@@ -1,6 +1,4 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 
 public class MaxFlightTime : MonoBehaviour
 {
@@ -21,7 +19,7 @@ public class MaxFlightTime : MonoBehaviour
         currentFlightTime = age;
         if (age > maxLifetimeSeconds)
         {
-            ConsoleControl.Write($"Maximum lifetime reached ({maxLifetimeSeconds}). Detonating");
+            ULog.Write($"Maximum lifetime reached ({maxLifetimeSeconds}). Detonating");
             det.Detonate();
         }
     }

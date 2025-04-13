@@ -41,7 +41,7 @@ namespace Subnautica_Echelon
             }
             catch (Exception ex)
             {
-                Log.Write($"MainPatcher.Awake()", ex);
+                PLog.Exception($"MainPatcher.Awake()", ex, gameObject);
             }
         }
 
@@ -62,7 +62,7 @@ namespace Subnautica_Echelon
             }
             catch (Exception ex)
             {
-                Log.Write("MainPatcher.Start()", ex);
+                PLog.Exception("MainPatcher.Start()", ex, gameObject);
             }
         }
         public static T CopyComponent<T>(T original, GameObject destination) where T : Component
@@ -79,7 +79,7 @@ namespace Subnautica_Echelon
 
         public static Atlas.Sprite LoadSprite(string filename)
         {
-            var path = Path.Combine(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location),filename);
+            var path = Path.Combine(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location), filename);
             Log.Write($"Trying to load sprite from {path}");
             try
             {
@@ -87,13 +87,13 @@ namespace Subnautica_Echelon
             }
             catch (Exception ex)
             {
-                Log.Write(ex);
+                PLog.Exception(nameof(LoadSprite), ex, null);
                 return null;
             }
         }
         private static Sprite LoadSpriteRaw(string filename)
         {
-            var path = Path.Combine(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location),filename);
+            var path = Path.Combine(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location), filename);
             Log.Write($"Trying to load sprite from {path}");
             try
             {
@@ -101,7 +101,7 @@ namespace Subnautica_Echelon
             }
             catch (Exception ex)
             {
-                Log.Write(ex);
+                PLog.Exception(nameof(LoadSpriteRaw), ex, null);
                 return null;
             }
         }
@@ -115,18 +115,19 @@ namespace Subnautica_Echelon
                 Log.Write("");
                 Log.Write("model loaded: " + Echelon.model.name);
                 var sub = Echelon.model.EnsureComponent<Echelon>();
-                Log.Write("echelon attached: "+sub.name);
+                Log.Write("echelon attached: " + sub.name);
 
                 Echelon.craftingSprite = LoadSprite("images/echelon.png");
                 Echelon.pingSprite = LoadSprite("images/outline.png") ?? Echelon.emptySprite;
                 Echelon.saveFileSprite = LoadSpriteRaw("images/outline.png");
                 Echelon.moduleBackground = LoadSpriteRaw("images/moduleBackground.png");
-                started = UWE.CoroutineHost.StartCoroutine(VehicleRegistrar.RegisterVehicle(sub,true));
+                started = UWE.CoroutineHost.StartCoroutine(VehicleRegistrar.RegisterVehicle(sub, true));
 
                 TorpedoModule.RegisterAll();
                 DriveModule.RegisterAll();
                 NuclearBatteryModule.RegisterAll();
                 RepairModule.RegisterAll();
+                RailgunModule.RegisterAll();
 
                 AudioPatcher.Patcher = (source) => FreezeTimePatcher.Register(source);
                 ActorAdapter.IsOutOfWater = (go, pos) =>
@@ -169,7 +170,7 @@ namespace Subnautica_Echelon
                     }
                     catch (Exception ex)
                     {
-                        Log.Write("RigidbodyAdapter.MakeRigidbody", ex);
+                        PLog.Exception("RigidbodyAdapter.MakeRigidbody", ex, gameObject);
                         throw;
                     }
                 };
@@ -180,7 +181,7 @@ namespace Subnautica_Echelon
             }
             catch (Exception ex)
             {
-                Log.Write($"MainPatcher.Register()", ex);
+                PLog.Exception($"MainPatcher.Register()", ex, gameObject);
             }
             yield return started;
         }

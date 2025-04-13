@@ -1,11 +1,9 @@
 ﻿using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Reflection;
-using UnityEditor;
 using UnityEngine;
 
 internal abstract class JsonNode
@@ -92,7 +90,7 @@ internal class SoftNull : JsonValue
 {
     public Type Type { get; }
 
-    public SoftNull(Type type, OverflowGuard guard):base($"SoftNull<{type.Name}>", guard)
+    public SoftNull(Type type, OverflowGuard guard) : base($"SoftNull<{type.Name}>", guard)
     {
         Type = type;
     }
@@ -253,7 +251,7 @@ internal class JsonObject : JsonNode
 internal class JsonException : JsonArray
 {
     public JsonException(Exception source)
-        :base($"Exception", new OverflowGuard())
+        : base($"Exception", new OverflowGuard())
     {
         if (source is AggregateException agg)
         {
@@ -265,7 +263,7 @@ internal class JsonException : JsonArray
             while (source != null)
             {
                 var g = new OverflowGuard();
-                var inner = new JsonObject($"Exception",g);
+                var inner = new JsonObject($"Exception", g);
                 inner.AddValue("ExceptionType", source.GetType().Name);
                 inner.AddArray("StackTrace").AddAsValues(source.StackTrace.Split('\n').Select(x => x.Trim()));
                 inner.AddValue($"Message", source.Message);
@@ -297,11 +295,11 @@ internal class Counter
 
 internal class OverflowGuard
 {
-    public readonly Counter objects = new Counter($"Object",10000);
+    public readonly Counter objects = new Counter($"Object", 10000);
     //public readonly Counter properties = new Counter($"Property",10000);
-    public readonly Counter values = new Counter($"Value",100000);
-    public readonly Counter arrays = new Counter($"Array",10000);
-    public readonly Counter arrayElements = new Counter($"ArrayElement",10000);
+    public readonly Counter values = new Counter($"Value", 100000);
+    public readonly Counter arrays = new Counter($"Array", 10000);
+    public readonly Counter arrayElements = new Counter($"ArrayElement", 10000);
 
 
     //private static void WriteLine(string line)
@@ -353,14 +351,14 @@ public class HierarchyAnalyzer
     {
         if (string.IsNullOrWhiteSpace(msg))
             return;
-        ConsoleControl.Write(indent + msg);
+        ULog.Write(indent + msg);
     }
     private static void LogMultiLine(Indent indent, string firstLine, IEnumerable<string> nextLines)
     {
-        ConsoleControl.Write(indent + firstLine);
+        ULog.Write(indent + firstLine);
         indent = indent.Inc();
         foreach (var line in nextLines)
-            ConsoleControl.Write(indent + line);
+            ULog.Write(indent + line);
 
     }
 
@@ -375,7 +373,7 @@ public class HierarchyAnalyzer
             if (VisitedBefore(m))
                 return new JsonReference(m, Guard);
 
-            JsonObject rs = new JsonObject($"Material "+m.name,Guard);
+            JsonObject rs = new JsonObject($"Material " + m.name, Guard);
             rs.SetObjectProperties(m);
 
 
@@ -452,20 +450,20 @@ public class HierarchyAnalyzer
                 case Matrix4x4 mat:
                     {
                         JsonObject rs = new JsonObject(owner.ToString(), Guard);
-                        rs.Add("row0",ToJsonNode(mat.GetRow(0),v));
-                        rs.Add("row1",ToJsonNode(mat.GetRow(1),v));
-                        rs.Add("row2",ToJsonNode(mat.GetRow(2),v));
-                        rs.Add("row3",ToJsonNode(mat.GetRow(3),v));
+                        rs.Add("row0", ToJsonNode(mat.GetRow(0), v));
+                        rs.Add("row1", ToJsonNode(mat.GetRow(1), v));
+                        rs.Add("row2", ToJsonNode(mat.GetRow(2), v));
+                        rs.Add("row3", ToJsonNode(mat.GetRow(3), v));
                         return rs;
                     }
                 case Transform t:
-                    return ToJson(t,true);
+                    return ToJson(t, true);
                 case Texture t:
                     return ObjectToJson(t, !typeof(Texture).IsAssignableFrom(owner.GetType()));
 
                 case Material[] ms:
                     {
-                        JsonArray ar = new JsonArray(owner.ToString(),Guard);
+                        JsonArray ar = new JsonArray(owner.ToString(), Guard);
                         foreach (var m in ms)
                         {
                             ar.Add(MaterialToJsonNode(m));
@@ -506,7 +504,7 @@ public class HierarchyAnalyzer
     }
     public void LogToJson(Transform t, string filename)
     {
-        ToJson(t,false).SaveTo(filename);
+        ToJson(t, false).SaveTo(filename);
     }
     private JsonNode ToJson(Transform t, bool nameOnly)
     {
@@ -521,7 +519,7 @@ public class HierarchyAnalyzer
                 return new JsonReference(t, Guard);
 
 
-            JsonObject o = new JsonObject("Transform "+t.name, Guard);
+            JsonObject o = new JsonObject("Transform " + t.name, Guard);
             o.SetComponentProperties(t);
 
             AddFieldsAndProperties(o, t, true);
@@ -557,7 +555,7 @@ public class HierarchyAnalyzer
             if (ComplexVisited(any))
                 return new JsonValue($"[{any.GetType()}] {any}", Guard);
 
-            JsonObject o = new JsonObject("Complex "+any,Guard);
+            JsonObject o = new JsonObject("Complex " + any, Guard);
             o.AddValue("Class", any.GetType().Name);
             AddFieldsAndProperties(o, any);
 
@@ -580,7 +578,7 @@ public class HierarchyAnalyzer
                 return new SoftNull(c.GetType(), Guard);
             if (!asObject || VisitedBefore(c))
                 return new JsonReference(c, Guard);
-            JsonObject o = new JsonObject("Object "+c.name,  Guard);
+            JsonObject o = new JsonObject("Object " + c.name, Guard);
             o.SetObjectProperties(c);
             AddFieldsAndProperties(o, c, true);
 
@@ -602,7 +600,7 @@ public class HierarchyAnalyzer
                 return new SoftNull(c.GetType(), Guard);
             if (VisitedBefore(c))
                 return new JsonReference(c, Guard);
-            JsonObject o = new JsonObject("Component "+c.name, Guard);
+            JsonObject o = new JsonObject("Component " + c.name, Guard);
             o.SetComponentProperties(c);
 
             AddFieldsAndProperties(o, c, true);
@@ -616,7 +614,7 @@ public class HierarchyAnalyzer
     }
 
     private HashSet<int> Visited { get; } = new HashSet<int>();
-    private HashSet<object> VisitedComplex {get; } = new HashSet<object>();
+    private HashSet<object> VisitedComplex { get; } = new HashSet<object>();
     private bool VisitedBefore(UnityEngine.Object o)
     {
         return !Visited.Add(o.GetInstanceID());

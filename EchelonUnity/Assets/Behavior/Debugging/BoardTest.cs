@@ -1,6 +1,4 @@
 ﻿using System;
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 
@@ -11,7 +9,7 @@ public class BoardTest : MonoBehaviour
     private Transform preBoardingParent;
     private bool isOnboarded;
     public EchelonControl subControl;
-    
+
 
     public KeyCode boardKey = KeyCode.B;
     public KeyCode centerKey = KeyCode.C;
@@ -19,7 +17,7 @@ public class BoardTest : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        
+
     }
 
     // Update is called once per frame
@@ -27,8 +25,7 @@ public class BoardTest : MonoBehaviour
     {
         if (!isOnboarded)
         {
-            //Debug.Log(Input.GetAxis("Vertical"));
-            transform.position += transform.forward * Input.GetAxis("Vertical") * 10* Time.deltaTime;
+            transform.position += transform.forward * Input.GetAxis("Vertical") * 10 * Time.deltaTime;
             transform.position += transform.right * Input.GetAxis("Horizontal") * 10 * Time.deltaTime;
 
             LockedEuler
@@ -49,10 +46,10 @@ public class BoardTest : MonoBehaviour
 
         if (Input.GetKeyDown(boardKey))
         {
-            ConsoleControl.Write(boardKey.ToString());
+            ULog.Write(boardKey.ToString());
             if (!isOnboarded)
             {
-                ConsoleControl.Write("Boarding");
+                ULog.Write("Boarding");
                 try
                 {
                     preBoardingPosition = transform.position;
@@ -63,20 +60,20 @@ public class BoardTest : MonoBehaviour
                 }
                 catch (Exception ex)
                 {
-                    ConsoleControl.WriteException("Onboarding failed", ex);
+                    ULog.Exception("Onboarding failed", ex, gameObject);
                 }
                 isOnboarded = true;
-                ConsoleControl.Write("Boarded");
+                ULog.Write("Boarded");
             }
             else
             {
-                ConsoleControl.Write("Offboarding");
+                ULog.Write("Offboarding");
                 subControl.Offboard();
                 transform.parent = preBoardingParent;
                 transform.position = preBoardingPosition;
                 preBoardingEuler.ApplyTo(transform);
                 isOnboarded = false;
-                ConsoleControl.Write("Offboarded");
+                ULog.Write("Offboarded");
             }
 
         }

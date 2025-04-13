@@ -1,13 +1,10 @@
-﻿using System;
-using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 
 public class SpatialSoundEmulator : MonoBehaviour
 {
     private AudioSource source;
-    private float minDistance=1;
-    private float maxDistance=500;
+    private float minDistance = 1;
+    private float maxDistance = 500;
     public float halfDistance = 10f;
     public float pitch = 1f;
     public float volume = 1f;
@@ -21,7 +18,7 @@ public class SpatialSoundEmulator : MonoBehaviour
         minDistance = source.minDistance;
         maxDistance = source.maxDistance;
         lastCamera = CameraUtil.GetTransform(nameof(SpatialSoundEmulator));
-        if (lastCamera != null )
+        if (lastCamera != null)
             lastCameraPosition = lastCamera.position;
     }
 
@@ -64,7 +61,6 @@ public class SpatialSoundEmulator : MonoBehaviour
                 distance /= halfDistance / M.Sqrt2;
                 source.dopplerLevel = 2;
                 source.volume = volume * (1f / (distance * distance) - (1f / (maxDistance * maxDistance)));
-                //Debug.Log($"Volume @{distance} now {source.volume}");
             }
         }
     }

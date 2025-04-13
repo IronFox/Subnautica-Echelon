@@ -13,4 +13,7 @@
     RepairModuleMk1,
     RepairModuleMk2,
     RepairModuleMk3,
+    RailgunMk1,
+    RailgunMk2,
+    RailgunMk3,
 }

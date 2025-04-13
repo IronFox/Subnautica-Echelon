@@ -1,6 +1,4 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 
 public class NonCameraOrientation : MonoBehaviour, IDirectionSource
 {
@@ -21,7 +19,7 @@ public class NonCameraOrientation : MonoBehaviour, IDirectionSource
     // Start is called before the first frame update
     void Start()
     {
-        
+
     }
 
 
@@ -35,7 +33,6 @@ public class NonCameraOrientation : MonoBehaviour, IDirectionSource
         }
         else
         {
-            //Debug.Log(upRotationSpeed);
             rot = rot.RotateBy(upRotationSpeed, rightRotationSpeed, Time.deltaTime);
         }
     }

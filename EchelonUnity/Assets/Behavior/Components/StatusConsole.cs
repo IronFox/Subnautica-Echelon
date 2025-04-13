@@ -1,6 +1,4 @@
 ﻿using System;
-using System.Collections;
-using System.Collections.Generic;
 using System.Text;
 using TMPro;
 using UnityEngine;
@@ -12,7 +10,7 @@ public class StatusConsole : CommonBoardingListener
     private Canvas canvas;
 
     private string[] status = new string[Enum.GetValues(typeof(StatusProperty)).Length];
-    
+
     public void SetString(StatusProperty property, string value)
     {
         status[(int)property] = value ?? "<null>";
@@ -31,16 +29,16 @@ public class StatusConsole : CommonBoardingListener
         var camera = CameraUtil.GetCamera(nameof(StatusConsole));
         if (camera == null)
         {
-            Debug.LogError($"Cannot assign camera as worldCamera. Canvas remains off");
+            ULog.Fail($"Cannot assign camera as worldCamera. Canvas remains off");
             return;
         }
-        ConsoleControl.Write($"Assigning {camera} as worldCamera of {canvas}");
+        ULog.Write($"Assigning {camera} as worldCamera of {canvas}");
         if (canvas == null)
             canvas = GetComponent<Canvas>();
 
         canvas.worldCamera = camera;
         canvas.planeDistance = Mathf.Max(camera.nearClipPlane * 1.1f, 2f);
-        ConsoleControl.Write($"Set clip plane to distance {canvas.planeDistance}");
+        ULog.Write($"Set clip plane to distance {canvas.planeDistance}");
         canvas.enabled = true;
         enabled = statusText.enabled = false;
     }
@@ -58,7 +56,7 @@ public class StatusConsole : CommonBoardingListener
     {
         enabled = !enabled;
         statusText.enabled = enabled;
-        ConsoleControl.Write($"Toggled canvas visibility to {enabled}");
+        ULog.Write($"Toggled canvas visibility to {enabled}");
     }
 
 
@@ -128,6 +126,7 @@ public enum StatusProperty
     OnboardingCooldown,
     OpenUpgradeCover,
     TorpedoMark,
+    RailgunMark,
     IsFirstPerson,
 }
 

@@ -1,5 +1,4 @@
-﻿using System.Collections;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Text;
 using TMPro;
 using UnityEngine;
@@ -27,7 +26,7 @@ public class TrailSpaceTargetText : CommonTargetListener
 
     void Start()
     {
-        
+
     }
 
     [ColorUsage(true, true)]
@@ -57,7 +56,7 @@ public class TrailSpaceTargetText : CommonTargetListener
                 return MainAdapterTarget.TargetAdapter.GameObjectInstanceId == gameObjectInstanceId;
             case TargetDisplay.LockedOnly:
                 return MainAdapterTarget.TargetAdapter.GameObjectInstanceId == gameObjectInstanceId
-                    && echelon.torpedoMark > 0;
+                    && echelon.ActiveWeaponMark > 0;
             case TargetDisplay.None:
                 return false;
         }
@@ -66,7 +65,8 @@ public class TrailSpaceTargetText : CommonTargetListener
 
     private IEnumerable<AdapterTargetable> Targets()
     {
-        switch (textDisplay) {
+        switch (textDisplay)
+        {
             case TargetDisplay.All:
                 if (Environment != null)
                     foreach (var t in Environment.Targets)
@@ -77,17 +77,17 @@ public class TrailSpaceTargetText : CommonTargetListener
                     yield return MainAdapterTarget;
                 yield break;
             case TargetDisplay.LockedOnly:
-                if (MainAdapterTarget != null && echelon.torpedoMark > 0)
+                if (MainAdapterTarget != null && echelon.ActiveWeaponMark > 0)
                     yield return MainAdapterTarget;
                 yield break;
             case TargetDisplay.None:
                 yield break;
-            }
+        }
     }
 
     private readonly TargetPool<TextMeshProUGUI> pool;
 
-//    private readonly Dictionary<int, TextMeshProUGUI> map = new Dictionary<int, TextMeshProUGUI>();
+    //    private readonly Dictionary<int, TextMeshProUGUI> map = new Dictionary<int, TextMeshProUGUI>();
 
     // Update is called once per frame
     void Update()
@@ -96,7 +96,7 @@ public class TrailSpaceTargetText : CommonTargetListener
         if (camera == null || Echelon == null)
             return;
 
-        pool.FilterAndUpdate<(Vector2 Screen, Vector2 Screen2) >(Targets(), t =>
+        pool.FilterAndUpdate<(Vector2 Screen, Vector2 Screen2)>(Targets(), t =>
         {
 
             var screen = Project(camera, t.Position);

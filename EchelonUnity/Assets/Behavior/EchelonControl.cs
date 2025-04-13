@@ -19,6 +19,7 @@ public class EchelonControl : MonoBehaviour
     public float targetMarkerSizeScale = 1;
 
     public int torpedoMark; //0 = disabled, 1 = Mk1, 2 = Mk2, 3 = Mk3
+    public int railgunMark = 1;
 
     /*
     Frequency = 60 * Mathf.Pow(2, mk);
@@ -50,10 +51,14 @@ public class EchelonControl : MonoBehaviour
     public TorpedoLaunchControl rightLaunch;
 
     private TargetProcessor targetProcessor;
-    private bool firingLeft = true;
+    //private bool firingLeft = true;
     private CoverAnimation upgradeCoverAnimation;
     private FirstPersonMarkers firstPersonMarkers;
     private Railgun railgun;
+
+    private RailgunTriggerGuidance RailgunGuidance { get; set; }
+    private TorpedoTriggerGuidance TorpedoGuidance { get; set; }
+
 
     public float regularForwardAcc = 400;
     public float overdriveForwardAcc = 800;
@@ -63,13 +68,8 @@ public class EchelonControl : MonoBehaviour
     public float airDrag = 0.1f;
     public bool triggerActive;  //captures continuous holding
     public bool triggerWasActivated; //captures trigger key down
-    public int railgunMark = 1;
     public Weapon activeWeapon = Weapon.Railgun;
 
-    private bool maintainTriggerUntilFired;
-    private ITargetable maintainTarget;
-
-    private DateTime lastTriggerTime = DateTime.MinValue;
 
     private EnergyLevel energyLevel;
 
@@ -85,9 +85,6 @@ public class EchelonControl : MonoBehaviour
 
     public Transform trailSpace;
     public Transform trailSpaceCameraContainer;
-    //public Canvas trailSpaceCanvas;
-    //public Transform cockpitRoot;
-    //public Transform headCenter;
     public Transform seat;
     public StatusConsole statusConsole;
 
@@ -116,25 +113,10 @@ public class EchelonControl : MonoBehaviour
 
     private CameraState state = CameraState.IsBound;
 
-    private int ActiveWeaponMark
-    {
-        get
-        {
-            switch (activeWeapon)
-            {
-                case Weapon.Torpedoes:
-                    return torpedoMark;
-                case Weapon.Railgun:
-                    return railgunMark;
-                default:
-                    return 0;
-            }
-        }
-    }
+    public int ActiveWeaponMark => ActiveGuidance?.Mark ?? 0;
 
     private void ChangeState(CameraState state)
     {
-        //Debug.Log($"->{state}");
         this.state = state;
     }
 
@@ -143,14 +125,14 @@ public class EchelonControl : MonoBehaviour
         if (!cameraIsInTrailspace)
         {
             cameraIsInTrailspace = true;
-            ConsoleControl.Write("Moving camera to trailspace. Setting secondary fallback camera transform");
+            ULog.Write("Moving camera to trailspace. Setting secondary fallback camera transform");
 
             CameraUtil.secondaryFallbackCameraTransform = trailSpaceCameraContainer;
 
             cameraMove = Parentage.FromLocal(cameraRoot);
             cameraRoot.parent = trailSpaceCameraContainer;
             TransformDescriptor.LocalIdentity.ApplyTo(cameraRoot);
-            ConsoleControl.Write("Moved");
+            ULog.Write("Moved");
         }
     }
 
@@ -160,12 +142,12 @@ public class EchelonControl : MonoBehaviour
         {
             cameraIsInTrailspace = false;
 
-            ConsoleControl.Write("Moving camera out of trailspace. Unsetting secondary fallback camera transform");
+            ULog.Write("Moving camera out of trailspace. Unsetting secondary fallback camera transform");
 
             CameraUtil.secondaryFallbackCameraTransform = null;
 
             cameraMove.Restore();
-            ConsoleControl.Write("Moved");
+            ULog.Write("Moved");
         }
     }
 
@@ -177,7 +159,7 @@ public class EchelonControl : MonoBehaviour
         lastOnboarded = DateTime.Now;
         if (!currentlyBoarded)
         {
-            ConsoleControl.Write($"Onboarding");
+            ULog.Write($"Onboarding");
 
             var listeners = BoardingListeners.Of(this, trailSpace);
 
@@ -186,7 +168,7 @@ public class EchelonControl : MonoBehaviour
             cameraRoot = localizeInsteadOfMainCamera;
             if (cameraRoot == null)
                 cameraRoot = Camera.main.transform;
-            ConsoleControl.Write($"Setting {cameraRoot} as cameraRoot");
+            ULog.Write($"Setting {cameraRoot} as cameraRoot");
             CameraUtil.primaryFallbackCameraTransform = cameraRoot;
             onboardLocalizedTransform = Parentage.FromLocal(cameraRoot);
 
@@ -194,7 +176,7 @@ public class EchelonControl : MonoBehaviour
             if (!currentCameraCenterIsCockpit)
                 MoveCameraToTrailSpace();
 
-            ConsoleControl.Write($"Offloading trail space");
+            ULog.Write($"Offloading trail space");
             trailSpace.parent = transform.parent;
 
             currentlyBoarded = isBoarded = true;
@@ -209,7 +191,7 @@ public class EchelonControl : MonoBehaviour
     {
         if (currentlyBoarded)
         {
-            ConsoleControl.Write($"Offboarding");
+            ULog.Write($"Offboarding");
             var listeners = BoardingListeners.Of(this, trailSpace);
             try
             {
@@ -217,13 +199,13 @@ public class EchelonControl : MonoBehaviour
                 listeners.SignalOffBoardingBegin();
 
                 MoveCameraOutOfTrailSpace();
-                ConsoleControl.Write($"Restoring parentage");
+                ULog.Write($"Restoring parentage");
                 onboardLocalizedTransform.Restore();
             }
             finally
             {
                 currentlyBoarded = isBoarded = false;
-                ConsoleControl.Write($"Reintegration trail space");
+                ULog.Write($"Reintegration trail space");
                 trailSpace.parent = transform;
             }
 
@@ -247,6 +229,8 @@ public class EchelonControl : MonoBehaviour
         energyLevel = GetComponentInChildren<EnergyLevel>();
         firstPersonMarkers = GetComponentInChildren<FirstPersonMarkers>();
         railgun = GetComponentInChildren<Railgun>();
+        RailgunGuidance = new RailgunTriggerGuidance(statusConsole, firstPersonMarkers, railgun);
+        TorpedoGuidance = new TorpedoTriggerGuidance(statusConsole, firstPersonMarkers, leftLaunch, rightLaunch);
         if (look != null)
             look.targetOrientation = inWaterDirectionSource = nonRailgunInWaterDirectionSource = new TransformDirectionSource(trailSpace);
     }
@@ -417,7 +401,30 @@ public class EchelonControl : MonoBehaviour
             Destroy(gameObject);
     }
 
-    public bool IsFiring => (triggerActive || maintainTriggerUntilFired)
+    private IWeaponTriggerGuidance ActiveGuidance
+    {
+        get
+        {
+            switch (activeWeapon)
+            {
+                case Weapon.Torpedoes:
+                    return TorpedoGuidance;
+                case Weapon.Railgun:
+                    return RailgunGuidance;
+                default:
+                    return null;
+            }
+        }
+    }
+
+
+    private IEnumerable<IWeaponTriggerGuidance> AllWeaponGuidances()
+    {
+        yield return TorpedoGuidance;
+        yield return RailgunGuidance;
+    }
+
+    public bool IsFiring => (triggerActive || ActiveGuidance?.MaintainedTarget != null)
                             && isBoarded
                             && !isDocked
                             && !cameraCenterIsCockpit
@@ -429,9 +436,8 @@ public class EchelonControl : MonoBehaviour
 
     private void ProcessTargeting()
     {
-        rightLaunch.torpedoTechLevel
-            = leftLaunch.torpedoTechLevel
-            = Math.Max(0, torpedoMark - 1);
+        TorpedoGuidance.Mark = torpedoMark;
+        RailgunGuidance.Mark = railgunMark;
 
         targetProcessor.Work =
                            isBoarded
@@ -445,12 +451,11 @@ public class EchelonControl : MonoBehaviour
         {
             liveTarget = GetTarget();
             statusConsole.Set(StatusProperty.Target, liveTarget);
-            //ConsoleControl.Write($"target: "+target.ToString());
 
 
             IEnumerable<ITargetable> set = targetProcessor.Latest.Targets;
             if (liveTarget != null
-                && torpedoMark > 0
+                && ActiveWeaponMark > 0
                 && liveTarget is PositionTargetable pt
                 )
             {
@@ -478,7 +483,7 @@ public class EchelonControl : MonoBehaviour
                     tm.Scale(targetSize);
                     var primary = t.Equals(liveTarget);
                     tm.TargetHealthFeed.isPrimary = primary;
-                    tm.TargetHealthFeed.isLocked = primary && torpedoMark > 0;
+                    tm.TargetHealthFeed.isLocked = primary && ActiveWeaponMark > 0;
                 });
             if (targetArrows != TargetArrows.None && !positionCamera.isFirstPerson)
                 targetDirectionMarkers.UpdateAll(targetProcessor.Latest.Targets,
@@ -493,79 +498,42 @@ public class EchelonControl : MonoBehaviour
             {
                 var targetSize = SizeOf(liveTarget);
 
-                //if (!(target is PositionTargetable) && !target.Equals(lastValidTarget))
-                //    ConsoleControl.Write($"New target acquired: {target}");
-
                 lastValidTarget = liveTarget;
-
-
             }
             else
             {
-                //ConsoleControl.Write($"Destroying target marker");
-
                 lastValidTarget = null;
             }
-
-            IFirable firing = null;
-            switch (activeWeapon)
-            {
-                case Weapon.Torpedoes:
-                    firing = firingLeft ? leftLaunch : rightLaunch;
-                    break;
-                case Weapon.Railgun:
-                    firing = railgun;
-                    break;
-            }
+            IWeaponTriggerGuidance guidance = ActiveGuidance;
+            foreach (var g in AllWeaponGuidances())
+                if (g != guidance)
+                    g.OnTriggerLost();
 
 
-            if (activeWeapon == Weapon.Torpedoes)
+            if (guidance != null)
             {
                 if (triggerWasActivated)
                 {
-                    maintainTriggerUntilFired = true;
-                    maintainTarget = liveTarget;
+                    guidance.OnTriggerWasActivated(liveTarget);
                 }
                 else if (triggerActive)
                 {
-                    maintainTarget = liveTarget;
+                    guidance.OnTriggerActiveOn(liveTarget);
                 }
+                else
+                    guidance.OnTriggerInactive();
             }
 
-            if (maintainTriggerUntilFired && !triggerActive && maintainTarget.Exists)
-                liveTarget = maintainTarget;
+            if (!triggerActive && guidance.MaintainedTarget != null)
+                liveTarget = guidance.MaintainedTarget;
 
 
             var doFire = IsFiring;
 
-            firstPersonMarkers.firingLeft = doFire && activeWeapon == Weapon.Torpedoes && firingLeft;
-            firstPersonMarkers.firingRight = doFire && activeWeapon == Weapon.Torpedoes && !firingLeft;
-            firstPersonMarkers.firingRailgun = doFire && activeWeapon == Weapon.Railgun;
 
-            // Debug.Log($"doFire={doFire} (triggerActive={triggerActive}, outOfWater={outOfWater})");
-            if (firing != null)
-            {
-                firing.FireWithTarget = doFire ? liveTarget : null;
-                if (firing is TorpedoLaunchControl control)
-                {
-                    if (control.CycleProgress > control.CycleTime * 0.5f)
-                    {
-                        ConsoleControl.Write($"Switching tube");
-                        control.FireWithTarget = null;
-                        firingLeft = !firingLeft;
-                        maintainTriggerUntilFired = false;
-                    }
-                }
-                else if (firing is Railgun r)
-                {
-                    if (r.CurrentShotIsDone)
-                    {
-                        maintainTriggerUntilFired = false;
-                    }
-                }
-            }
-            statusConsole.Set(StatusProperty.LeftLauncherTarget, leftLaunch.FireWithTarget);
-            statusConsole.Set(StatusProperty.RightLauncherTarget, rightLaunch.FireWithTarget);
+            foreach (var all in AllWeaponGuidances())
+                all.OnUpdate();
+
         }
         else
         {
@@ -624,7 +592,6 @@ public class EchelonControl : MonoBehaviour
             statusConsole.Set(StatusProperty.TriggerActive, triggerActive);
             statusConsole.Set(StatusProperty.OnboardingCooldown, OnboardingCooldown);
             statusConsole.Set(StatusProperty.OpenUpgradeCover, openUpgradeCover);
-            statusConsole.Set(StatusProperty.TorpedoMark, torpedoMark);
             statusConsole.Set(StatusProperty.IsFirstPerson, positionCamera.isFirstPerson);
 
             firstPersonMarkers.show =
@@ -672,28 +639,9 @@ public class EchelonControl : MonoBehaviour
                 if (currentlyBoarded)
                 {
                     statusConsole.ToggleVisibility();
-
-                    //ConsoleControl.Write("Capturing debug information v3");
-
-                    //ConsoleControl.Write($"3rd person camera at {trailSpace.position}");
-                    //ConsoleControl.Write($"Main camera at {cameraRoot.position}");
-                    ////ConsoleControl.Write($"Cockpit center at {cockpitRoot.position}");
-
-
-                    ////ConsoleControl.Write($"RigidBody.isKinematic="+rb.isKinematic);
-                    ////ConsoleControl.Write($"RigidBody.constraints="+rb.constraints);
-                    ////ConsoleControl.Write($"RigidBody.collisionDetectionMode=" +rb.collisionDetectionMode);
-                    ////ConsoleControl.Write($"RigidBody.drag=" +rb.drag);
-                    ////ConsoleControl.Write($"RigidBody.mass=" +rb.mass);
-                    ////ConsoleControl.Write($"RigidBody.useGravity=" +rb.useGravity);
-                    ////ConsoleControl.Write($"RigidBody.velocity=" +rb.velocity);
-                    ////ConsoleControl.Write($"RigidBody.worldCenterOfMass=" +rb.worldCenterOfMass);
-
-                    //LogComposition(transform);
-
                 }
                 else
-                    ConsoleControl.Write($"Not currently boarded. Ignoring console key");
+                    ULog.Write($"Not currently boarded. Ignoring console key");
 
             }
 
@@ -832,7 +780,7 @@ public class EchelonControl : MonoBehaviour
         }
         catch (Exception ex)
         {
-            ConsoleControl.WriteException($"EchelongControl.Update()", ex);
+            ULog.Exception($"EchelongControl.Update()", ex, gameObject);
         }
     }
 

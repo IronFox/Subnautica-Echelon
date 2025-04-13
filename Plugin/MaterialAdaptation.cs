@@ -63,7 +63,7 @@ namespace Subnautica_Echelon
         /// <returns>Addressed material or null if the address is/has become invalid</returns>
         public Material GetMaterial()
         {
-            if (Renderer == null)
+            if (!Renderer)
                 return null;
             if (MaterialIndex < 0 || MaterialIndex >= Renderer.materials.Length)
                 return null;
@@ -134,7 +134,7 @@ namespace Subnautica_Echelon
             try
             {
                 var m = Target.GetMaterial();
-                if (m == null)
+                if (!m)
                 {
                     logConfig.LogWarning($"Target material is gone ({Target}). Cannot apply");
                     return;
@@ -154,7 +154,7 @@ namespace Subnautica_Echelon
             }
             catch (Exception ex)
             {
-                Debug.LogException(ex);
+                Debug.LogException(ex, Target.Renderer.gameObject);
                 logConfig.LogError($"Failed to apply MaterialAdaptation to material {Target}");
             }
         }
@@ -168,7 +168,7 @@ namespace Subnautica_Echelon
             try
             {
                 var m = Target.GetMaterial();
-                if (m == null)
+                if (!m)
                 {
                     logConfig.LogWarning($"Target material is gone ({Target}). Cannot apply");
                     return;

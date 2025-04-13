@@ -44,10 +44,10 @@ namespace Subnautica_Echelon
         public override void OnFinishedLoading()
         {
             base.OnFinishedLoading();
-            Debug.Log($"Comparing colors {baseColor} and {stripeColor}");
+            PLog.Write($"Comparing colors {baseColor} and {stripeColor}");
             if (baseColor == Color.white && stripeColor == Color.white)
             {
-                Debug.Log($"Resetting white {VehicleName}");
+                PLog.Write($"Resetting white {VehicleName}");
                 SetBaseColor(Vector3.zero, defaultBaseColor);
                 SetStripeColor(Vector3.zero, defaultStripeColor);
             }
@@ -111,7 +111,7 @@ namespace Subnautica_Echelon
             }
             catch (Exception ex)
             {
-                Log.Write("Echelon.GetAssets()", ex);
+                PLog.Exception("Echelon.GetAssets()", ex, null);
             }
         }
 
@@ -145,7 +145,7 @@ namespace Subnautica_Echelon
             VFEngine = Engine = engine = gameObject.AddComponent<VoidDrive>();
             EchLog.Write($"Assigned new engine");
 
-
+            this.onToggle += OnToggleModule;
 
             base.Awake();
             var cameraController = gameObject.GetComponentInChildren<VehicleFramework.VehicleComponents.MVCameraController>();
@@ -158,6 +158,74 @@ namespace Subnautica_Echelon
 
         }
 
+        private bool ToggleAnyOn<T>() where T : EchelonModuleFamily<T>
+        {
+            for (int i = 0; i < slotIDs.Length; i++)
+            {
+                if (!IsToggled(i))
+                {
+                    var item = modules.GetItemInSlot(this.slotIDs[i])?.item;
+                    if (item && EchelonModuleFamily<T>.IsAny(item.GetTechType()))
+                    {
+                        EchLog.Write($"Found non-toggled weapon in slot {i}/{slotIDs[i]}. Toggling off");
+                        ToggleSlot(i, true);
+                        return true;
+                    }
+                }
+            }
+            return false;
+        }
+
+        private bool IsAnyToggled<T>() where T : EchelonModuleFamily<T>
+        {
+            for (int i = 0; i < slotIDs.Length; i++)
+            {
+                if (IsToggled(i))
+                {
+                    var item = modules.GetItemInSlot(this.slotIDs[i])?.item;
+                    if (item && EchelonModuleFamily<T>.IsAny(item.GetTechType()))
+                    {
+                        return true;
+                    }
+                }
+            }
+            return false;
+        }
+
+        private void OnToggleModule(int slotID, bool state)
+        {
+            EchLog.Write($"OnToggleModule({slotID},{state})");
+            var item = modules.GetItemInSlot(this.slotIDs[slotID])?.item;
+            EchLog.Write($"Checking {item}");
+            if (IsWeapon(item))
+            {
+                EchLog.Write($"Is weapon");
+                if (state)
+                {
+                    EchLog.Write($"Is toggling on");
+                    for (int i = 0; i < slotIDs.Length; i++)
+                    {
+                        if (i != slotID)
+                        {
+                            var item2 = modules.GetItemInSlot(this.slotIDs[i])?.item;
+                            if (IsWeapon(item2) && IsToggled(i))
+                            {
+                                EchLog.Write($"Found other toggled weapon in slot {i}/{slotIDs[i]}. Toggling off");
+                                ToggleSlot(i, false);
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+        private bool IsWeapon(Pickupable item)
+        {
+            if (!item)
+                return false;
+            var tt = item.GetTechType();
+            return TorpedoModule.IsAny(tt) || RailgunModule.IsAny(tt);
+        }
 
         public override bool AutoApplyShaders => false;
 
@@ -214,7 +282,7 @@ namespace Subnautica_Echelon
                 }
                 catch (Exception e)
                 {
-                    Log.Write("LocalInit()", e);
+                    PLog.Exception("LocalInit()", e, gameObject);
                 }
 
             }
@@ -223,7 +291,7 @@ namespace Subnautica_Echelon
 
         public override void SetBaseColor(Vector3 hsb, Color color)
         {
-            Debug.Log($"Updating sub base color to {color}");
+            PLog.Write($"Updating sub base color to {color}");
             base.SetBaseColor(hsb, color);
 
             var listeners = GetComponentsInChildren<IColorListener>();
@@ -234,7 +302,7 @@ namespace Subnautica_Echelon
 
         public override void SetStripeColor(Vector3 hsb, Color color)
         {
-            Debug.Log($"Updating sub stripe color to {color}");
+            PLog.Write($"Updating sub stripe color to {color}");
             base.SetStripeColor(hsb, color);
 
             var listeners = GetComponentsInChildren<IColorListener>();
@@ -258,7 +326,7 @@ namespace Subnautica_Echelon
             }
             catch (Exception ex)
             {
-                Log.Write("Echelon.Start()", ex);
+                PLog.Exception("Echelon.Start()", ex, gameObject);
             }
         }
 
@@ -286,7 +354,7 @@ namespace Subnautica_Echelon
             }
             catch (Exception ex)
             {
-                Log.Write("Echelon.PlayerEntry()", ex);
+                PLog.Exception("Echelon.PlayerEntry()", ex, gameObject);
             }
         }
 
@@ -310,7 +378,7 @@ namespace Subnautica_Echelon
             }
             catch (Exception ex)
             {
-                Log.Write("Echelon.PlayerExit()", ex);
+                PLog.Exception("Echelon.PlayerExit()", ex, gameObject);
             }
         }
 
@@ -329,12 +397,13 @@ namespace Subnautica_Echelon
                 if (!fixedUpdateError)
                 {
                     fixedUpdateError = true;
-                    Log.Write("Echelon.FixedUpdate()", ex);
+                    PLog.Exception("Echelon.FixedUpdate()", ex, gameObject);
                 }
             }
         }
 
         private EchelonModule GetTorpedoMark() => TorpedoModule.GetFrom(this);
+        private EchelonModule GetRailgunMark() => RailgunModule.GetFrom(this);
         private EchelonModule GetBatteryMark() => NuclearBatteryModule.GetFrom(this);
         private EchelonModule GetDriveMark() => DriveModule.GetFrom(this);
         private EchelonModule GetSelfRepairMark() => RepairModule.GetFrom(this);
@@ -423,7 +492,6 @@ namespace Subnautica_Echelon
 
                     var clamped = Mathf.Min(healing, liveMixin.maxHealth - liveMixin.health);
                     var effective = clamped / healing;
-                    //Debug.Log($"Healing at delta={Time.deltaTime}");
                     float energyDemand =
                         1 //max 1 energy per second
                         * delta
@@ -570,7 +638,7 @@ namespace Subnautica_Echelon
                     //    a.LogToJson(Player.main.currentMountedVehicle.transform, $@"C:\temp\vehicle.json");
                     //}
 
-                    Debug.Log($"Reapplying materials");
+                    PLog.Write($"Reapplying materials");
                     MaterialFixer.ReApply();
                 }
 
@@ -583,12 +651,12 @@ namespace Subnautica_Echelon
                     deathAge += Time.deltaTime;
                     if (deathAge > 1.5f)
                     {
-                        Debug.Log($"Emitting pseudo self destruct");
+                        PLog.Write($"Emitting pseudo self destruct");
                         control.SelfDestruct(true);
-                        Debug.Log($"Calling OnSalvage");
+                        PLog.Write($"Calling OnSalvage");
                         OnSalvage();
                         enabled = false;
-                        Debug.Log($"Done?");
+                        PLog.Write($"Done?");
                         return;
                     }
                 }
@@ -599,6 +667,21 @@ namespace Subnautica_Echelon
 
                 control.targetMarkerSizeScale = MainPatcher.PluginConfig.targetMarkerSizeScale / 100f;
                 control.torpedoMark = TorpedoModule.LevelOf(GetTorpedoMark()) + 1;
+                control.railgunMark = RailgunModule.LevelOf(GetRailgunMark()) + 1;
+                if (control.torpedoMark > 0 || control.railgunMark > 0)
+                {
+                    if (IsAnyToggled<TorpedoModule>())
+                        control.activeWeapon = Weapon.Torpedoes;
+                    else if (IsAnyToggled<RailgunModule>())
+                        control.activeWeapon = Weapon.Railgun;
+                    else if (ToggleAnyOn<RailgunModule>())
+                        control.activeWeapon = Weapon.Railgun;
+                    else
+                    {
+                        ToggleAnyOn<TorpedoModule>();
+                        control.activeWeapon = Weapon.Torpedoes;
+                    }
+                }
 
                 Vector2 lookDelta = GameInput.GetLookDelta();
                 control.lookRightAxis = lookDelta.x * 1e-3f * MainPatcher.PluginConfig.lookSensitivity;
@@ -641,7 +724,7 @@ namespace Subnautica_Echelon
             }
             catch (Exception ex)
             {
-                Log.Write("Echelon.Update()", ex);
+                PLog.Exception("Echelon.Update()", ex, gameObject);
             }
         }
 
@@ -688,11 +771,13 @@ namespace Subnautica_Echelon
             var bm = GetBatteryMark();
             var dm = GetDriveMark();
             var rm = GetSelfRepairMark();
+            var gm = GetRailgunMark();
             moduleCounts[(int)moduleType] = count;
             var tm2 = GetTorpedoMark();
             var bm2 = GetBatteryMark();
             var dm2 = GetDriveMark();
             var rm2 = GetSelfRepairMark();
+            var gm2 = GetRailgunMark();
             if (!destroyed)
             {
                 if (tm != tm2)
@@ -703,8 +788,10 @@ namespace Subnautica_Echelon
                     ErrorMessage.AddMessage(string.Format(Language.main.Get($"boostCapChanged"), VehicleName, Language.main.Get("cap_d_" + dm2)));
                 if (rm != rm2)
                     ErrorMessage.AddMessage(string.Format(Language.main.Get($"repairCapChanged"), VehicleName, Language.main.Get("cap_r_" + rm2)));
+                if (gm != gm2)
+                    ErrorMessage.AddMessage(string.Format(Language.main.Get($"railgunCapChanged"), VehicleName, Language.main.Get("cap_g_" + gm2)));
             }
-            Debug.Log($"Changed counts of {moduleType} to {moduleCounts[(int)moduleType]}");
+            PLog.Write($"Changed counts of {moduleType} to {moduleCounts[(int)moduleType]}");
         }
 
         public string VehicleName => subName != null ? subName.GetName() : vehicleName;
@@ -789,7 +876,7 @@ namespace Subnautica_Echelon
                         storageTransform = new GameObject(name).transform;
                         storageTransform.parent = root.transform;
                         storageTransform.localPosition = M.V3(i);
-                        Debug.Log($"Creating new storage transform {storageTransform} in {root} @{storageTransform.localPosition} => {storageTransform.position}");
+                        PLog.Write($"Creating new storage transform {storageTransform} in {root} @{storageTransform.localPosition} => {storageTransform.position}");
                     }
                     rs.Add(new VehicleStorage
                     {
@@ -923,7 +1010,7 @@ namespace Subnautica_Echelon
                 }
                 catch (Exception ex)
                 {
-                    Log.Write("HeadLights", ex);
+                    PLog.Exception("HeadLights", ex, gameObject);
                 }
                 EchLog.Write($"Returning {rs.Count} headlight(s)");
                 return rs;

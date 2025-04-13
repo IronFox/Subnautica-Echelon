@@ -1,6 +1,4 @@
 ﻿using System;
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 public class TorpedoDirectAt : MonoBehaviour
@@ -15,14 +13,14 @@ public class TorpedoDirectAt : MonoBehaviour
     {
         rb = GetComponent<Rigidbody>();
         if (rb == null)
-            Debug.LogError($"Rigid body adapter not found on torpedo");
+            ULog.Fail($"Rigid body adapter not found on torpedo");
         targetDirection = transform.forward;
     }
 
     // Update is called once per frame
     void Update()
     {
-        
+
     }
 
     void FixedUpdate()
@@ -31,30 +29,25 @@ public class TorpedoDirectAt : MonoBehaviour
         {
             var maxRotThisFrame = maxRotationDegreesPerSecond * Time.fixedDeltaTime;
             var error = Vector3.Angle(transform.forward, targetDirection);
-            //Debug.Log($"Torpedo.DirectAt: error={error}, maxRotThisFrame={maxRotThisFrame}, timeDelta={Time.fixedDeltaTime}");
 
             if (emulateRigidbody)
             {
                 var q = Quaternion.FromToRotation(transform.forward, targetDirection);
-                var actual  = Quaternion.Slerp(Quaternion.identity, q, Mathf.Min(maxRotThisFrame, error*0.1f* Time.fixedDeltaTime));
+                var actual = Quaternion.Slerp(Quaternion.identity, q, Mathf.Min(maxRotThisFrame, error * 0.1f * Time.fixedDeltaTime));
                 transform.rotation = actual * transform.rotation;
             }
             else
             {
-                //transform.forward = targetDirection;
-                //rb.angularVelocity = Vector3.zero;
 
                 var axis = Vector3.Cross(transform.forward, targetDirection).normalized;
                 var want = axis * M.DegToRad(maxRotationDegreesPerSecond) * Mathf.Min(error / maxRotThisFrame, 1);
                 var delta = (want - rb.angularVelocity);
-                //Debug.Log($"Torpedo.DirectAt: terminal, delta={delta}, want={want}, have={rb.angularVelocity}");
                 rb.AddTorque(delta, ForceMode.VelocityChange);
             }
         }
         catch (Exception ex)
         {
-            Debug.Log($"TorpedoDirectAt.FixedUpdate() failed on rb {rb}");
-            Debug.LogException(ex, this);
+            ULog.Exception($"TorpedoDirectAt.FixedUpdate() on rb {rb}", ex, gameObject);
         }
     }
 }

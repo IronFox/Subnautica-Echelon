@@ -12,6 +12,7 @@ public class TorpedoModule : EchelonModuleFamily<TorpedoModule>
         icon = torpedoSprite,
         name = $"echelontorpedoupgrades"
     };
+    public override QuickSlotType QuickSlotType => QuickSlotType.Toggleable;
 
 
 

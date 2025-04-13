@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
-using static UnityEngine.GraphicsBuffer;
 
 public class TargetScanner : MonoBehaviour
 {
@@ -12,7 +11,7 @@ public class TargetScanner : MonoBehaviour
     public float lastScanTime = 0;
 
 
-    private readonly CountedSet<RigidbodyReference> viableTargets 
+    private readonly CountedSet<RigidbodyReference> viableTargets
         = new CountedSet<RigidbodyReference>();
 
 
@@ -46,7 +45,7 @@ public class TargetScanner : MonoBehaviour
     {
         return excludePrefixes.Any(x => objectName.StartsWith(x))
             || objectName.Contains("School")
-            
+
             ;
     }
     public static bool IsCriticalTarget(GameObject gameObject)
@@ -97,7 +96,7 @@ public class TargetScanner : MonoBehaviour
         }
         catch (Exception ex)
         {
-            Debug.LogException(ex);
+            ULog.Exception(nameof(GetBestTarget), ex, gameObject);
             return null;
         }
     }
@@ -189,7 +188,7 @@ public class UpdateProcess
         return true;
     }
 
-    
+
 
 }
 
@@ -212,7 +211,7 @@ public class TargetEnvironment
         while (numTargets >= buffer.Length)
         {
             buffer = new Collider[buffer.Length * 2];
-            ConsoleControl.Write($"Increased target environment buffer size to {buffer.Length}");
+            ULog.Write($"Increased target environment buffer size to {buffer.Length}");
             numTargets = Physics.OverlapSphereNonAlloc(position, radius, buffer);
         }
         return currentProcess = new UpdateProcess(this, buffer, numTargets, exclude);
@@ -241,7 +240,7 @@ public class TargetEnvironment
 /// <typeparam name="T">Type that is to be associated with each one living target</typeparam>
 public class TargetPool<T>
 {
-    private readonly Dictionary<int,T> map = new Dictionary<int,T>();
+    private readonly Dictionary<int, T> map = new Dictionary<int, T>();
 
     /// <summary>
     /// Constructs a new pool
@@ -274,7 +273,7 @@ public class TargetPool<T>
             }
             catch (Exception ex)
             {
-                ConsoleControl.WriteException( nameof(TargetPool<T>)+ ".Flush("+gameObjectInstanceId+")", ex);
+                ULog.Exception(nameof(TargetPool<T>) + ".Flush(" + gameObjectInstanceId + ")", ex, null);
             }
             finally
             {
@@ -292,14 +291,13 @@ public class TargetPool<T>
         foreach (var p in map)
         {
             var instance = p.Value;
-            //ConsoleControl.Write($"Destroying {typeof(T).Name} {p.Key}");
             try
             {
                 Destroy(instance, true);
             }
             catch (Exception ex)
             {
-                ConsoleControl.WriteException(nameof(TargetPool<T>) + ".Flush(" + p.Key + ")", ex);
+                ULog.Exception(nameof(TargetPool<T>) + ".Flush(" + p.Key + ")", ex, null);
             }
         }
         map.Clear();
@@ -373,13 +371,12 @@ public class TargetPool<T>
                 {
                     try
                     {
-                        //ConsoleControl.Write($"Creating {typeof(T).Name} for target {t}");
                         instance = Instantiate(t);
                         map.Add(goid, instance);
                     }
                     catch (Exception ex)
                     {
-                        ConsoleControl.WriteException(nameof(TargetPool<T>) + $".Instantiate({t})", ex);
+                        ULog.Exception(nameof(TargetPool<T>) + $".Instantiate({t})", ex, null);
                         continue;
                     }
                 }
@@ -392,14 +389,13 @@ public class TargetPool<T>
             foreach (var p in remove)
             {
                 var instance = p.Value;
-                //ConsoleControl.Write($"Destroying {typeof(T).Name} {p.Key}");
                 try
                 {
                     Destroy(instance, false);
                 }
                 catch (Exception ex)
                 {
-                    ConsoleControl.WriteException(nameof(TargetPool<T>) + ".Flush(" + p.Key + ")", ex);
+                    ULog.Exception(nameof(TargetPool<T>) + ".Flush(" + p.Key + ")", ex, null);
                 }
                 finally
                 {
@@ -409,7 +405,7 @@ public class TargetPool<T>
         }
         catch (Exception ex)
         {
-            ConsoleControl.WriteException(nameof(TargetPool<T>) + ".Map()", ex);
+            ULog.Exception(nameof(TargetPool<T>) + ".Map()", ex, null);
 
         }
     }
@@ -434,13 +430,12 @@ public class TargetPool<T>
                 {
                     try
                     {
-                        //ConsoleControl.Write($"Creating {typeof(T).Name} for target {t}");
                         instance = Instantiate(t);
                         map.Add(goid, instance);
                     }
                     catch (Exception ex)
                     {
-                        ConsoleControl.WriteException(nameof(TargetPool<T>) + $".Instantiate({t})", ex);
+                        ULog.Exception(nameof(TargetPool<T>) + $".Instantiate({t})", ex, null);
                         continue;
                     }
                 }
@@ -453,14 +448,13 @@ public class TargetPool<T>
             foreach (var p in remove)
             {
                 var instance = p.Value;
-                //ConsoleControl.Write($"Destroying {typeof(T).Name} {p.Key}");
                 try
                 {
                     Destroy(instance, false);
                 }
                 catch (Exception ex)
                 {
-                    ConsoleControl.WriteException(nameof(TargetPool<T>) + ".Flush(" + p.Key + ")", ex);
+                    ULog.Exception(nameof(TargetPool<T>) + ".Flush(" + p.Key + ")", ex, null);
                 }
                 finally
                 {
@@ -470,7 +464,7 @@ public class TargetPool<T>
         }
         catch (Exception ex)
         {
-            ConsoleControl.WriteException(nameof(TargetPool<T>) + ".UpdateAllWithExtra()", ex);
+            ULog.Exception(nameof(TargetPool<T>) + ".UpdateAllWithExtra()", ex, null);
 
         }
     }

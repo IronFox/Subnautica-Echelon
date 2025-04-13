@@ -96,7 +96,7 @@ namespace Subnautica_Echelon
             }
             catch (Exception ex)
             {
-                Log.Write("FModSoundCreator.Instantiate()", ex);
+                PLog.Exception("FModSoundCreator.Instantiate()", ex, cfg.Owner);
                 return null;
             }
         }
@@ -178,7 +178,7 @@ namespace Subnautica_Echelon
             }
             catch (Exception ex)
             {
-                Log.Write($"FModSound.Update({timeDelta}) [{vpos},{velocity}] ", ex);
+                PLog.Exception($"FModSound.Update({timeDelta}) [{vpos},{velocity}] ", ex, Config.Owner);
             }
         }
 
@@ -195,7 +195,7 @@ namespace Subnautica_Echelon
             }
             catch (Exception ex)
             {
-                Log.Write($"FModSound.ApplyLiveChanges()", ex);
+                PLog.Exception($"FModSound.ApplyLiveChanges()", ex, Config.Owner);
             }
 
 
@@ -212,7 +212,7 @@ namespace Subnautica_Echelon
             }
             catch (Exception ex)
             {
-                Log.Write($"FModSound.Dispose()", ex);
+                PLog.Exception($"FModSound.Dispose()", ex, null);
             }
 
         }

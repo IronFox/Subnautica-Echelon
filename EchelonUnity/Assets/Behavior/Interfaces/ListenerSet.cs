@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -14,7 +13,7 @@ public class ListenerSet<Listener>
         Listeners = listenersArray;
     }
 
-    public static D Make<D>(params Component[] origins) where D:ListenerSet<Listener>
+    public static D Make<D>(params Component[] origins) where D : ListenerSet<Listener>
     {
         HashSet<Listener> listeners = new HashSet<Listener>();
         foreach (var o in origins)
@@ -37,7 +36,7 @@ public class ListenerSet<Listener>
             }
             catch (Exception e)
             {
-                ConsoleControl.WriteException(name + " on " + listener, e);
+                ULog.Exception(name + " on " + listener, e, null);
             }
         }
     }

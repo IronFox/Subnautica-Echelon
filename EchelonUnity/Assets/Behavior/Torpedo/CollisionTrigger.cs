@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections;
-using System.Collections.Generic;
-using System.Linq;
-using UnityEngine;
+﻿using UnityEngine;
 
 public class CollisionTrigger : MonoBehaviour
 {
@@ -55,7 +51,7 @@ public class CollisionTrigger : MonoBehaviour
         //if (SmallFishNames.Any(x => collision.gameObject.name.StartsWith(x)))
         //    return; //let's not detonate with these
 
-        if (PhysicsHelper.CanCollide(collision.collider, regularCollider, doNotCollideWith))
+        if (PhysicsHelper.CanCollide(collision.collider, regularCollider, doNotCollideWith) && collision.rigidbody)
         {
             var t = TargetAdapter.ResolveTarget(collision.rigidbody.gameObject, collision.rigidbody);
 
@@ -75,7 +71,6 @@ public class CollisionTrigger : MonoBehaviour
             {
                 if (ignoreNonTargets || collision.rigidbody.gameObject.GetComponent<TorpedoControl>() != null)
                 {
-                    //ConsoleControl.Write($"Flagging collisions with {collision.collider} to be ignored");
                     Physics.IgnoreCollision(collision.collider, regularCollider);
                     return;
                 }
@@ -83,16 +78,16 @@ public class CollisionTrigger : MonoBehaviour
 
             if (t != null && t.MaxHealth < 200 && !IsTarget(collision.collider.attachedRigidbody.gameObject))
             {
-                ConsoleControl.Write($"Colliding instance {t} is too fragile: Ramming & ignoring");
+                ULog.Write($"Colliding instance {t} is too fragile: Ramming & ignoring");
                 t.DealDamage(transform.position, 100, gameObject);
                 return;
             }
 
-            ConsoleControl.Write($"Reacting to collision with {collision.collider} (health={t?.MaxHealth}): Detonating");
+            ULog.Write($"Reacting to collision with {collision.collider} (health={t?.MaxHealth}): Detonating");
             detonator.Detonate();
         }
         else
-            ConsoleControl.Write($"Ignoring collision with {collision.collider} (cannot collide)");
+            ULog.Write($"Ignoring collision with {collision.collider} (cannot collide)");
     }
 
     private bool IsTarget(GameObject gameObject)
@@ -105,6 +100,6 @@ public class CollisionTrigger : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        
+
     }
 }

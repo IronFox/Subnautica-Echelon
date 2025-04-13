@@ -1,6 +1,4 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 
 public class DirectMarkerAtTarget : MonoBehaviour
 {
@@ -42,10 +40,9 @@ public class DirectMarkerAtTarget : MonoBehaviour
             transform.rotation = Quaternion.LookRotation(d);
             transform.position = ep + d * radius;
             transform.localScale = M.V3(scale);
-            distanceFade = 1f / (1f + distance*0.02f);
+            distanceFade = 1f / (1f + distance * 0.02f);
             if (adapterTarget != null)
             {
-                //Debug.Log($"DirectMarkerAt {adapterTarget} {adapterTarget.TargetAdapter.MaxHealth}");
                 if (adapterTarget.TargetAdapter.MaxHealth > 3000
                     || adapterTarget.IsCriticalTarget)
                     color = M.V3(1.5f, 0.2f, 0.1f);
@@ -90,13 +87,13 @@ public class DirectMarkerAtTarget : MonoBehaviour
                     flash
                     );
 
-        m.SetVector("_Color", 
+        m.SetVector("_Color",
             M.V4(color * scaledFlashSin
                 , fadeIn
                 * distanceFade
                 )
             );
-        
+
 
     }
 }

@@ -1,6 +1,4 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 
 public class ProximityDetector : MonoBehaviour
 {
@@ -15,7 +13,7 @@ public class ProximityDetector : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        
+
     }
 
     private void OnTriggerEnter(Collider collider)
@@ -27,7 +25,6 @@ public class ProximityDetector : MonoBehaviour
             || collider.attachedRigidbody == null
             || !PhysicsHelper.CanCollide(collider, regularCollider, true))
         {
-            //ConsoleControl.Write($"Cannot react to proximity of {collider.name} (excluded={excluded},nobody={collider.attachedRigidbody == null}, other={!PhysicsHelper.CanCollide(collider, regularCollider, true)}). Ignoring");
             return;
         }
         var otherControl = collider.attachedRigidbody.gameObject.GetComponent<TorpedoControl>();
@@ -37,7 +34,7 @@ public class ProximityDetector : MonoBehaviour
         }
         var rb = collider.attachedRigidbody;
         var rbName = rb != null ? rb.name : "<null>";
-        ConsoleControl.Write($"Detected proximity of {collider.name} attached to {rbName}. Exclusion is set to {doNotCollideWith}. Detonating");
+        ULog.Write($"Detected proximity of {collider.name} attached to {rbName}. Exclusion is set to {doNotCollideWith}. Detonating");
 
         detonator.Detonate();
     }
@@ -63,11 +60,9 @@ public class ProximityDetector : MonoBehaviour
                     ;
                 if (dist < targetTriggerDistance)
                 {
-                    ConsoleControl.Write($"Detected distance touch with target");
+                    ULog.Write($"Detected distance touch with target");
                     detonator.Detonate();
                 }
-                //else
-                //    Debug.Log(dist);
             }
 
         }

@@ -22,11 +22,11 @@ namespace Subnautica_Echelon
             }
             if (control == null)
             {
-                Debug.LogWarning($"Control is null in {nameof(closeDoorSoon)}");
+                PLog.Warn($"Control is null in {nameof(closeDoorSoon)}");
             }
             else
             {
-                Debug.LogWarning($"Timeout passed. Closing");
+                PLog.Write($"Timeout passed. Closing");
                 control.openUpgradeCover = false;
             }
             closeDoorCor = null;
@@ -36,8 +36,6 @@ namespace Subnautica_Echelon
         [HarmonyPatch(nameof(VehicleUpgradeConsoleInput.OnHandHover))]
         public static void VehicleUpgradeConsoleInputOnHandHoverPostfix(VehicleUpgradeConsoleInput __instance, Sequence ___sequence)
         {
-            //Debug.Log("VehicleUpgradeConsoleInputOnHandHoverPostfix");
-            // control opening the modules hatch
             if (__instance.GetComponentInParent<Echelon>() != null)
             {
                 __instance.GetComponentInParent<EchelonControl>().openUpgradeCover = true;
@@ -53,8 +51,6 @@ namespace Subnautica_Echelon
         [HarmonyPatch("OpenPDA")]
         public static void VehicleUpgradeConsoleInputOpenPDAPostfix(VehicleUpgradeConsoleInput __instance, Sequence ___sequence)
         {
-            //Debug.Log("VehicleUpgradeConsoleInputOpenPDAPostfix");
-            // control opening the modules hatch
             if (__instance.GetComponentInParent<EchelonControl>() != null)
             {
                 UWE.CoroutineHost.StopCoroutine(closeDoorCor);
@@ -65,8 +61,6 @@ namespace Subnautica_Echelon
         [HarmonyPatch("OnClosePDA")]
         public static void VehicleUpgradeConsoleInputOnClosePDAPostfix(VehicleUpgradeConsoleInput __instance, Sequence ___sequence)
         {
-            //Debug.Log("VehicleUpgradeConsoleInputOnClosePDAPostfix");
-            // control opening the modules hatch
             if (__instance.GetComponentInParent<EchelonControl>() != null)
             {
                 closeDoorCor = UWE.CoroutineHost.StartCoroutine(closeDoorSoon(__instance.GetComponentInParent<EchelonControl>()));

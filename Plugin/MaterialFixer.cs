@@ -25,7 +25,7 @@ namespace Subnautica_Echelon
             LogExtraSteps = logExtraSteps;
         }
 
-        public const string DefaultPrefix = "Material Fix";
+        public const string DefaultPrefix = "Echelon Material Fix";
 
         public static LogConfig Default { get; } = new LogConfig(
             logMaterialChanges: false,
@@ -154,11 +154,11 @@ namespace Subnautica_Echelon
             LogConfig? logConfig = null,
             Func<IEnumerable<SurfaceShaderData>> materialResolver = null
             )
-        { 
+        {
             if (owner == null)
                 throw new ArgumentNullException(nameof(owner));
             Vehicle = owner;
-            LogConfig = logConfig??LogConfig.Default;
+            LogConfig = logConfig ?? LogConfig.Default;
             MaterialResolver = materialResolver ?? (() => DefaultMaterialResolver(owner, LogConfig));
         }
 
@@ -169,7 +169,7 @@ namespace Subnautica_Echelon
         /// <param name="ignoreShaderNames">True to return all materials, false to only return Standard materials</param>
         /// <param name="logConfig">Log Configuration</param>
         /// <returns>Enumerable of all loaded surface shader data sets</returns>
-        public static IEnumerable<SurfaceShaderData> DefaultMaterialResolver(ModVehicle vehicle, LogConfig logConfig, bool ignoreShaderNames=false)
+        public static IEnumerable<SurfaceShaderData> DefaultMaterialResolver(ModVehicle vehicle, LogConfig logConfig, bool ignoreShaderNames = false)
         {
             var renderers = vehicle.GetComponentsInChildren<Renderer>();
             foreach (var renderer in renderers)

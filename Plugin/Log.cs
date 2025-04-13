@@ -44,20 +44,7 @@ namespace Subnautica_Echelon
         }
         public static void Write(string message)
         {
-            Debug.Log(message);
-        }
-
-        public static void Write(Exception ex)
-        {
-            Debug.LogException(ex);
-            //Write(ex.GetType().Name);
-            //Write(ex.Message);
-            //Write(ex.StackTrace);
-        }
-        public static void Write(string whileDoing, Exception caughtException)
-        {
-            Debug.LogError($"Caught exception during {whileDoing}");
-            Write(caughtException);
+            PLog.Write(message);
         }
     }
 

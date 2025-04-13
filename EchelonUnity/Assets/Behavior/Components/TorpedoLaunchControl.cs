@@ -1,7 +1,7 @@
 ﻿using System;
 using UnityEngine;
 
-public class TorpedoLaunchControl : MonoBehaviour, IFirable
+public class TorpedoLaunchControl : MonoBehaviour
 {
     public GameObject torpedoPrefab;
     public float relativeExitVelocity = 200;
@@ -63,15 +63,12 @@ public class TorpedoLaunchControl : MonoBehaviour, IFirable
 
             if (fired)
             {
-                //openSound.play = false;
                 fireRecoverProgress += Time.deltaTime;
                 fireSound.play = true;
                 fireSound.volume = M.Saturate(1f - fireRecoverProgress / Mathf.Min(1, secondsToFire));
-                //Debug.Log("Waiting for fire recovery @" + fireRecoverProgress);
                 if (fireRecoverProgress > secondsToFire)
                 {
                     fireRecoverProgress = secondsToFire;
-                    //ConsoleControl.Write("Recovered from firing. Closing again");
                     fired = false;
                     coverRecoveryProgress = 0;
                     SetCover(1);
@@ -81,13 +78,10 @@ public class TorpedoLaunchControl : MonoBehaviour, IFirable
             }
             else if (closing)
             {
-                //openSound.play = true;
                 fireSound.play = false;
                 coverRecoveryProgress += Time.deltaTime;
-                //Debug.Log("Closing again @" + coverRecoveryProgress);
                 if (coverRecoveryProgress > secondsToOpenCover)
                 {
-                    //ConsoleControl.Write("Closed");
                     closing = false;
 
                     SetCover(0);
@@ -106,7 +100,6 @@ public class TorpedoLaunchControl : MonoBehaviour, IFirable
                     torpedoInTube = InstantiateTorpedo();
 
                 coverRedactionProgress += Time.deltaTime;
-                //ConsoleControl.Write("Opening @" + coverRedactionProgress);
                 everOpened = true;
                 if (coverRedactionProgress > secondsToOpenCover)
                 {
@@ -114,7 +107,6 @@ public class TorpedoLaunchControl : MonoBehaviour, IFirable
                     fireSound.play = true;
                     coverRedactionProgress = secondsToOpenCover;
                     SetCover(1);
-                    //ConsoleControl.Write("Firing");
                     fired = true;
 
                     torpedoInTube.Launch(
@@ -123,7 +115,6 @@ public class TorpedoLaunchControl : MonoBehaviour, IFirable
                         noExplosions,
                         overrideMaxLifetimeSeconds);
                     lastTorpedo = torpedoInTube;
-                    //ConsoleControl.Write("Releasing fired torpedo");
                     torpedoInTube = null;
 
                 }
@@ -132,15 +123,10 @@ public class TorpedoLaunchControl : MonoBehaviour, IFirable
             }
             else
             {
-                //if (everOpened)
-                //    ConsoleControl.Write("fireWithTarget is null");
                 everOpened = false;
-                //openSound.play = false;
                 fireSound.play = false;
                 if (coverRedactionProgress > 0)
                 {
-                    //openSound.play = true;
-
                     coverRedactionProgress -= Time.deltaTime;
                     if (coverRedactionProgress < 0)
                     {
@@ -148,7 +134,7 @@ public class TorpedoLaunchControl : MonoBehaviour, IFirable
                         SetCover(0);
                         if (torpedoInTube != null)
                         {
-                            ConsoleControl.Write("Releasing unneeded torpedo in tube");
+                            ULog.Write("Releasing unneeded torpedo in tube");
 
                             torpedoInTube.Destroy();
                             torpedoInTube = null;
@@ -157,7 +143,6 @@ public class TorpedoLaunchControl : MonoBehaviour, IFirable
                     else
                     {
                         coverRedactionProgress = M.Max(coverRedactionProgress, 0);
-                        //Debug.Log("Closing @" + coverRedactionProgress);
                         SetCover(coverRedactionProgress / secondsToOpenCover);
                     }
                 }
@@ -166,14 +151,13 @@ public class TorpedoLaunchControl : MonoBehaviour, IFirable
         }
         catch (Exception e)
         {
-            ConsoleControl.WriteException($"TorpedoLaunchControl.Update()", e);
+            ULog.Exception($"TorpedoLaunchControl.Update()", e, gameObject);
         }
 
     }
 
     private Torpedo InstantiateTorpedo()
     {
-        //Debug.Log($"Creating torpedo");
         var torpedo = Instantiate(torpedoPrefab, transform);
         return new Torpedo(myBody, transform, torpedo, torpedoTechLevel);
 
@@ -189,7 +173,7 @@ public class Torpedo
     public bool IsAlive => GameObject != null;
     public void Launch(Vector3 velocity, ITargetable target, bool noExplosions, float overrideMaxFlightTime)
     {
-        ConsoleControl.Write($"Launching torpedo at {target}");
+        ULog.Write($"Launching torpedo at {target}");
         Control.Rigidbody.velocity = velocity;
         GameObject.transform.parent = null;
         Control.Detonator.noExplosion = noExplosions;
@@ -225,9 +209,6 @@ public class Torpedo
         torpedo.transform.position += origin.GetPointVelocity(owner.position) * 0.025f;
 
         torpedo.transform.localEulerAngles = Vector3.zero;
-
-        //Debug.Log($"Torpedo created");
-
     }
 
     public GameObject GameObject { get; }

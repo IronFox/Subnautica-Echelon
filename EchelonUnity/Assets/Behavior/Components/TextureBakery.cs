@@ -1,15 +1,12 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using System.IO;
-using UnityEngine;
+﻿using UnityEngine;
 using UnityEngine.Rendering;
 
 public class TextureBakery : MonoBehaviour, IColorListener
 {
     public Texture sourceTexture;
     public Texture mapTexture;
-    public Color mainColor = new Color(0xDE,0xDE,0xDE)/255f;
-    public Color stripeColor = new Color(0x3F,0x4C,0x7A)/255f;
+    public Color mainColor = new Color(0xDE, 0xDE, 0xDE) / 255f;
+    public Color stripeColor = new Color(0x3F, 0x4C, 0x7A) / 255f;
     public Shader bakeShader;
     public int targetMaterialSlot;
 
@@ -60,7 +57,7 @@ public class TextureBakery : MonoBehaviour, IColorListener
         {
             lastMainColor = mainColor;
             lastStripeColor = stripeColor;
-            Debug.Log($"(Re)Baking texture using shader {bakeShader}");
+            ULog.Write($"(Re)Baking texture using shader {bakeShader}");
             var bakeMaterial = new Material(bakeShader);
 
             using (var command = new CommandBuffer())
@@ -78,30 +75,19 @@ public class TextureBakery : MonoBehaviour, IColorListener
 
                 Graphics.ExecuteCommandBuffer(command);
             }
-            Debug.Log($"Releasing bake material");
+            //ULog.Write($"Releasing bake material");
             Destroy(bakeMaterial);
-//            texture.GenerateMips();
-            //RenderTexture.active = texture;
-            //Debug.Log($"Copying");
-            //tex.ReadPixels(new Rect(0, 0, texture.width, texture.height), 0, 0,true);
-            //tex.Apply();
-            //RenderTexture.active = null;
-            //Debug.Log($"Assigning texture");
-            //byte[] bytes = tex.EncodeToPNG();
-            //var dirPath = @"C:\temp\test.png";
-            //File.WriteAllBytes(dirPath, bytes);
-            //Debug.Log($"Saved");
-            //tex.Mip
+
             if (renderer != null && targetMaterialSlot < renderer.materials.Length)
             {
                 var targetMaterial = renderer.materials[targetMaterialSlot];
 
                 targetMaterial.mainTexture = texture;
                 //targetMaterial.SetTexture($"_MainTex", texture);
-                Debug.Log($"Assigned to material using shader {targetMaterial.shader}");
+                ULog.Write($"Assigned to material using shader {targetMaterial.shader}");
             }
             else
-                Debug.LogError($"Unable to assign generated texture");
+                ULog.Fail($"Unable to assign generated texture");
         }
     }
 

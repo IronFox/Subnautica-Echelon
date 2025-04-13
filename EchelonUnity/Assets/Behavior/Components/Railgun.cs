@@ -1,6 +1,6 @@
 ﻿using UnityEngine;
 
-public class Railgun : MonoBehaviour, IFirable, IDirectionSource
+public class Railgun : MonoBehaviour, IDirectionSource
 {
     public EchelonControl echelon;
     public GameObject shotPrefab;
@@ -21,7 +21,7 @@ public class Railgun : MonoBehaviour, IFirable, IDirectionSource
         if (pred is null)
             return transform.forward;
 
-        return M.Intercept(pred.Value, new LinearPrediction(transform.forward * speedMetersPerSecond, transform.position));
+        return M.Intercept(pred.Value, transform.position, speedMetersPerSecond);
     }
 
     public Vector3 Right => -Vector3.Cross(Forward, Vector3.up);

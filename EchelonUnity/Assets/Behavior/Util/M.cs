@@ -109,6 +109,26 @@ public static class M
     internal static float Clamp(float value, float min, float max)
         => Mathf.Clamp(value, min, max);
 
+    public static Vector3 Intercept(LinearPrediction target, Vector3 selfPosition, float interceptVelocity, float maxLookAheadSeconds = 10f)
+    {
+
+        var rp = target.Position - selfPosition;
+
+        var solution = M.SolveQuadraticEquation(
+            a: M.Sqr(target.Velocity) - M.Sqr(interceptVelocity),
+            b: 2 * M.Dot(rp, target.Velocity),
+            c: M.Sqr(rp));
+
+        var t = Mathf.Min(maxLookAheadSeconds, solution.SmallestNonNegative ?? 0);
+
+        var relLookAheadTarget = rp + target.Velocity * t;
+
+
+
+        //Debug.DrawLine(transform.position, transform.position + relLookAheadTarget, Color.red);
+        return relLookAheadTarget.normalized;
+    }
+
     /// <summary>
     /// Computes a normalized direction that should be the new direction of <paramref name="self"/> such that
     /// <paramref name="target"/> is intercepted at the current velocity
@@ -144,24 +164,6 @@ public static class M
             b: 2 * M.Dot(relTargetPosition, relTargetVelocity),
             c: M.Sqr(relTargetPosition));
         var t = solution.SmallestNonNegative;
-
-        //var lookAheadSeconds = maxLookAheadSeconds;
-        ////var targetVelocityDelta = targetVelocity - (Vector2)m_Body.velocity;
-        //var approachVelocity = M.Dot(relVelocity, directionToTarget);
-        //if (approachVelocity > 0)
-        //    lookAheadSeconds = Mathf.Min(lookAheadSeconds, distance / approachVelocity);
-
-        //var relLookAheadTarget = relTargetPosition + relTargetVelocity * lookAheadSeconds;
-
-
-        //var lookAheadDistance = relLookAheadTarget.magnitude;
-
-        //if (lookAheadDistance < minLookAheadDistance)
-        //{
-        //    //Debug.Log("Retract target projection: "+relTargetVelocity+" => "+lookAheadDistance);
-        //    relLookAheadTarget = relTargetPosition.normalized * minLookAheadDistance * 1.1f;
-        //}
-        //float apply = Mathf.Min(1.0f, (lookAheadDistance - detonationProximity / 2) * 0.5f);
 
 
         var relLookAheadTarget = relTargetPosition + relTargetVelocity * (t ?? 0);

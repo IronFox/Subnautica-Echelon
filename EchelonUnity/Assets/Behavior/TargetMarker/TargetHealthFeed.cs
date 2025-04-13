@@ -1,7 +1,4 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using System.Text;
-using TMPro;
+﻿using TMPro;
 using UnityEngine;
 
 public class TargetHealthFeed : MonoBehaviour
@@ -33,7 +30,7 @@ public class TargetHealthFeed : MonoBehaviour
         switch (EchelonControl.markerDisplay)
         {
             case TargetDisplay.None:
-                renderer.enabled = isPrimary && target != null && owner.torpedoMark > 0;
+                renderer.enabled = isPrimary && target != null && owner.ActiveWeaponMark > 0;
                 break;
             case TargetDisplay.Focused:
                 renderer.enabled = isPrimary;
@@ -42,12 +39,12 @@ public class TargetHealthFeed : MonoBehaviour
                 renderer.enabled = true;
                 break;
             case TargetDisplay.LockedOnly:
-                renderer.enabled = isPrimary && owner.torpedoMark > 0;
+                renderer.enabled = isPrimary && owner.ActiveWeaponMark > 0;
                 break;
         }
 
 
-        fadeIn = M.Saturate(fadeIn + Time.deltaTime*0.5f);
+        fadeIn = M.Saturate(fadeIn + Time.deltaTime * 0.5f);
         if (target != null && EchelonControl.markerDisplay != TargetDisplay.None)
             material.SetVector("_Health", M.V4(
                 target.CurrentHealth,

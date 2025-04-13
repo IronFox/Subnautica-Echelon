@@ -19,7 +19,7 @@ public static class CameraUtil
             if (!lastSent.TryGetValue(msg, out DateTime dt) || now - dt > TimeSpan.FromSeconds(10))
             {
                 lastSent[msg] = now;
-                Debug.LogWarning(msg);
+                ULog.Warn(msg);
             }
         }
         catch { }   //ignore this one

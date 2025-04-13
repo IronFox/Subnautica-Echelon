@@ -283,10 +283,10 @@ GameObject:
   - component: {fileID: 7521927918904332286}
   - component: {fileID: 3378224997223897512}
   - component: {fileID: 4212403024039375308}
-  - component: {fileID: 8596132587207070730}
   - component: {fileID: 3761711288602698140}
   - component: {fileID: 4714040130784626947}
   - component: {fileID: 4354811660002521645}
+  - component: {fileID: 2683643208010959226}
   m_Layer: 0
   m_Name: Torpedo
   m_TagString: Untagged
@@ -346,6 +346,7 @@ MonoBehaviour:
   normalCollider: {fileID: 4216335903275335655}
   origin: {fileID: 0}
   safetyOriginDistance: 10
+  techLevel: 0
 --- !u!114 &6030259259240138672
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -406,6 +407,8 @@ MonoBehaviour:
   currentVelocity: 0
   dragCompensated: 0
   finalAcceleration: 0
+  triggerActive: 1
+  targetDirection: {x: 0, y: 0, z: 0}
 --- !u!114 &3378224997223897512
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -432,26 +435,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 54f9db2caab66cb4ba43c39192eef356, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
---- !u!114 &8596132587207070730
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2501418104200933177}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 56534fd16a4420046924e3771b758cdd, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  clip: {fileID: 8300000, guid: c14f69f79de300d419cf03a4e6200328, type: 3}
-  volume: 1
-  play: 1
-  minDistance: 1
-  maxDistance: 500
-  is3D: 1
-  pitch: 2
-  loop: 1
 --- !u!114 &3761711288602698140
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -468,6 +451,7 @@ MonoBehaviour:
     type: 3}
   origin: {fileID: 0}
   noExplosion: 0
+  techLevel: 0
 --- !u!114 &4714040130784626947
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -494,6 +478,26 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c1a9af8db1eb95c409900e7a4192fdb9, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!114 &2683643208010959226
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2501418104200933177}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8c9da103176980046ab795a477fff5fe, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  clip: {fileID: 8300000, guid: c14f69f79de300d419cf03a4e6200328, type: 3}
+  volume: 1
+  play: 1
+  minDistance: 3
+  maxDistance: 100
+  is3D: 1
+  pitch: 1
+  loop: 1
 --- !u!1 &3097673172815291108
 GameObject:
   m_ObjectHideFlags: 0

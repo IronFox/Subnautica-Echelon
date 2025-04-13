@@ -71,8 +71,14 @@ public class RailgunLine : MonoBehaviour
 
                 var target = TargetAdapter.ResolveTarget(candidate.rigidbody.gameObject, candidate.rigidbody);
 
-                if (target is null || target.IsInvincible)
+                if (target is null)
                     continue;
+                if (!target.Rigidbody.isKinematic)
+                    target.Rigidbody.AddForce(transform.forward * 10000f / Time.fixedDeltaTime);
+                if (target.IsInvincible)
+                {
+                    continue;
+                }
                 if (hit.Add(target))
                 {
                     target.DealDamage(candidate.point, damage, owner.gameObject);

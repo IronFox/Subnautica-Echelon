@@ -2,7 +2,6 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using UnityEngine;
 using VehicleFramework.UpgradeTypes;
 
 public abstract class EchelonBaseModule : ModVehicleUpgrade
@@ -44,7 +43,7 @@ public abstract class EchelonBaseModule : ModVehicleUpgrade
         var path = $"images/{module}.png";
         icon = Subnautica_Echelon.MainPatcher.LoadSprite(path);
         if (icon == null)
-            Debug.LogError($"Error while constructing {module} {this}: File {path} not found");
+            PLog.Fail($"Error while constructing {module} {this}: File {path} not found");
 
         craftingPath = new List<CraftingNode>()
         {
@@ -70,7 +69,7 @@ public abstract class EchelonBaseModule : ModVehicleUpgrade
         All[type] = this;
         AllReverse[Module] = type;
 
-        Debug.Log($"Registered module {Module} {this} as tech type {type}");
+        PLog.Write($"Registered module {Module} {this} as tech type {type}");
 
         return type;
     }
@@ -84,7 +83,7 @@ public abstract class EchelonBaseModule : ModVehicleUpgrade
     {
         if (TechTypeMap.TryGetValue(module, out var type))
             return type;
-        Debug.LogError($"Unable to retrieve tech type of echelon module {module}: not registered");
+        PLog.Fail($"Unable to retrieve tech type of echelon module {module}: not registered");
         return TechType.None;
     }
 
@@ -98,11 +97,11 @@ public abstract class EchelonBaseModule : ModVehicleUpgrade
     public override void OnAdded(AddActionParams param)
     {
         var now = DateTime.Now;
-        Debug.Log($"[{now:HH:mm:ss.fff}] EchelonBaseModule[{Module}].OnAdded(vehicle={param.vehicle},isAdded={param.isAdded},slot={param.slotID})");
+        PLog.Write($"EchelonBaseModule[{Module}].OnAdded(vehicle={param.vehicle},isAdded={param.isAdded},slot={param.slotID})");
         var echelon = param.vehicle as Echelon;
         if (echelon == null)
         {
-            Debug.LogError($"Added to incompatible vehicle {param.vehicle}");
+            PLog.Fail($"Added to incompatible vehicle {param.vehicle}");
             ErrorMessage.AddWarning("This is an Echelon upgrade and will not work on other subs!");
             return;
         }
@@ -110,35 +109,6 @@ public abstract class EchelonBaseModule : ModVehicleUpgrade
         var cnt = GetNumberInstalled(echelon);
         try
         {
-            //while (cnt > 1)
-            //{
-            //    foreach (var slot in echelon.slotIDs)
-            //    {
-            //        if (slot == echelon.slotIDs[param.slotID])
-            //            continue;
-            //        var p = echelon.modules.GetItemInSlot(slot);
-            //        if (p != null)
-            //        {
-            //            var t = p.item.GetComponent<TechTag>();
-            //            if (t != null && t.type == SelfType)
-            //            {
-            //                Debug.Log($"Evacuating extra self type from slot {slot}");
-            //                if (!echelon.modules.RemoveItem(p.item))
-            //                {
-            //                    Debug.Log($"Failed remove");
-            //                    continue;
-            //                }
-            //                Inventory.main.AddPending(p.item);
-            //                Debug.Log($"Inventory moved");
-            //                break;
-            //            }
-            //        }
-
-            //    }
-            //    cnt = GetNumberInstalled(echelon);
-            //}
-
-
             foreach (var slot in echelon.slotIDs)
             {
                 if (slot == echelon.slotIDs[param.slotID])
@@ -149,14 +119,14 @@ public abstract class EchelonBaseModule : ModVehicleUpgrade
                     var t = p.item.GetComponent<TechTag>();
                     if (t != null && AutoDisplace.Contains(t.type))
                     {
-                        Debug.Log($"Evacuating extra {t.type} type from slot {slot}");
+                        PLog.Write($"Evacuating extra {t.type} type from slot {slot}");
                         if (!echelon.modules.RemoveItem(p.item))
                         {
-                            Debug.Log($"Failed remove");
+                            PLog.Fail($"Failed remove");
                             continue;
                         }
                         Inventory.main.AddPending(p.item);
-                        Debug.Log($"Inventory moved");
+                        PLog.Write($"Inventory moved");
                         break;
                     }
                 }
@@ -164,7 +134,7 @@ public abstract class EchelonBaseModule : ModVehicleUpgrade
         }
         catch (Exception e)
         {
-            Debug.LogException(e);
+            PLog.Exception(nameof(OnAdded), e, null);
         }
         echelon.SetModuleCount(Module, cnt);
     }

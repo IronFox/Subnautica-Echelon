@@ -153,5 +153,5 @@ MonoBehaviour:
   minDistance: 10
   maxDistance: 500
   is3D: 1
-  pitch: 1
+  pitch: 0.5
   loop: 0

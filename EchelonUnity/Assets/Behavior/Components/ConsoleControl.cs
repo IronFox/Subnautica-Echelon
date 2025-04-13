@@ -1,14 +1,11 @@
-﻿using System.Collections;
+﻿using System;
 using System.Collections.Generic;
-
-using UnityEngine;
 using System.Text;
 using TMPro;
-using System;
+using UnityEngine;
 
-using System.IO;
-
-public readonly struct Line {
+public readonly struct Line
+{
     public string Input { get; }
     public string Message { get; }
     public DateTimeOffset Captured { get; }
@@ -22,7 +19,7 @@ public readonly struct Line {
     }
 
     public override string ToString() => Message;
-    
+
 
     public bool IsOutdated(int lineRetentionSeconds) => DateTimeOffset.Now - Captured > TimeSpan.FromSeconds(lineRetentionSeconds);
 }
@@ -60,10 +57,7 @@ public class ConsoleControl : MonoBehaviour
 
     public static void WriteException(string whileDoing, Exception ex)
     {
-        Debug.LogError($"Caught exception during {whileDoing}: {ex.Message}");
-        //Write(ex.StackTrace);
-        
-        Debug.LogException(ex);
+        ULog.Exception(whileDoing, ex, null);
     }
 
 
@@ -71,7 +65,7 @@ public class ConsoleControl : MonoBehaviour
     {
         if (string.IsNullOrWhiteSpace(text))
             return;
-        Debug.Log(text);
+        ULog.Write(text);
         var line = new Line(text);
         foreach (var control in Instances)
             control.AddLine(line);
@@ -90,7 +84,7 @@ public class ConsoleControl : MonoBehaviour
 
     private readonly Queue<Line> fullLines = new Queue<Line>();
     private readonly Queue<Line> pendingLines = new Queue<Line>();
-    
+
     private int lineAnimationAt = 0;
 
     private Line? currentLine;
@@ -98,10 +92,10 @@ public class ConsoleControl : MonoBehaviour
 
     public void AddLine(Line line)
     {
-        Debug.Log("Adding " + line);
-        while (fullLines.Count > 0 && fullLines.Count + pendingLines.Count+1 > maxLines)
+        ULog.Write("Adding " + line);
+        while (fullLines.Count > 0 && fullLines.Count + pendingLines.Count + 1 > maxLines)
             fullLines.Dequeue();
-        while (pendingLines.Count+1 > maxLines)
+        while (pendingLines.Count + 1 > maxLines)
             pendingLines.Dequeue();
 
         pendingLines.Enqueue(line);
@@ -127,7 +121,7 @@ public class ConsoleControl : MonoBehaviour
                 bool changed = false;
                 if (currentLine != null)
                 {
-                    Debug.Log($"end line");
+                    ULog.Write($"end line");
                     fullLines.Enqueue(currentLine.Value);
                     var take = currentLine.Value.Message.Length - lineAnimationAt;
                     if (take > 0)
@@ -143,7 +137,7 @@ public class ConsoleControl : MonoBehaviour
                     var take = currentLine.Value.Message.Length;
                     if (take > numCharactersLeft)
                     {
-                        Debug.Log($"end on partial line ({numCharactersLeft})");
+                        ULog.Write($"end on partial line ({numCharactersLeft})");
                         lineAnimationAt = numCharactersLeft;
                         numCharactersLeft = 0;
                         changed = true;
@@ -153,7 +147,7 @@ public class ConsoleControl : MonoBehaviour
 
                     if (take == numCharactersLeft)
                     {
-                        Debug.Log($"end on exact match");
+                        ULog.Write($"end on exact match");
 
                         numCharactersLeft = 0;
                         fullLines.Enqueue(currentLine.Value);
@@ -181,7 +175,7 @@ public class ConsoleControl : MonoBehaviour
             }
             else
             {
-                Debug.Log("normal increment by " + numCharactersLeft);
+                ULog.Write("normal increment by " + numCharactersLeft);
                 lineAnimationAt += numCharactersLeft;
                 Rebuild();
             }
@@ -189,7 +183,7 @@ public class ConsoleControl : MonoBehaviour
         }
         catch (System.Exception ex)
         {
-            Debug.LogException(ex);
+            ULog.Exception(nameof(AnimateNextCharacters), ex, gameObject);
         }
     }
 
@@ -214,7 +208,7 @@ public class ConsoleControl : MonoBehaviour
         if (accumulatedSeconds > secondsPerCharacter)
         {
             int numCharacters = Mathf.FloorToInt(accumulatedSeconds / secondsPerCharacter);
-            accumulatedSeconds -= numCharacters *secondsPerCharacter;
+            accumulatedSeconds -= numCharacters * secondsPerCharacter;
             AnimateNextCharacters(numCharacters);
         }
 

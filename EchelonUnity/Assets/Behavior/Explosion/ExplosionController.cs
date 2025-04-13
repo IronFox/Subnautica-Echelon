@@ -1,14 +1,12 @@
 ﻿using System;
-using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.UIElements;
 
 public class ExplosionController : MonoBehaviour
 {
 
     private Light[] lights = Array.Empty<Light>();
-
+    private SoundAdapter sound;
     private float time;
 
     //public static float explosionDamage = 1500;
@@ -17,14 +15,15 @@ public class ExplosionController : MonoBehaviour
     public float explosionRadius = 15f;
     public float explosionDamage = 1500f;
 
-    
+
 
     // Start is called before the first frame update
     void Start()
     {
         lights = GetComponentsInChildren<Light>();
+        sound = GetComponent<SoundAdapter>();
 
-
+        sound.minDistance = explosionRadius / 2;
 
         var exp = transform.GetChild(0);
         exp.localScale = M.V3(explosionRadius * 2f / 15f);
@@ -35,11 +34,9 @@ public class ExplosionController : MonoBehaviour
             var t = TargetAdapter.ResolveTarget(env.gameObject, env);
             if (t != null && t.IsAlive)
             {
-                float distance = M.Distance(transform.position,t.GameObject.transform.position); 
+                float distance = M.Distance(transform.position, t.GameObject.transform.position);
                 float dmg = explosionDamage / (1f + distance * 0.1f);
-                //ConsoleControl.Write($"Dealing {dmg} damage to {t} at health {t.CurrentHealth} and distance {distance}");
                 t.DealDamage(transform.position, dmg, gameObject);
-                //ConsoleControl.Write($"Health now at {t.CurrentHealth}");
             }
         }
     }
