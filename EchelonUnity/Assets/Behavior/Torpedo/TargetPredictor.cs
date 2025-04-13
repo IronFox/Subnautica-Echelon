@@ -1,5 +1,4 @@
-﻿using System.Collections;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using UnityEngine;
 
 public class TargetPredictor : MonoBehaviour, ITargetPredictor
@@ -21,12 +20,12 @@ public class TargetPredictor : MonoBehaviour, ITargetPredictor
     // Start is called before the first frame update
     void Start()
     {
-        
+
     }
 
 
 
-        // Update is called once per frame
+    // Update is called once per frame
     void Update()
     {
         if (target?.Equals(lastTarget) == true && target.Exists)
@@ -197,7 +196,7 @@ public class RigidbodyTargetable : ITargetable
 
     public Vector3 Position => Rigidbody.position;
 
-    public Vector3? InherentVelocity => Exists ? Rigidbody.velocity : (Vector3 ? )null;
+    public Vector3? InherentVelocity => Exists ? Rigidbody.velocity : (Vector3?)null;
 
     public Vector3 GlobalSize { get; }
     public bool IsCriticalTarget { get; }

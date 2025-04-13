@@ -12,6 +12,8 @@ public class RailgunShot : MonoBehaviour
     private bool terminal = false;
 
     private RailgunLine line;
+    public float speedMetersPerSecond = 800;
+
     // Start is called before the first frame update
     void Start()
     {
@@ -44,6 +46,7 @@ public class RailgunShot : MonoBehaviour
             this.line = line.GetComponent<RailgunLine>();
             this.line.owner = owner;
             this.line.damage = damage;
+            this.line.speedMetersPerSecond = speedMetersPerSecond;
             owner.GetComponent<Rigidbody>().AddForce(-transform.forward * 10000f / Time.fixedDeltaTime);
         }
         if (terminal && !line)

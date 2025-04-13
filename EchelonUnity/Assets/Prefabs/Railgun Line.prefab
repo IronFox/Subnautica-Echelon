@@ -126,7 +126,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   segmentPrefab: {fileID: 261396208803435695, guid: 4ec9078808ce56c4f8aff7213f1d1393,
     type: 3}
-  hitPrefab: {fileID: 4939258887155925870, guid: cc8023dbcf3d9f6478b29362ead6177e,
+  hitPrefab: {fileID: 8001811337012669463, guid: d186f4b2481261544b69703c3d431d78,
     type: 3}
   cylinder: {fileID: 6003003014474726682}
   length: 500

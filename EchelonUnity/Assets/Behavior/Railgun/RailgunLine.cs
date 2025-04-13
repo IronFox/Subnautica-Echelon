@@ -25,7 +25,7 @@ public class RailgunLine : MonoBehaviour
         color = cylinder.materials[0].color;
         float len = 1;
         float offset = 0;
-        while (offset + len < length)
+        while (offset < length)
         {
             segments.Add(new Segment(offset, len));
             //segment.radius = radius;
@@ -33,7 +33,7 @@ public class RailgunLine : MonoBehaviour
             len *= 2;
         }
         cylinder.materials[0].SetFloat($"_FadeIn", 1);
-        cylinder.materials[0].SetFloat($"_FadeOut", 80);
+        cylinder.materials[0].SetFloat($"_FadeOut", 200);
     }
 
     // Update is called once per frame
@@ -58,20 +58,24 @@ public class RailgunLine : MonoBehaviour
             var candidates = Physics.RaycastAll(instance.transform.position, instance.transform.forward, s.Length);
             foreach (var candidate in candidates)
             {
+                if (candidate.transform.IsChildOf(owner.transform))
+                    continue;
+
+                var hitInstance = Instantiate(hitPrefab, transform);
+                hitInstance.transform.position = candidate.point;
+                hitInstance.transform.localEulerAngles = M.V3(90, 0, 0);
+
                 if (!candidate.rigidbody)
                     continue;
-                var t = candidate.rigidbody.transform;
-                if (t.IsChildOf(owner.transform))
-                    continue;
+
+
                 var target = TargetAdapter.ResolveTarget(candidate.rigidbody.gameObject, candidate.rigidbody);
+
                 if (target is null || target.IsInvincible)
                     continue;
                 if (hit.Add(target))
                 {
                     target.DealDamage(candidate.point, damage, owner.gameObject);
-                    var hitInstance = Instantiate(hitPrefab, transform);
-                    hitInstance.transform.position = candidate.point;
-                    hitInstance.transform.localEulerAngles = M.V3(90, 0, 0);
                 }
             }
 

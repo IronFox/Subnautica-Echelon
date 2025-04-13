@@ -12,8 +12,8 @@ public class RailgunCharge : MonoBehaviour
     public float size;
     public SoundAdapter chargeSound;
     public float scale = 10;
-    public bool EndReached => doCharge ? t >= 1 : t <= 0;
-
+    public bool EndReached => doCharge ? t >= chargeSeconds : t <= 0;
+    public float EndReachedSeconds { get; private set; }
 
     // Start is called before the first frame update
     void Start()
@@ -38,6 +38,10 @@ public class RailgunCharge : MonoBehaviour
         float pulseStrength = doPulse ? 1.1f : 1.0f;
 
         t = M.Clamp(t, 0, chargeSeconds);
+        if (EndReached)
+            EndReachedSeconds += Time.deltaTime;
+        else
+            EndReachedSeconds = 0;
         var relative = t / chargeSeconds;
         size = Mathf.Sqrt(relative);
         float pulseFrequency = 5f + relative * 5f;

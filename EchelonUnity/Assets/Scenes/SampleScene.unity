@@ -1864,6 +1864,75 @@ PrefabInstance:
       objectReference: {fileID: 928456319}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 6c73910b4b484e8459f5364f7bd0c221, type: 3}
+--- !u!1001 &1031868135362808615
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    m_TransformParent: {fileID: 0}
+    m_Modifications:
+    - target: {fileID: 775514133234666316, guid: d186f4b2481261544b69703c3d431d78,
+        type: 3}
+      propertyPath: m_RootOrder
+      value: 20
+      objectReference: {fileID: 0}
+    - target: {fileID: 775514133234666316, guid: d186f4b2481261544b69703c3d431d78,
+        type: 3}
+      propertyPath: m_LocalPosition.x
+      value: -8.634446
+      objectReference: {fileID: 0}
+    - target: {fileID: 775514133234666316, guid: d186f4b2481261544b69703c3d431d78,
+        type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 0.14792764
+      objectReference: {fileID: 0}
+    - target: {fileID: 775514133234666316, guid: d186f4b2481261544b69703c3d431d78,
+        type: 3}
+      propertyPath: m_LocalPosition.z
+      value: -5.6716957
+      objectReference: {fileID: 0}
+    - target: {fileID: 775514133234666316, guid: d186f4b2481261544b69703c3d431d78,
+        type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 775514133234666316, guid: d186f4b2481261544b69703c3d431d78,
+        type: 3}
+      propertyPath: m_LocalRotation.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 775514133234666316, guid: d186f4b2481261544b69703c3d431d78,
+        type: 3}
+      propertyPath: m_LocalRotation.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 775514133234666316, guid: d186f4b2481261544b69703c3d431d78,
+        type: 3}
+      propertyPath: m_LocalRotation.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 775514133234666316, guid: d186f4b2481261544b69703c3d431d78,
+        type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 775514133234666316, guid: d186f4b2481261544b69703c3d431d78,
+        type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 775514133234666316, guid: d186f4b2481261544b69703c3d431d78,
+        type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8001811337012669463, guid: d186f4b2481261544b69703c3d431d78,
+        type: 3}
+      propertyPath: m_Name
+      value: Railgun Impact
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+  m_SourcePrefab: {fileID: 100100000, guid: d186f4b2481261544b69703c3d431d78, type: 3}
 --- !u!1001 &3057455469208139143
 PrefabInstance:
   m_ObjectHideFlags: 0

@@ -31,7 +31,7 @@ public class TorpedoTargeting : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-     //   Debug.Log("Update");
+        //   Debug.Log("Update");
 
     }
 
@@ -45,58 +45,8 @@ public class TorpedoTargeting : MonoBehaviour
             //Debug.Log("Got no prediction");
             return transform.forward; //maintain current direction
         }
-        var prediction = predictionP.Value;
 
-        var currentPosition = transform.position;
-        var currentTarget = prediction.Position;
-
-
-        var absTargetVelocity = prediction.Velocity;
-
-        var absTargetSpeed = absTargetVelocity.magnitude;
-        var absVelocity = rb.velocity;
-
-
-        var relVelocity = absVelocity - absTargetVelocity;
-        var relTargetVelocity = -relVelocity;
-        var relTargetPosition = currentTarget - currentPosition;
-
-
-        var directionToTarget = relTargetPosition;
-        var distance = directionToTarget.magnitude;
-        directionToTarget /= distance;
-
-        //var interceptVelocity = absVelocity.magnitude * 0.5f;
-
-        var solution = M.SolveQuadraticEquation(
-            a: M.Sqr(relTargetVelocity),// - M.Sqr(interceptVelocity),
-            b: 2 * M.Dot(relTargetPosition, relTargetVelocity),
-            c: M.Sqr(relTargetPosition));
-        var t = solution.SmallestNonNegative;
-
-        //var lookAheadSeconds = maxLookAheadSeconds;
-        ////var targetVelocityDelta = targetVelocity - (Vector2)m_Body.velocity;
-        //var approachVelocity = M.Dot(relVelocity, directionToTarget);
-        //if (approachVelocity > 0)
-        //    lookAheadSeconds = Mathf.Min(lookAheadSeconds, distance / approachVelocity);
-
-        //var relLookAheadTarget = relTargetPosition + relTargetVelocity * lookAheadSeconds;
-
-
-        //var lookAheadDistance = relLookAheadTarget.magnitude;
-
-        //if (lookAheadDistance < minLookAheadDistance)
-        //{
-        //    //Debug.Log("Retract target projection: "+relTargetVelocity+" => "+lookAheadDistance);
-        //    relLookAheadTarget = relTargetPosition.normalized * minLookAheadDistance * 1.1f;
-        //}
-        //float apply = Mathf.Min(1.0f, (lookAheadDistance - detonationProximity / 2) * 0.5f);
-
-        
-        var relLookAheadTarget = relTargetPosition + relTargetVelocity * (t ?? 0);
-
-
-        return relLookAheadTarget.normalized;
+        return M.Intercept(predictionP.Value, new LinearPrediction(rb.velocity, transform.position));
     }
 
 
@@ -119,7 +69,7 @@ public class TorpedoTargeting : MonoBehaviour
             b: 2 * M.Dot(rp, target.Value.Velocity),
             c: M.Sqr(rp));
 
-        var t = Mathf.Min(maxLookAheadSeconds,  solution.SmallestNonNegative ?? 0);
+        var t = Mathf.Min(maxLookAheadSeconds, solution.SmallestNonNegative ?? 0);
 
         //Debug.Log($"Lookahead @{t}");
 

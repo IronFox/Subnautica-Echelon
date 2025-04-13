@@ -7,9 +7,22 @@ public class Railgun : MonoBehaviour, IFirable, IDirectionSource
     private RailgunShot shot;
     public CoverAnimation openCoverAnimation;
     public float damage = 2000;
+    public float speedMetersPerSecond = 800;
+    private TargetPredictor targetPredictor;
+    private Vector3 forward = Vector3.forward;
+
     public ITargetable FireWithTarget { get; set; }
 
-    public Vector3 Forward => FireWithTarget?.Exists == true ? (FireWithTarget.Position - transform.position).normalized : transform.forward;
+    public Vector3 Forward => forward;
+
+    private Vector3 CalculateInterceptDirection()
+    {
+        var pred = targetPredictor.CurentPrediction;
+        if (pred is null)
+            return transform.forward;
+
+        return M.Intercept(pred.Value, new LinearPrediction(transform.forward * speedMetersPerSecond, transform.position));
+    }
 
     public Vector3 Right => -Vector3.Cross(Forward, Vector3.up);
 
@@ -26,12 +39,14 @@ public class Railgun : MonoBehaviour, IFirable, IDirectionSource
     // Start is called before the first frame update
     void Start()
     {
-
+        targetPredictor = GetComponent<TargetPredictor>();
     }
 
     // Update is called once per frame
     void Update()
     {
+        targetPredictor.target = FireWithTarget;
+        forward = CalculateInterceptDirection();
         var doFire = FireWithTarget?.Exists == true;
         if (doFire)
         {
@@ -50,6 +65,7 @@ public class Railgun : MonoBehaviour, IFirable, IDirectionSource
                     shot = instance.GetComponent<RailgunShot>();
                     shot.owner = echelon;
                     shot.damage = damage;
+                    shot.speedMetersPerSecond = speedMetersPerSecond;
                 }
             }
         }
