@@ -1,3 +1,5 @@
+using UnityEngine;
+
 public interface IWeaponTriggerGuidance
 {
     ITargetable MaintainedTarget { get; }
@@ -7,4 +9,7 @@ public interface IWeaponTriggerGuidance
     void OnTriggerLost();
     void OnUpdate();
     void OnTriggerInactive();
+    bool CanHitWithoutRotation(Vector3 position);
+    bool CanHitWithRotation(Vector3 position);
+
 }

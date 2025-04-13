@@ -30,7 +30,7 @@ public class TargetHealthFeed : MonoBehaviour
         switch (EchelonControl.markerDisplay)
         {
             case TargetDisplay.None:
-                renderer.enabled = isPrimary && target != null && owner.ActiveWeaponMark > 0;
+                renderer.enabled = isPrimary && target != null && owner.CanHit(target.GameObject.transform.position);
                 break;
             case TargetDisplay.Focused:
                 renderer.enabled = isPrimary;
@@ -39,7 +39,7 @@ public class TargetHealthFeed : MonoBehaviour
                 renderer.enabled = true;
                 break;
             case TargetDisplay.LockedOnly:
-                renderer.enabled = isPrimary && owner.ActiveWeaponMark > 0;
+                renderer.enabled = isPrimary && owner.CanHit(target.GameObject.transform.position);
                 break;
         }
 

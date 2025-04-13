@@ -59,7 +59,7 @@ public class EchelonControl : MonoBehaviour
     private RailgunTriggerGuidance RailgunGuidance { get; set; }
     private TorpedoTriggerGuidance TorpedoGuidance { get; set; }
 
-
+    public bool RailgunIsCharging => activeWeapon == Weapon.Railgun && RailgunGuidance.IsCharging;
     public float regularForwardAcc = 400;
     public float overdriveForwardAcc = 800;
     public float strafeAcc = 200;
@@ -455,7 +455,7 @@ public class EchelonControl : MonoBehaviour
 
             IEnumerable<ITargetable> set = targetProcessor.Latest.Targets;
             if (liveTarget != null
-                && ActiveWeaponMark > 0
+                && CanHit(liveTarget.Position)
                 && liveTarget is PositionTargetable pt
                 )
             {
@@ -483,7 +483,7 @@ public class EchelonControl : MonoBehaviour
                     tm.Scale(targetSize);
                     var primary = t.Equals(liveTarget);
                     tm.TargetHealthFeed.isPrimary = primary;
-                    tm.TargetHealthFeed.isLocked = primary && ActiveWeaponMark > 0;
+                    tm.TargetHealthFeed.isLocked = primary && CanHit(liveTarget.Position);
                 });
             if (targetArrows != TargetArrows.None && !positionCamera.isFirstPerson)
                 targetDirectionMarkers.UpdateAll(targetProcessor.Latest.Targets,
@@ -687,7 +687,9 @@ public class EchelonControl : MonoBehaviour
                     }
                 }
 
-                if (railgun.WantsTargetOrientation)
+                if (activeWeapon == Weapon.Railgun
+                    && railgun.WantsTargetOrientation
+                    && RailgunGuidance.CanHitWithRotation(railgun.FireWithTarget.Position))
                     inWaterDirectionSource = railgun;
                 else
                     inWaterDirectionSource = nonRailgunInWaterDirectionSource;
@@ -791,6 +793,12 @@ public class EchelonControl : MonoBehaviour
         player.localEulerAngles = Vector3.zero;
     }
 
+    public bool CanHit(Vector3 position)
+    {
+        if (ActiveWeaponMark == 0)
+            return false;
+        return ActiveGuidance.CanHitWithRotation(position);
+    }
 }
 
 internal class TargetDirectionMarker

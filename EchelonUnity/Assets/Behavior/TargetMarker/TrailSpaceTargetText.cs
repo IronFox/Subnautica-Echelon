@@ -56,7 +56,8 @@ public class TrailSpaceTargetText : CommonTargetListener
                 return MainAdapterTarget.TargetAdapter.GameObjectInstanceId == gameObjectInstanceId;
             case TargetDisplay.LockedOnly:
                 return MainAdapterTarget.TargetAdapter.GameObjectInstanceId == gameObjectInstanceId
-                    && echelon.ActiveWeaponMark > 0;
+                    && echelon.CanHit(MainAdapterTarget.TargetAdapter.GameObject.transform.position)
+                    ;
             case TargetDisplay.None:
                 return false;
         }
@@ -77,7 +78,9 @@ public class TrailSpaceTargetText : CommonTargetListener
                     yield return MainAdapterTarget;
                 yield break;
             case TargetDisplay.LockedOnly:
-                if (MainAdapterTarget != null && echelon.ActiveWeaponMark > 0)
+                if (MainAdapterTarget != null
+                    && echelon.CanHit(MainAdapterTarget.TargetAdapter.GameObject.transform.position)
+                    )
                     yield return MainAdapterTarget;
                 yield break;
             case TargetDisplay.None:

@@ -45,7 +45,8 @@
 
             float opacity(float r2)
             {
-                return 1/(1 + r2*r2*20);
+                r2 = 1 - pow(1 - r2, 8);
+                return 1/(1 + r2*20);
             }
 
             fixed4 frag (v2f i) : SV_Target

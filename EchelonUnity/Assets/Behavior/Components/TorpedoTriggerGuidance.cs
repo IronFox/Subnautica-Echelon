@@ -1,4 +1,5 @@
 ﻿using System;
+using UnityEngine;
 
 internal class TorpedoTriggerGuidance : IWeaponTriggerGuidance
 {
@@ -76,4 +77,9 @@ internal class TorpedoTriggerGuidance : IWeaponTriggerGuidance
         if (!maintainTriggerUntilFired)
             maintainTarget = null;
     }
+
+    public bool CanHitWithoutRotation(Vector3 position)
+        => true;
+    public bool CanHitWithRotation(Vector3 position)
+        => true;
 }

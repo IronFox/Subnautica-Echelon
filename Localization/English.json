@@ -71,5 +71,12 @@
 	"display_DriveMk3":  "Echelon Drive Upgrade Mk3",
 	"desc_DriveMk1": "Improves boosting performance. Accelerates +{0}% compared to non-boosted. Does not stack",
 	"desc_DriveMk2": "Improves boosting performance. Accelerates +{0}% compared to non-boosted. Does not stack",
-	"desc_DriveMk3": "Improves boosting performance. Accelerates +{0}% compared to non-boosted. Does not stack"
+	"desc_DriveMk3": "Improves boosting performance. Accelerates +{0}% compared to non-boosted. Does not stack",
+	"group_Railgun":  "Railgun",
+	"display_RailgunMk1":  "Echelon Railgun System Mk1",
+	"display_RailgunMk2":  "Echelon Railgun System Mk2",
+	"display_RailgunMk3":  "Echelon Railgun System Mk3",
+	"desc_RailgunMk1": "Railgun Mk1 with limited aiming assist",
+	"desc_RailgunMk2": "Railgun Mk2 with full aiming assist",
+	"desc_RailgunMk3": "(future expansion)"
 }

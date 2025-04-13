@@ -8,11 +8,12 @@ public class Railgun : MonoBehaviour, IDirectionSource
     public CoverAnimation openCoverAnimation;
     public float damage = 2000;
     public float speedMetersPerSecond = 800;
+    public float AngleTolerance { get; set; } = 5;
     private TargetPredictor targetPredictor;
     private Vector3 forward = Vector3.forward;
 
     public ITargetable FireWithTarget { get; set; }
-
+    public bool holdFireOnBadAim = false;
     public Vector3 Forward => forward;
 
     private Vector3 CalculateInterceptDirection()
@@ -35,6 +36,32 @@ public class Railgun : MonoBehaviour, IDirectionSource
     public bool WantsTargetOrientation => FireWithTarget?.Exists == true;
 
     public bool CurrentShotIsDone { get; private set; }
+    public bool IsCharging => FireWithTarget?.Exists == true && shot && shot.IsCharging;
+
+    public bool CanHitWithoutRotation(Vector3 position)
+    {
+        var a = Vector3.Angle(position - transform.position, transform.forward);
+        return a <= AngleTolerance;
+    }
+    public float AngleError(Vector3 position)
+        => Vector3.Angle(position - transform.position, transform.forward);
+
+    public Vector3 ClosestHitDirection
+    {
+        get
+        {
+            var a = Vector3.Angle(forward, transform.forward);
+            if (a <= AngleTolerance)
+                return forward;
+            else
+            {
+                var axis = Vector3.Cross(forward, transform.forward);
+                var clamped = Quaternion.AngleAxis(5, -axis.normalized) * transform.forward;
+                return clamped;
+            }
+
+        }
+    }
 
     // Start is called before the first frame update
     void Start()
@@ -56,10 +83,9 @@ public class Railgun : MonoBehaviour, IDirectionSource
                 if (!shot)
                 {
                     var instance = Instantiate(shotPrefab, transform);
-                    if (Vector3.Angle(Forward, transform.forward) < 5)
-                        instance.transform.rotation = Quaternion.LookRotation(Forward);
-                    else
-                        instance.transform.localRotation = Quaternion.identity;
+
+                    instance.transform.rotation = Quaternion.LookRotation(ClosestHitDirection);
+
                     instance.transform.localScale = Vector3.one;
                     instance.transform.localPosition = Vector3.zero;
                     shot = instance.GetComponent<RailgunShot>();
@@ -75,7 +101,7 @@ public class Railgun : MonoBehaviour, IDirectionSource
 
         if (shot)
         {
-            shot.canFire = Vector3.Angle(Forward, transform.forward) < 5;
+            shot.canFire = !holdFireOnBadAim || Vector3.Angle(Forward, transform.forward) < 5;
 
             if (shot.HasFired)
             {
@@ -83,10 +109,7 @@ public class Railgun : MonoBehaviour, IDirectionSource
             }
             else
             {
-                if (Vector3.Angle(Forward, transform.forward) < 5)
-                    shot.transform.rotation = Quaternion.LookRotation(Forward);
-                else
-                    shot.transform.localRotation = Quaternion.identity;
+                shot.transform.rotation = Quaternion.LookRotation(ClosestHitDirection);
             }
             shot.doContinue = doFire;
             if (shot.SecondsAfterFired >= 1)

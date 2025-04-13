@@ -456,7 +456,18 @@ namespace Subnautica_Echelon
                 control.triggerWasActivated = GameInput.GetButtonDown(GameInput.Button.LeftHand);
                 if (control.IsFiring)
                 {
+
                     float drain = 2f;
+
+                    if (control.activeWeapon == Weapon.Railgun)
+                    {
+
+                        if (control.RailgunIsCharging)
+                            drain = 8;
+                        else
+                            drain = 0;
+                    }
+
                     powerMan.TrySpendEnergy(Time.deltaTime * drain);
                 }
             }

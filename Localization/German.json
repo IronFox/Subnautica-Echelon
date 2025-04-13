@@ -71,5 +71,13 @@
 	"display_DriveMk3":  "Echelon-Antriebs-Upgrade Mark 3",
 	"desc_DriveMk1": "Verbessert die Boost-Funktion der Echelon. Beschleunigt +{0}% verglichen mit der Normalgeschwindigkeit. Kann nicht mehrfach ausgerüstet werden",
 	"desc_DriveMk2": "Verbessert die Boost-Funktion der Echelon. Beschleunigt +{0}% verglichen mit der Normalgeschwindigkeit. Kann nicht mehrfach ausgerüstet werden",
-	"desc_DriveMk3": "Verbessert die Boost-Funktion der Echelon. Beschleunigt +{0}% verglichen mit der Normalgeschwindigkeit. Kann nicht mehrfach ausgerüstet werden"
+	"desc_DriveMk3": "Verbessert die Boost-Funktion der Echelon. Beschleunigt +{0}% verglichen mit der Normalgeschwindigkeit. Kann nicht mehrfach ausgerüstet werden",
+	"group_Railgun":  "Railgun",
+	"display_RailgunMk1":  "Echelon-Railgun-System Mark 1",
+	"display_RailgunMk2":  "Echelon-Railgun-System Mark 2",
+	"display_RailgunMk3":  "Echelon-Railgun-System Mark 3",
+	"desc_RailgunMk1": "Railgun Mark 1 mit minimaler Zielhilfe",
+	"desc_RailgunMk2": "Railgun Mark 2 mit überlegender Zielhilfe",
+	"desc_RailgunMk3": "(future expansion)"
+	
 }
