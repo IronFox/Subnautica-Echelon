@@ -36,7 +36,18 @@ internal class RailgunTriggerGuidance : IWeaponTriggerGuidance
     {
         Railgun.holdFireOnBadAim = Mark > 1;
         Railgun.FireWithTarget = Mark > 0 ? target : null;
-        Railgun.damage = 1000 * Mathf.Pow(2, Mark);
+        switch (Mark)
+        {
+            case 1:
+                Railgun.damage = 1000;
+                break;
+            case 2:
+                Railgun.damage = 5000;
+                break;
+            default:
+                Railgun.damage = 100;
+                break;
+        }
         FirstPersonMarkers.firingRailgun = target != null;
         StatusConsole.Set(StatusProperty.RailgunMark, Mark);
     }
