@@ -624,6 +624,17 @@ public class EchelonControl : MonoBehaviour
                 else
                     Onboard();
             }
+            else
+            {
+                if (currentlyBoarded)
+                {
+                    if (trailSpace.parent != transform.parent)
+                    {
+                        ULog.Warn($"Trail space is no longer sibling to sub. Moving...");
+                        trailSpace.parent = transform.parent;
+                    }
+                }
+            }
 
             if (currentCameraCenterIsCockpit != cameraCenterIsCockpit && currentlyBoarded)
             {
