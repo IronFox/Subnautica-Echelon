@@ -88,7 +88,7 @@ namespace Subnautica_Echelon
                 var component = cfg.Owner.AddComponent<FModComponent>();
 
                 channel.isPlaying(out var isPlaying);
-                //Log.Write($"Sound created (isPlaying={isPlaying})");
+                Log.Write($"Sound ({channel.handle}) created (isPlaying={isPlaying})");
                 var rs = component.sound = new FModSound(cfg, channel, sound, component, rolloffArray);
 
                 return rs;
@@ -104,7 +104,7 @@ namespace Subnautica_Echelon
         internal static void Check(string action, RESULT result)
         {
             if (result != RESULT.OK)
-                throw new InvalidOperationException($"{action} failed with {result}");
+                throw new FModException($"{action} failed with {result}", result);
         }
     }
 
@@ -112,9 +112,19 @@ namespace Subnautica_Echelon
     {
         public FModSound sound;
 
-        public void FixedUpdate()
+        public void OnDestroy()
         {
-            sound.Update(Time.fixedDeltaTime);
+            PLog.Write($"Disposing FModComponent ({sound?.Channel.handle})");
+            sound?.Dispose();
+        }
+
+        public void Update()
+        {
+            if (!sound.Update(Time.deltaTime))
+            {
+                PLog.Fail($"FModComponent.sound({sound.Channel.handle}).Update() returned false. Self-destructing");
+                Destroy(this);
+            }
         }
     }
 
@@ -138,8 +148,10 @@ namespace Subnautica_Echelon
             Sound = sound;
         }
 
-        internal void Update(float timeDelta)
+        internal bool Update(float timeDelta)
         {
+            if (timeDelta <= 0)
+                return true;
             Vector3 vpos = Vector3.zero, velocity = Vector3.zero;
             try
             {
@@ -164,21 +176,26 @@ namespace Subnautica_Echelon
 
 
 
-                var result = Channel.set3DAttributes(ref pos, ref vel);
-                if (result != RESULT.OK)
-                    throw new InvalidOperationException($"Channel.set3DAttributes() failed with {result}");
+                FModSoundCreator.Check($"Channel({Channel.handle}).set3DAttributes({position},{velocity})", Channel.set3DAttributes(ref pos, ref vel));
 
                 Age += timeDelta;
                 if (Age > 0.1f && !Recovered)
                 {
                     Recovered = true;
-                    FModSoundCreator.Check($"Channel.setVolume({Config.Volume})", Channel.setVolume(Config.Volume));
-                    FModSoundCreator.Check($"Channel.setPitch({Config.Pitch})", Channel.setPitch(Config.Pitch));
+                    FModSoundCreator.Check($"Channel({Channel.handle}).setVolume({Config.Volume})", Channel.setVolume(Config.Volume));
+                    FModSoundCreator.Check($"Channel({Channel.handle}).setPitch({Config.Pitch})", Channel.setPitch(Config.Pitch));
                 }
+                return true;
+            }
+            catch (FModException ex)
+            {
+                PLog.Exception($"FModSound.Update({timeDelta}) [{vpos},{velocity}] ", ex, Config.Owner);
+                return ex.Result != RESULT.ERR_INVALID_HANDLE;
             }
             catch (Exception ex)
             {
                 PLog.Exception($"FModSound.Update({timeDelta}) [{vpos},{velocity}] ", ex, Config.Owner);
+                return true;
             }
         }
 
