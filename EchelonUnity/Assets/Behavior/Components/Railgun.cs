@@ -34,7 +34,7 @@ public class Railgun : MonoBehaviour, IDirectionSource
     public float ZImpact => Impact * 0.1f;
 
     public bool WantsTargetOrientation => FireWithTarget?.Exists == true;
-
+    public int mark = 1;
     public bool CurrentShotIsDone { get; private set; }
     public bool IsCharging => FireWithTarget?.Exists == true && shot && shot.IsCharging;
 
@@ -91,6 +91,7 @@ public class Railgun : MonoBehaviour, IDirectionSource
                     shot = instance.GetComponent<RailgunShot>();
                     shot.owner = echelon;
                     shot.damage = damage;
+                    shot.upgradeLevel = mark;
                     shot.speedMetersPerSecond = speedMetersPerSecond;
                 }
             }

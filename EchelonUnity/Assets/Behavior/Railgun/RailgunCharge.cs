@@ -12,6 +12,7 @@ public class RailgunCharge : MonoBehaviour
     public float size;
     public SoundAdapter chargeSound;
     public float scale = 10;
+    public int upgradeLevel = 1;
     public bool EndReached => doCharge ? t >= chargeSeconds : t <= 0;
     public float EndReachedSeconds { get; private set; }
 
@@ -44,14 +45,14 @@ public class RailgunCharge : MonoBehaviour
             EndReachedSeconds = 0;
         var relative = t / chargeSeconds;
         size = Mathf.Sqrt(relative);
-        float pulseFrequency = 5f + relative * 5f;
-        float actualSize = size;
+        var upgradeScale = Mathf.Pow(2, upgradeLevel) * 0.5f;
+        float pulseFrequency = 5f + relative * 2.5f * upgradeScale;
         unclampedTime += Time.deltaTime * pulseFrequency;
         if (doPulse)
             size *= (1f + Mathf.Cos(unclampedTime) * 0.1f);
         Scale(isotropicSprite, Vector3.one * scale, size);
         Scale(wideSprite, M.V3(2, 0.1f, 2) * scale, size * 2);
-        chargeSound.pitch = 0.9f + relative * 2f;
+        chargeSound.pitch = 0.9f + relative * upgradeScale;
         chargeSound.volume = M.Saturate(relative * 5) * 0.5f + 0.5f * relative;
     }
 

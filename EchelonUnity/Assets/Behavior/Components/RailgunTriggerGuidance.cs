@@ -48,6 +48,7 @@ internal class RailgunTriggerGuidance : IWeaponTriggerGuidance
                 Railgun.damage = 100;
                 break;
         }
+        Railgun.mark = Mark;
         FirstPersonMarkers.firingRailgun = target != null;
         StatusConsole.Set(StatusProperty.RailgunMark, Mark);
     }

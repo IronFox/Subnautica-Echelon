@@ -277,6 +277,11 @@ PrefabInstance:
       propertyPath: m_Name
       value: Target (1)
       objectReference: {fileID: 0}
+    - target: {fileID: 2686086159483714447, guid: 4c309a0c53be3654cb1d042cdc8de02f,
+        type: 3}
+      propertyPath: m_Constraints
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 4784167282922112382, guid: 4c309a0c53be3654cb1d042cdc8de02f,
         type: 3}
       propertyPath: m_RootOrder
@@ -2043,6 +2048,11 @@ PrefabInstance:
     - target: {fileID: 5519261214424765450, guid: 90a2bc4f316bae74e996df61913f6a52,
         type: 3}
       propertyPath: torpedoMark
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 5519261214424765450, guid: 90a2bc4f316bae74e996df61913f6a52,
+        type: 3}
+      propertyPath: activeWeapon
       value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 6504700947456938084, guid: 90a2bc4f316bae74e996df61913f6a52,

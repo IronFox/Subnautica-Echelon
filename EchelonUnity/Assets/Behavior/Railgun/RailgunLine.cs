@@ -12,16 +12,24 @@ public class RailgunLine : MonoBehaviour
     private Color color;
     private float distance;
     public float speedMetersPerSecond = 200;
-    public int atSegment;
+    private int atSegment;
     public EchelonControl owner;
     public float damage = 2000;
+    public int upgradeLevel = 1;
     private readonly HashSet<TargetAdapter> hit = new HashSet<TargetAdapter>();
+    private float scale;
+    private SoundAdapter shotSound;
     //public float radius = 0.1f;
     // Start is called before the first frame update
     void Start()
     {
+        shotSound = GetComponent<SoundAdapter>();
         cylinder.transform.localPosition = M.V3(0, 0, length);
-        cylinder.transform.localScale = M.V3(radius, length, radius);
+        scale = M.Asymptotic(upgradeLevel, 2) * 2f;
+        shotSound.pitch = 1f - scale * 0.5f;
+        shotSound.volume = scale;
+        var r = radius * scale;
+        cylinder.transform.localScale = M.V3(r, length, r);
         color = cylinder.materials[0].color;
         float len = 1;
         float offset = 0;
@@ -64,7 +72,7 @@ public class RailgunLine : MonoBehaviour
                 var hitInstance = Instantiate(hitPrefab, transform);
                 hitInstance.transform.position = candidate.point;
                 hitInstance.transform.localEulerAngles = M.V3(90, 0, 0);
-
+                hitInstance.transform.localScale = M.V3(scale);
                 if (!candidate.rigidbody)
                     continue;
 
@@ -88,6 +96,7 @@ public class RailgunLine : MonoBehaviour
 
             var segment = instance.GetComponent<RailgunSegment>();
             segment.length = s.Length;
+            segment.transform.localScale = M.V3(scale, scale, 1);
         }
         if (distance > length * 2)
         {

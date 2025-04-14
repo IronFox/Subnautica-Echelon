@@ -172,8 +172,19 @@ public static class M
         return relLookAheadTarget.normalized;
     }
 
-
-
+    /// <summary>
+    /// Produces a value in [0,1) that is
+    /// 0 for <paramref name="x"/> = 0,
+    /// 0.5 for <paramref name="x"/> = <paramref name="halfX"/>,
+    /// and always remains &lt; 1 but also never stops growing
+    /// </summary>
+    /// <param name="x">Value to convert. Must be >= 0</param>
+    /// <param name="halfX">X value for which the function returns 0.5</param>
+    /// <returns>Asymptotically growing value of <paramref name="x"/></returns>
+    public static float Asymptotic(float x, int halfX)
+    {
+        return 1f - 1f / (1f + x / halfX);
+    }
 }
 
 

@@ -9,6 +9,7 @@ public class RailgunShot : MonoBehaviour
     public bool doContinue = true;
     public bool canFire = true;
     public float damage = 2000;
+    public int upgradeLevel = 1;
     private bool terminal = false;
 
     private RailgunLine line;
@@ -18,6 +19,7 @@ public class RailgunShot : MonoBehaviour
     void Start()
     {
         railgunCharge.doCharge = doContinue;
+        railgunCharge.upgradeLevel = upgradeLevel;
     }
 
     public bool HasFired => terminal;
@@ -28,6 +30,7 @@ public class RailgunShot : MonoBehaviour
     void Update()
     {
         railgunCharge.doCharge = doContinue && !terminal;
+        railgunCharge.upgradeLevel = upgradeLevel;
         if (terminal)
             SecondsAfterFired += Time.deltaTime;
         if (!terminal && railgunCharge.EndReached && canFire)
@@ -47,7 +50,9 @@ public class RailgunShot : MonoBehaviour
             this.line = line.GetComponent<RailgunLine>();
             this.line.owner = owner;
             this.line.damage = damage;
+            this.line.upgradeLevel = upgradeLevel;
             this.line.speedMetersPerSecond = speedMetersPerSecond;
+
             owner.GetComponent<Rigidbody>().AddForce(-transform.forward * 20000f / Time.fixedDeltaTime);
         }
         if (terminal && !line)
