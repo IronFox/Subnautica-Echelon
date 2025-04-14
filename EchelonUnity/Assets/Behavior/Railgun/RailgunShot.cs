@@ -53,7 +53,12 @@ public class RailgunShot : MonoBehaviour
             this.line.upgradeLevel = upgradeLevel;
             this.line.speedMetersPerSecond = speedMetersPerSecond;
 
-            owner.GetComponent<Rigidbody>().AddForce(-transform.forward * 20000f / Time.fixedDeltaTime);
+            var scale = M.Asymptotic(upgradeLevel, 2) * 2f;
+
+            owner.GetComponent<Rigidbody>().AddForce(
+                -transform.forward
+                * (50000f / Time.fixedDeltaTime * Mathf.Pow(scale, 4))
+                );
         }
         if (terminal && !line)
         {

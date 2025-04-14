@@ -82,7 +82,11 @@ public class RailgunLine : MonoBehaviour
                 if (target is null)
                     continue;
                 if (!target.Rigidbody.isKinematic)
-                    target.Rigidbody.AddForce(transform.forward * 10000f / Time.fixedDeltaTime);
+                    target.Rigidbody.AddForce(
+                        transform.forward
+                        * (
+                            10000f / Time.fixedDeltaTime * Mathf.Pow(scale, 4)
+                         ));
                 if (target.IsInvincible)
                 {
                     continue;
