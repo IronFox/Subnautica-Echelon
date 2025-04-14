@@ -76,7 +76,7 @@
 	"display_RailgunMk1":  "Echelon Railgun System Mk1",
 	"display_RailgunMk2":  "Echelon Railgun System Mk2",
 	"display_RailgunMk3":  "Echelon Railgun System Mk3",
-	"desc_RailgunMk1": "Railgun Mk1 with limited aiming assist",
-	"desc_RailgunMk2": "Railgun Mk2 with full aiming assist",
+	"desc_RailgunMk1": "Basic railgun with limited aiming assist",
+	"desc_RailgunMk2": "Superior railgun with full aiming assist",
 	"desc_RailgunMk3": "(future expansion)"
 }

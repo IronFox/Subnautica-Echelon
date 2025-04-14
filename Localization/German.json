@@ -76,8 +76,8 @@
 	"display_RailgunMk1":  "Echelon-Railgun-System Mark 1",
 	"display_RailgunMk2":  "Echelon-Railgun-System Mark 2",
 	"display_RailgunMk3":  "Echelon-Railgun-System Mark 3",
-	"desc_RailgunMk1": "Railgun Mark 1 mit minimaler Zielhilfe",
-	"desc_RailgunMk2": "Railgun Mark 2 mit überlegender Zielhilfe",
+	"desc_RailgunMk1": "Railgun mit minimaler Zielhilfe",
+	"desc_RailgunMk2": "Überlegene Railgun mit adaptiver Zielhilfe",
 	"desc_RailgunMk3": "(future expansion)"
 	
 }
