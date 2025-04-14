@@ -18,16 +18,19 @@ public class RailgunLine : MonoBehaviour
     public int upgradeLevel = 1;
     private readonly HashSet<TargetAdapter> hit = new HashSet<TargetAdapter>();
     private float scale;
-    private SoundAdapter shotSound;
+    public SoundAdapter primary;
+    public SoundAdapter secondary;
+    private float age;
+
     //public float radius = 0.1f;
     // Start is called before the first frame update
     void Start()
     {
-        shotSound = GetComponent<SoundAdapter>();
         cylinder.transform.localPosition = M.V3(0, 0, length);
         scale = M.Asymptotic(upgradeLevel, 2) * 2f;
-        shotSound.pitch = 1f - scale * 0.5f;
-        shotSound.volume = scale;
+        primary.pitch = 1f - scale * 0.5f;
+        primary.volume = scale;
+        secondary.play = upgradeLevel > 1;
         var r = radius * scale;
         cylinder.transform.localScale = M.V3(r, length, r);
         color = cylinder.materials[0].color;
@@ -51,7 +54,7 @@ public class RailgunLine : MonoBehaviour
 
         distance += Time.deltaTime * speedMetersPerSecond;
         m.SetFloat("_Progress", distance);
-
+        age += Time.deltaTime;
 
         cylinder.materials[0] = m;
 
@@ -102,7 +105,7 @@ public class RailgunLine : MonoBehaviour
             segment.length = s.Length;
             segment.transform.localScale = M.V3(scale, scale, 1);
         }
-        if (distance > length * 2)
+        if (distance > length && age > 5)
         {
             Destroy(gameObject);
         }

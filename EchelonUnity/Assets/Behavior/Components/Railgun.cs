@@ -35,6 +35,8 @@ public class Railgun : MonoBehaviour, IDirectionSource
 
     public bool WantsTargetOrientation => FireWithTarget?.Exists == true;
     public int mark = 1;
+    private SoundAdapter localizedSound;
+
     public bool CurrentShotIsDone { get; private set; }
     public bool IsCharging => FireWithTarget?.Exists == true && shot && shot.IsCharging;
     public bool IsDischarging => shot && shot.IsDischarging;
@@ -107,7 +109,19 @@ public class Railgun : MonoBehaviour, IDirectionSource
 
             if (shot.HasFired)
             {
-                shot.transform.SetParent(echelon.transform.parent);
+                if (shot.transform.parent == transform)
+                {
+                    var newSound = shot.Line.secondary;
+                    if (localizedSound != newSound)
+                    {
+                        if (localizedSound)
+                            Destroy(localizedSound.gameObject);
+                        localizedSound = newSound;
+                        if (newSound)
+                            localizedSound.transform.SetParent(transform);
+                    }
+                    shot.transform.SetParent(echelon.transform.parent);
+                }
             }
             else
             {
@@ -121,5 +135,11 @@ public class Railgun : MonoBehaviour, IDirectionSource
                 shot = null;
             }
         }
+        //else if (localizedSound)
+        //{
+        //    Destroy(localizedSound.gameObject);
+        //    localizedSound = null;
+        //}
+
     }
 }

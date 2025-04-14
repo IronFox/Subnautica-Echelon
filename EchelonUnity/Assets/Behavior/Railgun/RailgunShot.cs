@@ -13,6 +13,7 @@ public class RailgunShot : MonoBehaviour
     private bool terminal = false;
 
     private RailgunLine line;
+    public RailgunLine Line => line;
     public float speedMetersPerSecond = 800;
 
     // Start is called before the first frame update
@@ -22,7 +23,7 @@ public class RailgunShot : MonoBehaviour
         railgunCharge.upgradeLevel = upgradeLevel;
     }
 
-    public bool HasFired => terminal;
+    public bool HasFired => terminal && line;
     public float SecondsAfterFired { get; set; }
     public bool IsCharging => railgunCharge.doCharge && !railgunCharge.EndReached;
     public bool IsDischarging => !railgunCharge.doCharge && !terminal;

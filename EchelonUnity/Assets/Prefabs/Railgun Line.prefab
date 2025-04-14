@@ -1,5 +1,56 @@
 %YAML 1.1
 %TAG !u! tag:unity3d.com,2011:
+--- !u!1 &2972686522744928426
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1333094369185833295}
+  - component: {fileID: 2760864066775530357}
+  m_Layer: 0
+  m_Name: Secondary Sound
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1333094369185833295
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2972686522744928426}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 6003003015580870762}
+  m_RootOrder: 2
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &2760864066775530357
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2972686522744928426}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8c9da103176980046ab795a477fff5fe, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  clip: {fileID: 8300000, guid: bbf6cc72d8044304c99141e6053a2b66, type: 3}
+  volume: 1
+  play: 0
+  minDistance: 40
+  maxDistance: 500
+  is3D: 1
+  pitch: 0.25
+  loop: 0
 --- !u!1 &6003003014474726683
 GameObject:
   m_ObjectHideFlags: 0
@@ -89,7 +140,6 @@ GameObject:
   m_Component:
   - component: {fileID: 6003003015580870762}
   - component: {fileID: 6003003015580870763}
-  - component: {fileID: 4400755829541440457}
   m_Layer: 0
   m_Name: Railgun Line
   m_TagString: Untagged
@@ -109,6 +159,8 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 6003003014474726680}
+  - {fileID: 5132374206008097119}
+  - {fileID: 1333094369185833295}
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -132,16 +184,49 @@ MonoBehaviour:
   length: 500
   radius: 0.1
   speedMetersPerSecond: 800
-  atSegment: 0
   owner: {fileID: 0}
   damage: 2000
---- !u!114 &4400755829541440457
+  upgradeLevel: 1
+  primary: {fileID: 5906729384034611076}
+  secondary: {fileID: 2760864066775530357}
+--- !u!1 &6983982314757196786
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 5132374206008097119}
+  - component: {fileID: 5906729384034611076}
+  m_Layer: 0
+  m_Name: Primary Sound
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &5132374206008097119
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6983982314757196786}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 6003003015580870762}
+  m_RootOrder: 1
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &5906729384034611076
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 6003003015580870764}
+  m_GameObject: {fileID: 6983982314757196786}
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 8c9da103176980046ab795a477fff5fe, type: 3}

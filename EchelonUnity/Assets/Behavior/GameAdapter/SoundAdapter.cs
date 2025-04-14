@@ -1,8 +1,5 @@
 ﻿using System;
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.Networking.Types;
 
 public class SoundAdapter : MonoBehaviour
 {
@@ -16,11 +13,11 @@ public class SoundAdapter : MonoBehaviour
     public bool is3D = true;
     public float pitch = 1f;
     public bool loop = false;
-    
+
 
     void Start()
     {
-        
+
     }
 
     void OnDestroy()
@@ -32,7 +29,7 @@ public class SoundAdapter : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if (clip != null && play)
+        if (clip && play)
         {
             var cfg = GetCurrentConfig();
 
@@ -43,7 +40,7 @@ public class SoundAdapter : MonoBehaviour
             }
             else
                 if (Sound.Config.IsSignificantlyDifferent(cfg))
-                    Sound.ApplyLiveChanges(cfg);
+                Sound.ApplyLiveChanges(cfg);
         }
         else if (Sound != null)
         {
@@ -78,7 +75,7 @@ public class SoundAdapter : MonoBehaviour
 
 
     public static ISoundCreator SoundCreator { get; set; } = new DefaultSoundCreator();
-        //new DefaultSoundCreator();
+    //new DefaultSoundCreator();
 
 }
 
@@ -86,7 +83,7 @@ public interface IInstantiatedSound : IDisposable
 {
     SoundConfig Config { get; }
 
-    void ApplyLiveChanges( SoundConfig cfg );
+    void ApplyLiveChanges(SoundConfig cfg);
 
 }
 
@@ -125,7 +122,7 @@ public readonly struct SoundConfig
     public bool IsSignificantlyDifferent(SoundConfig other)
     {
         return //!IsLiveCompatibleTo(Other)
-            //|| 
+               //|| 
             SigDif(Pitch, other.Pitch)
             || SigDif(Volume, other.Volume)
             || SigDif(MinDistance, other.MinDistance)
@@ -246,7 +243,7 @@ internal class DefaultSound : IInstantiatedSound
 
     public void Dispose()
     {
-        GameObject.Destroy( Source );
+        GameObject.Destroy(Source);
     }
 
     public void ApplyLiveChanges(SoundConfig cfg)
@@ -262,7 +259,7 @@ internal class DefaultSound : IInstantiatedSound
                 Source.Stop();
         }
         else if (!Source.isPlaying)
-                Source.Play();
+            Source.Play();
 
         Config = cfg;
     }
