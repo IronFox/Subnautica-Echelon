@@ -25,6 +25,7 @@ public class RailgunShot : MonoBehaviour
     public bool HasFired => terminal;
     public float SecondsAfterFired { get; set; }
     public bool IsCharging => railgunCharge.doCharge && !railgunCharge.EndReached;
+    public bool IsDischarging => !railgunCharge.doCharge && !terminal;
 
     // Update is called once per frame
     void Update()

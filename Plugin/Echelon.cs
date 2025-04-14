@@ -438,6 +438,7 @@ namespace Subnautica_Echelon
 
         }
 
+        public const float RailgunEnergyCost = 12;
         public bool CanControl
             => control.isBoarded
             && !control.isDocked
@@ -461,9 +462,7 @@ namespace Subnautica_Echelon
                     {
 
                         if (control.RailgunIsCharging)
-                            drain = 8;
-                        else
-                            drain = 0;
+                            drain = RailgunEnergyCost;
                     }
 
                     powerMan.TrySpendEnergy(Time.deltaTime * drain);
@@ -471,6 +470,13 @@ namespace Subnautica_Echelon
             }
             else
                 control.triggerWasActivated = control.triggerActive = false;
+
+            if (control.RailgunIsDischarging)
+            {
+                //PLog.Write($"Discharging");
+                energyInterface.AddEnergy(RailgunEnergyCost * Time.deltaTime * RailgunCharge.DischargeSpeedFactor);
+            }
+
 
         }
 

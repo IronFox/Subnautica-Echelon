@@ -32,6 +32,7 @@ internal class RailgunTriggerGuidance : IWeaponTriggerGuidance
     { }
 
     public bool IsCharging => Railgun.IsCharging;
+    public bool IsDischarging => Railgun.IsDischarging;
     public void OnUpdate()
     {
         Railgun.holdFireOnBadAim = Mark > 1;

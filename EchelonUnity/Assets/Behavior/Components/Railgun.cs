@@ -37,6 +37,7 @@ public class Railgun : MonoBehaviour, IDirectionSource
     public int mark = 1;
     public bool CurrentShotIsDone { get; private set; }
     public bool IsCharging => FireWithTarget?.Exists == true && shot && shot.IsCharging;
+    public bool IsDischarging => shot && shot.IsDischarging;
 
     public bool CanHitWithoutRotation(Vector3 position)
     {

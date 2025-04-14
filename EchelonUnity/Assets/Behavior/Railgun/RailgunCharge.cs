@@ -13,6 +13,10 @@ public class RailgunCharge : MonoBehaviour
     public SoundAdapter chargeSound;
     public float scale = 10;
     public int upgradeLevel = 1;
+    /// <summary>
+    /// How many times faster discharge is than charge
+    /// </summary>
+    public const float DischargeSpeedFactor = 5;
     public bool EndReached => doCharge ? t >= chargeSeconds : t <= 0;
     public float EndReachedSeconds { get; private set; }
 
@@ -33,7 +37,7 @@ public class RailgunCharge : MonoBehaviour
         }
         else
         {
-            this.t -= Time.deltaTime * 5;
+            this.t -= Time.deltaTime * DischargeSpeedFactor;
             doPulse = false;
         }
         float pulseStrength = doPulse ? 1.1f : 1.0f;

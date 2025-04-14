@@ -60,6 +60,7 @@ public class EchelonControl : MonoBehaviour
     private TorpedoTriggerGuidance TorpedoGuidance { get; set; }
 
     public bool RailgunIsCharging => activeWeapon == Weapon.Railgun && RailgunGuidance.IsCharging;
+    public bool RailgunIsDischarging => /*activeWeapon == Weapon.Railgun && */RailgunGuidance.IsDischarging;
     public float regularForwardAcc = 400;
     public float overdriveForwardAcc = 800;
     public float strafeAcc = 200;
