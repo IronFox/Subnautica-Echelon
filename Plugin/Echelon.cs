@@ -27,15 +27,13 @@ namespace Subnautica_Echelon
         private bool wasDead;
         private bool destroyed;
         private float deathAge;
-        private MyLogger EchLog { get; }
         private VoidDrive engine;
         private AutoPilot autopilot;
         private EnergyInterface energyInterface;
         private int[] moduleCounts = new int[Enum.GetValues(typeof(EchelonModule)).Length];
         public Echelon()
         {
-            EchLog = new MyLogger(this);
-            EchLog.Write($"Constructed");
+            PLog.Write($"Echelon Constructed");
             MaterialFixer = new MaterialFixer(this, LogConfig.Verbose);
         }
 
@@ -138,12 +136,12 @@ namespace Subnautica_Echelon
             var existing = GetComponent<VFEngine>();
             if (existing != null)
             {
-                EchLog.Write($"Removing existing vfEngine {existing}");
+                PLog.Write($"Removing existing vfEngine {existing}");
                 //HierarchyAnalyzer analyzer = new HierarchyAnalyzer();
                 Destroy(existing);
             }
             VFEngine = Engine = engine = gameObject.AddComponent<VoidDrive>();
-            EchLog.Write($"Assigned new engine");
+            PLog.Write($"Assigned new engine");
 
             this.onToggle += OnToggleModule;
 
@@ -151,7 +149,7 @@ namespace Subnautica_Echelon
             var cameraController = gameObject.GetComponentInChildren<VehicleFramework.VehicleComponents.MVCameraController>();
             if (cameraController != null)
             {
-                EchLog.Write($"Destroying camera controller {cameraController}");
+                PLog.Write($"Destroying camera controller {cameraController}");
                 Destroy(cameraController);
             }
 
@@ -167,7 +165,7 @@ namespace Subnautica_Echelon
                     var item = modules.GetItemInSlot(this.slotIDs[i])?.item;
                     if (item && EchelonModuleFamily<T>.IsAny(item.GetTechType()))
                     {
-                        EchLog.Write($"Found non-toggled weapon in slot {i}/{slotIDs[i]}. Toggling off");
+                        PLog.Write($"Found non-toggled weapon in slot {i}/{slotIDs[i]}. Toggling off");
                         ToggleSlot(i, true);
                         return true;
                     }
@@ -194,15 +192,15 @@ namespace Subnautica_Echelon
 
         private void OnToggleModule(int slotID, bool state)
         {
-            EchLog.Write($"OnToggleModule({slotID},{state})");
+            PLog.Write($"OnToggleModule({slotID},{state})");
             var item = modules.GetItemInSlot(this.slotIDs[slotID])?.item;
-            EchLog.Write($"Checking {item}");
+            PLog.Write($"Checking {item}");
             if (IsWeapon(item))
             {
-                EchLog.Write($"Is weapon");
+                PLog.Write($"Is weapon");
                 if (state)
                 {
-                    EchLog.Write($"Is toggling on");
+                    PLog.Write($"Is toggling on");
                     for (int i = 0; i < slotIDs.Length; i++)
                     {
                         if (i != slotID)
@@ -210,7 +208,7 @@ namespace Subnautica_Echelon
                             var item2 = modules.GetItemInSlot(this.slotIDs[i])?.item;
                             if (IsWeapon(item2) && IsToggled(i))
                             {
-                                EchLog.Write($"Found other toggled weapon in slot {i}/{slotIDs[i]}. Toggling off");
+                                PLog.Write($"Found other toggled weapon in slot {i}/{slotIDs[i]}. Toggling off");
                                 ToggleSlot(i, false);
                             }
                         }
@@ -233,7 +231,7 @@ namespace Subnautica_Echelon
         {
             if (!isInitialized)
             {
-                EchLog.Write($"LocalInit() first time");
+                PLog.Write($"LocalInit() first time");
                 isInitialized = true;
                 try
                 {
@@ -258,26 +256,26 @@ namespace Subnautica_Echelon
                     //rotateCamera = GetComponentInChildren<RotateCamera>();
 
                     //if (rotateCamera == null)
-                    //    EchLog.Write($"Rotate camera not found");
+                    //    PLog.Write($"Rotate camera not found");
                     //else
-                    //    EchLog.Write($"Found camera rotate {rotateCamera.name}");
+                    //    PLog.Write($"Found camera rotate {rotateCamera.name}");
 
                     if (control != null)
                     {
-                        EchLog.Write("Found control");
+                        PLog.Write("Found control");
                     }
                     else
                     {
                         if (transform == null)
-                            EchLog.Write($"Do not have a transform");
+                            PLog.Write($"Do not have a transform");
                         else
                         {
-                            EchLog.Write($"This is {transform.name}");
-                            EchLog.Write("This has components: " + Helper.NamesS(Helper.AllComponents(transform)));
-                            EchLog.Write("This has children: " + Helper.NamesS(Helper.Children(transform)));
+                            PLog.Write($"This is {transform.name}");
+                            PLog.Write("This has components: " + Helper.NamesS(Helper.AllComponents(transform)));
+                            PLog.Write("This has children: " + Helper.NamesS(Helper.Children(transform)));
                         }
                     }
-                    EchLog.Write($"LocalInit() done");
+                    PLog.Write($"LocalInit() done");
 
                 }
                 catch (Exception e)
@@ -315,13 +313,13 @@ namespace Subnautica_Echelon
         {
             try
             {
-                EchLog.Write("Echelon.Start()");
+                PLog.Write("Echelon.Start()");
 
 
                 LocalInit();
 
                 base.Start();
-                EchLog.Write("Echelon.Start() done");
+                PLog.Write("Echelon.Start() done");
 
             }
             catch (Exception ex)
@@ -341,7 +339,7 @@ namespace Subnautica_Echelon
                     return;
                 }
 
-                EchLog.Write("Echelon.PlayerEntry()");
+                PLog.Write("Echelon.PlayerEntry()");
                 LocalInit();
 
                 base.PlayerEntry();
@@ -362,14 +360,14 @@ namespace Subnautica_Echelon
         {
             try
             {
-                EchLog.Write("Echelon.PlayerExit()");
+                PLog.Write("Echelon.PlayerExit()");
                 LocalInit();
                 control.Offboard();
                 base.PlayerExit();
 
                 foreach (MonoBehaviour behavior in reenableOnExit)
                 {
-                    EchLog.Write($"Reenabling {behavior.name}");
+                    PLog.Write($"Reenabling {behavior.name}");
                     behavior.enabled = true;
                 }
 
@@ -826,7 +824,7 @@ namespace Subnautica_Echelon
                 var cockpitExit = mainSeat.Find($"ExitLocation");
                 if (!mainSeat)
                 {
-                    EchLog.Write("PilotSeat not found");
+                    PLog.Write("PilotSeat not found");
                     return default;
                 }
                 return new VehiclePilotSeat
@@ -850,7 +848,7 @@ namespace Subnautica_Echelon
                 var hatch = transform.Find("Hatch");
                 if (!hatch)
                 {
-                    EchLog.Write("Hatch not found");
+                    PLog.Write("Hatch not found");
                     return new List<VehicleHatchStruct>();
                 }
                 return new List<VehicleHatchStruct>
@@ -912,7 +910,7 @@ namespace Subnautica_Echelon
                         rs.Add(clipProxyParent.GetChild(i).gameObject);
                 }
                 else
-                    EchLog.Write("Clip proxy not found");
+                    PLog.Write("Clip proxy not found");
                 return rs;
             }
         }
@@ -935,13 +933,13 @@ namespace Subnautica_Echelon
                         if (position != null)
                             plugProxies.Add(position);
                         else
-                            EchLog.Write($"Plug {plug.name} does not have a 'Module Position' child");
+                            PLog.Write($"Plug {plug.name} does not have a 'Module Position' child");
                     }
                 }
                 else
-                    EchLog.Write($"Plugs not found");
+                    PLog.Write($"Plugs not found");
 
-                EchLog.Write($"Determined {plugProxies.Count} plug(s)");
+                PLog.Write($"Determined {plugProxies.Count} plug(s)");
 
                 if (ui != null)
                 {
@@ -953,7 +951,7 @@ namespace Subnautica_Echelon
                     });
                 }
                 else
-                    EchLog.Write($"Upgrades interface not found");
+                    PLog.Write($"Upgrades interface not found");
                 return rs;
 
             }
@@ -1023,7 +1021,7 @@ namespace Subnautica_Echelon
                 {
                     PLog.Exception("HeadLights", ex, gameObject);
                 }
-                EchLog.Write($"Returning {rs.Count} headlight(s)");
+                PLog.Write($"Returning {rs.Count} headlight(s)");
                 return rs;
 
             }
