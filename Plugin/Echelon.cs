@@ -290,22 +290,46 @@ namespace Subnautica_Echelon
         public override void SetBaseColor(Vector3 hsb, Color color)
         {
             PLog.Write($"Updating sub base color to {color}");
-            base.SetBaseColor(hsb, color);
+            try
+            {
+                base.SetBaseColor(hsb, color);
+            }
+            catch (Exception ex)
+            {
+                PLog.Exception($"Forwarding to base.{nameof(SetBaseColor)}({hsb},{color})", ex, gameObject);
+            }
+            UpdateColors();
 
-            var listeners = GetComponentsInChildren<IColorListener>();
-            foreach (var listener in listeners)
-                listener.SetColors(baseColor, stripeColor);
+        }
 
+        private void UpdateColors()
+        {
+            try
+            {
+                var listeners = GetComponentsInChildren<IColorListener>();
+                foreach (var listener in listeners)
+                {
+                    try
+                    {
+                        listener.SetColors(baseColor, stripeColor);
+                    }
+                    catch (Exception ex)
+                    {
+                        PLog.Exception($"Forwarding to {listener}.{nameof(listener.SetColors)}({baseColor},{stripeColor})", ex, gameObject);
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                PLog.Exception($"Getting listeners", ex, gameObject);
+            }
         }
 
         public override void SetStripeColor(Vector3 hsb, Color color)
         {
             PLog.Write($"Updating sub stripe color to {color}");
             base.SetStripeColor(hsb, color);
-
-            var listeners = GetComponentsInChildren<IColorListener>();
-            foreach (var listener in listeners)
-                listener.SetColors(baseColor, stripeColor);
+            UpdateColors();
         }
 
 
