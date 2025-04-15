@@ -11,7 +11,6 @@ GameObject:
   - component: {fileID: 4614618463819383606}
   - component: {fileID: 1211563715915626494}
   - component: {fileID: 6784197274986465275}
-  - component: {fileID: 2867044626729357861}
   - component: {fileID: 4563424795450736802}
   m_Layer: 0
   m_Name: Animation Point 1
@@ -81,19 +80,6 @@ MeshRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
---- !u!114 &2867044626729357861
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 82917819404241210}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: f0d0b1ed23c13724ca6085d380ecaa9f, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  materialIndex: -401
 --- !u!114 &4563424795450736802
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -237,7 +223,6 @@ GameObject:
   - component: {fileID: 3263938457110422074}
   - component: {fileID: 8145465963958769157}
   - component: {fileID: 5494920728063002249}
-  - component: {fileID: 6061520830745903532}
   - component: {fileID: 5203190474509283754}
   m_Layer: 0
   m_Name: Animation Point 2
@@ -307,19 +292,6 @@ MeshRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
---- !u!114 &6061520830745903532
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 325592178738379285}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: f0d0b1ed23c13724ca6085d380ecaa9f, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  materialIndex: -401
 --- !u!114 &5203190474509283754
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1040,7 +1012,6 @@ GameObject:
   - component: {fileID: 6212953734192011112}
   - component: {fileID: 7390780118797195703}
   - component: {fileID: 4143655610127822941}
-  - component: {fileID: 2728778495059498040}
   - component: {fileID: 6073376595281940185}
   m_Layer: 0
   m_Name: Animation Point 3
@@ -1110,19 +1081,6 @@ MeshRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
---- !u!114 &2728778495059498040
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 946012157476672844}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: f0d0b1ed23c13724ca6085d380ecaa9f, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  materialIndex: -401
 --- !u!114 &6073376595281940185
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2311,7 +2269,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f0d0b1ed23c13724ca6085d380ecaa9f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  materialIndex: -401
+  materialIndex: 0
 --- !u!114 &2226830978669314359
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -8313,7 +8271,6 @@ GameObject:
   - component: {fileID: 449002497785484088}
   - component: {fileID: 3714017116751688865}
   - component: {fileID: 737239583079267474}
-  - component: {fileID: 4797208018577288905}
   - component: {fileID: 7459962002271655140}
   m_Layer: 0
   m_Name: Animation Point 0
@@ -8383,19 +8340,6 @@ MeshRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
---- !u!114 &4797208018577288905
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 4503685686552560719}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: f0d0b1ed23c13724ca6085d380ecaa9f, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  materialIndex: -401
 --- !u!114 &7459962002271655140
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -15226,6 +15170,8 @@ MonoBehaviour:
   openCoverAnimation: {fileID: 2226830978669314359}
   damage: 2000
   speedMetersPerSecond: 800
+  holdFireOnBadAim: 0
+  mark: 1
 --- !u!114 &4819567519028203873
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -16395,6 +16341,7 @@ MonoBehaviour:
   lookUpAxis: 0
   targetMarkerSizeScale: 1
   torpedoMark: 0
+  railgunMark: 1
   overdriveActive: 0
   outOfWater: 0
   freeCamera: 0
@@ -16420,7 +16367,6 @@ MonoBehaviour:
   airDrag: 0.1
   triggerActive: 0
   triggerWasActivated: 0
-  railgunMark: 1
   activeWeapon: 1
   forwardFacingLeft: {fileID: 7858723242007386751}
   backFacingLeft: {fileID: 7858723241938675400}
@@ -17685,15 +17631,15 @@ PrefabInstance:
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 79ee4f3f52d67374683a236723570b8a, type: 3}
---- !u!4 &358423859201862970 stripped
-Transform:
-  m_CorrespondingSourceObject: {fileID: 367112996754252716, guid: 79ee4f3f52d67374683a236723570b8a,
-    type: 3}
-  m_PrefabInstance: {fileID: 135494787220835990}
-  m_PrefabAsset: {fileID: 0}
 --- !u!198 &2815871491246593094 stripped
 ParticleSystem:
   m_CorrespondingSourceObject: {fileID: 2806485808818690768, guid: 79ee4f3f52d67374683a236723570b8a,
+    type: 3}
+  m_PrefabInstance: {fileID: 135494787220835990}
+  m_PrefabAsset: {fileID: 0}
+--- !u!4 &358423859201862970 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 367112996754252716, guid: 79ee4f3f52d67374683a236723570b8a,
     type: 3}
   m_PrefabInstance: {fileID: 135494787220835990}
   m_PrefabAsset: {fileID: 0}
