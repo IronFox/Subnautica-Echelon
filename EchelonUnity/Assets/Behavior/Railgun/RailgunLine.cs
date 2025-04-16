@@ -31,7 +31,7 @@ public class RailgunLine : MonoBehaviour
         primary.pitch = 1f - scale * 0.5f;
         primary.volume = scale;
         secondary.play = upgradeLevel > 1;
-        var r = radius * scale;
+        var r = radius * upgradeLevel;
         cylinder.transform.localScale = M.V3(r, length, r);
         color = cylinder.materials[0].color;
         float len = 1;
