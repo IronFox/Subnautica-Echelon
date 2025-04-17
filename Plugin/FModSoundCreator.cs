@@ -122,6 +122,7 @@ namespace Subnautica_Echelon
         {
             if (!sound.Update(Time.deltaTime))
             {
+                sound = null;//there is something going on in this case. better just unset and don't touch it
                 PLog.Fail($"FModComponent.sound({sound.Channel.handle}).Update() returned false. Self-destructing");
                 Destroy(this);
             }
