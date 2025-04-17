@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Nautilus.Handlers;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Reflection;
@@ -366,6 +367,9 @@ namespace Subnautica_Echelon
                 PLog.Write("Echelon.PlayerEntry()");
                 LocalInit();
 
+                CraftDataHandler.SetQuickSlotType(TechType.VehicleStorageModule, QuickSlotType.Instant);
+
+
                 base.PlayerEntry();
                 control.Onboard(Player.main.camRoot.transform);
 
@@ -394,6 +398,7 @@ namespace Subnautica_Echelon
                     PLog.Write($"Reenabling {behavior.name}");
                     behavior.enabled = true;
                 }
+                CraftDataHandler.SetQuickSlotType(TechType.VehicleStorageModule, QuickSlotType.None);
 
                 Player.main.transform.LookAt(transform.position);
 
@@ -620,14 +625,6 @@ namespace Subnautica_Echelon
         private bool HasModule(EchelonModule module)
             => moduleCounts[(int)module] > 0;
 
-        private int HighestModule(params EchelonModule[] m)
-        {
-            for (int i = m.Length - 1; i >= 0; i--)
-                if (HasModule(m[i]))
-                    return i + 1;
-            return 0;
-        }
-
         public EchelonModule HighestModuleType(params EchelonModule[] m)
         {
             for (int i = m.Length - 1; i >= 0; i--)
@@ -636,6 +633,48 @@ namespace Subnautica_Echelon
             return EchelonModule.None;
         }
 
+        public override void OnUpgradeModuleUse(TechType techType, int slotID)
+        {
+            try
+            {
+                PLog.Write($"OnUpgradeModuleUse({techType}, {slotID})");
+                base.OnUpgradeModuleUse(techType, slotID);
+                if (techType == TechType.VehicleStorageModule)
+                {
+                    PLog.Write($"Checking item in slot {slotID}");
+                    var slotItem = GetSlotItem(slotID);
+                    Pickupable pickupable = slotItem.item;
+                    if (slotItem is null)
+                    {
+                        PLog.Warn("Warning: failed to get item for that slotID: " + slotID);
+                        return;
+                    }
+
+                    Pickupable item = slotItem.item;
+                    if (item.GetTechType() != techType)
+                    {
+                        PLog.Warn("Warning: failed to get pickupable for that slotID: " + slotID);
+                        return;
+                    }
+
+                    SeamothStorageContainer component = item.GetComponent<SeamothStorageContainer>();
+                    if (!component)
+                    {
+                        PLog.Warn("Warning: failed to get storage-container for that slotID: " + slotID);
+                        return;
+                    }
+                    PLog.Write($"Valid container. Opening...");
+                    var itemsContainer = component.container;
+                    PDA pda = Player.main.GetPDA();
+                    Inventory.main.SetUsedStorage(itemsContainer);
+                    pda.Open(PDATab.Inventory);
+                }
+            }
+            catch (Exception ex)
+            {
+                PLog.Exception("OnUpgradeModuleUse()", ex, gameObject);
+            }
+        }
 
         public override void OnVehicleUndocked()
         {
