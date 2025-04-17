@@ -145,6 +145,7 @@ public abstract class EchelonBaseModule : ModVehicleUpgrade
         {
             return;
         }
+        echelon.OnModuleRemoved(param.slotID, Module);
         echelon.SetModuleCount(Module, GetNumberInstalled(echelon));
     }
 
