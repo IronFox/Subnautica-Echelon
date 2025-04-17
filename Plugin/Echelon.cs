@@ -1098,5 +1098,10 @@ namespace Subnautica_Echelon
             }
 
         }
+
+        public void OnModuleRemoved(int slot, EchelonModule module)
+        {
+            ToggleSlot(slot, false);    //just in case
+        }
     }
 }
