@@ -49,4 +49,7 @@ public class EchelonConfig : ConfigFile
     public float mk1RailgunDamage = 1700;
     [Slider(DefaultValue = 4000, Label = "Mk2 Railgun Damage", LabelLanguageId = "optMk2RailgunDamage", Min = 0, Max = 10000, Step = 100)]
     public float mk2RailgunDamage = 4000;
+    [Slider(DefaultValue = 75, Format = "{0:F0} %", Label = "Railgun Sound Level", LabelLanguageId = "optRailgunSoundLevel", Min = 0, Max = 100, Step = 5)]
+    public float railgunSoundLevel = 75;
+
 }

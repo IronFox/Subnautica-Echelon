@@ -29,7 +29,8 @@ public class RailgunLine : MonoBehaviour
         cylinder.transform.localPosition = M.V3(0, 0, length);
         scale = M.Asymptotic(upgradeLevel, 2) * 2f;
         primary.pitch = 1f - scale * 0.5f;
-        primary.volume = scale;
+        primary.volume = scale * Railgun.SoundLevel;
+        secondary.volume = Railgun.SoundLevel;
         secondary.play = upgradeLevel > 1;
         var r = radius * upgradeLevel;
         cylinder.transform.localScale = M.V3(r, length, r);
