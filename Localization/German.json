@@ -18,6 +18,8 @@
 	"CriticalOnly": "Nur kritische Kontakte",
 	"optLookSensitivity": "Zusätzliche Mausempfindlichkeit",
 	"optTargetMarkerSizeScale": "Kontaktumrandungsgröße",
+	"optMk1RailgunDamage": "Mark 1 Railgun Schaden",
+	"optMk2RailgunDamage": "Mark 2 Railgun Schaden",
 	"description": "Die Echelon ist ein Hochgeschwindigkeitsunterwasserjäger",
 	"encyclopedia": "Die Echelon wurde entwickelt, um unter den härtesten Bedingungen Ziele zu finden und zu vernichten.\nSie verfügt über eine Radionuklidbatterie, Selbstreparaturfunktionen sowie intelligenten Torpedovorrichtungen. Ihre fortgeschrittene Benutzerschnittstelle erlaubt holographische Sensorrekonstruktion zur verbesserten Umgebungswahrnehmung. Automatische Zielerfassung und -analyse unterstützen die Bedrohungs-Klassifikation und -priorisierung. Abgefeuerte Torpedos berechnen optimale Abfangtrajektorien und verfügen über eingebaute Sicherheitsmechanismen, so dass das abfeuernde Uboot nicht beschädigt wird.\nDas Fahrzeug kann an jeder mobilen Fahrzeugstation gebaut werden.",
 	"destroyedAndCannotBeBoarded": "{0} wurde zerstört und kann nicht gesteuert werden",

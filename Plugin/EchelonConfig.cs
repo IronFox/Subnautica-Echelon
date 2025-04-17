@@ -45,4 +45,8 @@ public class EchelonConfig : ConfigFile
     public float lookSensitivity = 100;
     [Slider(DefaultValue = 100, Format = "{0:F0} %", Label = "Target Marker Size Scale", LabelLanguageId = "optTargetMarkerSizeScale", Min = 0, Max = 100, Step = 10)]
     public float targetMarkerSizeScale = 100;
+    [Slider(DefaultValue = 1700, Label = "Mk1 Railgun Damage", LabelLanguageId = "optMk1RailgunDamage", Min = 0, Max = 10000, Step = 100)]
+    public float mk1RailgunDamage = 1700;
+    [Slider(DefaultValue = 4000, Label = "Mk2 Railgun Damage", LabelLanguageId = "optMk2RailgunDamage", Min = 0, Max = 10000, Step = 100)]
+    public float mk2RailgunDamage = 4000;
 }

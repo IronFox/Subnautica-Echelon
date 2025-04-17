@@ -1,6 +1,6 @@
 ﻿using UnityEngine;
 
-internal class RailgunTriggerGuidance : IWeaponTriggerGuidance
+public class RailgunTriggerGuidance : IWeaponTriggerGuidance
 {
     public RailgunTriggerGuidance(StatusConsole statusConsole, FirstPersonMarkers firstPersonMarkers, Railgun railgun)
     {
@@ -15,7 +15,8 @@ internal class RailgunTriggerGuidance : IWeaponTriggerGuidance
     private ITargetable target;
     public ITargetable MaintainedTarget => null;
     public float Mk1RotationAngleTolerance { get; set; } = 10;
-
+    public static float Mk1Damage { get; set; } = 1700;
+    public static float Mk2Damage { get; set; } = 4000;
     public int Mark { get; set; }
 
     public void OnTriggerActiveOn(ITargetable liveTarget)
@@ -40,10 +41,10 @@ internal class RailgunTriggerGuidance : IWeaponTriggerGuidance
         switch (Mark)
         {
             case 1:
-                Railgun.damage = 1000;
+                Railgun.damage = Mk1Damage;
                 break;
             case 2:
-                Railgun.damage = 5000;
+                Railgun.damage = Mk2Damage;
                 break;
             default:
                 Railgun.damage = 100;

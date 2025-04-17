@@ -705,6 +705,8 @@ namespace Subnautica_Echelon
                 EchelonControl.markerDisplay = MainPatcher.PluginConfig.targetHealthMarkers;
 
                 control.targetMarkerSizeScale = MainPatcher.PluginConfig.targetMarkerSizeScale / 100f;
+                RailgunTriggerGuidance.Mk1Damage = MainPatcher.PluginConfig.mk1RailgunDamage;
+                RailgunTriggerGuidance.Mk2Damage = MainPatcher.PluginConfig.mk2RailgunDamage;
                 control.torpedoMark = TorpedoModule.LevelOf(GetTorpedoMark()) + 1;
                 control.railgunMark = RailgunModule.LevelOf(GetRailgunMark()) + 1;
                 if (control.torpedoMark > 0 || control.railgunMark > 0)
