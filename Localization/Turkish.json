@@ -25,7 +25,7 @@
 	"batteryCapChanged": "{0} nükleer pil seviyesi {1} olarak değiştirildi",
 	"boostCapChanged": "{0} artırma performansı {1} olarak değiştirildi",
 	"repairCapChanged": "{0} kendi kendini onarma özelliği {1} olarak değiştirildi",
-	"railgunCapChanged": "{0}: elektromanyetik silah yeteneği {1} olarak değiştirildi",
+	"railgunCapChanged": "{0} elektromanyetik silah yeteneği {1} olarak değiştirildi",
 	"cap_t_None": "Hiç",
 	"cap_t_TorpedoMk1": "1. Düzey",
 	"cap_t_TorpedoMk2": "2. Düzey",

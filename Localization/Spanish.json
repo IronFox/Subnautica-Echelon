@@ -25,7 +25,7 @@
 	"batteryCapChanged": "{0} nivel de batería nuclear cambiado a {1}",
 	"boostCapChanged": "{0} Boost El rendimiento cambió a {1}",
 	"repairCapChanged": "{0} Capacidad de reparación automatica cambiada a {1}",
-	"railgunCapChanged": "{0}: la capacidad del Cañón de riel cambiada a {1}",
+	"railgunCapChanged": "{0} capacidad del Cañón de riel cambiada a {1}",
 	"cap_t_None": "Ninguno",
 	"cap_t_TorpedoMk1": "Mk1",
 	"cap_t_TorpedoMk2": "Mk2",

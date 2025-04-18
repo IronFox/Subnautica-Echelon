@@ -28,7 +28,7 @@
 	"batteryCapChanged": "{0} nuclear battery level changed to {1}",
 	"boostCapChanged": "{0} boost performance changed to {1}",
 	"repairCapChanged": "{0} self repair capability changed to {1}",
-	"railgunCapChanged": "{0}: railgun capability changed to {1}",
+	"railgunCapChanged": "{0} railgun capability changed to {1}",
 	"cap_t_None": "None",
 	"cap_t_TorpedoMk1": "Mk1",
 	"cap_t_TorpedoMk2": "Mk2",
