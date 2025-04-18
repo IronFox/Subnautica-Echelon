@@ -35,7 +35,7 @@ namespace Subnautica_Echelon
         public Echelon()
         {
             PLog.Write($"Echelon Constructed");
-            MaterialFixer = new MaterialFixer(this, LogConfig.Verbose);
+            MaterialFixer = new MaterialFixer(this, LogConfig.Silent);
         }
 
 
