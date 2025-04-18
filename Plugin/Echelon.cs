@@ -641,33 +641,14 @@ namespace Subnautica_Echelon
                 base.OnUpgradeModuleUse(techType, slotID);
                 if (techType == TechType.VehicleStorageModule)
                 {
-                    PLog.Write($"Checking item in slot {slotID}");
-                    var slotItem = GetSlotItem(slotID);
-                    Pickupable pickupable = slotItem.item;
-                    if (slotItem is null)
+                    var storage = GetStorageInSlot(slotID, techType);
+                    if (storage != null)
                     {
-                        PLog.Warn("Warning: failed to get item for that slotID: " + slotID);
-                        return;
+                        PLog.Write($"Valid container. Opening...");
+                        PDA pda = Player.main.GetPDA();
+                        Inventory.main.SetUsedStorage(storage);
+                        pda.Open(PDATab.Inventory);
                     }
-
-                    Pickupable item = slotItem.item;
-                    if (item.GetTechType() != techType)
-                    {
-                        PLog.Warn("Warning: failed to get pickupable for that slotID: " + slotID);
-                        return;
-                    }
-
-                    SeamothStorageContainer component = item.GetComponent<SeamothStorageContainer>();
-                    if (!component)
-                    {
-                        PLog.Warn("Warning: failed to get storage-container for that slotID: " + slotID);
-                        return;
-                    }
-                    PLog.Write($"Valid container. Opening...");
-                    var itemsContainer = component.container;
-                    PDA pda = Player.main.GetPDA();
-                    Inventory.main.SetUsedStorage(itemsContainer);
-                    pda.Open(PDATab.Inventory);
                 }
             }
             catch (Exception ex)
