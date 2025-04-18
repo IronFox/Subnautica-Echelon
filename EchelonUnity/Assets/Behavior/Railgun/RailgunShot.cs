@@ -59,7 +59,7 @@ public class RailgunShot : MonoBehaviour
 
             owner.GetComponent<Rigidbody>().AddForce(
                 -transform.forward
-                * (50000f / Time.fixedDeltaTime * Mathf.Pow(scale, 4))
+                * (25000f / Time.fixedDeltaTime * scale)
                 );
         }
         if (terminal && !line)
