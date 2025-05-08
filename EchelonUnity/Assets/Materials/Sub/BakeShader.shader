@@ -63,6 +63,7 @@
                 //return _StripeColor;
                 //return float4(1,0,0,1);
                 return float4(col.rgb * lerp(_StripeColor.rgb, _MainColor.rgb, mask), 1);
+                //return float4(1,1,0, 1);
             }
             ENDCG
         }
