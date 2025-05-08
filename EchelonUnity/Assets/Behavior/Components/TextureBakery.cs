@@ -16,7 +16,7 @@ public class TextureBakery : MonoBehaviour, IColorListener
     private Mesh screenQuad;
     private new MeshRenderer renderer;
     // Start is called before the first frame update
-    void Start()
+    void Awake()
     {
         renderer = GetComponent<MeshRenderer>();
         texture = new RenderTexture(new RenderTextureDescriptor(sourceTexture.width, sourceTexture.height, RenderTextureFormat.ARGB32));

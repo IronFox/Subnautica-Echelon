@@ -14,7 +14,7 @@ public class LoadStripeColor : MonoBehaviour, IColorListener
     }
 
     // Start is called before the first frame update
-    void Start()
+    void Awake()
     {
         renderer = GetComponent<MeshRenderer>();
     }
@@ -22,6 +22,6 @@ public class LoadStripeColor : MonoBehaviour, IColorListener
     // Update is called once per frame
     void Update()
     {
-        
+
     }
 }
