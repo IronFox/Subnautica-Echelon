@@ -232,8 +232,9 @@ namespace Subnautica_Echelon
         /// </summary>
         /// <remarks>Should be called from your vehicle Update() method</remarks>
         /// <param name="subTransform">Root transform of your sub</param>
-        public void OnUpdate()
+        public bool OnUpdate()
         {
+            bool anyChanged = false;
 
             if (!materialsFixed)
             {
@@ -269,6 +270,7 @@ namespace Subnautica_Echelon
                         LogConfig.LogExtraStep($"All done. Applied {adaptations.Count} adaptations");
                     }
                 }
+                anyChanged = true;
             }
             if (doRepairMaterialsPostUndock)
             {
@@ -280,8 +282,10 @@ namespace Subnautica_Echelon
                     LogConfig.LogExtraStep($"Undocked. Resetting materials");
                     foreach (MaterialAdaptation adaptation in adaptations)
                         adaptation.PostDockFixOnTarget(LogConfig);
+                    anyChanged = true;
                 }
             }
+            return anyChanged;
         }
     }
 }
