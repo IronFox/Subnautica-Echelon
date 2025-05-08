@@ -102,7 +102,10 @@ public class Railgun : MonoBehaviour, IDirectionSource
             }
         }
         else
+        {
             CurrentShotIsDone = false;
+            openCoverAnimation.animateForward = false;
+        }
 
 
         if (shot)
