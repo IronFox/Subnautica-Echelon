@@ -299,11 +299,11 @@ namespace Subnautica_Echelon
             {
                 PLog.Exception($"Forwarding to base.{nameof(SetBaseColor)}({hsb},{color})", ex, gameObject);
             }
-            UpdateColors();
+            UpdateColors(false);
 
         }
 
-        private void UpdateColors()
+        private void UpdateColors(bool force)
         {
             try
             {
@@ -312,7 +312,7 @@ namespace Subnautica_Echelon
                 {
                     try
                     {
-                        listener.SetColors(baseColor, stripeColor);
+                        listener.SetColors(baseColor, stripeColor, force);
                     }
                     catch (Exception ex)
                     {
@@ -330,7 +330,7 @@ namespace Subnautica_Echelon
         {
             PLog.Write($"Updating sub stripe color to {color}");
             base.SetStripeColor(hsb, color);
-            UpdateColors();
+            UpdateColors(false);
         }
 
 
@@ -687,7 +687,11 @@ namespace Subnautica_Echelon
                 if (stripeColor != Color.black)
                     nonBlackStripeColor = stripeColor;
 
-                MaterialFixer.OnUpdate();
+                if (MaterialFixer.OnUpdate())
+                {
+                    UpdateColors(true);
+
+                }
 
                 if (Input.GetKeyDown(KeyCode.F6))
                 {

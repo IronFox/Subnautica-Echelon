@@ -9,7 +9,7 @@ public class TextureBakery : MonoBehaviour, IColorListener
     public Color stripeColor = new Color(0x3F, 0x4C, 0x7A) / 255f;
     public Shader bakeShader;
     public int targetMaterialSlot;
-
+    private bool forceReapply;
     private Color lastMainColor;
     private Color lastStripeColor;
     private RenderTexture texture;
@@ -53,11 +53,12 @@ public class TextureBakery : MonoBehaviour, IColorListener
     // Update is called once per frame
     void Update()
     {
-        if (mainColor != lastMainColor || stripeColor != lastStripeColor)
+        if (mainColor != lastMainColor || stripeColor != lastStripeColor || forceReapply)
         {
             lastMainColor = mainColor;
             lastStripeColor = stripeColor;
-            ULog.Write($"(Re)Baking texture using shader {bakeShader}");
+            forceReapply = false;
+            ULog.Write($"(Re)Baking texture using shader {bakeShader} for color {mainColor}/{stripeColor}");
             var bakeMaterial = new Material(bakeShader);
 
             using (var command = new CommandBuffer())
@@ -80,20 +81,21 @@ public class TextureBakery : MonoBehaviour, IColorListener
 
             if (renderer != null && targetMaterialSlot < renderer.materials.Length)
             {
-                var targetMaterial = renderer.materials[targetMaterialSlot];
 
-                targetMaterial.mainTexture = texture;
+                renderer.materials[targetMaterialSlot].mainTexture = texture;
+                var targetMaterial = renderer.materials[targetMaterialSlot];
                 //targetMaterial.SetTexture($"_MainTex", texture);
-                ULog.Write($"Assigned to material using shader {targetMaterial.shader}");
+                ULog.Write($"Assigned {texture.GetInstanceID()} to material {targetMaterial.GetInstanceID()}/{targetMaterial.mainTexture.GetInstanceID()} using shader {targetMaterial.shader}");
             }
             else
                 ULog.Fail($"Unable to assign generated texture");
         }
     }
 
-    public void SetColors(Color mainColor, Color stripeColor)
+    public void SetColors(Color mainColor, Color stripeColor, bool forceReapply)
     {
         this.mainColor = mainColor;
         this.stripeColor = stripeColor;
+        this.forceReapply = true;
     }
 }

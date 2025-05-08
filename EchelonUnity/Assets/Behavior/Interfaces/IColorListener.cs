@@ -2,5 +2,5 @@ using UnityEngine;
 
 public interface IColorListener
 {
-    void SetColors(Color mainColor, Color stripeColor);
+    void SetColors(Color mainColor, Color stripeColor, bool forceReapply);
 }

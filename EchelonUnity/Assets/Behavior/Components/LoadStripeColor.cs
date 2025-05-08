@@ -1,13 +1,11 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 
 public class LoadStripeColor : MonoBehaviour, IColorListener
 {
     public int materialIndex;
     private new MeshRenderer renderer;
 
-    public void SetColors(Color mainColor, Color stripeColor)
+    public void SetColors(Color mainColor, Color stripeColor, bool forceReapply)
     {
         if (materialIndex < renderer.materials.Length)
             renderer.materials[materialIndex].color = stripeColor;
