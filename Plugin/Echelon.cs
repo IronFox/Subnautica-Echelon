@@ -287,21 +287,81 @@ namespace Subnautica_Echelon
             }
         }
 
+        private bool recursingColor = false;
+        private bool IsBlack(Color col)
+        {
+            return col.r == 0 && col.g == 0 && col.b == 0;
+        }
+
+        private void AllocateColors()
+        {
+            if (vehicleColors is null || vehicleColors.Length < 5)
+                vehicleColors = new Vector3[5];
+        }
 
         public override void SetBaseColor(Vector3 hsb, Color color)
         {
+            if (recursingColor)
+                return;
             PLog.Write($"Updating sub base color to {color}");
             try
             {
+                //if (!IsBlack(color))
+                //    nonBlackBaseColor = color;
+                //else
+                //    color = nonBlackBaseColor;
+
                 base.SetBaseColor(hsb, color);
+                AllocateColors();
+                vehicleColors[0] = new Vector3(color.r, color.g, color.b);
+
+                if (subName)
+                {
+                    recursingColor = true;
+                    subName.SetColor(0, hsb, color);
+                    recursingColor = false;
+                }
+
             }
             catch (Exception ex)
             {
                 PLog.Exception($"Forwarding to base.{nameof(SetBaseColor)}({hsb},{color})", ex, gameObject);
+                recursingColor = false;
             }
             UpdateColors(false);
-
         }
+
+
+        public override void SetStripeColor(Vector3 hsb, Color color)
+        {
+            if (recursingColor)
+                return;
+            PLog.Write($"Updating sub stripe color to {color}");
+            try
+            {
+                //if (!IsBlack(color))
+                //    nonBlackStripeColor = color;
+                //else
+                //    color = nonBlackStripeColor;
+
+                base.SetStripeColor(hsb, color);
+                AllocateColors();
+                vehicleColors[3] = new Vector3(color.r, color.g, color.b);
+                if (subName)
+                {
+                    recursingColor = true;
+                    subName.SetColor(3, hsb, color);
+                    recursingColor = false;
+                }
+            }
+            catch (Exception ex)
+            {
+                PLog.Exception($"Forwarding to base.{nameof(SetStripeColor)}({hsb},{color})", ex, gameObject);
+                recursingColor = false;
+            }
+            UpdateColors(false);
+        }
+
 
         private void UpdateColors(bool force)
         {
@@ -324,13 +384,6 @@ namespace Subnautica_Echelon
             {
                 PLog.Exception($"Getting listeners", ex, gameObject);
             }
-        }
-
-        public override void SetStripeColor(Vector3 hsb, Color color)
-        {
-            PLog.Write($"Updating sub stripe color to {color}");
-            base.SetStripeColor(hsb, color);
-            UpdateColors(false);
         }
 
 
@@ -672,8 +725,8 @@ namespace Subnautica_Echelon
         public override void OnVehicleDocked(Vehicle vehicle, Vector3 exitLocation)
         {
             base.OnVehicleDocked(vehicle, exitLocation);
-            SetBaseColor(Vector3.zero, nonBlackBaseColor);
-            SetStripeColor(Vector3.zero, nonBlackStripeColor);
+            //SetBaseColor(Vector3.zero, nonBlackBaseColor);
+            //SetStripeColor(Vector3.zero, nonBlackStripeColor);
         }
 
         public override void Update()
@@ -682,10 +735,6 @@ namespace Subnautica_Echelon
             {
                 LocalInit();
 
-                if (baseColor != Color.black)
-                    nonBlackBaseColor = baseColor;
-                if (stripeColor != Color.black)
-                    nonBlackStripeColor = stripeColor;
 
                 if (MaterialFixer.OnUpdate())
                 {
