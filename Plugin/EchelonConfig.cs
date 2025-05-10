@@ -52,4 +52,9 @@ public class EchelonConfig : ConfigFile
     [Slider(DefaultValue = 75, Format = "{0:F0} %", Label = "Railgun Sound Level", LabelLanguageId = "optRailgunSoundLevel", Min = 0, Max = 100, Step = 5)]
     public float railgunSoundLevel = 75;
 
+    [Toggle("Uniform Shininess", LabelLanguageId = "optUniformShininess")]
+    public bool uniformShininess = false;
+    [Slider(DefaultValue = 50, Format = "{0:F0} %", Label = "Uniform Shininess Level", LabelLanguageId = "optUniformShininessLevel", Min = 0, Max = 100, Step = 5)]
+    public float uniformShininessLevel = 50;
+
 }

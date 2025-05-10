@@ -142,6 +142,13 @@ namespace Subnautica_Echelon
         public Func<IEnumerable<SurfaceShaderData>> MaterialResolver { get; }
 
         /// <summary>
+        /// Null or in [0,1].<br/>
+        /// If non-null, enforces the same uniform shininess level on all materials
+        /// </summary>
+        public float? UniformShininess { get; set; }
+        private float? uniformShininess;
+
+        /// <summary>
         /// Constructs the instance
         /// </summary>
         /// <param name="owner">Owning vehicle</param>
@@ -243,6 +250,7 @@ namespace Subnautica_Echelon
                 if (prototype != null)
                 {
                     materialsFixed = true;
+                    uniformShininess = UniformShininess;
 
                     if (prototype.IsEmpty)
                     {
@@ -257,7 +265,7 @@ namespace Subnautica_Echelon
                             try
                             {
                                 var materialAdaptation = new MaterialAdaptation(prototype, data, shader);
-                                materialAdaptation.ApplyToTarget(LogConfig);
+                                materialAdaptation.ApplyToTarget(LogConfig, uniformShininess);
 
                                 adaptations.Add(materialAdaptation);
                             }
@@ -269,6 +277,15 @@ namespace Subnautica_Echelon
                         }
                         LogConfig.LogExtraStep($"All done. Applied {adaptations.Count} adaptations");
                     }
+                }
+                anyChanged = true;
+            }
+            else if (uniformShininess != UniformShininess)
+            {
+                uniformShininess = UniformShininess;
+                foreach (MaterialAdaptation adaptation in adaptations)
+                {
+                    adaptation.ApplyToTarget(LogConfig, uniformShininess);
                 }
                 anyChanged = true;
             }

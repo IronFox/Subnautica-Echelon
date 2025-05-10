@@ -244,7 +244,7 @@ namespace Subnautica_Echelon
         /// </summary>
         /// <param name="m">Target material</param>
         /// <param name="logConfig">Log Configuration</param>
-        public void ApplyTo(Material m, LogConfig logConfig)
+        public void ApplyTo(Material m, float? uniformShininess, LogConfig logConfig)
         {
             ColorVariable.Set(m, "_Color2", Color, logConfig);
             ColorVariable.Set(m, "_Color3", Color, logConfig);
@@ -253,7 +253,7 @@ namespace Subnautica_Echelon
 
             var spec = SpecularTexture;
 
-            if (spec != null)
+            if (spec && uniformShininess is null)
             {
                 if (existingSpecTex != MetallicTexture)
                 {
@@ -264,18 +264,29 @@ namespace Subnautica_Echelon
             }
             else
             {
-                if (existingSpecTex == null || existingSpecTex.name != DummyTexName)
+                var tex = existingSpecTex as Texture2D;
+                if (!tex || existingSpecTex.name != DummyTexName)
                 {
                     logConfig.LogExtraStep($"Source has no smoothness alpha texture. Setting to {Smoothness}");
-                    var met = Smoothness;
-                    var tex = new Texture2D(1, 1, TextureFormat.RGBA32, false);
+                    var gray = uniformShininess ?? Smoothness;
+                    tex = new Texture2D(1, 1, TextureFormat.RGBA32, false);
                     tex.name = DummyTexName;
-                    tex.SetPixel(0, 0, new Color(met, met, met, met));
+                    tex.SetPixel(0, 0, new Color(gray, gray, gray, gray));
                     tex.Apply();
                     m.SetTexture(SpecTexName, tex);
                 }
+                else
+                {
+                    var gray = uniformShininess ?? Smoothness;
+                    var col = new Color(gray, gray, gray, gray);
+                    if (tex.GetPixel(0, 0) != col)
+                    {
+                        logConfig.LogExtraStep($"Updating smoothness alpha texture. Setting to {gray}");
+                        tex.SetPixel(0, 0, col);
+                        tex.Apply();
+                    }
+                }
             }
-
             var existingIllumTex = m.GetTexture(IllumTexName);
 
             if (EmissionTexture != null)

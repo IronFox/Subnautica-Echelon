@@ -163,7 +163,7 @@ namespace Subnautica_Echelon
         /// Reapplies all material properties to the target
         /// </summary>
         /// <param name="logConfig">Log Configuration</param>
-        public void ApplyToTarget(LogConfig logConfig = default)
+        public void ApplyToTarget(LogConfig logConfig = default, float? uniformShininess = null)
         {
             try
             {
@@ -182,7 +182,7 @@ namespace Subnautica_Echelon
 
                 Prototype.ApplyTo(m, logConfig);
 
-                Migrated.ApplyTo(m, logConfig);
+                Migrated.ApplyTo(m, uniformShininess, logConfig);
             }
             catch (Exception ex)
             {

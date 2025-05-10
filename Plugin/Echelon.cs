@@ -735,6 +735,9 @@ namespace Subnautica_Echelon
             {
                 LocalInit();
 
+                MaterialFixer.UniformShininess = MainPatcher.PluginConfig.uniformShininess
+                    ? MainPatcher.PluginConfig.uniformShininessLevel / 100f
+                    : (float?)null;
 
                 if (MaterialFixer.OnUpdate())
                 {
