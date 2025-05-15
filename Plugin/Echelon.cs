@@ -306,10 +306,10 @@ namespace Subnautica_Echelon
             PLog.Write($"Updating sub base color to {color}");
             try
             {
-                //if (!IsBlack(color))
-                //    nonBlackBaseColor = color;
-                //else
-                //    color = nonBlackBaseColor;
+                if (!IsBlack(color))
+                    nonBlackBaseColor = color;
+                else
+                    color = nonBlackBaseColor;
 
                 base.SetBaseColor(hsb, color);
                 AllocateColors();
@@ -339,10 +339,10 @@ namespace Subnautica_Echelon
             PLog.Write($"Updating sub stripe color to {color}");
             try
             {
-                //if (!IsBlack(color))
-                //    nonBlackStripeColor = color;
-                //else
-                //    color = nonBlackStripeColor;
+                if (!IsBlack(color))
+                    nonBlackStripeColor = color;
+                else
+                    color = nonBlackStripeColor;
 
                 base.SetStripeColor(hsb, color);
                 AllocateColors();
