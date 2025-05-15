@@ -218,10 +218,16 @@ namespace Subnautica_Echelon
         /// <remarks>Should be called from your vehicle OnVehicleUndocked() method</remarks>
         public void OnVehicleUndocked()
         {
-            repairMaterialsInSeconds = 0.5f;
-            repairMaterialsInFrames = 3;
+            repairMaterialsInSeconds = 0.2f;
+            repairMaterialsInFrames = 1;
             doRepairMaterialsPostUndock = true;
         }
+
+        /// <summary>
+        /// Notifies that the vehicle has just docked to a docking bay (moonpool, etc).
+        /// </summary>
+        /// <remarks>Should be called from your vehicle OnVehicleDocked() method</remarks>
+        public void OnVehicleDocked() => OnVehicleUndocked();
 
         /// <summary>
         /// Forcefully reapplies all material adaptations.
