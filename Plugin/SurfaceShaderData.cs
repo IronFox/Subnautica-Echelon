@@ -249,6 +249,13 @@ namespace Subnautica_Echelon
             ColorVariable.Set(m, "_Color2", Color, logConfig);
             ColorVariable.Set(m, "_Color3", Color, logConfig);
 
+
+            //if (!MainTex && !m.mainTexture)
+            //{
+            //    logConfig.LogExtraStep($"Main texture not set. Loading white texture");
+            //    m.mainTexture = Texture2D.whiteTexture;
+            //}
+
             var existingSpecTex = m.GetTexture(SpecTexName);
 
             var spec = SpecularTexture;
@@ -279,9 +286,10 @@ namespace Subnautica_Echelon
                 {
                     var gray = uniformShininess ?? Smoothness;
                     var col = new Color(gray, gray, gray, gray);
-                    if (tex.GetPixel(0, 0) != col)
+                    var old = tex.GetPixel(0, 0);
+                    if (!old.ApproxEquals(col, 0.02f))
                     {
-                        logConfig.LogExtraStep($"Updating smoothness alpha texture. Setting to {gray}");
+                        logConfig.LogExtraStep($"Updating smoothness alpha texture. Setting {old} -> {col}");
                         tex.SetPixel(0, 0, col);
                         tex.Apply();
                     }
