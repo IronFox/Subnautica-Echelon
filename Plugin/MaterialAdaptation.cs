@@ -145,10 +145,10 @@ namespace Subnautica_Echelon
 
                     m.shader = Shader;
                 }
-
                 Prototype.ApplyTo(m, logConfig, x =>
                        x == "_SpecInt"
                     || x == "_GlowStrength"
+                    || x == "_EmissionLMNight"
                     || x == "_GlowStrengthNight");
 
             }
