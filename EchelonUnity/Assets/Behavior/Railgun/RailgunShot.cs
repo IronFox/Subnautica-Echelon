@@ -5,6 +5,7 @@ public class RailgunShot : MonoBehaviour
     public EchelonControl owner;
     public GameObject railgunLine;
     public RailgunCharge railgunCharge;
+    public CameraShake cameraShake;
 
     public bool doContinue = true;
     public bool canFire = true;
@@ -35,6 +36,16 @@ public class RailgunShot : MonoBehaviour
         railgunCharge.upgradeLevel = upgradeLevel;
         if (terminal)
             SecondsAfterFired += Time.deltaTime;
+
+        if (cameraShake)
+        {
+            if (railgunCharge.doCharge)
+                cameraShake.SignalRailgunCharging(transform, upgradeLevel);
+            else
+                cameraShake.ClearRailgunCharging(transform, upgradeLevel);
+        }
+
+
         if (!terminal && railgunCharge.EndReached && canFire)
         {
             if (!doContinue)
@@ -42,6 +53,11 @@ public class RailgunShot : MonoBehaviour
                 Destroy(gameObject);
                 return;
             }
+            if (cameraShake)
+            {
+                cameraShake.SignalRailgunFired(transform, upgradeLevel);
+            }
+
             terminal = true;
             railgunCharge.doCharge = false;
 

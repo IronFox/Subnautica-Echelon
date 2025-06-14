@@ -13,6 +13,7 @@ public class RailgunCharge : MonoBehaviour
     public SoundAdapter chargeSound;
     public float scale = 10;
     public int upgradeLevel = 1;
+
     /// <summary>
     /// How many times faster discharge is than charge
     /// </summary>

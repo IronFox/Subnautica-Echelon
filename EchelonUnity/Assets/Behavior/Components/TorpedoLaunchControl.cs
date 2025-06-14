@@ -12,7 +12,7 @@ public class TorpedoLaunchControl : MonoBehaviour
     public bool noExplosions;
     public float overrideMaxLifetimeSeconds;
     public SoundAdapter fireSound;
-
+    public CameraShake cameraShake;
     /// <summary>
     /// Zero-based torpedo tech level
     /// </summary>
@@ -108,7 +108,6 @@ public class TorpedoLaunchControl : MonoBehaviour
                     coverRedactionProgress = secondsToOpenCover;
                     SetCover(1);
                     fired = true;
-
                     torpedoInTube.Launch(
                         myBody.GetPointVelocity(transform.position) + transform.forward * relativeExitVelocity,
                         FireWithTarget,
@@ -159,7 +158,7 @@ public class TorpedoLaunchControl : MonoBehaviour
     private Torpedo InstantiateTorpedo()
     {
         var torpedo = Instantiate(torpedoPrefab, transform);
-        return new Torpedo(myBody, transform, torpedo, torpedoTechLevel);
+        return new Torpedo(myBody, transform, cameraShake, torpedo, torpedoTechLevel);
 
     }
 
@@ -178,7 +177,8 @@ public class Torpedo
         GameObject.transform.parent = null;
         Control.Detonator.noExplosion = noExplosions;
         Control.TargetPredictor.target = target;
-
+        if (Control.CameraShake)
+            Control.CameraShake.SignalTorpedoFired();
 
         if (overrideMaxFlightTime > 0)
             Control.MaxFlightTime.maxLifetimeSeconds = overrideMaxFlightTime;
@@ -196,7 +196,7 @@ public class Torpedo
         GameObject.Destroy(GameObject);
     }
 
-    public Torpedo(Rigidbody origin, Transform owner, GameObject torpedo, int techLevel)
+    public Torpedo(Rigidbody origin, Transform owner, CameraShake cameraShake, GameObject torpedo, int techLevel)
     {
         GameObject = torpedo;
 
@@ -204,6 +204,7 @@ public class Torpedo
         Control.origin = origin;
         Control.techLevel = techLevel;
         Control.IsLive = false;
+        Control.CameraShake = cameraShake;
         torpedo.transform.localPosition = Vector3.zero;
         //this compensates a bit that torpedoes are crossly misplaced at high velocities:
         torpedo.transform.position += origin.GetPointVelocity(owner.position) * 0.025f;

@@ -11,7 +11,7 @@ public class Railgun : MonoBehaviour, IDirectionSource
     public float AngleTolerance { get; set; } = 5;
     private TargetPredictor targetPredictor;
     private Vector3 forward = Vector3.forward;
-
+    public CameraShake cameraShake;
     public ITargetable FireWithTarget { get; set; }
     public bool holdFireOnBadAim = false;
     public Vector3 Forward => forward;
@@ -97,6 +97,7 @@ public class Railgun : MonoBehaviour, IDirectionSource
                     shot.owner = echelon;
                     shot.damage = damage;
                     shot.upgradeLevel = mark;
+                    shot.cameraShake = cameraShake;
                     shot.speedMetersPerSecond = speedMetersPerSecond;
                 }
             }

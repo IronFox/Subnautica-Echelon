@@ -1,6 +1,4 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 
 public class Detonator : MonoBehaviour
 {
@@ -8,7 +6,7 @@ public class Detonator : MonoBehaviour
     public Rigidbody origin;
     public bool noExplosion;
     public int techLevel;
-
+    public CameraShake cameraShake;
     public float ExplosionDamage => 2000f / 25 * Mathf.Pow(5, techLevel);
     public static float ExplosionRadiusAt(int techLevel) => 15f / 4 * Mathf.Pow(2, techLevel);
     public float ExplosionRadius => ExplosionRadiusAt(techLevel);
@@ -17,13 +15,13 @@ public class Detonator : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        
+
     }
 
     public void Detonate()
     {
         if (
-            !noExplosion 
+            !noExplosion
             //&& 
             //(
             //    safetyOff
@@ -34,6 +32,7 @@ public class Detonator : MonoBehaviour
         {
             var instance = Instantiate(explosionPrefab, transform.position, Quaternion.identity);
             var ctrl = instance.GetComponent<ExplosionController>();
+            ctrl.cameraShake = cameraShake;
             ctrl.explosionDamage = ExplosionDamage;
             ctrl.explosionRadius = ExplosionRadius;
         }
@@ -43,6 +42,6 @@ public class Detonator : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        
+
     }
 }

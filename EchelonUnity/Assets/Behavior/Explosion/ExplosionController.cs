@@ -14,7 +14,7 @@ public class ExplosionController : MonoBehaviour
 
     public float explosionRadius = 15f;
     public float explosionDamage = 1500f;
-
+    public CameraShake cameraShake;
 
 
     // Start is called before the first frame update
@@ -27,7 +27,8 @@ public class ExplosionController : MonoBehaviour
 
         var exp = transform.GetChild(0);
         exp.localScale = M.V3(explosionRadius * 2f / 15f);
-
+        if (cameraShake)
+            cameraShake.SignalExplosionStart(transform, explosionRadius);
 
         foreach (var env in GetCurrentEnvironment())
         {

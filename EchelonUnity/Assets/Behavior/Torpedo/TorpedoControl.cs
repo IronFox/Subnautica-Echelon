@@ -17,6 +17,8 @@ public class TorpedoControl : MonoBehaviour
     public CollisionTrigger CollisionTrigger { get; private set; }
     public Light[] Lights { get; private set; }
 
+    public CameraShake CameraShake { get; set; }
+
     public Collider normalCollider;
 
     public static TorpedoTerrainCollisions terrainCollisions = TorpedoTerrainCollisions.IgnoreWhenTargeted;
@@ -83,6 +85,7 @@ public class TorpedoControl : MonoBehaviour
         Detonator = GetComponent<Detonator>();
         Detonator.origin = origin;
         Detonator.techLevel = techLevel;
+        Detonator.cameraShake = CameraShake;
         TorpedoDirectAt = GetComponent<TorpedoDirectAt>();
         ParticleSystem = GetComponentInChildren<ParticleSystem>();
         SoundAdapter = GetComponent<SoundAdapter>();
@@ -98,6 +101,7 @@ public class TorpedoControl : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        Detonator.cameraShake = CameraShake;
         ProximityDetector.doNotCollideWith = origin;
         CollisionTrigger.doNotCollideWith = origin;
         Detonator.origin = origin;

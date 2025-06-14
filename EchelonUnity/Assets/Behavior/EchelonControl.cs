@@ -55,6 +55,7 @@ public class EchelonControl : MonoBehaviour
     private CoverAnimation upgradeCoverAnimation;
     private FirstPersonMarkers firstPersonMarkers;
     private Railgun railgun;
+    private CameraShake cameraShake;
 
     private RailgunTriggerGuidance RailgunGuidance { get; set; }
     private TorpedoTriggerGuidance TorpedoGuidance { get; set; }
@@ -218,6 +219,7 @@ public class EchelonControl : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
+        cameraShake = trailSpace.GetComponentInChildren<CameraShake>();
         targetProcessor = GetComponent<TargetProcessor>();
         upgradeCoverAnimation = GetComponentInChildren<CoverAnimation>();
         scanner = trailSpace.GetComponentInChildren<TargetScanner>();
@@ -562,6 +564,7 @@ public class EchelonControl : MonoBehaviour
         try
         {
             firstPersonMarkers.overdriveActive = false;
+            cameraShake.overdriveActive = false;
 
             ProcessTargeting();
             ProcessUpgradeCover();
@@ -742,6 +745,7 @@ public class EchelonControl : MonoBehaviour
                         if (forwardAxis > overdriveThreshold)
                         {
                             firstPersonMarkers.overdriveActive = true;
+                            cameraShake.overdriveActive = true;
                             backFacingRight.overdrive =
                             backFacingLeft.overdrive =
                                 (forwardAxis - overdriveThreshold) / (1f - overdriveThreshold);
