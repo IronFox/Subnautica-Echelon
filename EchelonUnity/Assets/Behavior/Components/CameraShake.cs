@@ -133,6 +133,16 @@ public class CameraShake : MonoBehaviour
         transform.localPosition = intensity;
     }
 
+    internal void SignalCollision(Collision collision)
+    {
+        shakeEvents.Add(new ShakeEvent(Origin.Collision, echelon.transform, 0.01f)
+        {
+            intensity = collision.impulse.magnitude * 0.000003f,
+
+
+        });
+    }
+
     enum Origin
     {
         RailgunCharge,
