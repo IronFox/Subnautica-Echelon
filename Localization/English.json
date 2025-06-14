@@ -21,6 +21,8 @@
 	"optMk1RailgunDamage": "Mk1 Railgun Damage",
 	"optMk2RailgunDamage": "Mk2 Railgun Damage",
 	"optRailgunSoundLevel": "Railgun Sound Volume",
+	"optGlobalCameraShakeIntensity": "Global Camera Shake Intensity",
+	"optBoostCameraShakeIntensity": "Camera Shake Intensity (Boost)",
 	"description": "The Echelon is a high-speed sub-aquatic superiority fighter",
 	"encyclopedia": "The Echelon is designed with the most demanding environments in mind with extensive hunter seeker capabilities.\nIt features automatic integrity and power recovery, and onboard weapon support. Its advanced user interfacing enables holographic sensor reconstruction for increased environmental awareness. Automatic targeting and target integrity analysis supports threat classification and prioritization. Finally, fired torpedoes and railgun shots intercept locked targets with high efficiency while built-in safety mechanics avoid harming the origin craft.\nYou can craft it at any Mobile Vehicle Bay.",
 	"destroyedAndCannotBeBoarded": "{0} is destroyed and cannot be boarded",

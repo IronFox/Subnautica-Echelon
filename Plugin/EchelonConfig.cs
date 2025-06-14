@@ -56,5 +56,9 @@ public class EchelonConfig : ConfigFile
     public bool uniformShininess = false;
     [Slider(DefaultValue = 50, Format = "{0:F0} %", Label = "Uniform Shininess Level", LabelLanguageId = "optUniformShininessLevel", Min = 0, Max = 100, Step = 5)]
     public float uniformShininessLevel = 50;
+    [Slider(DefaultValue = 100, Format = "{0:F0} %", Label = "Global Camera Shake Intensity", LabelLanguageId = "optGlobalCameraShakeIntensity", Min = 0, Max = 200, Step = 10)]
+    public float globalCameraShakeIntensity = 100;
+    [Slider(DefaultValue = 100, Format = "{0:F0} %", Label = "Turbo Camera Shake Intensity", LabelLanguageId = "optBoostCameraShakeIntensity", Min = 0, Max = 200, Step = 10)]
+    public float boostCameraShakeIntensity = 100;
 
 }

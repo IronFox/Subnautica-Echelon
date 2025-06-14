@@ -785,6 +785,10 @@ namespace Subnautica_Echelon
                 RailgunTriggerGuidance.Mk1Damage = MainPatcher.PluginConfig.mk1RailgunDamage;
                 RailgunTriggerGuidance.Mk2Damage = MainPatcher.PluginConfig.mk2RailgunDamage;
                 Railgun.SoundLevel = MainPatcher.PluginConfig.railgunSoundLevel / 100f;
+                CameraShake.GlobalScale = MainPatcher.PluginConfig.globalCameraShakeIntensity / 100f;
+                CameraShake.BoostScale = MainPatcher.PluginConfig.boostCameraShakeIntensity / 100f;
+
+
                 control.torpedoMark = TorpedoModule.LevelOf(GetTorpedoMark()) + 1;
                 control.railgunMark = RailgunModule.LevelOf(GetRailgunMark()) + 1;
                 if (control.torpedoMark > 0 || control.railgunMark > 0)

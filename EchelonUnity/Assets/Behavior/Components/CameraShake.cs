@@ -5,6 +5,7 @@ using UnityEngine;
 public class CameraShake : MonoBehaviour
 {
     public static float GlobalScale { get; set; } = 1.0f;
+    public static float BoostScale { get; set; } = 1f;
 
     public EchelonControl echelon;
 
