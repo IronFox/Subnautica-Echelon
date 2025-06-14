@@ -29,6 +29,7 @@ public class EchelonControl : MonoBehaviour
 
 
     public bool overdriveActive;
+    public float overdriveIntensity = 1;
     public bool outOfWater;
     public bool freeCamera;
     public bool isBoarded;
@@ -564,7 +565,7 @@ public class EchelonControl : MonoBehaviour
         try
         {
             firstPersonMarkers.overdriveActive = false;
-            cameraShake.overdriveActive = false;
+            cameraShake.overdriveIntensity = null;
 
             ProcessTargeting();
             ProcessUpgradeCover();
@@ -745,7 +746,7 @@ public class EchelonControl : MonoBehaviour
                         if (forwardAxis > overdriveThreshold)
                         {
                             firstPersonMarkers.overdriveActive = true;
-                            cameraShake.overdriveActive = true;
+                            cameraShake.overdriveIntensity = overdriveIntensity;
                             backFacingRight.overdrive =
                             backFacingLeft.overdrive =
                                 (forwardAxis - overdriveThreshold) / (1f - overdriveThreshold);

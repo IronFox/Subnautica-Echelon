@@ -662,6 +662,7 @@ namespace Subnautica_Echelon
 
 
             control.overdriveActive = engine.overdriveActive > 0.5f;
+            control.overdriveIntensity = DriveModule.GetSpeedBoost(engine.driveUpgrade);
         }
 
         /// <summary>

@@ -9,7 +9,7 @@ public class CameraShake : MonoBehaviour
 
     public EchelonControl echelon;
 
-    public bool overdriveActive = false;
+    public float? overdriveIntensity = null;
 
     private List<ShakeEvent> shakeEvents = new List<ShakeEvent>();
     private ShakeEvent overdriveEvent;
@@ -53,19 +53,29 @@ public class CameraShake : MonoBehaviour
         shakeEvents.Add(new ShakeEvent(Origin.TorpedoFire, echelon.transform, 0.1f)
         {
             radius = 100,
-            intensity = 0.02f,
+            intensity = 0.06f,
             maxAge = 0.5f,
         });
     }
 
 
+    private static float ExplosionD(float distance)
+    {
+        return 1f / (1f + 0.01f * distance);
+    }
     internal void SignalExplosionStart(Transform explosion, float explosionRadius)
     {
+        var distance = M.Distance(transform.parent.position, explosion.position);
+        var maxDistance = explosionRadius * 10;
+        if (distance > maxDistance)
+            return;
+        var proximity = (ExplosionD(distance) - ExplosionD(maxDistance)) / (ExplosionD(0) - ExplosionD(maxDistance));
         shakeEvents.Add(new ShakeEvent(Origin.Explosion, explosion, 0.01f)
         {
-            radius = explosionRadius * 10,
+            radius = maxDistance,
+            speed = 20,
             intensity = 0.5f,
-            maxAge = 2,
+            maxAge = 1.5f * proximity,
         });
     }
 
@@ -78,15 +88,15 @@ public class CameraShake : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if (overdriveActive)
+        if (overdriveIntensity.HasValue && BoostScale > 0)
         {
             if (overdriveEvent == null)
             {
-                overdriveEvent = new ShakeEvent(Origin.Overdrive, echelon.transform, 1f)
+                overdriveEvent = new ShakeEvent(Origin.Overdrive, echelon.transform, 2f)
                 {
                     radius = 10000,
-                    speed = 20,
-                    intensity = 0.02f,
+                    speed = 5 * overdriveIntensity.Value,
+                    intensity = 0.01f * BoostScale * overdriveIntensity.Value,
                     maxAge = 100000
                 };
                 shakeEvents.Add(overdriveEvent);
@@ -129,7 +139,8 @@ public class CameraShake : MonoBehaviour
         RailgunFire,
         TorpedoFire,
         Explosion,
-        Overdrive
+        Overdrive,
+        Collision
     }
 
     class ShakeEvent
@@ -137,9 +148,9 @@ public class CameraShake : MonoBehaviour
         public Origin Origin { get; }
         public float speed = 20;
         public float age;
-        public float intensity;
-        public float radius;
-        public float maxAge;
+        public float intensity = 1;
+        public float radius = 100;
+        public float maxAge = 1;
         private bool terminal;
         private float terminalSince;
         public float FadeIn { get; }
