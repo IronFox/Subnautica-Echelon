@@ -96,7 +96,7 @@ public class CameraShake : MonoBehaviour
                 {
                     radius = 10000,
                     speed = 5 * overdriveIntensity.Value,
-                    intensity = 0.01f * BoostScale * overdriveIntensity.Value,
+                    intensity = 0.02f * BoostScale * overdriveIntensity.Value,
                     maxAge = 100000
                 };
                 shakeEvents.Add(overdriveEvent);
@@ -137,8 +137,9 @@ public class CameraShake : MonoBehaviour
     {
         shakeEvents.Add(new ShakeEvent(Origin.Collision, echelon.transform, 0.01f)
         {
-            intensity = collision.impulse.magnitude * 0.000003f,
-
+            intensity = collision.impulse.magnitude * 0.0000025f,
+            speed = 20,
+            maxAge = 0.8f
 
         });
     }
@@ -171,9 +172,15 @@ public class CameraShake : MonoBehaviour
         public bool ShouldRemove => age > maxAge
             || (terminal && age > terminalSince + 1);
 
+
+        private static float TimeFalloff(float x)
+        {
+            return 1f / (1f + 0.1f * x);
+        }
+        private float Falloff => (TimeFalloff(age) - TimeFalloff(maxAge)) / (TimeFalloff(0) - TimeFalloff(maxAge));
         public void Log(string message)
         {
-            Debug.Log($"[{Origin}]<{Target}>@{age} {message} ");
+            //Debug.Log($"[{Origin}]<{Target}>@{age} {message} ");
         }
 
         public void Terminate()
@@ -199,7 +206,7 @@ public class CameraShake : MonoBehaviour
 
             var magnitude =
                 (1f - M.Smoothstep(0, radius, M.Distance(lastLocation, camera)))
-                * Mathf.Max(0, 1f - age / maxAge)
+                * Falloff
                 * M.Smoothstep(0, FadeIn, age)
                 * intensity;
             if (terminal)
