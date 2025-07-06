@@ -1019,8 +1019,8 @@ namespace Subnautica_Echelon
                     rs.Add(new VehicleStorage
                     {
                         Container = storageTransform.gameObject,
-                        Height = 4,
-                        Width = 4
+                        Height = 10,
+                        Width = 8
                     });
                 }
                 return rs;
