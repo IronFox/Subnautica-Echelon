@@ -935,7 +935,7 @@ namespace Subnautica_Echelon
         public string VehicleName => subName != null ? subName.GetName() : vehicleName;
 
         public override int MaxHealth => 2000;
-        public override int NumModules => 8;
+        public override int NumModules => ModuleCount;
         public override int BaseCrushDepth => 300;
         public override int CrushDepthUpgrade1 => 200;
 
