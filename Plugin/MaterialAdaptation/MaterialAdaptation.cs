@@ -1,7 +1,7 @@
 ﻿using System;
 using UnityEngine;
 
-namespace Subnautica_Echelon
+namespace Subnautica_Echelon.MaterialAdaptation
 {
     /// <summary>
     /// A renderer material target description, identifying a material by its slot index,

@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-namespace Subnautica_Echelon
+namespace Subnautica_Echelon.Logs
 {
 
     public static class Log

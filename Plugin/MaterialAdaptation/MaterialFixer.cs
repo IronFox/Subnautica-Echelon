@@ -5,7 +5,7 @@ using UnityEngine;
 using UnityEngine.Rendering;
 using VehicleFramework;
 
-namespace Subnautica_Echelon
+namespace Subnautica_Echelon.MaterialAdaptation
 {
     /// <summary>
     /// Logging configuration
@@ -189,7 +189,7 @@ namespace Subnautica_Echelon
                     // I feel okay using Skybox as the designated "don't apply marmoset to me" component.
                     // I think there's no reason a vehicle should have a skybox anywhere.
                     // And if there is, I'm sure that developer can work around this.
-                    Component.DestroyImmediate(renderer.gameObject.GetComponent<Skybox>());
+                    UnityEngine.Object.DestroyImmediate(renderer.gameObject.GetComponent<Skybox>());
                     continue;
                 }
                 if (renderer.gameObject.name.ToLower().Contains("light"))

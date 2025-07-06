@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using Subnautica_Echelon.Logs;
+using UnityEngine;
 using VehicleFramework;
 using VehicleFramework.Engines;
 

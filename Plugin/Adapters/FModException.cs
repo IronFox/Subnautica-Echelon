@@ -1,7 +1,7 @@
 ﻿using FMOD;
 using System;
 
-namespace Subnautica_Echelon
+namespace Subnautica_Echelon.Adapters
 {
     internal class FModException : Exception
     {
@@ -10,7 +10,7 @@ namespace Subnautica_Echelon
 
         public FModException(string message, RESULT result) : base(message)
         {
-            this.Result = result;
+            Result = result;
         }
     }
 }

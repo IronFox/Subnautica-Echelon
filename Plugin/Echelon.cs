@@ -1,4 +1,8 @@
 ﻿using Nautilus.Handlers;
+using Subnautica_Echelon.Logs;
+using Subnautica_Echelon.MaterialAdaptation;
+using Subnautica_Echelon.Modules;
+using Subnautica_Echelon.Util;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -275,19 +279,20 @@ namespace Subnautica_Echelon
                     //else
                     //    PLog.Write($"Found camera rotate {rotateCamera.name}");
 
-                    if (control != null)
+                    if (control)
                     {
                         PLog.Write("Found control");
                     }
                     else
                     {
-                        if (transform == null)
+                        PLog.Fail("Did not find control");
+                        if (!transform)
                             PLog.Write($"Do not have a transform");
                         else
                         {
                             PLog.Write($"This is {transform.name}");
                             PLog.Write("This has components: " + Helper.NamesS(Helper.AllComponents(transform)));
-                            PLog.Write("This has children: " + Helper.NamesS(Helper.Children(transform)));
+                            PLog.Write("This has children: " + Helper.NamesS(transform.GetChildren()));
                         }
                     }
                     PLog.Write($"LocalInit() done");
@@ -1009,7 +1014,7 @@ namespace Subnautica_Echelon
                 {
                     var name = $"Storage{i}";
                     var storageTransform = root.transform.Find(name);
-                    if (storageTransform == null)
+                    if (!storageTransform)
                     {
                         storageTransform = new GameObject(name).transform;
                         storageTransform.parent = root.transform;

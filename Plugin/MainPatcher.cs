@@ -1,6 +1,8 @@
 ﻿using BepInEx;
 using HarmonyLib;
 using Nautilus.Handlers;
+using Subnautica_Echelon.Logs;
+using Subnautica_Echelon.Modules;
 using System;
 using System.Collections;
 using System.IO;
@@ -30,6 +32,7 @@ namespace Subnautica_Echelon
         {
             try
             {
+                Logging.Target = new Logs.LoggerTarget(Logger);
                 Log.Write($"MainPatcher.Awake()");
 
                 RecipePurger.Purge();
@@ -112,7 +115,6 @@ namespace Subnautica_Echelon
             try
             {
                 Log.Write("MainPatcher.Register()");
-                Log.Write("");
                 Log.Write("model loaded: " + Echelon.model.name);
                 var sub = Echelon.model.EnsureComponent<Echelon>();
                 Log.Write("echelon attached: " + sub.name);
@@ -145,7 +147,7 @@ namespace Subnautica_Echelon
                         return null;    //don't target vehicles
                     if (go.name.Contains("Cyclops-MainPrefab"))
                         return null;    //don't target cyclops
-                    return new MixinTargetAdapter(go, rb, mixin);
+                    return new Adapters.MixinTargetAdapter(go, rb, mixin);
 
                 };
                 RigidbodyPatcher.Patch = (go, rb) =>
@@ -175,7 +177,7 @@ namespace Subnautica_Echelon
                     }
                 };
 
-                SoundAdapter.SoundCreator = new FModSoundCreator();
+                SoundAdapter.SoundCreator = new Adapters.FModSoundCreator();
 
                 Log.Write("MainPatcher.Register() done");
             }

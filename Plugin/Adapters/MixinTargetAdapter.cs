@@ -1,6 +1,7 @@
-﻿using UnityEngine;
+﻿using Subnautica_Echelon.Logs;
+using UnityEngine;
 
-namespace Subnautica_Echelon
+namespace Subnautica_Echelon.Adapters
 {
     internal class MixinTargetAdapter : TargetAdapter
     {

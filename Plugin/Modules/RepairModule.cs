@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using VehicleFramework.Assets;
 using VehicleFramework.UpgradeTypes;
 
-namespace Subnautica_Echelon
+namespace Subnautica_Echelon.Modules
 {
     public class RepairModule : EchelonModuleFamily<RepairModule>
     {
@@ -24,7 +24,7 @@ namespace Subnautica_Echelon
 
         public static void RegisterAll()
         {
-            groupSprite = Subnautica_Echelon.MainPatcher.LoadSprite("images/repairModule.png");
+            groupSprite = MainPatcher.LoadSprite("images/repairModule.png");
             new RepairModule(EchelonModule.RepairModuleMk1).Register();
             new RepairModule(EchelonModule.RepairModuleMk2).Register();
             new RepairModule(EchelonModule.RepairModuleMk3).Register();

@@ -1,7 +1,7 @@
 ﻿using System;
 using UnityEngine;
 
-namespace Subnautica_Echelon
+namespace Subnautica_Echelon.MaterialAdaptation
 {
     /// <summary>
     /// Surface shader data extracted from a material imported from Unity.
