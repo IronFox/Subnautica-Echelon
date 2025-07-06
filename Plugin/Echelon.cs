@@ -1018,7 +1018,8 @@ namespace Subnautica_Echelon
                     {
                         storageTransform = new GameObject(name).transform;
                         storageTransform.parent = root.transform;
-                        storageTransform.localPosition = M.V3(i);
+                        storageTransform.localPosition = M.V3(i) * 0.01f;
+                        storageTransform.localScale = Vector3.one * 0.01f;
                         PLog.Write($"Creating new storage transform {storageTransform} in {root} @{storageTransform.localPosition} => {storageTransform.position}");
                     }
                     rs.Add(new VehicleStorage

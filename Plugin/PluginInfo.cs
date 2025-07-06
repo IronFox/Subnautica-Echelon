@@ -4,6 +4,6 @@
     {
         public const string PLUGIN_GUID = "com.ironfox.subnautica.echelon.mod";
         public const string PLUGIN_NAME = "Echelon";
-        public const string PLUGIN_VERSION = "1.3.8";
+        public const string PLUGIN_VERSION = "1.3.9";
     }
 }
