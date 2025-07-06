@@ -1,4 +1,5 @@
 ﻿using UnityEngine;
+using VehicleFramework;
 using VehicleFramework.Engines;
 
 namespace Subnautica_Echelon
@@ -6,11 +7,21 @@ namespace Subnautica_Echelon
     public class VoidDrive : ModVehicleEngine
     {
         private MyLogger Log { get; }
+        public AudioSource EngineSource1 { get; private set; }
+        public AudioSource EngineSource2 { get; private set; }
+
         public VoidDrive()
         {
             Log = new MyLogger(this);
             //AngularDrag = 10;
 
+        }
+
+        public new void OnDisable()
+        {
+            EngineSource1?.Stop();
+            EngineSource2?.Stop();
+            base.OnDisable();
         }
 
         public float overdriveActive;
@@ -29,9 +40,66 @@ namespace Subnautica_Echelon
         public override void Start()
         {
             base.Start();
+            sounds = EngineSoundsManager.GetVoice("ShirubaFoxy");
+            EngineSource1 = base.MV.gameObject.AddComponent<AudioSource>().Register();
+            EngineSource1.loop = true;
+            EngineSource1.playOnAwake = false;
+            EngineSource1.priority = 0;
+            EngineSource2 = base.MV.gameObject.AddComponent<AudioSource>().Register();
+            EngineSource2.loop = false;
+            EngineSource2.playOnAwake = false;
+            EngineSource2.priority = 0;
+            EngineSource1.clip = sounds.hum;
+            EngineSource2.clip = sounds.whistle;
         }
+
         public override void ControlRotation()
         {
+        }
+
+
+
+        protected override void PlayEngineHum()
+        {
+            float value = MainPatcher.PluginConfig.engineSoundVolume / 100f;
+            EngineSource1.volume = EngineHum / 10f * value * HumFactor;
+            if (base.MV.IsPowered())
+            {
+                if (!EngineSource1.isPlaying && base.RB.velocity.magnitude > 0.2f)
+                {
+                    EngineSource1.Play();
+                }
+            }
+            else
+            {
+                EngineSource1.Stop();
+            }
+        }
+
+        protected override void PlayEngineWhistle(Vector3 moveDirection)
+        {
+            if (base.gameObject.GetComponent<Rigidbody>().velocity.magnitude < 1f)
+            {
+                isReadyToWhistle = true;
+            }
+            else
+            {
+                isReadyToWhistle = false;
+            }
+
+            if (EngineSource2.isPlaying)
+            {
+                if (moveDirection.magnitude == 0f)
+                {
+                    EngineSource2.Stop();
+                }
+            }
+            else if (isReadyToWhistle && moveDirection.magnitude > 0f)
+            {
+                float value = MainPatcher.PluginConfig.engineSoundVolume / 100f;
+                EngineSource2.volume = value * 0.4f * WhistleFactor;
+                EngineSource2.Play();
+            }
         }
 
         //public override void KillMomentum()
