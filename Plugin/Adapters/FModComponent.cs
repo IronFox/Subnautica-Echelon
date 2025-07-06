@@ -17,8 +17,8 @@ namespace Subnautica_Echelon.Adapters
         {
             if (sound is null || !sound.Update(Time.deltaTime))
             {
+                PLog.Fail($"FModComponent.sound({sound?.Channel.handle}).Update() returned false. Self-destructing");
                 sound = null;//there is something going on in this case. better just unset and don't touch it
-                PLog.Fail($"FModComponent.sound({sound.Channel.handle}).Update() returned false. Self-destructing");
                 Destroy(this);
             }
         }
