@@ -38,7 +38,21 @@ namespace Subnautica_Echelon
             MaterialFixer = new MaterialFixer(this, LogConfig.Silent);
         }
 
+        private const int ModuleCount = 8;
+        private string[] _slotIDs = GenerateSlotIDs(ModuleCount);
 
+        private static string[] GenerateSlotIDs(int modules)
+        {
+            string[] array = new string[modules];
+            for (int i = 0; i < modules; i++)
+            {
+                array[i] = "VehicleModule" + i;
+            }
+
+            return array;
+        }
+
+        public override string[] slotIDs => _slotIDs;
 
         public override void OnFinishedLoading()
         {
