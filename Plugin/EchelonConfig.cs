@@ -60,5 +60,7 @@ public class EchelonConfig : ConfigFile
     public float globalCameraShakeIntensity = 100;
     [Slider(DefaultValue = 100, Format = "{0:F0} %", Label = "Turbo Camera Shake Intensity", LabelLanguageId = "optBoostCameraShakeIntensity", Min = 0, Max = 200, Step = 10)]
     public float boostCameraShakeIntensity = 100;
+    [Slider(DefaultValue = 50, Format = "{0:F0} %", Label = "Engine Sound Volume", LabelLanguageId = "optEngineSoundVolume", Min = 0, Max = 200, Step = 10)]
+    public float engineSoundVolume = 50;
 
 }
