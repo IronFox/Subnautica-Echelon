@@ -258,8 +258,8 @@ namespace Subnautica_Echelon
                         //"Chels-E" - high-pitched panicky
                         //"Mikjaw"/"Salli" - just bad
                         //"Turtle" - missing?
-                        //autopilot.apVoice.voice = VoiceManager.GetVoice("Salli");
-                        autopilot.apVoice.voice = Helper.Clone(autopilot.apVoice.voice);
+                        //autopilot.apVoice.voice = VoiceManager.GetVoice("ShirubaFoxy");
+                        autopilot.apVoice.voice = Helper.Clone(VoiceManager.GetVoice("ShirubaFoxy"));
                         autopilot.apVoice.voice.PowerLow = null;
                         autopilot.apVoice.voice.BatteriesNearlyEmpty = null;
                         autopilot.apVoice.voice.UhOh = null;
