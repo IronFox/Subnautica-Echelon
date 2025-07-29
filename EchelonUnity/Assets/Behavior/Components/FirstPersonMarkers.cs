@@ -16,6 +16,7 @@ public class FirstPersonMarkers : MonoBehaviour
     private bool wasShown = true;
     private Renderer[] childRenderers;
     private HealingLight[] hls;
+    private int checkAnywayCounter = 0;
     // Start is called before the first frame update
     void Start()
     {
@@ -26,7 +27,7 @@ public class FirstPersonMarkers : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if (show != wasShown)
+        if (show != wasShown || (--checkAnywayCounter < 0))
         {
             wasShown = show;
             foreach (var renderer in childRenderers)
@@ -34,6 +35,7 @@ public class FirstPersonMarkers : MonoBehaviour
 
             foreach (var hl in hls)
                 hl.isEnabled = show;
+            checkAnywayCounter = 50;
         }
 
 
