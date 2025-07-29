@@ -264,6 +264,19 @@ namespace Subnautica_Echelon.MaterialAdaptation
                     }
                     else
                     {
+
+                        try
+                        {
+                            var prefabId = Vehicle.GetComponent<PrefabIdentifier>();
+                            if (prefabId != null)
+                                LogConfig.LogExtraStep($"Fixing materials for {prefabId.Id} {Vehicle.GetName()} on {Vehicle.gameObject.GetInstanceID()}");
+                            else
+                                LogConfig.LogExtraStep($"Fixing materials for {Vehicle.GetName()} on {Vehicle.gameObject.GetInstanceID()}");
+                        }
+                        catch (Exception ex)
+                        { }
+
+
                         Shader shader = Shader.Find("MarmosetUBER");
 
                         foreach (var data in MaterialResolver())
@@ -302,12 +315,15 @@ namespace Subnautica_Echelon.MaterialAdaptation
                 {
                     repairMaterialsInSeconds = float.MaxValue;
                     doRepairMaterialsPostUndock = false;
-                    LogConfig.LogExtraStep($"Undocked. Resetting materials");
+                    LogConfig.LogExtraStep($"Undocked. Resetting {adaptations.Count} materials");
                     foreach (MaterialAdaptation adaptation in adaptations)
                         adaptation.PostDockFixOnTarget(LogConfig);
                     anyChanged = true;
                 }
+                else
+                    LogConfig.LogExtraStep($"Undock repair in progress: {repairMaterialsInSeconds:F2} seconds left, {repairMaterialsInFrames} frames left");
             }
+
             return anyChanged;
         }
     }
