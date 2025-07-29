@@ -13,29 +13,27 @@ public class FirstPersonMarkers : MonoBehaviour
     public Renderer overdriveLeft;
     public Renderer overdriveRight;
 
-    private bool wasShown = true;
     private Renderer[] childRenderers;
+    private Renderer check;
     private HealingLight[] hls;
-    private int checkAnywayCounter = 0;
     // Start is called before the first frame update
     void Start()
     {
         childRenderers = GetComponentsInChildren<Renderer>();
+        check = childRenderers.Length > 0 ? childRenderers[0] : null;
         hls = GetComponentsInChildren<HealingLight>();
     }
 
     // Update is called once per frame
     void Update()
     {
-        if (show != wasShown || (--checkAnywayCounter < 0))
+        if (check && check.enabled != show)
         {
-            wasShown = show;
             foreach (var renderer in childRenderers)
                 renderer.enabled = show;
 
             foreach (var hl in hls)
                 hl.isEnabled = show;
-            checkAnywayCounter = 50;
         }
 
 
