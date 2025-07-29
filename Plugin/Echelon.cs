@@ -921,9 +921,9 @@ namespace Subnautica_Echelon
         private Color nonBlackBaseColor;
         private Color nonBlackStripeColor;
 
-        public override void OnVehicleDocked(Vector3 exitLocation)
+        public override void OnVehicleDocked(Vehicle vehicle, Vector3 exitLocation)
         {
-            base.OnVehicleDocked(exitLocation);
+            base.OnVehicleDocked(vehicle, exitLocation);
             MaterialFixer.OnVehicleDocked();
             //SetBaseColor(Vector3.zero, nonBlackBaseColor);
             //SetStripeColor(Vector3.zero, nonBlackStripeColor);
