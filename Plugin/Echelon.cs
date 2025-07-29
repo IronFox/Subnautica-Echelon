@@ -467,6 +467,8 @@ namespace Subnautica_Echelon
         {
             try
             {
+                if (!IsUnderCommand)
+                    return; //there appears to be some double execution
                 PLog.Write("Echelon.PlayerExit()");
                 LocalInit();
                 control.Offboard();
