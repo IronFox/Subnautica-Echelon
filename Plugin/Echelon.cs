@@ -1060,10 +1060,13 @@ namespace Subnautica_Echelon
             }
         }
 
+        private List<VehicleUpgrades> upgrades = null;
         public override List<VehicleUpgrades> Upgrades
         {
             get
             {
+                if (upgrades != null)
+                    return upgrades;
                 var rs = new List<VehicleUpgrades>();
                 var ui = transform.Find("UpgradesInterface");
                 var plugs = transform.Find("Module Plugs");
@@ -1097,7 +1100,7 @@ namespace Subnautica_Echelon
                 }
                 else
                     PLog.Write($"Upgrades interface not found");
-                return rs;
+                return upgrades = rs;
 
             }
 
