@@ -28,6 +28,9 @@ namespace Subnautica_Echelon
         public static readonly Color defaultBaseColor = new Color(0xDE, 0xDE, 0xDE) / 255f;
         public static readonly Color defaultStripeColor = new Color(0x3F, 0x4C, 0x7A) / 255f;
 
+        private static int instanceCounter = 0;
+        public int InstanceID { get; } = instanceCounter++;
+
         //tracks true if vehicle death was ever determined. Can't enter in this state
         private bool wasDead;
         private bool destroyed;
@@ -38,7 +41,7 @@ namespace Subnautica_Echelon
         private int[] moduleCounts = new int[Enum.GetValues(typeof(EchelonModule)).Length];
         public Echelon()
         {
-            PLog.Write($"Echelon Constructed");
+            PLog.Write($"Echelon {InstanceID} Constructed");
             MaterialFixer = new MaterialFixer(this, LogConfig.Silent);
         }
 
@@ -150,7 +153,11 @@ namespace Subnautica_Echelon
 
         public override void Awake()
         {
-
+            var prefabId = GetComponent<PrefabIdentifier>();
+            if (prefabId != null)
+                PLog.Write($"Echelon.Awake() '{VehicleName}' <{prefabId.Id}> #{InstanceID} {gameObject.NiceName()}");
+            else
+                PLog.Write($"Echelon.Awake() '{VehicleName}' #{InstanceID} {gameObject.NiceName()}");
 
             var existing = GetComponent<VFEngine>();
             if (existing != null)
