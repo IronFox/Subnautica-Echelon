@@ -6,6 +6,7 @@ using Subnautica_Echelon.Util;
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Reflection;
 using System.Runtime.InteropServices;
 using UnityEngine;
@@ -482,6 +483,7 @@ namespace Subnautica_Echelon
                 CraftDataHandler.SetQuickSlotType(TechType.VehicleStorageModule, QuickSlotType.None);
 
                 Player.main.transform.LookAt(transform.position);
+                DoSanityCheck();
 
             }
             catch (Exception ex)
@@ -744,6 +746,173 @@ namespace Subnautica_Echelon
             PLog.Write($"[{InstanceID}] Echelon.OnVehicleUndocked() isScuttled: " + this.isScuttled);
             base.OnVehicleUndocked();
             MaterialFixer.OnVehicleUndocked();
+
+            DoSanityCheck();
+
+
+        }
+
+
+        private void DoSanityCheck()
+        {
+
+            PLog.Write($"[{InstanceID}] Performing sanity check");
+            if (!isScuttled)
+            {
+                if (!IsVehicleDocked)
+                {
+                    var colliders = GetComponentsInChildren<Collider>();
+                    PLog.Write($"[{InstanceID}] Found {colliders.Length} colliders in children");
+                    MeshCollider foundMesh = null;
+                    foreach (var collider in colliders)
+                    {
+                        if (collider.transform.IsChildOf(Player.main.transform))
+                        {
+                            PLog.Write($"[{InstanceID}] Skipping collider {collider.NiceName()} because it is a child of player");
+                            continue;
+                        }
+                        if (collider is BoxCollider box)
+                        {
+                            if (!collider.enabled)
+                                continue;
+
+                            if (collider.transform.GetComponentInParent<VehicleFramework.VehicleHatch>() != null)
+                            {
+                                PLog.Write($"[{InstanceID}] Skipping box collider {box.NiceName()} because it is a child of a hatch");
+                                continue;
+                            }
+                            if (collider.transform.IsChildOf(PilotSeat.Seat.transform))
+                            {
+                                PLog.Write($"[{InstanceID}] Skipping box collider {box.NiceName()} because it is a child of pilot seat");
+                                continue;
+                            }
+                            if (Upgrades.Any(x => collider.transform.IsChildOf(x.Interface.transform) || collider.transform.IsChildOf(x.Flap.transform)))
+                            {
+                                PLog.Write($"[{InstanceID}] Skipping box collider {box.NiceName()} because it is an upgrade interface");
+                                continue;
+                            }
+                            if (Batteries.Any(x => collider.transform.IsChildOf(x.BatterySlot.transform)))
+                            {
+                                PLog.Write($"[{InstanceID}] Skipping box collider {box.NiceName()} because it is a battery interface");
+                                continue;
+                            }
+                            if (collider.enabled)
+                            {
+                                PLog.Write($"[{InstanceID}] Found enabled box collider {box.NiceName()} with size {box.size}. Disabling");
+                                collider.enabled = false;
+                            }
+                        }
+                        else if (collider is MeshCollider mesh)
+                        {
+                            if (foundMesh != null)
+                            {
+                                PLog.Fail($"[{InstanceID}] Found multiple mesh colliders in {VehicleName}. This is not allowed. Disabling {mesh.NiceName()}");
+                                collider.enabled = false;
+                                continue;
+                            }
+                            if (!collider.enabled)
+                            {
+                                PLog.Write($"[{InstanceID}] Found disabled mesh collider {mesh.NiceName()}. Disabling");
+                                collider.enabled = true;
+                                foundMesh = mesh;
+                            }
+                        }
+                        else
+                        {
+                            PLog.Fail($"[{InstanceID}] Found unsupported collider type {collider.NiceName()} in {VehicleName}. Disabling");
+                            collider.enabled = false;
+                        }
+                    }
+                }
+                else
+                    PLog.Write($"[{InstanceID}] Vehicle is docked, skipping collider sanity check");
+
+
+                foreach (var h in this.Hatches)
+                {
+                    var go = h.Hatch;
+                    var hatch = go.GetComponent<VehicleFramework.VehicleHatch>();
+                    if (hatch == null)
+                    {
+                        PLog.Fail($"[{InstanceID}] Found hatch without VehicleHatch component in {VehicleName}. Creating");
+                        hatch = go.EnsureComponent<VehicleFramework.VehicleHatch>();
+                        hatch.mv = this;
+                        hatch.EntryLocation = h.EntryLocation;
+                        hatch.ExitLocation = h.ExitLocation;
+                        hatch.SurfaceExitLocation = h.SurfaceExitLocation;
+                        ((IDockListener)hatch).OnUndock();
+                    }
+
+                    var box = go.GetComponent<BoxCollider>();
+                    if (box == null)
+                    {
+                        PLog.Fail($"[{InstanceID}] Hatch {h.Hatch.NiceName()} does not have a BoxCollider. Creating");
+                        box = go.EnsureComponent<BoxCollider>();
+                        box.size = new Vector3(1, 1, 1);
+                        box.center = Vector3.zero;
+                    }
+                    else
+                    {
+                        if (!box.enabled)
+                        {
+                            PLog.Fail($"[{InstanceID}] Hatch {h.Hatch.NiceName()} has disabled BoxCollider. Enabling");
+                            box.enabled = true;
+                        }
+                    }
+
+                    if (hatch.mv != this)
+                    {
+                        PLog.Fail($"[{InstanceID}] Hatch {h.Hatch.NiceName()} is attached to {hatch.mv.NiceName()}, not this vehicle. Fixing...");
+                        hatch.mv = this;
+                    }
+
+                    if (Drone.mountedDrone)
+                    {
+                        PLog.Fail($"[{InstanceID}] Hatch {h.Hatch.NiceName()} is not a valid hand target because drone is mounted. Resetting...");
+                        Drone.mountedDrone = null;
+                    }
+
+                    if (!hatch.isValidHandTarget)
+                    {
+                        PLog.Fail($"[{InstanceID}] Hatch {h.Hatch.NiceName()} is not a valid hand target. Resetting...");
+                        hatch.isValidHandTarget = true;
+                    }
+
+                    if (!hatch.isActiveAndEnabled)
+                    {
+                        PLog.Fail($"[{InstanceID}] Hatch {h.Hatch.NiceName()} is not active. Enabling...");
+                        hatch.enabled = true;
+                        var current = go;
+                        while (go != null && go != gameObject)
+                        {
+                            if (!go.activeSelf)
+                            {
+                                PLog.Fail($"[{InstanceID}] Hatch {h.Hatch.NiceName()} is not active in hierarchy. Activating parent {current.name}");
+                                go.SetActive(true);
+                            }
+                            var p = go.transform.parent;
+                            go = p ? p.gameObject : null;
+                        }
+                    }
+                    var live = hatch.GetType().GetField("isLive", BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic);
+                    if (live != null)
+                    {
+                        var value = live.GetValue(hatch);
+                        if (!(value is bool b))
+                            PLog.Fail($"[{InstanceID}] Hatch {h.Hatch.NiceName()} isLive: {value} (not a bool)");
+                        else
+                        if (!b)
+                        {
+                            PLog.Fail($"[{InstanceID}] Hatch {h.Hatch.NiceName()} is not live");
+                            ((IDockListener)hatch).OnUndock();
+                        }
+                    }
+                    else
+                        PLog.Fail($"[{InstanceID}] Hatch {h.Hatch.NiceName()} does not have isLive field");
+                }
+            }
+            else
+                PLog.Write($"[{InstanceID}] Vehicle is scuttled, skipping sanity check");
         }
 
 
@@ -752,9 +921,9 @@ namespace Subnautica_Echelon
         private Color nonBlackBaseColor;
         private Color nonBlackStripeColor;
 
-        public override void OnVehicleDocked(Vehicle vehicle, Vector3 exitLocation)
+        public override void OnVehicleDocked(Vector3 exitLocation)
         {
-            base.OnVehicleDocked(vehicle, exitLocation);
+            base.OnVehicleDocked(exitLocation);
             MaterialFixer.OnVehicleDocked();
             //SetBaseColor(Vector3.zero, nonBlackBaseColor);
             //SetStripeColor(Vector3.zero, nonBlackStripeColor);
