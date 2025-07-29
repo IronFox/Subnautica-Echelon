@@ -739,6 +739,7 @@ namespace Subnautica_Echelon
 
         public override void OnVehicleUndocked()
         {
+            PLog.Write($"[{InstanceID}] Echelon.OnVehicleUndocked() isScuttled: " + this.isScuttled);
             base.OnVehicleUndocked();
             MaterialFixer.OnVehicleUndocked();
         }
