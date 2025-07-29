@@ -218,7 +218,7 @@ namespace Subnautica_Echelon.MaterialAdaptation
         /// <remarks>Should be called from your vehicle OnVehicleUndocked() method</remarks>
         public void OnVehicleUndocked()
         {
-            repairMaterialsInSeconds = 0.2f;
+            repairMaterialsInSeconds = 0.5f;
             repairMaterialsInFrames = 1;
             doRepairMaterialsPostUndock = true;
         }
