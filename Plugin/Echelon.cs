@@ -34,7 +34,10 @@ namespace Subnautica_Echelon
 
         //tracks true if vehicle death was ever determined. Can't enter in this state
         private bool wasDead;
+
         private bool destroyed;
+        private bool hadUnpausedFrame;
+
         private float deathAge;
         private VoidDrive engine;
         private AutoPilot autopilot;
@@ -937,6 +940,8 @@ namespace Subnautica_Echelon
         {
             try
             {
+                hadUnpausedFrame |= Time.deltaTime > 0;
+
                 LocalInit();
 
                 MaterialFixer.UniformShininess = MainPatcher.PluginConfig.uniformShininess
@@ -1104,7 +1109,7 @@ namespace Subnautica_Echelon
             var dm2 = GetDriveMark();
             var rm2 = GetSelfRepairMark();
             var gm2 = GetRailgunMark();
-            if (!destroyed)
+            if (!destroyed && hadUnpausedFrame)
             {
                 if (tm != tm2)
                     ErrorMessage.AddMessage(string.Format(Language.main.Get($"torpedoCapChanged"), VehicleName, Language.main.Get("cap_t_" + tm2)));
