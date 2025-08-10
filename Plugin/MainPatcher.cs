@@ -1,6 +1,7 @@
 ﻿using BepInEx;
 using HarmonyLib;
 using Nautilus.Handlers;
+using Nautilus.Utility.ModMessages;
 using Subnautica_Echelon.Logs;
 using Subnautica_Echelon.Modules;
 using System;
@@ -39,6 +40,10 @@ namespace Subnautica_Echelon
 
 
                 Echelon.GetAssets();
+
+
+                ModMessageSystem.SendGlobal("FindMyUpdates", "https://raw.githubusercontent.com/IronFox/Subnautica-Echelon/refs/heads/main/mod-info.json");
+
                 Log.Write($"MainPatcher.Awake() done");
 
             }
