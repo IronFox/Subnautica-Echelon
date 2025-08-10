@@ -1,15 +1,4 @@
 echelon todos:
-	FindMyUpdate support:
-
-	https://discord.com/channels/324207629784186882/1190308479731241020/1393654605493309662
-
-	Add a json file on the internet, but most convenient to be in your project: example
-
-	Add one line to your plugin Awake() or Start()
-	ModMessageSystem.SendGlobal("FindMyUpdates", "URL (raw) to your json file")
-
-
-	Done. If users have Find My Updates installed, your mod will be checked for updates using the information in the json file 
 
 
 maybe later:
@@ -23,6 +12,7 @@ maybe later:
 
 
 * general:
+	* FindMyUpdate support
 	* update version number  (done)
 	* disable all access to C:\temp both in the unity scene and the plugin. Redirect to Debug.  (done)
 	* rework readme in repo, add details, fix typoes  (done)
