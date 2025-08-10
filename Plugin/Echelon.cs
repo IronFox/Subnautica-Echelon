@@ -823,93 +823,97 @@ namespace Subnautica_Echelon
                             collider.enabled = false;
                         }
                     }
+
+
+
+
+                    foreach (var h in this.Hatches)
+                    {
+                        var go = h.Hatch;
+                        var hatch = go.GetComponent<VehicleFramework.VehicleHatch>();
+                        if (hatch == null)
+                        {
+                            PLog.Fail($"[{InstanceID}] Found hatch without VehicleHatch component in {VehicleName}. Creating");
+                            hatch = go.EnsureComponent<VehicleFramework.VehicleHatch>();
+                            hatch.mv = this;
+                            hatch.EntryLocation = h.EntryLocation;
+                            hatch.ExitLocation = h.ExitLocation;
+                            hatch.SurfaceExitLocation = h.SurfaceExitLocation;
+                            ((IDockListener)hatch).OnUndock();
+                        }
+
+                        var box = go.GetComponent<BoxCollider>();
+                        if (box == null)
+                        {
+                            PLog.Fail($"[{InstanceID}] Hatch {h.Hatch.NiceName()} does not have a BoxCollider. Creating");
+                            box = go.EnsureComponent<BoxCollider>();
+                            box.size = new Vector3(1, 1, 1);
+                            box.center = Vector3.zero;
+                        }
+                        else
+                        {
+                            if (!box.enabled)
+                            {
+                                PLog.Fail($"[{InstanceID}] Hatch {h.Hatch.NiceName()} has disabled BoxCollider. Enabling");
+                                box.enabled = true;
+                            }
+                        }
+
+                        if (hatch.mv != this)
+                        {
+                            PLog.Fail($"[{InstanceID}] Hatch {h.Hatch.NiceName()} is attached to {hatch.mv.NiceName()}, not this vehicle. Fixing...");
+                            hatch.mv = this;
+                        }
+
+                        if (Drone.mountedDrone)
+                        {
+                            PLog.Fail($"[{InstanceID}] Hatch {h.Hatch.NiceName()} is not a valid hand target because drone is mounted. Resetting...");
+                            Drone.mountedDrone = null;
+                        }
+
+                        if (!hatch.isValidHandTarget)
+                        {
+                            PLog.Fail($"[{InstanceID}] Hatch {h.Hatch.NiceName()} is not a valid hand target. Resetting...");
+                            hatch.isValidHandTarget = true;
+                        }
+
+                        if (!hatch.isActiveAndEnabled)
+                        {
+                            PLog.Fail($"[{InstanceID}] Hatch {h.Hatch.NiceName()} is not active. Enabling...");
+                            hatch.enabled = true;
+                            var current = go;
+                            while (go != null && go != gameObject)
+                            {
+                                if (!go.activeSelf)
+                                {
+                                    PLog.Fail($"[{InstanceID}] Hatch {h.Hatch.NiceName()} is not active in hierarchy. Activating parent {current.name}");
+                                    go.SetActive(true);
+                                }
+                                var p = go.transform.parent;
+                                go = p ? p.gameObject : null;
+                            }
+                        }
+                        var live = hatch.GetType().GetField("isLive", BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic);
+                        if (live != null)
+                        {
+                            var value = live.GetValue(hatch);
+                            if (!(value is bool b))
+                                PLog.Fail($"[{InstanceID}] Hatch {h.Hatch.NiceName()} isLive: {value} (not a bool)");
+                            else
+                            if (!b)
+                            {
+                                PLog.Fail($"[{InstanceID}] Hatch {h.Hatch.NiceName()} is not live");
+                                ((IDockListener)hatch).OnUndock();
+                            }
+                        }
+                        else
+                            PLog.Fail($"[{InstanceID}] Hatch {h.Hatch.NiceName()} does not have isLive field");
+                    }
+
                 }
                 else
                     PLog.Write($"[{InstanceID}] Vehicle is docked, skipping collider sanity check");
 
-
-                foreach (var h in this.Hatches)
-                {
-                    var go = h.Hatch;
-                    var hatch = go.GetComponent<VehicleFramework.VehicleHatch>();
-                    if (hatch == null)
-                    {
-                        PLog.Fail($"[{InstanceID}] Found hatch without VehicleHatch component in {VehicleName}. Creating");
-                        hatch = go.EnsureComponent<VehicleFramework.VehicleHatch>();
-                        hatch.mv = this;
-                        hatch.EntryLocation = h.EntryLocation;
-                        hatch.ExitLocation = h.ExitLocation;
-                        hatch.SurfaceExitLocation = h.SurfaceExitLocation;
-                        ((IDockListener)hatch).OnUndock();
-                    }
-
-                    var box = go.GetComponent<BoxCollider>();
-                    if (box == null)
-                    {
-                        PLog.Fail($"[{InstanceID}] Hatch {h.Hatch.NiceName()} does not have a BoxCollider. Creating");
-                        box = go.EnsureComponent<BoxCollider>();
-                        box.size = new Vector3(1, 1, 1);
-                        box.center = Vector3.zero;
-                    }
-                    else
-                    {
-                        if (!box.enabled)
-                        {
-                            PLog.Fail($"[{InstanceID}] Hatch {h.Hatch.NiceName()} has disabled BoxCollider. Enabling");
-                            box.enabled = true;
-                        }
-                    }
-
-                    if (hatch.mv != this)
-                    {
-                        PLog.Fail($"[{InstanceID}] Hatch {h.Hatch.NiceName()} is attached to {hatch.mv.NiceName()}, not this vehicle. Fixing...");
-                        hatch.mv = this;
-                    }
-
-                    if (Drone.mountedDrone)
-                    {
-                        PLog.Fail($"[{InstanceID}] Hatch {h.Hatch.NiceName()} is not a valid hand target because drone is mounted. Resetting...");
-                        Drone.mountedDrone = null;
-                    }
-
-                    if (!hatch.isValidHandTarget)
-                    {
-                        PLog.Fail($"[{InstanceID}] Hatch {h.Hatch.NiceName()} is not a valid hand target. Resetting...");
-                        hatch.isValidHandTarget = true;
-                    }
-
-                    if (!hatch.isActiveAndEnabled)
-                    {
-                        PLog.Fail($"[{InstanceID}] Hatch {h.Hatch.NiceName()} is not active. Enabling...");
-                        hatch.enabled = true;
-                        var current = go;
-                        while (go != null && go != gameObject)
-                        {
-                            if (!go.activeSelf)
-                            {
-                                PLog.Fail($"[{InstanceID}] Hatch {h.Hatch.NiceName()} is not active in hierarchy. Activating parent {current.name}");
-                                go.SetActive(true);
-                            }
-                            var p = go.transform.parent;
-                            go = p ? p.gameObject : null;
-                        }
-                    }
-                    var live = hatch.GetType().GetField("isLive", BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic);
-                    if (live != null)
-                    {
-                        var value = live.GetValue(hatch);
-                        if (!(value is bool b))
-                            PLog.Fail($"[{InstanceID}] Hatch {h.Hatch.NiceName()} isLive: {value} (not a bool)");
-                        else
-                        if (!b)
-                        {
-                            PLog.Fail($"[{InstanceID}] Hatch {h.Hatch.NiceName()} is not live");
-                            ((IDockListener)hatch).OnUndock();
-                        }
-                    }
-                    else
-                        PLog.Fail($"[{InstanceID}] Hatch {h.Hatch.NiceName()} does not have isLive field");
-                }
             }
             else
                 PLog.Write($"[{InstanceID}] Vehicle is scuttled, skipping sanity check");
