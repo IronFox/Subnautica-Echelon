@@ -1,7 +1,16 @@
 echelon todos:
+	FindMyUpdate support:
+
+	https://discord.com/channels/324207629784186882/1190308479731241020/1393654605493309662
+
+	Add a json file on the internet, but most convenient to be in your project: example
+
+	Add one line to your plugin Awake() or Start()
+	ModMessageSystem.SendGlobal("FindMyUpdates", "URL (raw) to your json file")
 
 
-* add camera shake on overdrive (use Random.insideUnitSphere)
+	Done. If users have Find My Updates installed, your mod will be checked for updates using the information in the json file 
+
 
 maybe later:
 * add option to automatically fire at warpers
@@ -21,6 +30,7 @@ maybe later:
 	* reduce launch debug log verbosity (done)
 
 * sub: 
+	* add camera shake on overdrive (use Random.insideUnitSphere)
 	* add glowing markers around sub for surrounding targets (done, configurable)
 	* torpedos fired with no target should always collide with terrain (configurable via option)
 	* show all alternative targets (done)
