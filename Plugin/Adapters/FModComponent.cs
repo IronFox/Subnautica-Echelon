@@ -5,7 +5,7 @@ namespace Subnautica_Echelon.Adapters
 
     internal class FModComponent : MonoBehaviour
     {
-        public FModSound sound;
+        public FModSound? sound;
 
         public void OnDestroy()
         {

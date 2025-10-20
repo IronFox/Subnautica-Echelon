@@ -2,19 +2,20 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using UnityEngine;
 using VehicleFramework.UpgradeTypes;
 
 public abstract class EchelonBaseModule : ModVehicleUpgrade
 {
     public CraftingNode GroupNode { get; }
     public EchelonModule Module { get; }
-    private Atlas.Sprite icon;
+    private Sprite? icon;
 
     public TechType TechType { get; private set; }
 
-    public List<CraftingNode> craftingPath;
+    public List<CraftingNode>? craftingPath;
 
-    public virtual IReadOnlyCollection<TechType> AutoDisplace { get; }
+    public virtual IReadOnlyCollection<TechType>? AutoDisplace { get; }
     public override string ClassId => $"Echelon{Module}";
 
     public override string Description => Language.main.Get("desc_" + Module);
@@ -23,7 +24,7 @@ public abstract class EchelonBaseModule : ModVehicleUpgrade
     public static CraftingNode RootCraftingNode { get; } = new CraftingNode
     {
         displayName = $"Echelon",
-        icon = Echelon.craftingSprite,
+        icon = Echelon.craftingSprite!,
         name = $"echelonupgradetab"
     };
 
@@ -87,7 +88,7 @@ public abstract class EchelonBaseModule : ModVehicleUpgrade
         return TechType.None;
     }
 
-    public override List<CraftingNode> CraftingPath
+    public override List<CraftingNode>? CraftingPath
     {
         get => craftingPath;
         set => craftingPath = value;
@@ -149,6 +150,6 @@ public abstract class EchelonBaseModule : ModVehicleUpgrade
         echelon.SetModuleCount(Module, GetNumberInstalled(echelon));
     }
 
-    public override Atlas.Sprite Icon => icon ?? base.Icon;
+    public override Sprite? Icon => icon ?? base.Icon;
 
 }

@@ -1,18 +1,18 @@
 ﻿using System.Collections.Generic;
-using VehicleFramework.Assets;
+using UnityEngine;
 using VehicleFramework.UpgradeTypes;
 
 namespace Subnautica_Echelon
 {
     public class NuclearBatteryModule : EchelonModuleFamily<NuclearBatteryModule>
     {
-        public static Atlas.Sprite batterySprite;
+        public static Sprite? batterySprite;
 
 
         public static CraftingNode BatteryGroupNode => new CraftingNode
         {
             displayName = Language.main.Get($"group_NuclearBattery"),
-            icon = batterySprite,
+            icon = batterySprite!,
             name = $"echelonnuclearbatteryupgrades"
         };
 

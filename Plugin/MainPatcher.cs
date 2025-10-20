@@ -2,14 +2,18 @@
 using HarmonyLib;
 using Nautilus.Handlers;
 using Nautilus.Utility.ModMessages;
+using Newtonsoft.Json;
 using Subnautica_Echelon.Logs;
 using Subnautica_Echelon.Modules;
+using Subnautica_Echelon.Util;
 using System;
 using System.Collections;
+using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Reflection;
 using UnityEngine;
-using VehicleFramework;
+using VehicleFramework.Admin;
 using VehicleFramework.Assets;
 using VehicleFramework.Patches;
 
@@ -23,10 +27,92 @@ namespace Subnautica_Echelon
     [BepInDependency(Nautilus.PluginInfo.PLUGIN_GUID, Nautilus.PluginInfo.PLUGIN_VERSION)]
     public class MainPatcher : BaseUnityPlugin
     {
-        internal static EchelonConfig PluginConfig { get; private set; }
+        private static EchelonConfig? config;
+        internal static EchelonConfig PluginConfig => config ?? throw new InvalidOperationException("Config not loaded yet");
         internal const string WorkBenchTab = "Storage";
         internal static string RootFolder { get; } = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
         internal static string ImagesFolder { get; } = Path.Combine(RootFolder, "images");
+
+
+        /// <inheritdoc/>
+        public void LoadLanguagesAndConfig(string languageFolderName = "Localization")
+        {
+            var aType = typeof(BindableButtonAttribute);
+
+            var languageFolder = Path.Combine(Path.GetDirectoryName(typeof(EchelonConfig).Assembly.Location), languageFolderName);
+
+            PLog.Write($"Registering localization folder at '{languageFolder}'");
+
+            LanguageHandler.RegisterLocalizationFolder(languageFolder);
+
+            if (!Directory.Exists(languageFolder))
+            {
+                PLog.Warn($"Language folder '{languageFolder}' does not exist. Skipping language loading.");
+            }
+
+            config = OptionsPanelHandler.RegisterModOptions<EchelonConfig>();
+
+            var languages = Directory.Exists(languageFolder) ? new DirectoryInfo(languageFolder).GetFiles("*.json")
+                .Select(lang =>
+                {
+                    var l = JsonConvert.DeserializeObject<Dictionary<string, string>>(
+                        File.ReadAllText(lang.FullName)
+                        );
+                    return (Name: Path.GetFileNameWithoutExtension(lang.Name), Dict: l);
+                }).ToList()
+                : [];
+
+
+            foreach (var f in typeof(EchelonConfig).GetFields(System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.Public))
+            {
+                var b = Attribute.GetCustomAttribute(f, aType) as BindableButtonAttribute;
+                if (b is null)
+                    continue;
+                try
+                {
+
+                    if (EnumHandler.TryAddEntry<GameInput.Button>($"Echelon.Button.{f.Name}", out var builder))
+                    {
+                        bool anyTranslation = false;
+                        if (!string.IsNullOrEmpty(b.LabelLocalizationKey) && languages.Count > 0)
+                        {
+                            foreach (var lang in languages)
+                            {
+                                lang.Dict.TryGetValue(b.LabelLocalizationKey!, out var translated);
+                                string? toolTipTranslated = null;
+                                if (!string.IsNullOrEmpty(b.TooltipLocalizationKey))
+                                    lang.Dict.TryGetValue(b.TooltipLocalizationKey!, out toolTipTranslated);
+                                if (!string.IsNullOrEmpty(translated))
+                                {
+                                    builder = builder.CreateInput(displayName: translated, tooltip: toolTipTranslated ?? "", language: lang.Name);
+                                    anyTranslation = true;
+                                }
+                            }
+                        }
+
+                        if (!anyTranslation)
+                            builder = builder.CreateInput(b.Name);
+
+                        if (!string.IsNullOrEmpty(b.KeyboardDefault))
+                            builder = builder.WithKeyboardBinding(b.KeyboardDefault);
+                        else
+                            builder = builder.WithKeyboardBinding("None");
+                        if (!string.IsNullOrEmpty(b.GamepadDefault))
+                            builder = builder.WithControllerBinding(b.GamepadDefault);
+                        else
+                            builder = builder.WithControllerBinding("None");
+
+                        builder.WithCategory("Echelon");
+                        f.SetValue(config, builder.Value);
+                    }
+                }
+                catch (Exception ex)
+                {
+                    PLog.Fail($"Error registering bindable button for field '{f.Name}': {ex}");
+                }
+            }
+
+        }
 
 
         public void Awake()
@@ -58,8 +144,7 @@ namespace Subnautica_Echelon
             try
             {
                 Log.Write("MainPatcher.Start()");
-                LanguageHandler.RegisterLocalizationFolder();
-                PluginConfig = OptionsPanelHandler.RegisterModOptions<EchelonConfig>();
+                LoadLanguagesAndConfig();
                 var harmony = new Harmony(PluginInfo.PLUGIN_GUID);
                 harmony.PatchAll();
                 UWE.CoroutineHost.StartCoroutine(Register());
@@ -82,10 +167,10 @@ namespace Subnautica_Echelon
             {
                 field.SetValue(copy, field.GetValue(original));
             }
-            return copy as T;
+            return (T)copy;
         }
 
-        public static Atlas.Sprite LoadSprite(string filename)
+        public static Sprite? LoadSprite(string filename)
         {
             var path = Path.Combine(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location), filename);
             Log.Write($"Trying to load sprite from {path}");
@@ -99,13 +184,13 @@ namespace Subnautica_Echelon
                 return null;
             }
         }
-        private static Sprite LoadSpriteRaw(string filename)
+        private static Sprite? LoadSpriteRaw(string filename)
         {
             var path = Path.Combine(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location), filename);
             Log.Write($"Trying to load sprite from {path}");
             try
             {
-                return SpriteHelper.GetSpriteRaw(path);
+                return SpriteHelper.GetSprite(path);
             }
             catch (Exception ex)
             {
@@ -116,11 +201,11 @@ namespace Subnautica_Echelon
 
         public IEnumerator Register()
         {
-            Coroutine started = null;
+            Coroutine? started = null;
             try
             {
                 Log.Write("MainPatcher.Register()");
-                Log.Write("model loaded: " + Echelon.model.name);
+                Log.Write("model loaded: " + Echelon.model!.name);
                 var sub = Echelon.model.EnsureComponent<Echelon>();
                 Log.Write("echelon attached: " + sub.name);
 
@@ -166,7 +251,7 @@ namespace Subnautica_Echelon
                         //rb.interpolation = RigidbodyInterpolation.Extrapolate;
                         //rb.collisionDetectionMode = CollisionDetectionMode.ContinuousDynamic;
 
-                        var worldForces = CopyComponent<WorldForces>(SeamothHelper.Seamoth.GetComponent<SeaMoth>().worldForces, go);
+                        var worldForces = CopyComponent<WorldForces>(SeamothHelper.Seamoth!.GetComponent<SeaMoth>().worldForces, go);
                         worldForces.useRigidbody = rb;
                         worldForces.underwaterGravity = 0f;
                         worldForces.aboveWaterGravity = 9.8f;

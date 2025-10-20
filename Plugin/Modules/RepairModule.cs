@@ -1,19 +1,19 @@
 ﻿using System;
 using System.Collections.Generic;
-using VehicleFramework.Assets;
+using UnityEngine;
 using VehicleFramework.UpgradeTypes;
 
 namespace Subnautica_Echelon.Modules
 {
     public class RepairModule : EchelonModuleFamily<RepairModule>
     {
-        public static Atlas.Sprite groupSprite;
+        public static Sprite? groupSprite;
 
 
         public static CraftingNode SelfRepairGroupNode => new CraftingNode
         {
             displayName = Language.main.Get("group_RepairModule"),
-            icon = groupSprite,
+            icon = groupSprite!,
             name = $"echelonrepairmoduleupgrades"
         };
 

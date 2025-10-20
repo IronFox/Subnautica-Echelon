@@ -1,7 +1,7 @@
 
 using Subnautica_Echelon;
 using System.Collections.Generic;
-using VehicleFramework.Assets;
+using UnityEngine;
 using VehicleFramework.UpgradeTypes;
 
 public class RailgunModule : EchelonModuleFamily<RailgunModule>
@@ -9,14 +9,14 @@ public class RailgunModule : EchelonModuleFamily<RailgunModule>
     public static CraftingNode RailgunGroupNode => new CraftingNode
     {
         displayName = Language.main.Get("group_Railgun"),
-        icon = railgunSprite,
+        icon = railgunSprite!,
         name = $"echelonrailgunupgrades"
     };
     public override QuickSlotType QuickSlotType => QuickSlotType.Toggleable;
 
 
 
-    internal static Atlas.Sprite railgunSprite;
+    internal static Sprite? railgunSprite;
     public static int LevelOf(EchelonModule module)
     {
         switch (module)

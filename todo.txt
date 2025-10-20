@@ -1,5 +1,7 @@
 echelon todos:
 
+* check targets for subroot existence. Remove Cyclops name filter restriction
+
 
 maybe later:
 * add option to automatically fire at warpers

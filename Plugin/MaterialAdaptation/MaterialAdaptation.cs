@@ -61,7 +61,7 @@ namespace Subnautica_Echelon.MaterialAdaptation
         /// Gets the addressed material
         /// </summary>
         /// <returns>Addressed material or null if the address is/has become invalid</returns>
-        public Material GetMaterial()
+        public Material? GetMaterial()
         {
             if (!Renderer)
                 return null;
@@ -139,7 +139,7 @@ namespace Subnautica_Echelon.MaterialAdaptation
                     logConfig.LogWarning($"Target material is gone ({Target}). Cannot apply");
                     return;
                 }
-                if (m.shader != Shader)
+                if (m!.shader != Shader)
                 {
                     logConfig.LogExtraStep($"Applying shader {Shader.name} to target");
 
@@ -173,7 +173,7 @@ namespace Subnautica_Echelon.MaterialAdaptation
                     logConfig.LogWarning($"Target material is gone ({Target}). Cannot apply");
                     return;
                 }
-                if (m.shader != Shader)
+                if (m!.shader != Shader)
                 {
                     logConfig.LogExtraStep($"Applying shader {Shader.name} to target");
 

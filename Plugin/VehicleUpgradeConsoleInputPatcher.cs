@@ -12,7 +12,7 @@ namespace Subnautica_Echelon
     {
         const float openDuration = 0.5f;
         static float timeUntilClose = 0f;
-        static Coroutine closeDoorCor = null;
+        static Coroutine? closeDoorCor = null;
         public static IEnumerator closeDoorSoon(EchelonControl control)
         {
             while (timeUntilClose > 0)

@@ -1,7 +1,7 @@
 
 using Subnautica_Echelon;
 using System.Collections.Generic;
-using VehicleFramework.Assets;
+using UnityEngine;
 using VehicleFramework.UpgradeTypes;
 
 public class TorpedoModule : EchelonModuleFamily<TorpedoModule>
@@ -9,14 +9,14 @@ public class TorpedoModule : EchelonModuleFamily<TorpedoModule>
     public static CraftingNode TorpedoGroupNode => new CraftingNode
     {
         displayName = Language.main.Get("group_Torpedoes"),
-        icon = torpedoSprite,
+        icon = torpedoSprite!,
         name = $"echelontorpedoupgrades"
     };
     public override QuickSlotType QuickSlotType => QuickSlotType.Toggleable;
 
 
 
-    internal static Atlas.Sprite torpedoSprite;
+    internal static Sprite? torpedoSprite;
     public static int LevelOf(EchelonModule module)
     {
         switch (module)

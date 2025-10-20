@@ -2,11 +2,16 @@
 
   <PropertyGroup>
     <TargetFramework>net4.7.2</TargetFramework>
+    <LangVersion>13.0</LangVersion>
     <RootNamespace>Subnautica_Echelon</RootNamespace>
     <OutputType>Library</OutputType>
+    <Nullable>enable</Nullable>
   </PropertyGroup>
 
   <ItemGroup>
+    <Reference Include="Unity.InputSystem">
+      <HintPath>$(SUBNAUTICA_PATH)\Subnautica_Data\Managed\Unity.InputSystem.dll</HintPath>
+    </Reference>
     <Reference Include="0Harmony">
       <HintPath>G:\SteamLibrary\steamapps\common\Subnautica\BepInEx\core\0Harmony.dll</HintPath>
     </Reference>
@@ -18,6 +23,10 @@
     </Reference>
     <Reference Include="BepInEx">
       <HintPath>G:\SteamLibrary\steamapps\common\Subnautica\BepInEx\core\BepInEx.dll</HintPath>
+    </Reference>
+    <Reference Include="Newtonsoft.Json">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>$(SUBNAUTICA_PATH)\Subnautica_Data\Managed\Newtonsoft.Json.dll</HintPath>
     </Reference>
     <Reference Include="EchelonScripts">
       <HintPath>..\..\BuildTarget\Subnautica Echelon_Data\Managed\EchelonScripts.dll</HintPath>

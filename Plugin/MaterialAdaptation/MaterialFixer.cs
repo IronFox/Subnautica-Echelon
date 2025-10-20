@@ -96,7 +96,7 @@ namespace Subnautica_Echelon.MaterialAdaptation
             Debug.Log(MakeMessage(msg()));
         }
 
-        private string ValueToString<T>(T value)
+        private string? ValueToString<T>(T value)
         {
             if (value is float f0)
                 return f0.ToString(CultureInfo.InvariantCulture);
@@ -159,7 +159,7 @@ namespace Subnautica_Echelon.MaterialAdaptation
         public MaterialFixer(
             ModVehicle owner,
             LogConfig? logConfig = null,
-            Func<IEnumerable<SurfaceShaderData>> materialResolver = null
+            Func<IEnumerable<SurfaceShaderData>>? materialResolver = null
             )
         {
             if (owner == null)
@@ -273,7 +273,7 @@ namespace Subnautica_Echelon.MaterialAdaptation
                             else
                                 LogConfig.LogExtraStep($"Fixing materials for {Vehicle.GetName()} on {Vehicle.gameObject.GetInstanceID()}");
                         }
-                        catch (Exception ex)
+                        catch (Exception)
                         { }
 
 

@@ -17,7 +17,7 @@ namespace Subnautica_Echelon.Util
         /// <param name="original">Original component</param>
         /// <param name="destination">Destination owner</param>
         /// <returns>Duplicated component</returns>
-        public static T CopyComponentWithFieldsTo<T>(this T original, GameObject destination) where T : Component
+        public static T? CopyComponentWithFieldsTo<T>(this T original, GameObject destination) where T : Component
         {
             if (!original)
             {
@@ -84,7 +84,7 @@ namespace Subnautica_Echelon.Util
         /// Selectively returns the transform of a GameObject.
         /// Returns null if the GameObject is null.
         /// </summary>
-        public static Transform GetTransform(this GameObject gameObject)
+        public static Transform? GetTransform(this GameObject gameObject)
         {
             if (gameObject == null)
                 return null;
@@ -95,7 +95,7 @@ namespace Subnautica_Echelon.Util
         /// Selectively returns the transform of a Component.
         /// Returns null if the Component is null.
         /// </summary>
-        public static Transform GetTransform(this Component component)
+        public static Transform? GetTransform(this Component component)
         {
             if (component == null)
                 return null;
@@ -105,7 +105,7 @@ namespace Subnautica_Echelon.Util
         /// Selectively returns the GameObject of a Component.
         /// Returns null if the Component is null.
         /// </summary>
-        public static GameObject GetGameObject(this Component component)
+        public static GameObject? GetGameObject(this Component component)
         {
             if (component == null)
                 return null;
@@ -116,7 +116,7 @@ namespace Subnautica_Echelon.Util
         /// Selectively returns the Texture2D of a Sprite.
         /// Returns null if the Sprite is null.
         /// </summary>
-        public static Texture2D GetTexture2D(this Sprite sprite)
+        public static Texture2D? GetTexture2D(this Sprite sprite)
         {
             if (sprite == null)
                 return null;
@@ -197,7 +197,7 @@ namespace Subnautica_Echelon.Util
         /// Favors the attached Rigidbody if available, otherwise uses the Collider's GameObject.
         /// Returns null if the Collider is null.
         /// </summary>
-        public static GameObject GetGameObjectOf(Collider collider)
+        public static GameObject? GetGameObjectOf(Collider collider)
         {
             if (!collider)
                 return null;

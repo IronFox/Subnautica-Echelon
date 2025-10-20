@@ -10,7 +10,7 @@ namespace Subnautica_Echelon.Adapters
     {
         public float halfDistance = 20f;
         private static float Sqr(float value) => value * value;
-        public IInstantiatedSound Instantiate(SoundConfig cfg)
+        public IInstantiatedSound? Instantiate(SoundConfig cfg)
         {
 
             try

@@ -5,7 +5,7 @@ using System.Globalization;
 using System.Linq;
 using UnityEngine;
 using UnityEngine.Rendering;
-using VehicleFramework;
+using VehicleFramework.Assets;
 
 namespace Subnautica_Echelon
 {
@@ -139,9 +139,9 @@ namespace Subnautica_Echelon
 
         private HashSet<string> ShaderKeywords { get; } = new HashSet<string>();
         public MaterialGlobalIlluminationFlags MaterialGlobalIlluminationFlags { get; }
-        private ColorVariable[] ColorVariables { get; }
-        private VectorVariable[] VectorVariables { get; }
-        private FloatVariable[] FloatVariables { get; }
+        private ColorVariable[] ColorVariables { get; } = [];
+        private VectorVariable[] VectorVariables { get; } = [];
+        private FloatVariable[] FloatVariables { get; } = [];
 
         /// <summary>
         /// Updates all recorded shader variables in the specified material
@@ -151,7 +151,7 @@ namespace Subnautica_Echelon
         /// <param name="variableNamePredicate">
         /// Optional predicate to only check/update certain shader variables by name.
         /// If non-null updates only variables for which this function returns true</param>
-        public void ApplyTo(Material m, LogConfig logConfig, Func<string, bool> variableNamePredicate = null)
+        public void ApplyTo(Material m, LogConfig logConfig, Func<string, bool>? variableNamePredicate = null)
         {
             variableNamePredicate = variableNamePredicate ?? (_ => true);
 
@@ -190,7 +190,7 @@ namespace Subnautica_Echelon
         /// Constructs the prototype from a given material
         /// </summary>
         /// <param name="source">Material to read. Can be null, causing <see cref="IsEmpty"/> to be set true</param>
-        public MaterialPrototype(Material source)
+        public MaterialPrototype(Material? source)
         {
             if (source == null)
             {
@@ -246,7 +246,7 @@ namespace Subnautica_Echelon
         /// <returns>Null if the seamoth is not (yet) available. Keep trying if null.
         /// Non-null if the seamoth is loaded, but can then be empty (IsEmpty is true)
         /// if the respective material is not found</returns>
-        public static MaterialPrototype FromSeamoth(LogConfig logConfig = default)
+        public static MaterialPrototype? FromSeamoth(LogConfig logConfig = default)
         {
             var sm = SeamothHelper.Seamoth;
             if (sm == null)
@@ -254,7 +254,7 @@ namespace Subnautica_Echelon
 
             logConfig.LogExtraStep($"Found Seamoth");
 
-            Material seamothMaterial = null;
+            Material? seamothMaterial = null;
             var renderers = sm.GetComponentsInChildren<MeshRenderer>();
             foreach (var renderer in renderers)
             {

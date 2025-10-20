@@ -1,18 +1,17 @@
 ﻿using System.Collections.Generic;
 using UnityEngine;
-using VehicleFramework.Assets;
 using VehicleFramework.UpgradeTypes;
 
 namespace Subnautica_Echelon
 {
     public class DriveModule : EchelonModuleFamily<DriveModule>
     {
-        public static Atlas.Sprite driveSprite;
+        public static Sprite? driveSprite;
 
         public static CraftingNode BatteryGroupNode => new CraftingNode
         {
             displayName = Language.main.Get("group_Drive"),
-            icon = driveSprite,
+            icon = driveSprite!,
             name = $"echelondriveupgrades"
         };
 

@@ -1,15 +1,17 @@
 ﻿using Subnautica_Echelon.Logs;
 using UnityEngine;
-using VehicleFramework;
+using VehicleFramework.Admin;
 using VehicleFramework.Engines;
+using VehicleFramework.Extensions;
 
 namespace Subnautica_Echelon
 {
     public class VoidDrive : ModVehicleEngine
     {
         private MyLogger Log { get; }
-        public AudioSource EngineSource1 { get; private set; }
-        public AudioSource EngineSource2 { get; private set; }
+        public AudioSource? EngineSource1 { get; private set; }
+        public AudioSource? EngineSource2 { get; private set; }
+        public Echelon? MV { get; private set; }
 
         public VoidDrive()
         {
@@ -37,21 +39,22 @@ namespace Subnautica_Echelon
         {
             WhistleFactor = 1.5f;
             base.Awake();
+            MV = GetComponent<Echelon>();
         }
         public override void Start()
         {
             base.Start();
-            sounds = EngineSoundsManager.GetVoice("ShirubaFoxy");
-            EngineSource1 = base.MV.gameObject.AddComponent<AudioSource>().Register();
+            Sounds = EngineSoundsManager.GetVoice("ShirubaFoxy");
+            EngineSource1 = MV!.gameObject.AddComponent<AudioSource>().Register();
             EngineSource1.loop = true;
             EngineSource1.playOnAwake = false;
             EngineSource1.priority = 0;
-            EngineSource2 = base.MV.gameObject.AddComponent<AudioSource>().Register();
+            EngineSource2 = MV.gameObject.AddComponent<AudioSource>().Register();
             EngineSource2.loop = false;
             EngineSource2.playOnAwake = false;
             EngineSource2.priority = 0;
-            EngineSource1.clip = sounds.hum;
-            EngineSource2.clip = sounds.whistle;
+            EngineSource1.clip = Sounds.hum;
+            EngineSource2.clip = Sounds.whistle;
         }
 
         public override void ControlRotation()
@@ -63,8 +66,8 @@ namespace Subnautica_Echelon
         protected override void PlayEngineHum()
         {
             float value = MainPatcher.PluginConfig.engineSoundVolume / 100f;
-            EngineSource1.volume = EngineHum / 10f * value * HumFactor;
-            if (base.MV.IsPowered())
+            EngineSource1!.volume = EngineHum / 10f * value * HumFactor;
+            if (MV!.IsPowered())
             {
                 if (!EngineSource1.isPlaying && base.RB.velocity.magnitude > 0.2f)
                 {
@@ -88,7 +91,7 @@ namespace Subnautica_Echelon
                 isReadyToWhistle = false;
             }
 
-            if (EngineSource2.isPlaying)
+            if (EngineSource2!.isPlaying)
             {
                 if (moveDirection.magnitude == 0f)
                 {
@@ -141,7 +144,7 @@ namespace Subnautica_Echelon
             base.DoEngineSounds(GetEffectiveMoveInput(moveDirection));
         }
 
-        public override void DrainPower(Vector3 moveDirection)
+        protected override void DrainPower(Vector3 moveDirection)
         {
 
             moveDirection = GetEffectiveMoveInput(moveDirection);
@@ -152,7 +155,7 @@ namespace Subnautica_Echelon
                 );
 
             var neededNow = energyNeeded * Time.fixedDeltaTime;
-            var drained = Mathf.Abs(MV.powerMan.TrySpendEnergy(neededNow));
+            MV!.energyInterface!.ConsumeEnergy(neededNow);
             //insufficientPower = drained < neededNow * 0.8f;
         }
 

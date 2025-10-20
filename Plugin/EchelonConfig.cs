@@ -1,18 +1,26 @@
 using Nautilus.Json;
 using Nautilus.Options.Attributes;
-using UnityEngine;
+using Newtonsoft.Json;
+using Subnautica_Echelon.Util;
 
 [Menu("Echelon Options")]
 public class EchelonConfig : ConfigFile
 {
-    [Keybind("Toggle Free Camera", LabelLanguageId = "optInput_ToggleFreeCamera")]
-    public KeyCode toggleFreeCamera = KeyCode.F;
-    [Keybind("Camera Zoom In", LabelLanguageId = "optInput_CameraZoomIn")]
-    public KeyCode altZoomIn = KeyCode.None;
-    [Keybind("Camera Zoom Out", LabelLanguageId = "optInput_CameraZoomOut")]
-    public KeyCode altZoomOut = KeyCode.None;
+    [JsonIgnore]
+    [BindableButton("Toggle Free Camera", LabelLocalizationKey = "optInput_ToggleFreeCamera", KeyboardDefault = Nautilus.Handlers.GameInputHandler.Paths.Keyboard.F)]
+    public GameInput.Button toggleFreeCamera;
+
+    [JsonIgnore]
+    [BindableButton("Camera Zoom In", LabelLocalizationKey = "optInput_CameraZoomIn")]
+    public GameInput.Button altZoomIn;
+
+    [JsonIgnore]
+    [BindableButton("Camera Zoom Out", LabelLocalizationKey = "optInput_CameraZoomOut")]
+    public GameInput.Button altZoomOut;
+
     [Toggle("Hold Sprint to Boost", LabelLanguageId = "optInput_HoldToBoost")]
     public bool holdToBoost = false;
+
     [Choice("Torpedo Terrain Collisions",
         nameof(TorpedoTerrainCollisions.NeverIgnore),
         nameof(TorpedoTerrainCollisions.IgnoreWhenTargeted),
