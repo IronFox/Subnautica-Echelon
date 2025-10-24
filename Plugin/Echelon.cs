@@ -78,8 +78,8 @@ namespace Subnautica_Echelon
             if (BaseColor == Color.white && StripeColor == Color.white)
             {
                 PLog.Write($"Resetting white {VehicleName}");
-                SetBaseColor(Vector3.zero, BaseColor = defaultBaseColor);
-                SetStripeColor(Vector3.zero, StripeColor = defaultStripeColor);
+                PaintBaseColor(Vector3.zero, BaseColor = defaultBaseColor);
+                PaintStripeColor(Vector3.zero, StripeColor = defaultStripeColor);
             }
         }
 
@@ -157,8 +157,8 @@ namespace Subnautica_Echelon
         public override void SubConstructionComplete()
         {
             base.SubConstructionComplete();
-            SetBaseColor(Vector3.zero, defaultBaseColor);
-            SetStripeColor(Vector3.zero, defaultStripeColor);
+            PaintBaseColor(Vector3.zero, defaultBaseColor);
+            PaintStripeColor(Vector3.zero, defaultStripeColor);
         }
 
         public override void Awake()
@@ -342,7 +342,7 @@ namespace Subnautica_Echelon
                 vehicleColors = new Vector3[5];
         }
 
-        public /*override*/ void SetBaseColor(Vector3 hsb, Color color)
+        protected override void PaintBaseColor(Vector3 hsb, Color color)
         {
             if (recursingColor)
                 return;
@@ -354,16 +354,16 @@ namespace Subnautica_Echelon
                 else
                     color = nonBlackBaseColor;
 
+                recursingColor = true;
                 base.SetBaseColor(BaseColor = color);
                 AllocateColors();
                 vehicleColors[0] = new Vector3(color.r, color.g, color.b);
 
                 if (subName)
                 {
-                    recursingColor = true;
                     subName.SetColor(0, hsb, color);
-                    recursingColor = false;
                 }
+                recursingColor = false;
 
             }
             catch (Exception ex)
@@ -375,7 +375,7 @@ namespace Subnautica_Echelon
         }
 
 
-        public /*override*/ void SetStripeColor(Vector3 hsb, Color color)
+        protected override void PaintStripeColor(Vector3 hsb, Color color)
         {
             if (recursingColor)
                 return;
@@ -387,15 +387,15 @@ namespace Subnautica_Echelon
                 else
                     color = nonBlackStripeColor;
 
+                recursingColor = true;
                 base.SetStripeColor(StripeColor = color);
                 AllocateColors();
                 vehicleColors[3] = new Vector3(color.r, color.g, color.b);
                 if (subName)
                 {
-                    recursingColor = true;
                     subName.SetColor(3, hsb, color);
-                    recursingColor = false;
                 }
+                recursingColor = false;
             }
             catch (Exception ex)
             {
@@ -471,6 +471,7 @@ namespace Subnautica_Echelon
 
                 reenableOnExit.Clear();
 
+                DoSanityCheck();
 
                 //playerPosition = Player.main.transform.parent.gameObject;
             }
