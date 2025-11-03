@@ -10,6 +10,7 @@ using System.Linq;
 using System.Reflection;
 using System.Runtime.InteropServices;
 using UnityEngine;
+using VehicleFramework;
 using VehicleFramework.Admin;
 using VehicleFramework.AutoPilot;
 using VehicleFramework.Engines;
@@ -57,13 +58,17 @@ namespace Subnautica_Echelon
 
         private static string[] GenerateSlotIDs(int modules)
         {
-            string[] array = new string[modules];
-            for (int i = 0; i < modules; i++)
-            {
-                array[i] = "VehicleModule" + i;
-            }
+            return (string[])typeof(ModVehicle).GetMethod("GenerateSlotIDs", BindingFlags.NonPublic | BindingFlags.Static)!
+                .Invoke(null, [modules, false]);
 
-            return array;
+
+            //string[] array = new string[modules];
+            //for (int i = 0; i < modules; i++)
+            //{
+            //    array[i] = "VehicleFrameworkUpgradeModule" + i;
+            //}
+
+            //return array;
         }
 
         public override string[] slotIDs => _slotIDs;
@@ -345,7 +350,10 @@ namespace Subnautica_Echelon
         protected override void PaintBaseColor(Vector3 hsb, Color color)
         {
             if (recursingColor)
+            {
+                PLog.Write("Recursing color, returning");
                 return;
+            }
             PLog.Write($"Updating sub base color to {color}");
             try
             {
@@ -354,8 +362,11 @@ namespace Subnautica_Echelon
                 else
                     color = nonBlackBaseColor;
 
+                BaseColor = color;
+
                 recursingColor = true;
-                base.SetBaseColor(BaseColor = color);
+                base.PaintBaseColor(hsb, color);
+                base.SetBaseColor(color);
                 AllocateColors();
                 vehicleColors[0] = new Vector3(color.r, color.g, color.b);
 
@@ -378,7 +389,10 @@ namespace Subnautica_Echelon
         protected override void PaintStripeColor(Vector3 hsb, Color color)
         {
             if (recursingColor)
+            {
+                PLog.Write("Recursing color, returning");
                 return;
+            }
             PLog.Write($"Updating sub stripe color to {color}");
             try
             {
@@ -386,9 +400,11 @@ namespace Subnautica_Echelon
                     nonBlackStripeColor = color;
                 else
                     color = nonBlackStripeColor;
+                StripeColor = color;
 
                 recursingColor = true;
-                base.SetStripeColor(StripeColor = color);
+                base.PaintStripeColor(hsb, color);
+                base.SetStripeColor(StripeColor);
                 AllocateColors();
                 vehicleColors[3] = new Vector3(color.r, color.g, color.b);
                 if (subName)
