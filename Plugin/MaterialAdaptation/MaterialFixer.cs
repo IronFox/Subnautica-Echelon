@@ -1,6 +1,8 @@
-﻿using System;
+﻿using Subnautica_Echelon.Util;
+using System;
 using System.Collections.Generic;
 using System.Globalization;
+using System.Linq;
 using UnityEngine;
 using UnityEngine.Rendering;
 using VehicleFramework;
@@ -146,6 +148,7 @@ namespace Subnautica_Echelon.MaterialAdaptation
         /// If non-null, enforces the same uniform shininess level on all materials
         /// </summary>
         public float? UniformShininess { get; set; }
+        public SkyApplier? SkyApplier { get; private set; }
         private float? uniformShininess;
 
         /// <summary>
@@ -167,6 +170,8 @@ namespace Subnautica_Echelon.MaterialAdaptation
             Vehicle = owner;
             LogConfig = logConfig ?? LogConfig.Default;
             MaterialResolver = materialResolver ?? (() => DefaultMaterialResolver(owner, LogConfig));
+
+
         }
 
         /// <summary>
@@ -324,7 +329,43 @@ namespace Subnautica_Echelon.MaterialAdaptation
                     LogConfig.LogExtraStep($"Undock repair in progress: {repairMaterialsInSeconds:F2} seconds left, {repairMaterialsInFrames} frames left");
             }
 
+            if (anyChanged)
+            {
+                RefreshSkyApplier();
+            }
+            //Vehicle.GetComponent<SkyApplier>().RefreshDirtySky();
+
             return anyChanged;
         }
+
+
+        private void RefreshSkyApplier()
+        {
+            try
+            {
+                if (SkyApplier == null)
+                {
+                    var skyApplier = Vehicle.GetComponent<SkyApplier>();
+                    if (skyApplier != null)
+                    {
+                        PLog.Write($"Destroying sky applier {skyApplier.NiceName()}");
+                        UnityEngine.Object.Destroy(skyApplier);
+                    }
+
+                    SkyApplier = Vehicle.gameObject.AddComponent<SkyApplier>();
+                }
+
+                LogConfig.LogExtraStep($"Updating sky applier renderers");
+                SkyApplier.renderers = [.. adaptations.Select(x => x.Target.Renderer)];
+                SkyApplier.dynamic = true;
+                LogConfig.LogExtraStep($"Rebuilt sky applier with {SkyApplier.renderers.Length} renderers");
+            }
+            catch (Exception ex)
+            {
+                LogConfig.LogError($"Failed to refresh SkyApplier: {ex}");
+                Debug.LogException(ex);
+            }
+        }
+
     }
 }
