@@ -105,6 +105,30 @@ namespace Subnautica_Echelon.MaterialAdaptation
             return value?.ToString();
         }
 
+        public void LoggedMaterialUpdate<T>(
+            ShaderPropertyType type,
+            string name,
+            Func<T> getOld,
+            T newValue,
+            Action<T> setNew,
+            Func<T, T, bool> equals,
+            Material m)
+        {
+            try
+            {
+                var old = getOld();
+                if (equals(old, newValue))
+                    return;
+                LogMaterialVariableSet(type, name, old, newValue, m);
+                setNew(newValue);
+            }
+            catch (Exception ex)
+            {
+                Debug.LogException(ex);
+                LogError($"Failed to set color {name} ({newValue}) on material {m}");
+            }
+        }
+
         public void LogMaterialVariableSet<T>(
             ShaderPropertyType type,
             string name,
@@ -131,10 +155,10 @@ namespace Subnautica_Echelon.MaterialAdaptation
         private int repairMaterialsInFrames = 3;
         private bool materialsFixed;
         private readonly List<MaterialAdaptation> adaptations = new List<MaterialAdaptation>();
-
+        private static Dictionary<EchelonControl, MaterialFixer> AllInstances { get; } = [];
         public bool MaterialsAreFixed => materialsFixed;
 
-        public ModVehicle Vehicle { get; }
+        public Echelon Vehicle { get; }
 
         /// <summary>
         /// Controls how debug logging should be performed
@@ -160,7 +184,7 @@ namespace Subnautica_Echelon.MaterialAdaptation
         /// mimics VF's default material selection in addition to filtering out non-standard materials</param>
         /// <param name="logConfig">Log Configuration. If null, defaults to <see cref="LogConfig.Default" /></param>
         public MaterialFixer(
-            ModVehicle owner,
+            Echelon owner,
             LogConfig? logConfig = null,
             Func<IEnumerable<SurfaceShaderData>>? materialResolver = null
             )
@@ -171,6 +195,16 @@ namespace Subnautica_Echelon.MaterialAdaptation
             LogConfig = logConfig ?? LogConfig.Default;
             MaterialResolver = materialResolver ?? (() => DefaultMaterialResolver(owner, LogConfig));
 
+        }
+
+        public void Awake()
+        {
+            AllInstances.Add(Vehicle.Control, this);
+        }
+
+        public void Destroy()
+        {
+            AllInstances.Remove(Vehicle.Control);
 
         }
 
@@ -367,5 +401,56 @@ namespace Subnautica_Echelon.MaterialAdaptation
             }
         }
 
+        internal static void UpdateMainTexture(EchelonControl echelon, Renderer renderer, int materialIndex, Texture newMainTex)
+        {
+            if (AllInstances.TryGetValue(echelon, out var fixer))
+            {
+                int found = -1;
+                for (int i = 0; i < fixer.adaptations.Count; i++)
+                {
+                    var adaptation = fixer.adaptations[i];
+                    if (adaptation.Target.Renderer == renderer && adaptation.Target.MaterialIndex == materialIndex)
+                    {
+                        found = i;
+                        break;
+                    }
+                }
+
+                if (found >= 0)
+                {
+                    PLog.Write($"MaterialFixer: Updating main texture for renderer {renderer.NiceName()} #{materialIndex} to {newMainTex.NiceName()}");
+                    var adapt = fixer.adaptations[found] = fixer.adaptations[found].WithNewMainTexture(newMainTex);
+                    adapt.ApplyToTarget(fixer.LogConfig, fixer.uniformShininess);
+                }
+                else
+                    PLog.Warn($"MaterialFixer: Could not find adaptation for renderer {renderer} index {materialIndex} to signal texture shininess change");
+            }
+        }
+
+        internal static void UpdateColorSmoothness(EchelonControl echelon, Renderer renderer, int materialIndex, Color color, float newSmoothness)
+        {
+            if (AllInstances.TryGetValue(echelon, out var fixer))
+            {
+                int found = -1;
+                for (int i = 0; i < fixer.adaptations.Count; i++)
+                {
+                    var adaptation = fixer.adaptations[i];
+                    if (adaptation.Target.Renderer == renderer && adaptation.Target.MaterialIndex == materialIndex)
+                    {
+                        found = i;
+                        break;
+                    }
+                }
+
+                if (found >= 0)
+                {
+                    PLog.Write($"MaterialFixer: Updating color smoothness for renderer {renderer.NiceName()} #{materialIndex} to {color}/{newSmoothness}");
+                    var adapt = fixer.adaptations[found] = fixer.adaptations[found].WithNewColorSmoothness(color, newSmoothness);
+                    adapt.ApplyToTarget(fixer.LogConfig, fixer.uniformShininess);
+                }
+                else
+                    PLog.Warn($"MaterialFixer: Could not find adaptation for renderer {renderer} index {materialIndex} to update smoothness value");
+            }
+        }
     }
 }

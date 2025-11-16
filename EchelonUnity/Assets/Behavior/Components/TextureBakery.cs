@@ -6,6 +6,7 @@ public class TextureBakery : MonoBehaviour, IColorListener
     public Texture sourceTexture;
     public Texture mapTexture;
     public GlobalMaterialConfig globalMaterialConfig;
+    public EchelonControl echelon;
 
     public int targetMaterialSlot;
     private bool forceReapply;
@@ -14,6 +15,9 @@ public class TextureBakery : MonoBehaviour, IColorListener
     private RenderTexture texture;
     private Mesh screenQuad;
     private new MeshRenderer renderer;
+    private float lastStripeSmoothness = -1;
+    private float lastMainSmoothness = -1;
+
     // Start is called before the first frame update
     void Awake()
     {
@@ -57,12 +61,24 @@ public class TextureBakery : MonoBehaviour, IColorListener
             ULog.Fail($"No global material config assigned to {this.name}");
             return;
         }
-        if (globalMaterialConfig.mainColor != lastMainColor || globalMaterialConfig.stripeColor != lastStripeColor || forceReapply)
+        if (!echelon)
+        {
+            ULog.Fail($"No echelon assigned to {this.name}");
+            return;
+        }
+        if (
+            globalMaterialConfig.mainColor != lastMainColor
+            || globalMaterialConfig.stripeColor != lastStripeColor
+            || globalMaterialConfig.mainSmoothness != lastMainSmoothness
+            || globalMaterialConfig.stripeSmoothness != lastStripeSmoothness
+            || forceReapply)
         {
             lastMainColor = globalMaterialConfig.mainColor;
             lastStripeColor = globalMaterialConfig.stripeColor;
+            lastMainSmoothness = globalMaterialConfig.mainSmoothness;
+            lastStripeSmoothness = globalMaterialConfig.stripeSmoothness;
             forceReapply = false;
-            ULog.Write($"(Re)Baking texture using shader {globalMaterialConfig.bakeShader} for color {globalMaterialConfig.mainColor}/{globalMaterialConfig.stripeColor}");
+            ULog.Write($"(Re)Baking texture using shader {globalMaterialConfig.bakeShader} for colors {globalMaterialConfig.mainColor}/{globalMaterialConfig.stripeColor} and smoothness levels {lastMainSmoothness}/{lastStripeSmoothness}");
             var bakeMaterial = new Material(globalMaterialConfig.bakeShader);
 
             using (var command = new CommandBuffer())
@@ -71,10 +87,10 @@ public class TextureBakery : MonoBehaviour, IColorListener
 
                 bakeMaterial.SetTexture($"_Source", sourceTexture);
                 bakeMaterial.SetTexture($"_StripeMask", mapTexture);
-                bakeMaterial.SetColor($"_MainColor", globalMaterialConfig.mainColor);
-                bakeMaterial.SetFloat($"_MainSmoothness", globalMaterialConfig.mainSmoothness);
-                bakeMaterial.SetColor($"_StripeColor", globalMaterialConfig.stripeColor);
-                bakeMaterial.SetFloat($"_StripeSmoothness", globalMaterialConfig.stripeSmoothness);
+                bakeMaterial.SetColor($"_MainColor", lastMainColor);
+                bakeMaterial.SetFloat($"_MainSmoothness", lastMainSmoothness);
+                bakeMaterial.SetColor($"_StripeColor", lastStripeColor);
+                bakeMaterial.SetFloat($"_StripeSmoothness", lastStripeSmoothness);
 
                 command.SetRenderTarget(texture);
                 //command.ClearRenderTarget(true, true, Color.black);
@@ -88,8 +104,9 @@ public class TextureBakery : MonoBehaviour, IColorListener
             if (renderer != null && targetMaterialSlot < renderer.materials.Length)
             {
 
-                renderer.materials[targetMaterialSlot].mainTexture = texture;
                 var targetMaterial = renderer.materials[targetMaterialSlot];
+
+                MaterialAdapter.UpdateMainTexture(echelon, renderer, targetMaterialSlot, texture);
                 //targetMaterial.SetTexture($"_MainTex", texture);
                 ULog.Write($"Assigned {texture.GetInstanceID()} to material {targetMaterial.GetInstanceID()}/{targetMaterial.mainTexture.GetInstanceID()} using shader {targetMaterial.shader}");
             }
@@ -98,8 +115,14 @@ public class TextureBakery : MonoBehaviour, IColorListener
         }
     }
 
-    public void SetColors(Color mainColor, Color stripeColor, bool forceReapply)
+    public void SetColors(
+        Color mainColor,
+        float mainSmoothness,
+        Color stripeColor,
+        float stripeSmoothness,
+        bool forceReapply)
     {
-        this.forceReapply = true;
+        if (forceReapply)
+            this.forceReapply = true;
     }
 }

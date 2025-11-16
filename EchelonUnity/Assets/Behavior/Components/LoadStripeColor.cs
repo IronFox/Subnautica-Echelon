@@ -5,10 +5,16 @@ public class LoadStripeColor : MonoBehaviour, IColorListener
     public int materialIndex;
     private new MeshRenderer renderer;
     public GlobalMaterialConfig globalMaterialConfig;
+    public EchelonControl echelon;
 
-    public void SetColors(Color mainColor, Color stripeColor, bool forceReapply)
+    public void SetColors(
+        Color mainColor,
+        float mainSmoothness,
+        Color stripeColor,
+        float stripeSmoothness,
+        bool forceReapply)
     {
-        forceUpdate = true;
+        forceUpdate = true; //always set here because we don't otherwise compare
     }
 
     // Start is called before the first frame update
@@ -27,13 +33,22 @@ public class LoadStripeColor : MonoBehaviour, IColorListener
             ULog.Fail($"No global material config assigned to {this.name}");
             return;
         }
+        if (!echelon)
+        {
+            ULog.Fail($"No echelon assigned to {this.name}");
+            return;
+        }
         if (forceUpdate)
         {
             forceUpdate = false;
             if (materialIndex < renderer.materials.Length)
             {
-                renderer.materials[materialIndex].color = globalMaterialConfig.stripeColor;
-                renderer.materials[materialIndex].SetFloat("_Glossiness", globalMaterialConfig.stripeSmoothness);
+                MaterialAdapter.UpdateColorSmoothness(
+                    echelon,
+                    renderer,
+                    materialIndex,
+                    globalMaterialConfig.stripeColor,
+                    globalMaterialConfig.stripeSmoothness);
             }
         }
 

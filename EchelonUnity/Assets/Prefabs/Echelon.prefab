@@ -1213,6 +1213,7 @@ MonoBehaviour:
   sourceTexture: {fileID: 2800000, guid: b49bb3908436b11409e651416c34c3d3, type: 3}
   mapTexture: {fileID: 2800000, guid: c8e13a2b37651264a96122915f1054b4, type: 3}
   globalMaterialConfig: {fileID: 6371551022259331574}
+  echelon: {fileID: 5519261214424765450}
   targetMaterialSlot: 0
 --- !u!1 &1040924887341058116
 GameObject:
@@ -2283,6 +2284,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   materialIndex: 0
   globalMaterialConfig: {fileID: 6371551022259331574}
+  echelon: {fileID: 5519261214424765450}
 --- !u!114 &2226830978669314359
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2401,6 +2403,7 @@ MonoBehaviour:
   sourceTexture: {fileID: 2800000, guid: 2b5a55b7a9c50a54c9adfd24ef4e9233, type: 3}
   mapTexture: {fileID: 2800000, guid: c105631835713f545ae4b075cc01cef3, type: 3}
   globalMaterialConfig: {fileID: 6371551022259331574}
+  echelon: {fileID: 5519261214424765450}
   targetMaterialSlot: 0
 --- !u!1 &2902270603441504556
 GameObject:
@@ -2496,6 +2499,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   materialIndex: 0
   globalMaterialConfig: {fileID: 6371551022259331574}
+  echelon: {fileID: 5519261214424765450}
 --- !u!1 &2905437245911901662
 GameObject:
   m_ObjectHideFlags: 0
@@ -7975,6 +7979,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   materialIndex: 0
   globalMaterialConfig: {fileID: 6371551022259331574}
+  echelon: {fileID: 5519261214424765450}
 --- !u!1 &4003022009977120769
 GameObject:
   m_ObjectHideFlags: 0
@@ -8578,6 +8583,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   materialIndex: 0
   globalMaterialConfig: {fileID: 6371551022259331574}
+  echelon: {fileID: 5519261214424765450}
 --- !u!1 &4723203366338518493
 GameObject:
   m_ObjectHideFlags: 0
@@ -13871,6 +13877,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   materialIndex: 0
   globalMaterialConfig: {fileID: 6371551022259331574}
+  echelon: {fileID: 5519261214424765450}
 --- !u!1 &5654463157801849611
 GameObject:
   m_ObjectHideFlags: 0
@@ -14919,6 +14926,7 @@ MonoBehaviour:
   sourceTexture: {fileID: 2800000, guid: 55d98b1658cf8ed4a9da7ad94d854354, type: 3}
   mapTexture: {fileID: 2800000, guid: 9e1def638ca88e2468784902c60a39b6, type: 3}
   globalMaterialConfig: {fileID: 6371551022259331574}
+  echelon: {fileID: 5519261214424765450}
   targetMaterialSlot: 0
 --- !u!1 &6359532593069268880
 GameObject:
@@ -15094,6 +15102,7 @@ MonoBehaviour:
   sourceTexture: {fileID: 2800000, guid: 2b5a55b7a9c50a54c9adfd24ef4e9233, type: 3}
   mapTexture: {fileID: 2800000, guid: c105631835713f545ae4b075cc01cef3, type: 3}
   globalMaterialConfig: {fileID: 6371551022259331574}
+  echelon: {fileID: 5519261214424765450}
   targetMaterialSlot: 0
 --- !u!1 &6633590971494861137
 GameObject:
@@ -15427,6 +15436,7 @@ MonoBehaviour:
   sourceTexture: {fileID: 2800000, guid: b49bb3908436b11409e651416c34c3d3, type: 3}
   mapTexture: {fileID: 2800000, guid: c8e13a2b37651264a96122915f1054b4, type: 3}
   globalMaterialConfig: {fileID: 6371551022259331574}
+  echelon: {fileID: 5519261214424765450}
   targetMaterialSlot: 0
 --- !u!1 &7122029487064343754
 GameObject:
@@ -15766,6 +15776,7 @@ MonoBehaviour:
   sourceTexture: {fileID: 2800000, guid: 3a54fb60a535f514ba302ccf2fc32c52, type: 3}
   mapTexture: {fileID: 2800000, guid: 9e1def638ca88e2468784902c60a39b6, type: 3}
   globalMaterialConfig: {fileID: 6371551022259331574}
+  echelon: {fileID: 5519261214424765450}
   targetMaterialSlot: 3
 --- !u!114 &2542665924598243323
 MonoBehaviour:
@@ -15781,6 +15792,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   materialIndex: 4
   globalMaterialConfig: {fileID: 6371551022259331574}
+  echelon: {fileID: 5519261214424765450}
 --- !u!1 &7317757876132703559
 GameObject:
   m_ObjectHideFlags: 0

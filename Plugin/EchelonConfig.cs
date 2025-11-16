@@ -60,10 +60,12 @@ public class EchelonConfig : ConfigFile
     [Slider(DefaultValue = 75, Format = "{0:F0} %", Label = "Railgun Sound Level", LabelLanguageId = "optRailgunSoundLevel", Min = 0, Max = 100, Step = 5)]
     public float railgunSoundLevel = 75;
 
-    [Toggle("Uniform Shininess", LabelLanguageId = "optUniformShininess")]
-    public bool uniformShininess = false;
-    [Slider(DefaultValue = 50, Format = "{0:F0} %", Label = "Uniform Shininess Level", LabelLanguageId = "optUniformShininessLevel", Min = 0, Max = 100, Step = 5)]
-    public float uniformShininessLevel = 50;
+    [Toggle("Override Shininess", LabelLanguageId = "optOverrideShininess")]
+    public bool overrideShininess = false;
+    [Slider(DefaultValue = 80, Format = "{0:F0} %", Label = "Main Shininess Level", LabelLanguageId = "optMainShininessLevel", Min = 0, Max = 100, Step = 5)]
+    public float mainShininessLevel = 80;
+    [Slider(DefaultValue = 53.72f, Format = "{0:F0} %", Label = "Stripe Shininess Level", LabelLanguageId = "optStripeShininessLevel", Min = 0, Max = 100, Step = 5)]
+    public float stripeShininessLevel = 53.72f;
     [Slider(DefaultValue = 100, Format = "{0:F0} %", Label = "Global Camera Shake Intensity", LabelLanguageId = "optGlobalCameraShakeIntensity", Min = 0, Max = 200, Step = 10)]
     public float globalCameraShakeIntensity = 100;
     [Slider(DefaultValue = 100, Format = "{0:F0} %", Label = "Turbo Camera Shake Intensity", LabelLanguageId = "optBoostCameraShakeIntensity", Min = 0, Max = 200, Step = 10)]

@@ -190,5 +190,23 @@ namespace Subnautica_Echelon.MaterialAdaptation
                 Debug.LogException(ex);
             }
         }
+
+        internal MaterialAdaptation WithNewColorSmoothness(Color color, float newSmoothness)
+        {
+            return new MaterialAdaptation(
+                Prototype,
+                Migrated.WithNewColorSmoothness(color, newSmoothness),
+                Shader
+                );
+        }
+
+        internal MaterialAdaptation WithNewMainTexture(Texture newMainTex)
+        {
+            return new MaterialAdaptation(
+                Prototype,
+                Migrated.WithNewMainTexture(newMainTex),
+                Shader
+                );
+        }
     }
 }

@@ -1,7 +1,6 @@
 ﻿using Subnautica_Echelon.MaterialAdaptation;
 using System;
 using System.Collections.Generic;
-using System.Globalization;
 using System.Linq;
 using UnityEngine;
 using UnityEngine.Rendering;
@@ -42,19 +41,14 @@ namespace Subnautica_Echelon
         /// <param name="logConfig">Log Configuration</param>
         public static void Set(Material m, string name, Color value, LogConfig logConfig)
         {
-            try
-            {
-                var old = m.GetColor(name);
-                if (old == value)
-                    return;
-                logConfig.LogMaterialVariableSet(ShaderPropertyType.Color, name, old, value, m);
-                m.SetColor(name, value);
-            }
-            catch (Exception ex)
-            {
-                Debug.LogException(ex);
-                logConfig.LogError($"Failed to set color {name} ({value}) on material {m}");
-            }
+            logConfig.LoggedMaterialUpdate(
+                ShaderPropertyType.Color,
+                name,
+                () => m.GetColor(name),
+                value,
+                v => m.SetColor(name, v),
+                (a, b) => a == b,
+                m);
         }
 
         public void SetTo(Material m, LogConfig logConfig)
@@ -78,19 +72,15 @@ namespace Subnautica_Echelon
 
         public void SetTo(Material m, LogConfig logConfig)
         {
-            try
-            {
-                var old = m.GetVector(Name);
-                if (old == Value)
-                    return;
-                logConfig.LogMaterialVariableSet(Type, Name, old, Value, m);
-                m.SetVector(Name, Value);
-            }
-            catch (Exception ex)
-            {
-                Debug.LogException(ex);
-                logConfig.LogError($"Failed to set {Type} {Name} ({Value}) on material {m}");
-            }
+            var name = Name;
+            logConfig.LoggedMaterialUpdate(
+                ShaderPropertyType.Vector,
+                name,
+                () => m.GetVector(name),
+                Value,
+                v => m.SetVector(name, v),
+                (a, b) => a == b,
+                m);
         }
     }
 
@@ -109,19 +99,15 @@ namespace Subnautica_Echelon
 
         public void SetTo(Material m, LogConfig logConfig)
         {
-            try
-            {
-                var old = m.GetFloat(Name);
-                if (old == Value)
-                    return;
-                logConfig.LogMaterialVariableSet(Type, Name, old, Value, m);
-                m.SetFloat(Name, Value);
-            }
-            catch (Exception ex)
-            {
-                Debug.LogException(ex);
-                logConfig.LogError($"Failed to set {Type} {Name} ({Value.ToString(CultureInfo.InvariantCulture)}) on material {m}");
-            }
+            var name = Name;
+            logConfig.LoggedMaterialUpdate(
+                ShaderPropertyType.Float,
+                name,
+                () => m.GetFloat(name),
+                Value,
+                v => m.SetFloat(name, v),
+                (a, b) => a == b,
+                m);
         }
     }
 

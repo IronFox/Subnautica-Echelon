@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Subnautica_Echelon.Util;
+using System;
 using UnityEngine;
 
 namespace Subnautica_Echelon.MaterialAdaptation
@@ -246,6 +247,15 @@ namespace Subnautica_Echelon.MaterialAdaptation
         /// <param name="logConfig">Log Configuration</param>
         public void ApplyTo(Material m, float? uniformShininess, LogConfig logConfig)
         {
+            PLog.Write($"Applying color to material {m.NiceName()}: {Color}");
+            logConfig.LoggedMaterialUpdate(
+                UnityEngine.Rendering.ShaderPropertyType.Color,
+                "_Color",
+                () => m.color,
+                Color,
+                (v) => m.color = v,
+                (a, b) => a == b,
+                m);
             ColorVariable.Set(m, "_Color2", Color, logConfig);
             ColorVariable.Set(m, "_Color3", Color, logConfig);
 
@@ -256,17 +266,26 @@ namespace Subnautica_Echelon.MaterialAdaptation
             //    m.mainTexture = Texture2D.whiteTexture;
             //}
 
+            logConfig.LoggedMaterialUpdate(
+                UnityEngine.Rendering.ShaderPropertyType.Texture,
+                "_MainTex",
+                () => m.mainTexture,
+                MainTex,
+                (v) => m.mainTexture = v,
+                (a, b) => a == b,
+                m);
+
             var existingSpecTex = m.GetTexture(SpecTexName);
 
             var spec = SpecularTexture;
 
             if (spec && uniformShininess is null)
             {
-                if (existingSpecTex != MetallicTexture)
+                if (existingSpecTex != spec)
                 {
                     logConfig.LogExtraStep($"Translating smoothness alpha map {spec} to spec");
 
-                    m.SetTexture(SpecTexName, MetallicTexture);
+                    m.SetTexture(SpecTexName, spec);
                 }
             }
             else
@@ -336,5 +355,30 @@ namespace Subnautica_Echelon.MaterialAdaptation
         public override string ToString()
             => "" + Source;
 
+        internal SurfaceShaderData WithNewColorSmoothness(Color color, float newSmoothness)
+        {
+            return new SurfaceShaderData(
+                color: color,
+                mainTex: MainTex,
+                smoothness: newSmoothness,
+                smoothnessTextureChannel: SmoothnessTextureChannel,
+                metallicTexture: MetallicTexture,
+                bumpMap: BumpMap,
+                emissionTexture: EmissionTexture,
+                source: Source);
+        }
+
+        internal SurfaceShaderData WithNewMainTexture(Texture newMainTex)
+        {
+            return new SurfaceShaderData(
+                color: Color,
+                mainTex: newMainTex,
+                smoothness: Smoothness,
+                smoothnessTextureChannel: SmoothnessTextureChannel,
+                metallicTexture: MetallicTexture,
+                bumpMap: BumpMap,
+                emissionTexture: EmissionTexture,
+                source: Source);
+        }
     }
 }

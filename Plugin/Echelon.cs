@@ -10,7 +10,6 @@ using System.Linq;
 using System.Reflection;
 using System.Runtime.InteropServices;
 using UnityEngine;
-using VehicleFramework;
 using VehicleFramework.Admin;
 using VehicleFramework.AutoPilot;
 using VehicleFramework.Engines;
@@ -29,6 +28,8 @@ namespace Subnautica_Echelon
         public static GameObject? model;
         private EchelonControl? control;
 
+        public EchelonControl Control => control ?? throw new InvalidOperationException("Echelon Control not initialized");
+
         public static readonly Color defaultBaseColor = new Color(0xDE, 0xDE, 0xDE) / 255f;
         public static readonly Color defaultStripeColor = new Color(0x3F, 0x4C, 0x7A) / 255f;
 
@@ -41,6 +42,9 @@ namespace Subnautica_Echelon
         private bool destroyed;
         private bool hadUnpausedFrame;
 
+        private float mainSmoothness = GlobalMaterialConfig.DefaultMainSmoothness;
+        private float stripeSmoothness = GlobalMaterialConfig.DefaultStripeSmoothness;
+
         private float deathAge;
         private VoidDrive? engine;
         private AutoPilot? autopilot;
@@ -50,7 +54,7 @@ namespace Subnautica_Echelon
         public Echelon()
         {
             PLog.Write($"Echelon {InstanceID} Constructed");
-            MaterialFixer = new MaterialFixer(this, LogConfig.Silent);
+            MaterialFixer = new MaterialFixer(this, LogConfig.Verbose);
         }
 
         private const int ModuleCount = 8;
@@ -156,6 +160,7 @@ namespace Subnautica_Echelon
         void OnDestroy()
         {
             Log.Write($"{VehicleName} Echelon.OnDestroy()");
+            MaterialFixer.Destroy();
             destroyed = true;
         }
 
@@ -191,7 +196,29 @@ namespace Subnautica_Echelon
                 VFEngine = engine = gameObject.AddComponent<VoidDrive>();
                 PLog.Write($"Assigned new engine");
 
+                control = GetComponent<EchelonControl>();
+                if (control)
+                {
+                    PLog.Write("Found Control");
+                }
+                else
+                {
+                    PLog.Fail("Did not find Control");
+                    if (!transform)
+                        PLog.Write($"Do not have a transform");
+                    else
+                    {
+                        PLog.Write($"This is {transform.name}");
+                        PLog.Write("This has components: " + Helper.NamesS(Helper.AllComponents(transform)));
+                        PLog.Write("This has children: " + Helper.NamesS(transform.GetChildren()));
+                    }
+                }
+
+
+
                 this.onToggle += OnToggleModule;
+
+                MaterialFixer.Awake();
 
                 base.Awake();
                 var cameraController = gameObject.GetComponentInChildren<VehicleFramework.VehicleRootComponents.MVCameraController>();
@@ -305,30 +332,6 @@ namespace Subnautica_Echelon
                     }
 
                     energyInterface = GetComponent<EnergyInterface>();
-                    control = GetComponent<EchelonControl>();
-                    //rotateCamera = GetComponentInChildren<RotateCamera>();
-
-                    //if (rotateCamera == null)
-                    //    PLog.Write($"Rotate camera not found");
-                    //else
-                    //    PLog.Write($"Found camera rotate {rotateCamera.name}");
-
-                    if (control)
-                    {
-                        PLog.Write("Found control");
-                    }
-                    else
-                    {
-                        PLog.Fail("Did not find control");
-                        if (!transform)
-                            PLog.Write($"Do not have a transform");
-                        else
-                        {
-                            PLog.Write($"This is {transform.name}");
-                            PLog.Write("This has components: " + Helper.NamesS(Helper.AllComponents(transform)));
-                            PLog.Write("This has children: " + Helper.NamesS(transform.GetChildren()));
-                        }
-                    }
                     PLog.Write($"LocalInit() done");
 
                 }
@@ -436,7 +439,7 @@ namespace Subnautica_Echelon
                 {
                     try
                     {
-                        listener.SetColors(BaseColor, StripeColor, force);
+                        listener.SetColors(BaseColor, mainSmoothness, StripeColor, stripeSmoothness, force);
                     }
                     catch (Exception ex)
                     {
@@ -488,7 +491,7 @@ namespace Subnautica_Echelon
 
 
                 base.PlayerEntry();
-                control!.Onboard(Player.main.camRoot.transform);
+                Control.Onboard(Player.main.camRoot.transform);
 
                 reenableOnExit.Clear();
 
@@ -510,7 +513,7 @@ namespace Subnautica_Echelon
                     return; //there appears to be some double execution
                 PLog.Write("Echelon.PlayerExit()");
                 LocalInit();
-                control!.Offboard();
+                Control.Offboard();
                 base.PlayerExit();
 
                 foreach (MonoBehaviour behavior in reenableOnExit)
@@ -590,28 +593,28 @@ namespace Subnautica_Echelon
 
         public const float RailgunEnergyCost = 12;
         public bool CanControl
-            => control!.isBoarded
-            && !control.isDocked
+            => Control.isBoarded
+            && !Control.isDocked
             && Player.main.pda.state == PDA.State.Closed
             && !IngameMenu.main.gameObject.activeSelf;
 
         private void ProcessTrigger(bool lowPower)
         {
             if (CanControl
-                && !control!.outOfWater && !lowPower
+                && !Control.outOfWater && !lowPower
                 )
             {
-                control.triggerActive = GameInput.GetButtonHeld(GameInput.Button.LeftHand);
-                control.triggerWasActivated = GameInput.GetButtonDown(GameInput.Button.LeftHand);
-                if (control.IsFiring)
+                Control.triggerActive = GameInput.GetButtonHeld(GameInput.Button.LeftHand);
+                Control.triggerWasActivated = GameInput.GetButtonDown(GameInput.Button.LeftHand);
+                if (Control.IsFiring)
                 {
 
                     float drain = 2f;
 
-                    if (control.activeWeapon == Weapon.Railgun)
+                    if (Control.activeWeapon == Weapon.Railgun)
                     {
 
-                        if (control.RailgunIsCharging)
+                        if (Control.RailgunIsCharging)
                             drain = RailgunEnergyCost;
                     }
 
@@ -619,9 +622,9 @@ namespace Subnautica_Echelon
                 }
             }
             else
-                control!.triggerWasActivated = control.triggerActive = false;
+                Control.triggerWasActivated = Control.triggerActive = false;
 
-            if (control.RailgunIsDischarging)
+            if (Control.RailgunIsDischarging)
             {
                 //PLog.Write($"Discharging");
                 energyInterface!.AddEnergy(RailgunEnergyCost * Time.deltaTime * RailgunCharge.DischargeSpeedFactor);
@@ -632,7 +635,7 @@ namespace Subnautica_Echelon
 
         private void ProcessRegeneration(bool criticalPower)
         {
-            control!.isHealing = false;
+            Control.isHealing = false;
 
             var delta = Time.deltaTime;
 
@@ -669,30 +672,30 @@ namespace Subnautica_Echelon
 
                     var actuallyHealed = clamped;
                     liveMixin.AddHealth(actuallyHealed);
-                    control.isHealing = true;
+                    Control.isHealing = true;
 
                 }
 
 
-                control.maxHealth = liveMixin.maxHealth;
-                control.currentHealth = liveMixin.health;
+                Control.maxHealth = liveMixin.maxHealth;
+                Control.currentHealth = liveMixin.health;
 
             }
         }
 
         private void ForwardControlAxes()
         {
-            if (control!.batteryDead || control.powerOff)
+            if (Control.batteryDead || Control.powerOff)
             {
-                control.forwardAxis = 0;
-                control.rightAxis = 0;
-                control.upAxis = 0;
+                Control.forwardAxis = 0;
+                Control.rightAxis = 0;
+                Control.upAxis = 0;
             }
             else
             {
-                control.forwardAxis = engine!.currentInput.z;
-                control.rightAxis = engine.currentInput.x;
-                control.upAxis = engine.currentInput.y;
+                Control.forwardAxis = engine!.currentInput.z;
+                Control.rightAxis = engine.currentInput.x;
+                Control.upAxis = engine.currentInput.y;
             }
         }
 
@@ -705,7 +708,7 @@ namespace Subnautica_Echelon
 
             if (GameInput.GetButtonDown(GameInput.Button.Sprint) && boostToggle)
             {
-                if (control!.forwardAxis > 0 && engine.overdriveActive > 0)
+                if (Control.forwardAxis > 0 && engine.overdriveActive > 0)
                     engine.overdriveActive = 0;
             }
 
@@ -718,30 +721,30 @@ namespace Subnautica_Echelon
 
             if (boostToggle)
             {
-                if (control!.forwardAxis <= 0 || !canBoost)
+                if (Control.forwardAxis <= 0 || !canBoost)
                     engine.overdriveActive = 0;
                 else
                     engine.overdriveActive = Mathf.Max(engine.overdriveActive, GameInput.GetButtonHeld(GameInput.Button.Sprint) ? 1 : 0);
             }
             else
-                engine.overdriveActive = control!.forwardAxis > 0 && canBoost
+                engine.overdriveActive = Control.forwardAxis > 0 && canBoost
                     ? GameInput.GetButtonHeld(GameInput.Button.Sprint) ? 1 : 0
                     : 0;
 
 
-            control.overdriveActive = engine.overdriveActive > 0.5f;
-            control.overdriveIntensity = DriveModule.GetSpeedBoost(engine.driveUpgrade);
+            Control.overdriveActive = engine.overdriveActive > 0.5f;
+            Control.overdriveIntensity = DriveModule.GetSpeedBoost(engine.driveUpgrade);
         }
 
         /// <summary>
-        /// Redetects proximity to the ocean surface and forwards the state to control
+        /// Redetects proximity to the ocean surface and forwards the state to Control
         /// </summary>
         private void RepositionCamera()
         {
             if (transform.position.y >= Ocean.GetOceanLevel() - 15 && transform.position.y < 1)
-                control!.positionCameraBelowSub = true;
+                Control.positionCameraBelowSub = true;
             else if (transform.position.y < Ocean.GetOceanLevel() - 20 || transform.position.y > 2)
-                control!.positionCameraBelowSub = false;
+                Control.positionCameraBelowSub = false;
         }
 
         private bool HasModule(EchelonModule module)
@@ -980,9 +983,31 @@ namespace Subnautica_Echelon
 
                 LocalInit();
 
-                MaterialFixer.UniformShininess = MainPatcher.PluginConfig.uniformShininess
-                    ? MainPatcher.PluginConfig.uniformShininessLevel / 100f
-                    : (float?)null;
+                {
+                    float mainShininess;
+                    float stripeShininess;
+                    if (MainPatcher.PluginConfig.overrideShininess)
+                    {
+                        mainShininess = MainPatcher.PluginConfig.mainShininessLevel / 100f;
+                        stripeShininess = MainPatcher.PluginConfig.stripeShininessLevel / 100f;
+                    }
+                    else
+                    {
+                        mainShininess = GlobalMaterialConfig.DefaultMainSmoothness;
+                        stripeShininess = GlobalMaterialConfig.DefaultStripeSmoothness;
+                    }
+                    if (mainSmoothness != mainShininess || stripeSmoothness != stripeShininess)
+                    {
+                        PLog.Write($"Overriding shininess to main={mainShininess} stripe={stripeShininess}");
+                        mainSmoothness = mainShininess;
+                        stripeSmoothness = stripeShininess;
+                        UpdateColors(true);
+                    }
+                }
+
+                //MaterialFixer.UniformShininess = MainPatcher.PluginConfig.uniformShininess
+                //        ? MainPatcher.PluginConfig.uniformShininessLevel / 100f
+                //        : (float?)null;
 
                 if (MaterialFixer.OnUpdate())
                 {
@@ -1012,7 +1037,7 @@ namespace Subnautica_Echelon
                     if (deathAge > 1.5f)
                     {
                         PLog.Write($"Emitting pseudo self destruct");
-                        control!.SelfDestruct(true);
+                        Control.SelfDestruct(true);
                         PLog.Write($"Calling OnSalvage");
                         OnSalvage();
                         enabled = false;
@@ -1025,7 +1050,7 @@ namespace Subnautica_Echelon
                 EchelonControl.targetArrows = MainPatcher.PluginConfig.targetArrows;
                 EchelonControl.markerDisplay = MainPatcher.PluginConfig.targetHealthMarkers;
 
-                control!.targetMarkerSizeScale = MainPatcher.PluginConfig.targetMarkerSizeScale / 100f;
+                Control.targetMarkerSizeScale = MainPatcher.PluginConfig.targetMarkerSizeScale / 100f;
                 RailgunTriggerGuidance.Mk1Damage = MainPatcher.PluginConfig.mk1RailgunDamage;
                 RailgunTriggerGuidance.Mk2Damage = MainPatcher.PluginConfig.mk2RailgunDamage;
                 Railgun.SoundLevel = MainPatcher.PluginConfig.railgunSoundLevel / 100f;
@@ -1033,40 +1058,40 @@ namespace Subnautica_Echelon
                 CameraShake.BoostScale = MainPatcher.PluginConfig.boostCameraShakeIntensity / 100f;
 
 
-                control.torpedoMark = TorpedoModule.LevelOf(GetTorpedoMark()) + 1;
-                control.railgunMark = RailgunModule.LevelOf(GetRailgunMark()) + 1;
-                if (control.torpedoMark > 0 || control.railgunMark > 0)
+                Control.torpedoMark = TorpedoModule.LevelOf(GetTorpedoMark()) + 1;
+                Control.railgunMark = RailgunModule.LevelOf(GetRailgunMark()) + 1;
+                if (Control.torpedoMark > 0 || Control.railgunMark > 0)
                 {
                     if (IsAnyToggled<TorpedoModule>())
-                        control.activeWeapon = Weapon.Torpedoes;
+                        Control.activeWeapon = Weapon.Torpedoes;
                     else if (IsAnyToggled<RailgunModule>())
-                        control.activeWeapon = Weapon.Railgun;
+                        Control.activeWeapon = Weapon.Railgun;
                     else if (ToggleAnyOn<RailgunModule>())
-                        control.activeWeapon = Weapon.Railgun;
+                        Control.activeWeapon = Weapon.Railgun;
                     else
                     {
                         ToggleAnyOn<TorpedoModule>();
-                        control.activeWeapon = Weapon.Torpedoes;
+                        Control.activeWeapon = Weapon.Torpedoes;
                     }
                 }
 
                 Vector2 lookDelta = GameInput.GetLookDelta();
-                control.lookRightAxis = lookDelta.x * 1e-3f * MainPatcher.PluginConfig.lookSensitivity;
-                control.lookUpAxis = lookDelta.y * 1e-3f * MainPatcher.PluginConfig.lookSensitivity;
+                Control.lookRightAxis = lookDelta.x * 1e-3f * MainPatcher.PluginConfig.lookSensitivity;
+                Control.lookUpAxis = lookDelta.y * 1e-3f * MainPatcher.PluginConfig.lookSensitivity;
 
                 ProcessEnergyRecharge(out var lowPower, out var criticalPower);
                 ProcessTrigger(lowPower);
                 ProcessRegeneration(criticalPower);
                 ForwardControlAxes();
 
-                control.outOfWater = !GetIsUnderwater();
-                control.cameraCenterIsCockpit = Player.main.pda.state == PDA.State.Opened;
-                control.isDocked = docked;
+                Control.outOfWater = !GetIsUnderwater();
+                Control.cameraCenterIsCockpit = Player.main.pda.state == PDA.State.Opened;
+                Control.isDocked = docked;
                 TorpedoControl.terrainCollisions = MainPatcher.PluginConfig.torpedoTerrainCollisions;
 
                 if (Player.main.pda.state == PDA.State.Closed && !IngameMenu.main.gameObject.activeSelf)
                 {
-                    control.zoomAxis = -Input.GetAxis("Mouse ScrollWheel")
+                    Control.zoomAxis = -Input.GetAxis("Mouse ScrollWheel")
                         +
                         ((GameInput.GetButtonHeld(MainPatcher.PluginConfig.altZoomOut) ? 1f : 0f)
                         - (GameInput.GetButtonHeld(MainPatcher.PluginConfig.altZoomIn) ? 1f : 0f)) * Time.deltaTime
@@ -1074,7 +1099,7 @@ namespace Subnautica_Echelon
                 }
 
                 if (CanControl && GameInput.GetButtonDown(MainPatcher.PluginConfig.toggleFreeCamera))
-                    engine!.freeCamera = control.freeCamera = !control.freeCamera;
+                    engine!.freeCamera = Control.freeCamera = !Control.freeCamera;
 
                 ProcessBoost(lowPower);
                 RepositionCamera();
@@ -1083,8 +1108,8 @@ namespace Subnautica_Echelon
                 {
                     energyInterface.GetValues(out var energyCharge, out var energyCapacity);
 
-                    control.maxEnergy = energyCapacity;
-                    control.currentEnergy = energyCharge;
+                    Control.maxEnergy = energyCapacity;
+                    Control.currentEnergy = energyCharge;
                 }
 
                 base.Update();
@@ -1098,22 +1123,22 @@ namespace Subnautica_Echelon
 
         public void OnPowerUp()
         {
-            control!.powerOff = false;
+            Control.powerOff = false;
         }
 
         public void OnPowerDown()
         {
-            control!.powerOff = true;
+            Control.powerOff = true;
         }
 
         public void OnBatteryDead()
         {
-            control!.batteryDead = true;
+            Control.batteryDead = true;
         }
 
         public void OnBatteryRevive()
         {
-            control!.batteryDead = false;
+            Control.batteryDead = false;
         }
 
         public void OnBatterySafe()

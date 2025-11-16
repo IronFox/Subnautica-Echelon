@@ -4,6 +4,7 @@ using Nautilus.Handlers;
 using Nautilus.Utility.ModMessages;
 using Newtonsoft.Json;
 using Subnautica_Echelon.Logs;
+using Subnautica_Echelon.MaterialAdaptation;
 using Subnautica_Echelon.Modules;
 using Subnautica_Echelon.Util;
 using System;
@@ -214,6 +215,9 @@ namespace Subnautica_Echelon
                 Echelon.saveFileSprite = LoadSpriteRaw("images/outline.png");
                 Echelon.moduleBackground = LoadSpriteRaw("images/moduleBackground.png");
                 started = UWE.CoroutineHost.StartCoroutine(VehicleRegistrar.RegisterVehicle(sub, true));
+
+                MaterialAdapter.UpdateMainTexture = MaterialFixer.UpdateMainTexture;
+                MaterialAdapter.UpdateColorSmoothness = MaterialFixer.UpdateColorSmoothness;
 
                 TorpedoModule.RegisterAll();
                 DriveModule.RegisterAll();

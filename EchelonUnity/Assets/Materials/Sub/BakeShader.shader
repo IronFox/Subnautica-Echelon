@@ -14,7 +14,7 @@
         Tags { "RenderType"="Opaque" }
         LOD 100
         Cull Off
-        Blend One Zero
+        Blend Off
 
         Pass
         {
@@ -65,7 +65,7 @@
                 //return col;
                 //return 1-float4(mask,mask,mask,0);
                 //return _StripeColor;
-                //return float4(1,0,0,1);
+                //return float4(0,0,0,0);
                 return float4(col.rgb * lerp(_StripeColor.rgb, _MainColor.rgb, mask), lerp(_StripeSmoothness, _MainSmoothness, mask));
                 //return float4(1,1,0, 1);
             }
