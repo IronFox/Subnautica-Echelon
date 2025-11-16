@@ -78,7 +78,7 @@ public class TextureBakery : MonoBehaviour, IColorListener
             lastMainSmoothness = globalMaterialConfig.mainSmoothness;
             lastStripeSmoothness = globalMaterialConfig.stripeSmoothness;
             forceReapply = false;
-            ULog.Write($"(Re)Baking texture using shader {globalMaterialConfig.bakeShader} for colors {globalMaterialConfig.mainColor}/{globalMaterialConfig.stripeColor} and smoothness levels {lastMainSmoothness}/{lastStripeSmoothness}");
+            //ULog.Write($"(Re)Baking texture using shader {globalMaterialConfig.bakeShader} for colors {globalMaterialConfig.mainColor}/{globalMaterialConfig.stripeColor} and smoothness levels {lastMainSmoothness}/{lastStripeSmoothness}");
             var bakeMaterial = new Material(globalMaterialConfig.bakeShader);
 
             using (var command = new CommandBuffer())
@@ -108,7 +108,7 @@ public class TextureBakery : MonoBehaviour, IColorListener
 
                 MaterialAdapter.UpdateMainTexture(echelon, renderer, targetMaterialSlot, texture);
                 //targetMaterial.SetTexture($"_MainTex", texture);
-                ULog.Write($"Assigned {texture.GetInstanceID()} to material {targetMaterial.GetInstanceID()}/{targetMaterial.mainTexture.GetInstanceID()} using shader {targetMaterial.shader}");
+                //ULog.Write($"Assigned {texture.GetInstanceID()} to material {targetMaterial.GetInstanceID()}/{targetMaterial.mainTexture.GetInstanceID()} using shader {targetMaterial.shader}");
             }
             else
                 ULog.Fail($"Unable to assign generated texture");
