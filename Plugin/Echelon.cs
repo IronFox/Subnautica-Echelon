@@ -54,24 +54,25 @@ namespace Subnautica_Echelon
         }
 
         private const int ModuleCount = 8;
-        private string[] _slotIDs = GenerateSlotIDs(ModuleCount);
+        //private string[] _slotIDs = GenerateSlotIDs(ModuleCount);
 
-        private static string[] GenerateSlotIDs(int modules)
-        {
-            return (string[])typeof(ModVehicle).GetMethod("GenerateSlotIDs", BindingFlags.NonPublic | BindingFlags.Static)!
-                .Invoke(null, [modules, false]);
+        protected override int UpgradeModuleCount => 8;
 
+        //private static string[] GenerateSlotIDs(int modules)
+        //{
+        //    var rs = (string[])typeof(ModVehicle).GetMethod("GenerateSlotIDs", BindingFlags.NonPublic | BindingFlags.Static)!
+        //        .Invoke(null, [modules, false]);
+        //    PLog.Write($"Generated {rs.Length} slot IDs for {modules} modules: {string.Join(", ", rs)}");
 
-            //string[] array = new string[modules];
-            //for (int i = 0; i < modules; i++)
-            //{
-            //    array[i] = "VehicleFrameworkUpgradeModule" + i;
-            //}
+        //    return rs;
+        //    //string[] array = new string[modules];
+        //    //for (int i = 0; i < modules; i++)
+        //    //{
+        //    //    array[i] = "VehicleFrameworkUpgradeModule" + i;
+        //    //}
 
-            //return array;
-        }
-
-        public override string[] slotIDs => _slotIDs;
+        //    //return array;
+        //}
 
         private Color BaseColor { get; set; }
         private Color StripeColor { get; set; }
