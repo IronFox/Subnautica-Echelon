@@ -11,7 +11,7 @@ namespace Subnautica_Echelon
         private MyLogger Log { get; }
         public AudioSource? EngineSource1 { get; private set; }
         public AudioSource? EngineSource2 { get; private set; }
-        public Echelon? MV { get; private set; }
+        public new Echelon? MV { get; private set; }
 
         public VoidDrive()
         {
