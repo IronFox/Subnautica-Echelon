@@ -190,7 +190,7 @@ namespace Subnautica_Echelon
                 this.onToggle += OnToggleModule;
 
                 base.Awake();
-                var cameraController = gameObject.GetComponentInChildren<VehicleFramework.VehicleComponents.MVCameraController>();
+                var cameraController = gameObject.GetComponentInChildren<VehicleFramework.VehicleRootComponents.MVCameraController>();
                 if (cameraController != null)
                 {
                     PLog.Write($"Destroying camera controller {cameraController}");
