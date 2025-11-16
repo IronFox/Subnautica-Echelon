@@ -54,7 +54,7 @@ namespace Subnautica_Echelon
         public Echelon()
         {
             PLog.Write($"Echelon {InstanceID} Constructed");
-            MaterialFixer = new MaterialFixer(this, LogConfig.Verbose);
+            MaterialFixer = new MaterialFixer(this, LogConfig.Silent);
         }
 
         private const int ModuleCount = 8;

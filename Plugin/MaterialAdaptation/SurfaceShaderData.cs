@@ -1,5 +1,4 @@
-﻿using Subnautica_Echelon.Util;
-using System;
+﻿using System;
 using UnityEngine;
 
 namespace Subnautica_Echelon.MaterialAdaptation
@@ -247,7 +246,6 @@ namespace Subnautica_Echelon.MaterialAdaptation
         /// <param name="logConfig">Log Configuration</param>
         public void ApplyTo(Material m, float? uniformShininess, LogConfig logConfig)
         {
-            PLog.Write($"Applying color to material {m.NiceName()}: {Color}");
             logConfig.LoggedMaterialUpdate(
                 UnityEngine.Rendering.ShaderPropertyType.Color,
                 "_Color",
@@ -258,13 +256,6 @@ namespace Subnautica_Echelon.MaterialAdaptation
                 m);
             ColorVariable.Set(m, "_Color2", Color, logConfig);
             ColorVariable.Set(m, "_Color3", Color, logConfig);
-
-
-            //if (!MainTex && !m.mainTexture)
-            //{
-            //    logConfig.LogExtraStep($"Main texture not set. Loading white texture");
-            //    m.mainTexture = Texture2D.whiteTexture;
-            //}
 
             logConfig.LoggedMaterialUpdate(
                 UnityEngine.Rendering.ShaderPropertyType.Texture,

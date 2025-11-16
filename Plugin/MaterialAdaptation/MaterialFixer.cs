@@ -418,7 +418,7 @@ namespace Subnautica_Echelon.MaterialAdaptation
 
                 if (found >= 0)
                 {
-                    PLog.Write($"MaterialFixer: Updating main texture for renderer {renderer.NiceName()} #{materialIndex} to {newMainTex.NiceName()}");
+                    //PLog.Write($"MaterialFixer: Updating main texture for renderer {renderer.NiceName()} #{materialIndex} to {newMainTex.NiceName()}");
                     var adapt = fixer.adaptations[found] = fixer.adaptations[found].WithNewMainTexture(newMainTex);
                     adapt.ApplyToTarget(fixer.LogConfig, fixer.uniformShininess);
                 }
@@ -444,7 +444,7 @@ namespace Subnautica_Echelon.MaterialAdaptation
 
                 if (found >= 0)
                 {
-                    PLog.Write($"MaterialFixer: Updating color smoothness for renderer {renderer.NiceName()} #{materialIndex} to {color}/{newSmoothness}");
+                    //PLog.Write($"MaterialFixer: Updating color smoothness for renderer {renderer.NiceName()} #{materialIndex} to {color}/{newSmoothness}");
                     var adapt = fixer.adaptations[found] = fixer.adaptations[found].WithNewColorSmoothness(color, newSmoothness);
                     adapt.ApplyToTarget(fixer.LogConfig, fixer.uniformShininess);
                 }
