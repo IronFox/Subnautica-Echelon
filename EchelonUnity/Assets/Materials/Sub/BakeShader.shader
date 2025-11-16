@@ -6,6 +6,8 @@
         _StripeMask ("Stripe Mask Texture", 2D) = "white" {}
         _MainColor ("Main Color",Color) = (1,1,1)
         _StripeColor("Stripe Color", Color) = (1,1,1)
+        _StripeSmoothness ("Stripe Smoothness", Range(0,1)) = 0.5
+        _MainSmoothness ("Main Smoothness", Range(0,1)) = 0.5
     }
     SubShader
     {
@@ -41,6 +43,8 @@
             float4 _Source_ST;
             float4 _MainColor;
             float4 _StripeColor;
+            float _StripeSmoothness;
+            float _MainSmoothness;
 
 
             v2f vert (appdata v)
@@ -62,7 +66,7 @@
                 //return 1-float4(mask,mask,mask,0);
                 //return _StripeColor;
                 //return float4(1,0,0,1);
-                return float4(col.rgb * lerp(_StripeColor.rgb, _MainColor.rgb, mask), 1);
+                return float4(col.rgb * lerp(_StripeColor.rgb, _MainColor.rgb, mask), lerp(_StripeSmoothness, _MainSmoothness, mask));
                 //return float4(1,1,0, 1);
             }
             ENDCG

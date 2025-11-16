@@ -5,9 +5,8 @@ public class TextureBakery : MonoBehaviour, IColorListener
 {
     public Texture sourceTexture;
     public Texture mapTexture;
-    public Color mainColor = new Color(0xDE, 0xDE, 0xDE) / 255f;
-    public Color stripeColor = new Color(0x3F, 0x4C, 0x7A) / 255f;
-    public Shader bakeShader;
+    public GlobalMaterialConfig globalMaterialConfig;
+
     public int targetMaterialSlot;
     private bool forceReapply;
     private Color lastMainColor;
@@ -53,13 +52,18 @@ public class TextureBakery : MonoBehaviour, IColorListener
     // Update is called once per frame
     void Update()
     {
-        if (mainColor != lastMainColor || stripeColor != lastStripeColor || forceReapply)
+        if (!globalMaterialConfig)
         {
-            lastMainColor = mainColor;
-            lastStripeColor = stripeColor;
+            ULog.Fail($"No global material config assigned to {this.name}");
+            return;
+        }
+        if (globalMaterialConfig.mainColor != lastMainColor || globalMaterialConfig.stripeColor != lastStripeColor || forceReapply)
+        {
+            lastMainColor = globalMaterialConfig.mainColor;
+            lastStripeColor = globalMaterialConfig.stripeColor;
             forceReapply = false;
-            ULog.Write($"(Re)Baking texture using shader {bakeShader} for color {mainColor}/{stripeColor}");
-            var bakeMaterial = new Material(bakeShader);
+            ULog.Write($"(Re)Baking texture using shader {globalMaterialConfig.bakeShader} for color {globalMaterialConfig.mainColor}/{globalMaterialConfig.stripeColor}");
+            var bakeMaterial = new Material(globalMaterialConfig.bakeShader);
 
             using (var command = new CommandBuffer())
             {
@@ -67,8 +71,10 @@ public class TextureBakery : MonoBehaviour, IColorListener
 
                 bakeMaterial.SetTexture($"_Source", sourceTexture);
                 bakeMaterial.SetTexture($"_StripeMask", mapTexture);
-                bakeMaterial.SetColor($"_MainColor", mainColor);
-                bakeMaterial.SetColor($"_StripeColor", stripeColor);
+                bakeMaterial.SetColor($"_MainColor", globalMaterialConfig.mainColor);
+                bakeMaterial.SetFloat($"_MainSmoothness", globalMaterialConfig.mainSmoothness);
+                bakeMaterial.SetColor($"_StripeColor", globalMaterialConfig.stripeColor);
+                bakeMaterial.SetFloat($"_StripeSmoothness", globalMaterialConfig.stripeSmoothness);
 
                 command.SetRenderTarget(texture);
                 //command.ClearRenderTarget(true, true, Color.black);
@@ -94,8 +100,6 @@ public class TextureBakery : MonoBehaviour, IColorListener
 
     public void SetColors(Color mainColor, Color stripeColor, bool forceReapply)
     {
-        this.mainColor = mainColor;
-        this.stripeColor = stripeColor;
         this.forceReapply = true;
     }
 }
