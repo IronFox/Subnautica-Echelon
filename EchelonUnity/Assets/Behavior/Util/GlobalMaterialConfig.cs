@@ -9,7 +9,7 @@ public class GlobalMaterialConfig : MonoBehaviour, IColorListener
     public float mainSmoothness = DefaultMainSmoothness;
 
     public const float DefaultStripeSmoothness = 0.5372549f;
-    public const float DefaultMainSmoothness = 0.8f;
+    public const float DefaultMainSmoothness = 0.7f;
 
     // Start is called before the first frame update
     void Start()

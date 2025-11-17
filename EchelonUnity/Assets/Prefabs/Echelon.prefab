@@ -16519,7 +16519,7 @@ MonoBehaviour:
   stripeColor: {r: 0.24705882, g: 0.29803923, b: 0.47843137, a: 0.003921569}
   bakeShader: {fileID: 4800000, guid: 19b90812f82b53b42b878f8acaff6cc0, type: 3}
   stripeSmoothness: 0.5372549
-  mainSmoothness: 0.8
+  mainSmoothness: 0.7
 --- !u!1 &7858723241917922246
 GameObject:
   m_ObjectHideFlags: 0
