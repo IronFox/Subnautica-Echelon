@@ -1149,6 +1149,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   mainColor: {r: 1, g: 1, b: 1, a: 1}
   stripeColor: {r: 0.24705882, g: 0.29803923, b: 0.47843137, a: 1}
+  mainSmoothness: 0.65
+  stripeSmoothness: 0.5372549
 --- !u!1 &1039264199
 GameObject:
   m_ObjectHideFlags: 0
