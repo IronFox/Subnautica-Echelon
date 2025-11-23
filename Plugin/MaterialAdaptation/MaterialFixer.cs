@@ -429,6 +429,7 @@ namespace Subnautica_Echelon.MaterialAdaptation
 
         internal static void UpdateColorSmoothness(EchelonControl echelon, Renderer renderer, int materialIndex, Color color, float newSmoothness)
         {
+            throw new NotImplementedException();
             if (AllInstances.TryGetValue(echelon, out var fixer))
             {
                 int found = -1;

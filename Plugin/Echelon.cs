@@ -54,7 +54,7 @@ namespace Subnautica_Echelon
         public Echelon()
         {
             PLog.Write($"Echelon {InstanceID} Constructed");
-            MaterialFixer = new MaterialFixer(this, LogConfig.Silent);
+            MaterialFixer = new MaterialFixer(this, LogConfig.Verbose);
         }
 
         private const int ModuleCount = 8;
@@ -314,10 +314,12 @@ namespace Subnautica_Echelon
                 isInitialized = true;
                 try
                 {
-                    autopilot = GetComponentInChildren<AutoPilot>();
+                    //autopilot = GetComponentInChildren<AutoPilot>();
                     voice = GetComponentInChildren<AutoPilotVoice>();
 
-                    if (autopilot != null/* && MainPatcher.PluginConfig.batteryChargeSpeed > 0*/)
+
+
+                    if (voice != null/* && MainPatcher.PluginConfig.batteryChargeSpeed > 0*/)
                     {
                         //"Airon" - weird, partially indecipherable low energy voice
                         //"Chels-E" - high-pitched panicky
@@ -325,11 +327,21 @@ namespace Subnautica_Echelon
                         //"Turtle" - missing?
                         //autopilot.apVoice.voice = VoiceManager.GetVoice("ShirubaFoxy");
                         voice.voice = Helper.Clone(VoiceManager.GetVoice("ShirubaFoxy"));
-                        voice.voice.PowerLow = null;
-                        voice.voice.BatteriesNearlyEmpty = null;
-                        voice.voice.UhOh = null;
+                        if (voice.voice != null)
+                        {
+                            voice.voice.PowerLow = null;
+                            voice.voice.BatteriesNearlyEmpty = null;
+                            voice.voice.UhOh = null;
+
+                            voice.NotifyReadyToSpeak();
+                            PLog.Write($"Autopilot voice patched");
+                        }
+                        else
+                            PLog.Write($"Autopilot voice 'ShirubaFoxy' not found");
 
                     }
+                    else
+                        PLog.Write($"No autopilot voice found");
 
                     energyInterface = GetComponent<EnergyInterface>();
                     PLog.Write($"LocalInit() done");

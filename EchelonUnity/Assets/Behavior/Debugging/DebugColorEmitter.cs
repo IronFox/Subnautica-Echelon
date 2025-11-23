@@ -1,5 +1,6 @@
 ﻿using UnityEngine;
 
+
 public class DebugColorEmitter : MonoBehaviour
 {
     public Color mainColor = Color.white;

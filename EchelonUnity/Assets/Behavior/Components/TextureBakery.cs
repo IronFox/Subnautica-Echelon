@@ -3,26 +3,38 @@ using UnityEngine.Rendering;
 
 public class TextureBakery : MonoBehaviour, IColorListener
 {
-    public Texture sourceTexture;
-    public Texture mapTexture;
+    public Texture colorOverlay;
+    public Color colorOverlayConstant = Color.white;
+    public Texture bodyOpacityTexture;
+    [Range(0f, 1f)]
+    public float bodyOpacityConstant = 0f;
     public GlobalMaterialConfig globalMaterialConfig;
     public EchelonControl echelon;
 
-    public int targetMaterialSlot;
     private bool forceReapply;
     private Color lastMainColor;
     private Color lastStripeColor;
     private RenderTexture texture;
     private Mesh screenQuad;
-    private new MeshRenderer renderer;
     private float lastStripeSmoothness = -1;
     private float lastMainSmoothness = -1;
+
+    public int versionCounter = 0;
+
+    private int width;
+    private int height;
+
+    public Texture GetBakedTexture()
+    {
+        return texture;
+    }
 
     // Start is called before the first frame update
     void Awake()
     {
-        renderer = GetComponent<MeshRenderer>();
-        texture = new RenderTexture(new RenderTextureDescriptor(sourceTexture.width, sourceTexture.height, RenderTextureFormat.ARGB32));
+        width = colorOverlay ? colorOverlay.width : 1;
+        height = colorOverlay ? colorOverlay.height : 1;
+        texture = new RenderTexture(new RenderTextureDescriptor(width, height, RenderTextureFormat.ARGB32));
         texture.useMipMap = true;
         texture.autoGenerateMips = true;
         screenQuad = new Mesh();
@@ -73,6 +85,7 @@ public class TextureBakery : MonoBehaviour, IColorListener
             || globalMaterialConfig.stripeSmoothness != lastStripeSmoothness
             || forceReapply)
         {
+            versionCounter++;
             lastMainColor = globalMaterialConfig.mainColor;
             lastStripeColor = globalMaterialConfig.stripeColor;
             lastMainSmoothness = globalMaterialConfig.mainSmoothness;
@@ -85,8 +98,8 @@ public class TextureBakery : MonoBehaviour, IColorListener
             {
                 command.name = "Texture Bakery";
 
-                bakeMaterial.SetTexture($"_Source", sourceTexture);
-                bakeMaterial.SetTexture($"_StripeMask", mapTexture);
+                bakeMaterial.SetTexture($"_Source", colorOverlay.Or(OnePixelTexture.Get(colorOverlayConstant)));
+                bakeMaterial.SetTexture($"_StripeMask", bodyOpacityTexture.Or(OnePixelTexture.GetGray(bodyOpacityConstant)));
                 bakeMaterial.SetColor($"_MainColor", lastMainColor);
                 bakeMaterial.SetFloat($"_MainSmoothness", lastMainSmoothness);
                 bakeMaterial.SetColor($"_StripeColor", lastStripeColor);
@@ -98,20 +111,8 @@ public class TextureBakery : MonoBehaviour, IColorListener
 
                 Graphics.ExecuteCommandBuffer(command);
             }
-            //ULog.Write($"Releasing bake material");
             Destroy(bakeMaterial);
-
-            if (renderer != null && targetMaterialSlot < renderer.materials.Length)
-            {
-
-                var targetMaterial = renderer.materials[targetMaterialSlot];
-
-                MaterialAdapter.UpdateMainTexture(echelon, renderer, targetMaterialSlot, texture);
-                //targetMaterial.SetTexture($"_MainTex", texture);
-                //ULog.Write($"Assigned {texture.GetInstanceID()} to material {targetMaterial.GetInstanceID()}/{targetMaterial.mainTexture.GetInstanceID()} using shader {targetMaterial.shader}");
-            }
-            else
-                ULog.Fail($"Unable to assign generated texture");
+            ULog.Write($"Re-Baked " + name);
         }
     }
 
