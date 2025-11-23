@@ -97,7 +97,7 @@ public class RailgunLine : MonoBehaviour
                 }
                 if (hit.Add(target))
                 {
-                    target.DealDamage(candidate.point, damage, owner.gameObject);
+                    target.DealDamage(candidate.point, damage, gameObject);
                 }
             }
 
